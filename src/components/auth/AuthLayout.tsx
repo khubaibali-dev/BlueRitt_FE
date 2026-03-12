@@ -28,7 +28,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       {/* ------------------------------------------------------------- */}
 
       {/* The outer page frame — matches Figma's dark rounded rectangle */}
-      <div className="auth-main-container relative z-10 w-full max-w-[1280px] min-h-[600px] lg:min-h-[800px] mx-auto rounded-[24px] flex flex-col">
+      <div className="auth-main-container relative z-10 w-full max-w-[1140px] min-h-[600px] lg:min-h-[800px] mx-auto rounded-[24px] flex flex-col">
         {/* Header / Logo */}
         <header className="absolute top-0 left-0 w-full z-20 px-6 pt-6 lg:px-10 lg:pt-10">
           <BlueRittLogo />

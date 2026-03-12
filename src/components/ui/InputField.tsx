@@ -64,7 +64,7 @@ const InputField: React.FC<InputFieldProps> = ({
           required={required}
           className="
             flex-1 bg-transparent text-[14px] font-normal leading-[16px] tracking-[0px] text-white 
-            placeholder-[#4A6680] outline-none border-none ring-0
+            placeholder-[#99A1AF] outline-none border-none ring-0
           "
         />
 

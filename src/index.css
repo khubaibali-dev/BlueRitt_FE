@@ -34,10 +34,9 @@
     padding: 1px;
     background: linear-gradient(
       to right,
-      #2563EB 0%,
-      #6D28D9 40%,
-      #EA4444 80%,
-      #F05A2B 100%
+      #155DFC,
+      #840765,
+      #FF5900
     );
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
@@ -75,11 +74,11 @@
   .bg-glow-image {
     position: absolute;
     inset: 0;
-    width: 100%;
+    width: 250%;
     height: 100%;
     object-fit: cover;
     z-index: 0;
-    opacity: 0.8;
+
   }
 
   /* react-phone-input-2 dark theme overrides */
@@ -100,7 +99,7 @@
   }
   .phone-input-wrapper .react-tel-input .form-control:focus {
     box-shadow: 0 0 0 2px rgba(37,99,235,0.5) !important;
-    border-color: #172D4A !important;
+    border-color: #082656 !important;
   }
   .phone-input-wrapper .react-tel-input .flag-dropdown {
     background: transparent !important;

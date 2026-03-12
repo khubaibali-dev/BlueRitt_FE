@@ -57,7 +57,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
             w-full flex items-center justify-between gap-3 px-4 py-[11px] rounded-lg
             bg-[#081421] border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
-            ${error ? "border-red-500" : "border-[#172D4A]"}
+            ${error ? "border-red-500" : "border-[#082656]"}
           `}
         >
           <div className="flex items-center gap-3 overflow-hidden">
@@ -81,7 +81,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
         </button>
 
         {isOpen && (
-          <div className="absolute z-[100] w-full mt-2 bg-[#0B1828] border border-[#172D4A] rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar">
+          <div className="absolute z-[100] w-full mt-2 bg-[#0B1828] border border-[#082656] rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar">
             {countries.map((country) => (
               <button
                 key={country.code}

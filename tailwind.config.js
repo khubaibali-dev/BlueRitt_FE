@@ -15,7 +15,7 @@ module.exports = {
           textPrimary: "#FFFFFF",
           textSecondary: "#7A9ABF",
           inputBg: "#081421",
-          inputBorder: "#172D4A",
+          inputBorder: "#082656",
         },
       },
       backgroundImage: {
