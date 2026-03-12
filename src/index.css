@@ -5,6 +5,30 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --brand-bg: #F0F4F8;
+    --brand-card: #FFFFFF;
+    --brand-border: #D1D5DB;
+    --brand-primary: #F05A2B;
+    --brand-accent: #3B82F6;
+    --brand-text-primary: #1F2937;
+    --brand-text-secondary: #64748B;
+    --brand-input-bg: #F9FAFB;
+    --brand-input-border: #D1D5DB;
+  }
+
+  .dark {
+    --brand-bg: #07111F;
+    --brand-card: #0B1828;
+    --brand-border: #1B3A5C;
+    --brand-primary: #F05A2B;
+    --brand-accent: #3B82F6;
+    --brand-text-primary: #FFFFFF;
+    --brand-text-secondary: #7A9ABF;
+    --brand-input-bg: #081421;
+    --brand-input-border: #082656;
+  }
+
   *, *::before, *::after {
     box-sizing: border-box;
   }
@@ -15,8 +39,9 @@
   }
 
   body {
-    @apply bg-[#060E1C] text-white font-sans;
+    @apply bg-brand-bg text-brand-textPrimary font-sans;
     margin: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -83,9 +108,9 @@
 
   /* react-phone-input-2 dark theme overrides */
   .phone-input-wrapper .react-tel-input .form-control {
-    background: #081421 !important;
-    border: 1px solid #172D4A !important;
-    color: #FFFFFF !important;
+    background: var(--brand-input-bg) !important;
+    border: 1px solid var(--brand-input-border) !important;
+    color: var(--brand-text-primary) !important;
     width: 100% !important;
     height: 44px !important;
     border-radius: 8px !important;
@@ -93,9 +118,10 @@
     font-size: 14px !important;
     padding-left: 50px !important;
     outline: none !important;
+    transition: all 0.3s ease !important;
   }
   .phone-input-wrapper .react-tel-input .form-control::placeholder {
-    color: #4A6680 !important;
+    color: var(--brand-text-secondary) !important;
   }
   .phone-input-wrapper .react-tel-input .form-control:focus {
     box-shadow: 0 0 0 2px rgba(37,99,235,0.5) !important;
@@ -120,9 +146,9 @@
     border-radius: 7px 0 0 7px !important;
   }
   .phone-input-wrapper .react-tel-input .country-list {
-    background: #0B1828 !important;
-    border: 1px solid #172D4A !important;
-    color: white !important;
+    background: var(--brand-card) !important;
+    border: 1px solid var(--brand-input-border) !important;
+    color: var(--brand-text-primary) !important;
     border-radius: 8px !important;
     margin-top: 8px !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
@@ -141,13 +167,15 @@
 
   /* Main Container Frame */
   .auth-main-container {
-    background: #07101E;
-    box-shadow: 0 0 0 1px rgba(30, 58, 95, 0.5);
+    background: var(--brand-bg);
+    box-shadow: 0 0 0 1px var(--brand-border);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   /* Card Inner Background */
   .brand-card-bg {
-    background: #0B1828;
+    background: var(--brand-card);
+    transition: background-color 0.3s ease;
   }
 
   /* Orange Star Icon Wrapper */

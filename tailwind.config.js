@@ -1,21 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./index.html"],
   theme: {
     extend: {
       colors: {
         brand: {
-          bg: "#07111F",
-          card: "#0B1828",
-          border: "#1B3A5C",
+          bg: "var(--brand-bg)",
+          card: "var(--brand-card)",
+          border: "var(--brand-border)",
           borderGlow: "#2563EB",
-          primary: "#F05A2B",
+          primary: "var(--brand-primary)",
           primaryEnd: "#EF4444",
-          accent: "#3B82F6",
-          textPrimary: "#FFFFFF",
-          textSecondary: "#7A9ABF",
-          inputBg: "#081421",
-          inputBorder: "#082656",
+          accent: "var(--brand-accent)",
+          textPrimary: "var(--brand-text-primary)",
+          textSecondary: "var(--brand-text-secondary)",
+          inputBg: "var(--brand-input-bg)",
+          inputBorder: "var(--brand-input-border)",
         },
       },
       backgroundImage: {
