@@ -11,7 +11,7 @@ const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => (
     <div
       className="
         flex items-center justify-center rounded-lg
-        border border-[#082656]
+      
         overflow-hidden py-3
       "
     >
