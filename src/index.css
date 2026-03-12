@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-[#060E1C] text-white font-sans;
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  /* === FIGMA CARD: gradient border via pseudo-element === */
+  .figma-card-border {
+    position: relative;
+    border-radius: 16px;
+  }
+  .figma-card-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      to right,
+      #2563EB 0%,
+      #6D28D9 40%,
+      #EA4444 80%,
+      #F05A2B 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* === OUTER PAGE FRAME === */
+  .figma-page-frame {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .figma-page-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: rgba(30, 58, 100, 0.5);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* === NEW STANDARD CLASSES === */
+  
+  /* Background glow image */
+  .bg-glow-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.8;
+  }
+
+  /* react-phone-input-2 dark theme overrides */
+  .phone-input-wrapper .react-tel-input .form-control {
+    background: #081421 !important;
+    border: 1px solid #172D4A !important;
+    color: #FFFFFF !important;
+    width: 100% !important;
+    height: 44px !important;
+    border-radius: 8px !important;
+    font-family: 'Work Sans', sans-serif !important;
+    font-size: 14px !important;
+    padding-left: 50px !important;
+    outline: none !important;
+  }
+  .phone-input-wrapper .react-tel-input .form-control::placeholder {
+    color: #4A6680 !important;
+  }
+  .phone-input-wrapper .react-tel-input .form-control:focus {
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.5) !important;
+    border-color: #172D4A !important;
+  }
+  .phone-input-wrapper .react-tel-input .flag-dropdown {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 8px 0 0 8px !important;
+    height: 40px !important;
+    top: 2px !important;
+    left: 2px !important;
+  }
+  .phone-input-wrapper .react-tel-input .selected-flag {
+    background: transparent !important;
+    width: 44px !important;
+    padding: 0 0 0 12px !important;
+  }
+  .phone-input-wrapper .react-tel-input .selected-flag:hover,
+  .phone-input-wrapper .react-tel-input .selected-flag:focus {
+    background: #15273F !important;
+    border-radius: 7px 0 0 7px !important;
+  }
+  .phone-input-wrapper .react-tel-input .country-list {
+    background: #0B1828 !important;
+    border: 1px solid #172D4A !important;
+    color: white !important;
+    border-radius: 8px !important;
+    margin-top: 8px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+    width: 250px !important;
+    z-index: 1000 !important;
+  }
+  .phone-input-wrapper .react-tel-input .country-list .country:hover {
+    background: #15273F !important;
+  }
+  .phone-input-wrapper .react-tel-input .country-list .country.highlight {
+    background: #15273F !important;
+  }
+  .phone-input-wrapper .react-tel-input .country-list .country .dial-code {
+    color: #7A9ABF !important;
+  }
+
+  /* Main Container Frame */
+  .auth-main-container {
+    background: #07101E;
+    box-shadow: 0 0 0 1px rgba(30, 58, 95, 0.5);
+  }
+
+  /* Card Inner Background */
+  .brand-card-bg {
+    background: #0B1828;
+  }
+
+  /* Orange Star Icon Wrapper */
+  .brand-star-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #F36030 0%, #E03535 100%);
+    box-shadow: 0 4px 22px rgba(240, 90, 43, 0.60);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Primary Login Button */
+  .brand-login-btn {
+    background: linear-gradient(135deg, #F05A2B 0%, #EF4444 100%);
+    box-shadow: 0 6px 28px rgba(240, 90, 43, 0.50);
+  }
+}
