@@ -57,7 +57,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
             w-full flex items-center justify-between gap-3 px-4 py-[11px] rounded-lg
             bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
-            ${error ? "border-red-500" : "border-[#082656]"}
+            ${error ? "border-red-500" : "border-brand-inputBorder"}
           `}
         >
           <div className="flex items-center gap-3 overflow-hidden">

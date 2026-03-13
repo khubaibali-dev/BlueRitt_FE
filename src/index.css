@@ -127,7 +127,7 @@
   }
   .phone-input-wrapper .react-tel-input .form-control:focus {
     box-shadow: 0 0 0 2px rgba(37,99,235,0.5) !important;
-    border-color: #082656 !important;
+    border-color: var(--brand-input-border) !important;
   }
   .phone-input-wrapper .react-tel-input .flag-dropdown {
     background: transparent !important;

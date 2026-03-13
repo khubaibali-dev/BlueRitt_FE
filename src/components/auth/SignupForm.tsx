@@ -135,7 +135,7 @@ const SignupForm: React.FC = () => {
           error={errors.country}
         />
         <div className="flex flex-col gap-[6px]">
-          <label className="text-[14px] font-bold leading-[16px] tracking-[0px] text-brand-textPrimary">
+          <label className="text-[14px]  leading-[16px] tracking-[0px] text-brand-textPrimary">
             Whatsapp(Optional)
           </label>
           <div className="phone-input-wrapper">
