@@ -7,29 +7,33 @@ interface ReCaptchaWidgetProps {
   onVerify: (verified: boolean) => void;
 }
 
-const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => (
-  <div className="flex flex-col gap-[6px] w-full">
-    <div
-      className="
-        flex items-center justify-center rounded-lg
-      
-        overflow-hidden py-3
-      "
-    >
-      {/* 
-        Google reCAPTCHA is ~304px wide. 
-        We scale it to fill the container width more naturally while keeping it crisp.
-      */}
-      <div className="scale-105 sm:scale-115 origin-center transition-transform duration-300">
-        <ReCAPTCHA
-          sitekey="6LfIEogsAAAAAAMKoe923FYLjKwVo5skjil-HDjs"
-          theme="dark"
+const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => {
+  const { theme } = useTheme();
 
-          onChange={(token) => onVerify(!!token)}
-        />
+  return (
+    <div className="flex flex-col gap-[6px] w-full">
+      <div
+        className="
+          flex items-center justify-center rounded-lg
+         
+          overflow-hidden py-3 transition-colors duration-300
+        "
+      >
+        {/* 
+          Google reCAPTCHA is ~304px wide. 
+          We scale it to fill the container width more naturally while keeping it crisp.
+        */}
+        <div className="scale-105 sm:scale-115 origin-center transition-transform duration-300">
+          <ReCAPTCHA
+            key={theme}
+            sitekey="6LdxE4gsAAAAADdZjktXOctgLnqPLRrahBQcbhCm"
+            theme={theme}
+            onChange={(token) => onVerify(!!token)}
+          />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ReCaptchaWidget;

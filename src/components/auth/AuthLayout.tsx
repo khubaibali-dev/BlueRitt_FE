@@ -25,7 +25,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       <img 
         src="/bg-glows.png" 
         alt="" 
-        className={`bg-glow-image transition-opacity duration-1000 ${theme === 'dark' ? 'opacity-100' : 'opacity-20'}`}
+        className="bg-glow-image transition-opacity duration-1000 opacity-100"
         aria-hidden="true"
       />
       {/* ------------------------------------------------------------- */}

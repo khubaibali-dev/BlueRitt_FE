@@ -33,7 +33,7 @@ const LoginCard: React.FC = () => {
         </div>
 
         <div className="text-center mb-2">
-          <h1 className="text-[22px] font-bold text-white mb-[6px] tracking-tight">
+          <h1 className="text-[22px] font-bold text-brand-textPrimary mb-[6px] tracking-tight">
             Welcome back!
           </h1>
           <p className="text-[14px] font-normal leading-[16px] tracking-[0px] text-[#7A9ABF]">

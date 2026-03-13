@@ -44,7 +44,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
   return (
     <div className="flex flex-col gap-[6px]" ref={dropdownRef}>
       {label && (
-        <label className="text-[14px] font-normal leading-[16px] tracking-[0px] text-white">
+        <label className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary">
           {label}
         </label>
       )}
@@ -55,7 +55,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
           onClick={() => setIsOpen(!isOpen)}
           className={`
             w-full flex items-center justify-between gap-3 px-4 py-[11px] rounded-lg
-            bg-[#081421] border transition-all duration-200
+            bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
             ${error ? "border-red-500" : "border-[#082656]"}
           `}
@@ -66,7 +66,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
               alt={selectedCountry.name}
               className="w-5 h-auto rounded-sm flex-shrink-0"
             />
-            <span className="text-[14px] text-white font-normal font-sans tracking-[0px] whitespace-nowrap overflow-hidden text-ellipsis">
+            <span className="text-[14px] text-brand-textPrimary font-normal font-sans tracking-[0px] whitespace-nowrap overflow-hidden text-ellipsis">
               {selectedCountry.name}
             </span>
           </div>
@@ -81,7 +81,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
         </button>
 
         {isOpen && (
-          <div className="absolute z-[100] w-full mt-2 bg-[#0B1828] border border-[#082656] rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar">
+          <div className="absolute z-[100] w-full mt-2 bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar">
             {countries.map((country) => (
               <button
                 key={country.code}
@@ -97,7 +97,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
                   alt={country.name}
                   className="w-5 h-auto rounded-sm"
                 />
-                <span className="text-[14px] text-white">{country.name}</span>
+                <span className="text-[14px] text-brand-textPrimary">{country.name}</span>
               </button>
             ))}
           </div>

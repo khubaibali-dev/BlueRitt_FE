@@ -77,7 +77,7 @@ const SignupForm: React.FC = () => {
     <button
       type="button"
       onClick={togglePassword}
-      className="text-[#7A9ABF] hover:text-white transition-colors duration-150 focus:outline-none"
+      className="text-brand-textSecondary hover:text-brand-primary transition-colors duration-150 focus:outline-none"
       aria-label={showPassword ? "Hide password" : "Show password"}
     >
       {showPassword ? (
@@ -135,7 +135,7 @@ const SignupForm: React.FC = () => {
           error={errors.country}
         />
         <div className="flex flex-col gap-[6px]">
-          <label className="text-[14px] font-normal leading-[16px] tracking-[0px] text-white">
+          <label className="text-[14px] font-bold leading-[16px] tracking-[0px] text-brand-textPrimary">
             Whatsapp(Optional)
           </label>
           <div className="phone-input-wrapper">
@@ -198,7 +198,7 @@ const SignupForm: React.FC = () => {
               )}
             </div>
           </div>
-          <span className="text-[14px] font-normal leading-[16px] tracking-[0px] text-white">
+          <span className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary">
             By creating an account you agree to our Terms & Conditions & Privacy Policy
           </span>
         </label>

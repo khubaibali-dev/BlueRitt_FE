@@ -33,7 +33,7 @@ const InputField: React.FC<InputFieldProps> = ({
       {label && (
         <label
           htmlFor={id}
-          className="text-[14px] font-normal leading-[16px] tracking-[0px] text-white"
+          className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary"
         >
           {label}
         </label>
@@ -63,7 +63,7 @@ const InputField: React.FC<InputFieldProps> = ({
           autoComplete={autoComplete}
           required={required}
           className="
-            flex-1 bg-transparent text-[14px] font-normal leading-[16px] tracking-[0px] text-white 
+            flex-1 bg-transparent text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary 
             placeholder-[#99A1AF] outline-none border-none ring-0
           "
         />
