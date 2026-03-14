@@ -26,7 +26,7 @@ const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => {
         <div className="scale-105 sm:scale-115 origin-center transition-transform duration-300">
           <ReCAPTCHA
             key={theme}
-            sitekey="6Lfk9IgsAAAAAHqOGrSL332xhFd-IZZR2a4S4w6S"
+            sitekey="6LcKJoosAAAAAL1Q4t2sbAXzExvdieXu1wz62Yl2"
             theme={theme}
             onChange={(token) => onVerify(token || "")}
           />
