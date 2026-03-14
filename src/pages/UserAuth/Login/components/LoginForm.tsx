@@ -83,7 +83,7 @@ const LoginForm: React.FC = () => {
     <button
       type="button"
       onClick={togglePassword}
-      className="text-[#7A9ABF] hover:text-white transition-colors duration-150 focus:outline-none flex items-center justify-center"
+      className="text-brand-textSecondary hover:text-brand-primary transition-colors duration-150 focus:outline-none flex items-center justify-center"
       aria-label={showPassword ? "Hide password" : "Show password"}
     >
       {showPassword ? (

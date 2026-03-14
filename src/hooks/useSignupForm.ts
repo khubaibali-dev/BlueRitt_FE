@@ -50,6 +50,7 @@ const useSignupForm = () => {
   });
   const [errors, setErrors] = useState<SignupErrors>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const handleChange = (field: keyof SignupFields) => (
@@ -71,6 +72,7 @@ const useSignupForm = () => {
   };
 
   const togglePassword = () => setShowPassword((prev) => !prev);
+  const toggleConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -92,11 +94,13 @@ const useSignupForm = () => {
     fields,
     errors,
     showPassword,
+    showConfirmPassword,
     loading,
     captchaVerified,
     setCaptchaVerified: handleCaptchaVerify,
     handleChange,
     togglePassword,
+    toggleConfirmPassword,
     handleSubmit,
   };
 };

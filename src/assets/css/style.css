@@ -16,6 +16,7 @@
     --brand-input-bg: #FFFFFF;
     --brand-input-border: #D1D5DB;
     --brand-hover: #F1F5F9;
+    --auth-border: #6b9ded;
   }
 
   .dark {
@@ -29,6 +30,7 @@
     --brand-input-bg: #081421;
     --brand-input-border: #082656;
     --brand-hover: #15273F;
+    --auth-border: #082656;
   }
 
   *, *::before, *::after {
@@ -170,7 +172,7 @@
   /* Main Container Frame */
   .auth-main-container {
     background: var(--brand-bg);
-    box-shadow: 0 0 0 1px var(--brand-border);
+    box-shadow: 0 0 0 1px var(--auth-border);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
 

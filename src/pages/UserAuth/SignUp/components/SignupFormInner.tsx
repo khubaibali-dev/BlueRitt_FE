@@ -11,9 +11,11 @@ const SignupForm: React.FC = () => {
     fields,
     errors,
     showPassword,
+    showConfirmPassword,
     setCaptchaVerified,
     handleChange,
     togglePassword,
+    toggleConfirmPassword,
     handleSubmit,
   } = useSignupForm();
 
@@ -31,6 +33,21 @@ const SignupForm: React.FC = () => {
       aria-label={showPassword ? "Hide password" : "Show password"}
     >
       {showPassword ? (
+        <EyeOff className="w-[18px] h-[18px]" strokeWidth={1.4} />
+      ) : (
+        <Eye className="w-[18px] h-[18px]" strokeWidth={1.4} />
+      )}
+    </button>
+  );
+
+  const ConfirmPasswordToggle = (
+    <button
+      type="button"
+      onClick={toggleConfirmPassword}
+      className="text-brand-textSecondary hover:text-brand-primary transition-colors duration-150 focus:outline-none flex items-center justify-center"
+      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+    >
+      {showConfirmPassword ? (
         <EyeOff className="w-[18px] h-[18px]" strokeWidth={1.4} />
       ) : (
         <Eye className="w-[18px] h-[18px]" strokeWidth={1.4} />
@@ -111,13 +128,13 @@ const SignupForm: React.FC = () => {
       <InputField
         id="confirmPassword"
         label="Confirm Password"
-        type={showPassword ? "text" : "password"}
+        type={showConfirmPassword ? "text" : "password"}
         placeholder="Confirm your password"
         value={fields.confirmPassword}
         onChange={handleChange("confirmPassword")}
         icon={Lock}
         error={errors.confirmPassword}
-        rightElement={PasswordToggle}
+        rightElement={ConfirmPasswordToggle}
         autoComplete="new-password"
       />
 
