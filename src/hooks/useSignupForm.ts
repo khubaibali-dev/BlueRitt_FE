@@ -52,13 +52,22 @@ const useSignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaVerified, setCaptchaVerified] = useState(false);
-
   const handleChange = (field: keyof SignupFields) => (
     e: ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFields((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleCaptchaVerify = (tokenOrBool: string | boolean | null) => {
+    if (typeof tokenOrBool === "string" && tokenOrBool) {
+      setCaptchaVerified(true);
+    } else if (typeof tokenOrBool === "boolean") {
+      setCaptchaVerified(tokenOrBool);
+    } else {
+      setCaptchaVerified(false);
+    }
   };
 
   const togglePassword = () => setShowPassword((prev) => !prev);
@@ -85,7 +94,7 @@ const useSignupForm = () => {
     showPassword,
     loading,
     captchaVerified,
-    setCaptchaVerified,
+    setCaptchaVerified: handleCaptchaVerify,
     handleChange,
     togglePassword,
     handleSubmit,

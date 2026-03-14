@@ -1,4 +1,4 @@
-// src/components/ui/InputField.tsx
+// src/components/common/input/InputField.tsx
 import React from "react";
 
 interface InputFieldProps {
@@ -9,6 +9,7 @@ interface InputFieldProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   icon?: React.ComponentType<{ className?: string }>;
+  prefix?: string;
   rightElement?: React.ReactNode;
   autoComplete?: string;
   required?: boolean;
@@ -23,6 +24,7 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   icon: Icon,
+  prefix,
   rightElement = null,
   autoComplete,
   required = false,
@@ -54,6 +56,12 @@ const InputField: React.FC<InputFieldProps> = ({
           />
         )}
 
+        {prefix && (
+          <span className="text-[14px] font-medium text-brand-textSecondary border-r border-brand-inputBorder pr-2 flex-shrink-0">
+            {prefix}
+          </span>
+        )}
+
         <input
           id={id}
           type={type}
@@ -69,7 +77,7 @@ const InputField: React.FC<InputFieldProps> = ({
         />
 
         {rightElement && (
-          <div className="flex-shrink-0">{rightElement}</div>
+          <div className="flex-shrink-0 flex items-center justify-center">{rightElement}</div>
         )}
       </div>
 

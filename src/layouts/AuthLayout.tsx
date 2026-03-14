@@ -1,6 +1,6 @@
 import React from "react";
-import BlueRittLogo from "../ui/BlueRittLogo";
-import { useTheme } from "../../context/ThemeContext";
+import BlueRittLogo from "../components/common/logo/BlueRittLogo";
+import { useTheme } from "../context/ThemeContext";
 import { Sun, Moon } from "lucide-react";
 
 interface AuthLayoutProps {

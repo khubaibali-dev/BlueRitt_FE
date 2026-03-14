@@ -1,4 +1,4 @@
-// src/components/ui/BlueRittLogo.jsx
+// src/components/common/logo/BlueRittLogo.tsx
 
 const BlueRittLogo = ({ className = "" }) => {
   return (
@@ -6,7 +6,7 @@ const BlueRittLogo = ({ className = "" }) => {
       <img 
         src="/logo.png" 
         alt="BlueRitt Logo" 
-        className="h-8 w-auto object-contain"
+        className="h-6 w-auto object-contain"
       />
     </div>
   );

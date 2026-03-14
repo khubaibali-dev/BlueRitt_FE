@@ -1,4 +1,4 @@
-// src/components/ui/PrimaryButton.tsx
+// src/components/common/button/PrimaryButton.tsx
 import React from "react";
 
 interface PrimaryButtonProps {

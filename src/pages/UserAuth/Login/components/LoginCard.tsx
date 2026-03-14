@@ -1,8 +1,8 @@
-// src/components/auth/LoginCard.tsx
+// src/pages/UserAuth/Login/components/LoginCard.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 import LoginForm from "./LoginForm";
-import PrimaryButton from "../ui/PrimaryButton";
+import PrimaryButton from "../../../../components/common/button/PrimaryButton";
 
 /* 4-pointed sparkle star — matches Figma icon exactly */
 const StarIcon: React.FC = () => (

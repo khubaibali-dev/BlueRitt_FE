@@ -1,27 +1,28 @@
-// src/components/ui/CountrySelect.tsx
+// src/components/common/select/CountrySelect.tsx
 import React, { useState, useRef, useEffect } from "react";
 
-interface Country {
+export interface Country {
   name: string;
   code: string;
   flag: string;
+  dialCode: string;
 }
 
-const countries: Country[] = [
-  { name: "Pakistan", code: "PK", flag: "🇵🇰" },
-  { name: "United Kingdom", code: "GB", flag: "🇬🇧" },
-  { name: "United States", code: "US", flag: "🇺🇸" },
-  { name: "United Arab Emirates", code: "AE", flag: "🇦🇪" },
-  { name: "Saudi Arabia", code: "SA", flag: "🇸🇦" },
-  { name: "Canada", code: "CA", flag: "🇨🇦" },
-  { name: "Australia", code: "AU", flag: "🇦🇺" },
+export const countries: Country[] = [
+  { name: "Pakistan", code: "PK", flag: "🇵🇰", dialCode: "+92" },
+  { name: "United Kingdom", code: "GB", flag: "🇬🇧", dialCode: "+44" },
+  { name: "United States", code: "US", flag: "🇺🇸", dialCode: "+1" },
+  { name: "United Arab Emirates", code: "AE", flag: "🇦🇪", dialCode: "+971" },
+  { name: "Saudi Arabia", code: "SA", flag: "🇸🇦", dialCode: "+966" },
+  { name: "Canada", code: "CA", flag: "🇨🇦", dialCode: "+1" },
+  { name: "Australia", code: "AU", flag: "🇦🇺", dialCode: "+61" },
   // Add more as needed
 ];
 
 interface CountrySelectProps {
   label?: string;
   value: string;
-  onChange: (name: string) => void;
+  onChange: (country: Country) => void;
   error?: string;
 }
 
@@ -54,7 +55,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full flex items-center justify-between gap-3 px-4 py-[11px] rounded-lg
+            w-full flex items-center justify-between gap-3 px-4 py-[12px] rounded-lg
             bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
             ${error ? "border-red-500" : "border-brand-inputBorder"}
@@ -88,7 +89,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
                 type="button"
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#15273F] transition-colors text-left"
                 onClick={() => {
-                  onChange(country.name);
+                  onChange(country);
                   setIsOpen(false);
                 }}
               >

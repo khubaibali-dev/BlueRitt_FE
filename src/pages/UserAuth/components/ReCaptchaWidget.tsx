@@ -1,10 +1,10 @@
-// src/components/auth/ReCaptchaWidget.tsx
+// src/pages/UserAuth/components/ReCaptchaWidget.tsx
 import React from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../../context/ThemeContext";
 
 interface ReCaptchaWidgetProps {
-  onVerify: (verified: boolean) => void;
+  onVerify: (token: string) => void;
 }
 
 const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => {
@@ -26,9 +26,9 @@ const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => {
         <div className="scale-105 sm:scale-115 origin-center transition-transform duration-300">
           <ReCAPTCHA
             key={theme}
-            sitekey="6LeQ84gsAAAAALpDm8DDnow-K6kuvOIic5ar50P2"
+            sitekey="6Lfk9IgsAAAAAHqOGrSL332xhFd-IZZR2a4S4w6S"
             theme={theme}
-            onChange={(token) => onVerify(!!token)}
+            onChange={(token) => onVerify(token || "")}
           />
         </div>
       </div>

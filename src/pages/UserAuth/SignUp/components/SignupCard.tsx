@@ -1,8 +1,8 @@
-// src/components/auth/SignupCard.tsx
+// src/pages/UserAuth/SignUp/components/SignupCard.tsx
 import React from "react";
 import { Link } from "react-router-dom";
-import SignupForm from "./SignupForm";
-import PrimaryButton from "../ui/PrimaryButton";
+import SignupForm from "./SignupFormInner";
+import PrimaryButton from "../../../../components/common/button/PrimaryButton";
 
 /* 4-pointed sparkle star — matches Figma icon exactly */
 const StarIcon: React.FC = () => (
