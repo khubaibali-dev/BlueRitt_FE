@@ -16,7 +16,7 @@ const StarIcon: React.FC = () => (
   >
     <path
       d="M13 2L14.8 10.2H22L16 14.8L18.4 23L13 18.4L7.6 23L10 14.8L4 10.2H11.2L13 2Z"
-      fill="white"
+      fill="currentColor"
     />
   </svg>
 );
@@ -44,7 +44,7 @@ const SelectPlanPage: React.FC = () => {
 
       {/* ── TITLE ── */}
       <div className="w-full flex flex-col items-center relative mb-4">
-        <div className="brand-star-icon">
+        <div className="brand-star-icon text-white">
           <StarIcon />
         </div>
 
@@ -52,16 +52,16 @@ const SelectPlanPage: React.FC = () => {
           <h1 className="text-[28px] md:text-[32px] font-bold text-brand-textPrimary mb-[8px] tracking-tight">
             Choose Your Plan
           </h1>
-          <p className="text-[14px] font-normal leading-[16px] text-[#7A9ABF]">
+          <p className="text-[14px] font-normal leading-[16px] text-brand-textSecondary dark:text-[#7A9ABF]">
             Select the perfect plan for your business
           </p>
         </div>
       </div>
 
       {/* ── MAIN CONTENT (Split View) ── */}
-      <div className="w-full flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center">
+      <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-4 items-start justify-center px-4">
         {/* LEFT COMPONENT: Selection Config + Create Account Button */}
-        <div className="w-full lg:w-[45%] flex flex-col items-center gap-4">
+        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-center gap-4">
           <PackageSelectPanel
             packages={packages}
             selectedPackageId={selectedPackageId}
@@ -79,7 +79,7 @@ const SelectPlanPage: React.FC = () => {
         </div>
 
         {/* RIGHT COMPONENT: Feature Details */}
-        <div className="w-full lg:w-[55%] flex justify-start">
+        <div className="w-full lg:w-1/2 flex justify-start">
           <PackageDetailsPanel
             packageData={selectedPackage}
             billingCycle={billingCycle}

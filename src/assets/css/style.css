@@ -215,6 +215,9 @@
 
   /* Package Details Panel: card background */
   .pkg-details-card-bg {
+    background: linear-gradient(128.96deg, rgba(21, 93, 252, 0.05) -27.12%, rgba(255, 89, 0, 0.05) 127.89%);
+  }
+  .dark .pkg-details-card-bg {
     background: linear-gradient(128.96deg, rgba(21, 93, 252, 0.2) -27.12%, rgba(255, 89, 0, 0.2) 127.89%);
   }
 
@@ -222,6 +225,10 @@
   .pkg-details-border {
     position: relative;
     border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  .dark .pkg-details-border {
+    box-shadow: none;
   }
   .pkg-details-border::before {
     content: "";
@@ -231,9 +238,9 @@
     padding: 1px;
     background: linear-gradient(
       to right,
-      rgba(21, 93, 252, 0.35),
-      rgba(132, 7, 101, 0.25),
-      rgba(255, 89, 0, 0.35)
+      rgba(21, 93, 252, 0.4),
+      rgba(132, 7, 101, 0.3),
+      rgba(255, 89, 0, 0.4)
     );
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
@@ -241,6 +248,14 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+  }
+  .dark .pkg-details-border::before {
+    background: linear-gradient(
+      to right,
+      rgba(21, 93, 252, 0.35),
+      rgba(132, 7, 101, 0.25),
+      rgba(255, 89, 0, 0.35)
+    );
   }
 
   /* Package Details Panel: Current Plan badge */
@@ -250,6 +265,9 @@
 
   /* Package Select: Popular badge */
   .pkg-popular-badge {
+    background: linear-gradient(90deg, #0A1626 0%, #CD5150 100%);
+  }
+  .dark .pkg-popular-badge {
     background: linear-gradient(90deg, #082656 0%, #CD5150 100%);
   }
 
@@ -257,10 +275,17 @@
   .pkg-tab-active {
     background: linear-gradient(91.61deg, #D05942 -14.44%, #D4375F 118.02%);
   }
+  .dark .pkg-tab-active {
+    background: linear-gradient(91.61deg, #D05942 -14.44%, #D4375F 118.02%);
+  }
 
   /* Package Select: icon circle gradient border */
   .pkg-icon-circle {
     position: relative;
+    background: #f8fafc;
+    border-radius: 50%;
+  }
+  .dark .pkg-icon-circle {
     background: transparent;
   }
   .pkg-icon-circle::before {
@@ -269,13 +294,18 @@
     inset: 0;
     border-radius: 50%;
     padding: 1px;
-    background: linear-gradient(92.44deg, #109EF0 3.68%, #FFFFFF 43.28%, #FB8567 97.28%);
+    background: linear-gradient(92.44deg, #109EF0 3.68%, #04132B 43.28%, #FB8567 97.28%);
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+    opacity: 0.3;
+  }
+  .dark .pkg-icon-circle::before {
+    background: linear-gradient(92.44deg, #109EF0 3.68%, #FFFFFF 43.28%, #FB8567 97.28%);
+    opacity: 1;
   }
 
   /* Package Select: gradient icon color */
@@ -291,6 +321,7 @@
   .pkg-option-border {
     position: relative;
     border: 1px solid var(--brand-border);
+    transition: all 0.2s ease;
   }
   .pkg-option-border::before {
     content: "";
@@ -298,7 +329,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(93.35deg, #109EF0 2.53%, #FFFFFF 43.76%, #FB8567 99.98%);
+    background: linear-gradient(93.35deg, #109EF0 2.53%, #04132B 43.76%, #FB8567 99.98%);
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -309,8 +340,15 @@
     opacity: 0;
     transition: opacity 0.2s ease;
   }
+  .dark .pkg-option-border::before {
+    background: linear-gradient(93.35deg, #109EF0 2.53%, #FFFFFF 43.76%, #FB8567 99.98%);
+  }
   .pkg-option-border:hover::before,
   .pkg-option-border.pkg-option-selected::before {
+    opacity: 0.5;
+  }
+  .dark .pkg-option-border:hover::before,
+  .dark .pkg-option-border.pkg-option-selected::before {
     opacity: 1;
   }
   .pkg-option-border:hover,
