@@ -37,7 +37,11 @@ const validate = (fields: SignupFields): SignupErrors => {
   return errors;
 };
 
-const useSignupForm = () => {
+interface SignupFormProps {
+  onSuccess?: () => void;
+}
+
+const useSignupForm = (props?: SignupFormProps) => {
   const [fields, setFields] = useState<SignupFields>({ 
     firstName: "",
     lastName: "",
@@ -88,6 +92,10 @@ const useSignupForm = () => {
     setLoading(true);
     await new Promise((res) => setTimeout(res, 1500));
     setLoading(false);
+    
+    if (props?.onSuccess) {
+      props.onSuccess();
+    }
   };
 
   return {

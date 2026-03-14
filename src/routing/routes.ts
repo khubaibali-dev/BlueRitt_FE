@@ -3,6 +3,7 @@ import AuthLayout from "../layouts/AuthLayout";
 
 const LoginPage = lazy(() => import("../pages/UserAuth/Login"));
 const SignupPage = lazy(() => import("../pages/UserAuth/SignUp/SignupForm"));
+const SelectPlanPage = lazy(() => import("../pages/UserAuth/SelectPlan/SelectPlanPage"));
 
 type RouteType = {
   path: string;
@@ -22,6 +23,12 @@ const routes: RouteType[] = [
   {
     path: "/signup",
     element: SignupPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/select-plan",
+    element: SelectPlanPage,
     layout: AuthLayout,
     isProtected: false,
   },

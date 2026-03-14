@@ -1,6 +1,6 @@
 // src/pages/UserAuth/SignUp/components/SignupCard.tsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignupForm from "./SignupFormInner";
 import PrimaryButton from "../../../../components/common/button/PrimaryButton";
 
@@ -22,6 +22,8 @@ const StarIcon: React.FC = () => (
 );
 
 const SignupCard: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full max-w-[500px] mx-auto flex flex-col items-center gap-4">
       
@@ -50,7 +52,7 @@ const SignupCard: React.FC = () => {
       {/* ── CARD ── */}
       <div className="w-full figma-card-border brand-card-bg">
         <div className="px-8 pt-9 pb-8">
-          <SignupForm />
+          <SignupForm onSuccess={() => navigate("/select-plan")} />
         </div>
       </div>
 

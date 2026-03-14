@@ -6,7 +6,11 @@ import CountrySelect, { countries, Country } from "../../../../components/common
 import ReCaptchaWidget from "../../components/ReCaptchaWidget";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
-const SignupForm: React.FC = () => {
+interface SignupFormProps {
+  onSuccess?: () => void;
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
   const {
     fields,
     errors,
@@ -17,7 +21,7 @@ const SignupForm: React.FC = () => {
     togglePassword,
     toggleConfirmPassword,
     handleSubmit,
-  } = useSignupForm();
+  } = useSignupForm({ onSuccess });
 
   const handleCountryChange = (country: { name: string, dialCode: string }) => {
     handleChange("country")({

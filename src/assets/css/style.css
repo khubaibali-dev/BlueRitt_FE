@@ -53,7 +53,7 @@
   /* === FIGMA CARD: gradient border via pseudo-element === */
   .figma-card-border {
     position: relative;
-    border-radius: 16px;
+    border-radius: 14px;
   }
   .figma-card-border::before {
     content: "";
@@ -99,15 +99,28 @@
 
   /* === NEW STANDARD CLASSES === */
   
+  /* Custom Scrollbar for inner containers */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #1B3A5C;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #3B82F6;
+  }
   /* Background glow image */
   .bg-glow-image {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    width: 250%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     object-fit: cover;
     z-index: 0;
-
   }
 
   /* react-phone-input-2 dark theme overrides */
@@ -187,8 +200,8 @@
     width: 54px;
     height: 54px;
     border-radius: 50%;
-    background: linear-gradient(145deg, #F36030 0%, #E03535 100%);
-    box-shadow: 0 4px 22px rgba(240, 90, 43, 0.60);
+    background: linear-gradient(to bottom, #9E0003 0%, #FF00049E 100%);
+    box-shadow: 0 4px 22px rgba(255, 0, 4, 0.40);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -198,5 +211,110 @@
   .brand-login-btn {
     background: linear-gradient(135deg, #F05A2B 0%, #EF4444 100%);
     box-shadow: 0 6px 28px rgba(240, 90, 43, 0.50);
+  }
+
+  /* Package Details Panel: card background */
+  .pkg-details-card-bg {
+    background: linear-gradient(128.96deg, rgba(21, 93, 252, 0.2) -27.12%, rgba(255, 89, 0, 0.2) 127.89%);
+  }
+
+  /* Package Details Panel: lighter gradient border */
+  .pkg-details-border {
+    position: relative;
+    border-radius: 14px;
+  }
+  .pkg-details-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      to right,
+      rgba(21, 93, 252, 0.35),
+      rgba(132, 7, 101, 0.25),
+      rgba(255, 89, 0, 0.35)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Package Details Panel: Current Plan badge */
+  .pkg-current-plan-badge {
+    background: linear-gradient(92.06deg, rgba(21, 93, 252, 0.8) -43.37%, rgba(255, 89, 0, 0.8) 131.77%);
+  }
+
+  /* Package Select: Popular badge */
+  .pkg-popular-badge {
+    background: linear-gradient(90deg, #082656 0%, #CD5150 100%);
+  }
+
+  /* Package Select: active tab background (reusable) */
+  .pkg-tab-active {
+    background: linear-gradient(91.61deg, #D05942 -14.44%, #D4375F 118.02%);
+  }
+
+  /* Package Select: icon circle gradient border */
+  .pkg-icon-circle {
+    position: relative;
+    background: transparent;
+  }
+  .pkg-icon-circle::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 1px;
+    background: linear-gradient(92.44deg, #109EF0 3.68%, #FFFFFF 43.28%, #FB8567 97.28%);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Package Select: gradient icon color */
+  .pkg-icon-gradient {
+    background: linear-gradient(108.69deg, #109EF0 3.34%, rgba(0, 0, 0, 0) 45.18%, #FB8567 102.22%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Package Select: option card gradient border */
+  .pkg-option-border {
+    position: relative;
+    border: 1px solid var(--brand-border);
+  }
+  .pkg-option-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(93.35deg, #109EF0 2.53%, #FFFFFF 43.76%, #FB8567 99.98%);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .pkg-option-border:hover::before,
+  .pkg-option-border.pkg-option-selected::before {
+    opacity: 1;
+  }
+  .pkg-option-border:hover,
+  .pkg-option-border.pkg-option-selected {
+    border-color: transparent;
   }
 }
