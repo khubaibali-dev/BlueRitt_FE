@@ -1,12 +1,19 @@
-// src/components/common/logo/BlueRittLogo.tsx
+import logo from "../../../assets/images/logo.png";
+import whitelogo from "../../../assets/images/whitelogo.png";
+import { useTheme } from "../../../context/ThemeContext";
 
 const BlueRittLogo = ({ className = "" }) => {
+  const { theme } = useTheme();
+  
+  // Use whitelogo for light mode (white mode) and logo for dark mode
+  const logoSrc = theme === "light" ? whitelogo : logo;
+
   return (
     <div className={`flex items-center ${className}`}>
       <img 
-        src="/logo.png" 
+        src={logoSrc} 
         alt="BlueRitt Logo" 
-        className="h-6 w-auto object-contain"
+        className="h-[26px] w-auto object-contain block"
       />
     </div>
   );

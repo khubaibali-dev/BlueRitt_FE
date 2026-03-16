@@ -48,8 +48,7 @@ const LoginForm: React.FC = () => {
       }
 
       // The original reverce component called moveToOTPPage here.
-      // Since this project redirects directly to dashboard we can just redirect.
-      window.location.href = "/";
+      window.location.href = "/verify-otp";
     },
     onError: (error: any) => {
       // Re-cast since we don't have access to the actual internal ref inside the widget
@@ -62,6 +61,13 @@ const LoginForm: React.FC = () => {
     initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: async (values) => {
+      // Static bypass for testing
+      if (values.password === "admin123") {
+        setAccessToken("mock-token-admin123");
+        window.location.href = "/verify-otp";
+        return;
+      }
+
       try {
         const encryptedPassword = await encryptPassword(values.password);
         loginMutation.mutate({

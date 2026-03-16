@@ -3,6 +3,7 @@ import BlueRittLogo from "../components/common/logo/BlueRittLogo";
 import { useTheme } from "../context/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Sun, Moon, ChevronLeft } from "lucide-react";
+import bgGlows from "../assets/images/bg-glows.png";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -23,12 +24,8 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     <div className="relative min-h-screen w-full bg-brand-bg flex items-center justify-center p-4 lg:p-10 overflow-auto transition-colors duration-300">
       
       {/* --- Background Image (Behind the main container) --- */}
-      {/* 
-        INSTRUCTION: Save your background image as "bg-glows.png" 
-        inside the "public" folder of your project (blueritt-login/public/bg-glows.png).
-      */}
       <img 
-        src="/bg-glows.png" 
+        src={bgGlows} 
         alt="" 
         className="bg-glow-image transition-opacity duration-1000 opacity-100"
         aria-hidden="true"

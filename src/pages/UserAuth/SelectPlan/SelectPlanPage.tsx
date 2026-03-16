@@ -4,22 +4,7 @@ import PackageSelectPanel from "./components/PackageSelectPanel";
 import PackageDetailsPanel from "./components/PackageDetailsPanel";
 import { packages } from "./data/packages";
 
-/* 4-pointed sparkle star — matches Figma icon exactly */
-const StarIcon: React.FC = () => (
-  <svg
-    width="26"
-    height="26"
-    viewBox="0 0 26 26"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <path
-      d="M13 2L14.8 10.2H22L16 14.8L18.4 23L13 18.4L7.6 23L10 14.8L4 10.2H11.2L13 2Z"
-      fill="currentColor"
-    />
-  </svg>
-);
+import starImg from "../../../assets/images/star.png";
 
 const SelectPlanPage: React.FC = () => {
   // State
@@ -44,15 +29,15 @@ const SelectPlanPage: React.FC = () => {
 
       {/* ── TITLE ── */}
       <div className="w-full flex flex-col items-center relative mb-4">
-        <div className="brand-star-icon text-white">
-          <StarIcon />
+        <div className="">
+          <img src={starImg} alt="" className="brand-star-standard" />
         </div>
 
         <div className="text-center mt-4">
-          <h1 className="text-[28px] md:text-[32px] font-bold text-brand-textPrimary mb-[8px] tracking-tight">
+          <h1 className="auth-title">
             Choose Your Plan
           </h1>
-          <p className="text-[14px] font-normal leading-[16px] text-brand-textSecondary dark:text-[#7A9ABF]">
+          <p className="auth-subtitle">
             Select the perfect plan for your business
           </p>
         </div>
