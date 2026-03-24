@@ -9,61 +9,85 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  FolderOpen
+  FolderOpen,
+  X
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 import BlueRittLogo from "../common/logo/BlueRittLogo";
 
 interface NavItemProps {
   icon: React.ElementType;
   label: string;
-  active?: boolean;
+  to: string;
   badge?: string;
-  onClick?: () => void;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, active, badge, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`${active ? "sidebar-item sidebar-item-active" : "sidebar-item"}`}
+const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, to, badge }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      isActive ? "sidebar-item sidebar-item-active group" : "sidebar-item group"
+    }
   >
     <div className="flex items-center gap-3">
       <Icon size={20} />
       <span className="text-sm font-medium">{label}</span>
     </div>
+
     {badge && (
-      <span className="bg-[#EF4444] text-white text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
+      <span className="sidebar-badge">
         {badge}
       </span>
     )}
-  </button>
+  </NavLink>
 );
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   return (
-    <aside className="w-[240px] h-screen bg-[#020817] border-r border-[#1E293B] flex flex-col py-6 px-4 shrink-0 overflow-y-auto custom-scrollbar">
-      {/* Logo */}
-      <div className="px-2 mb-10">
-        <BlueRittLogo />
-      </div>
+    <>
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden transition-opacity ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        onClick={toggleSidebar}
+      ></div>
 
-      {/* Main Nav */}
-      <nav className="flex-1 space-y-1">
-        <NavItem icon={LayoutDashboard} label="Dashboard" active />
-        <NavItem icon={Search} label="Explorer" />
-        <NavItem icon={Zap} label="ToolFusion" />
-        <NavItem icon={BarChart3} label="MarginMax" />
-        <NavItem icon={Share2} label="SocialPulse" />
-        <NavItem icon={FolderOpen} label="Product Vault" badge="24" />
-      </nav>
+      <aside
+        className={`sidebar-wrapper ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }`}
+      >
+        {/* Logo and Close Button */}
+        <div className="flex justify-between items-center px-2 mb-10">
+          <BlueRittLogo />
+          <button onClick={toggleSidebar} className="lg:hidden text-gray-400">
+            <X size={24} />
+          </button>
+        </div>
 
-      {/* Bottom Nav */}
-      <div className="pt-6 mt-6 border-t border-[#1E293B] space-y-1">
-        <NavItem icon={PlusCircle} label="Add Ons" />
-        <NavItem icon={Settings} label="Settings" />
-        <NavItem icon={HelpCircle} label="Help & Support" />
-        <NavItem icon={LogOut} label="Log Out" />
-      </div>
-    </aside>
+        {/* Main Nav */}
+        <nav className="flex-1 space-y-1">
+          <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" />
+          <NavItem icon={Search} label="Explorer" to="/explorer" />
+          <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" />
+          <NavItem icon={BarChart3} label="MarginMax" to="/profit-calculator" />
+          <NavItem icon={Share2} label="SocialPulse" to="/socialpulse" />
+          <NavItem icon={FolderOpen} label="Product Vault" to="/products" badge="24" />
+        </nav>
+
+        {/* Bottom Nav */}
+        <div className="pt-6 mt-6 border-t border-[#1E293B] space-y-1">
+          <NavItem icon={PlusCircle} label="Add Ons" to="/addons" />
+          <NavItem icon={Settings} label="Settings" to="/settings" />
+          <NavItem icon={HelpCircle} label="Help & Support" to="/help" />
+          <NavItem icon={LogOut} label="Log Out" to="/logout" />
+        </div>
+      </aside>
+    </>
   );
 };
 

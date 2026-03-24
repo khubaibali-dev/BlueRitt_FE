@@ -27,7 +27,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
       onClick={onClick}
       disabled={disabled || loading}
       className={`
-        brand-login-btn relative w-full py-[15px] px-6 rounded-full font-semibold text-[15px] text-white
+        bg-brand-gradient brand-login-btn relative w-full py-[15px] px-6 rounded-full font-semibold text-[15px] text-white
         transition-all duration-200
         hover:opacity-90 active:scale-[0.98]
         disabled:opacity-50 disabled:cursor-not-allowed

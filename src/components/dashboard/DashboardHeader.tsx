@@ -1,33 +1,45 @@
 import React from "react";
 import { useTheme } from "../../context/ThemeContext";
-import { Sun, Moon, Bell, ChevronDown } from "lucide-react";
+import { Sun, Moon, Bell, ChevronDown, Menu } from "lucide-react";
 
-const DashboardHeader: React.FC = () => {
+interface DashboardHeaderProps {
+  toggleSidebar: () => void;
+}
+
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="h-[72px] bg-[#020817] border-b border-[#1E293B] flex items-center justify-between px-8 shrink-0">
-      {/* Left: Greeting */}
-      <div>
-        <h1 className="text-[20px] font-semibold text-white tracking-tight">
-          Good Morning John!
-        </h1>
-        <p className="text-[13px] text-[#94A3B8]">
-          Start your day with the best tools
-        </p>
+    <header className="dashboard-header">
+      {/* Left: Greeting & Mobile Menu */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={toggleSidebar}
+          className="lg:hidden text-[#94A3B8] hover:text-white"
+        >
+          <Menu size={24} />
+        </button>
+        <div>
+          <h1 className="header-greeting">
+            Good Morning John!
+          </h1>
+          <p className="header-subtitle">
+            Start your day with the best tools
+          </p>
+        </div>
       </div>
 
       {/* Right: Actions & Profile */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2 sm:gap-6">
         {/* Theme Toggle */}
-        <div className="flex items-center bg-[#0F172A] p-1 rounded-full border border-[#334155]">
-          <button 
+        <div className="theme-toggle-wrapper">
+          <button
             onClick={() => theme === 'light' && toggleTheme()}
             className={`p-1.5 rounded-full transition-all ${theme === 'dark' ? 'bg-[#1E293B] text-white shadow-sm' : 'text-[#64748B]'}`}
           >
             <Moon size={16} />
           </button>
-          <button 
+          <button
             onClick={() => theme === 'dark' && toggleTheme()}
             className={`p-1.5 rounded-full transition-all ${theme === 'light' ? 'bg-white text-black shadow-sm' : 'text-[#64748B]'}`}
           >
@@ -42,15 +54,15 @@ const DashboardHeader: React.FC = () => {
         </button>
 
         {/* User Profile */}
-        <div className="flex items-center gap-3 pl-6 border-l border-[#1E293B]">
-          <div className="text-right">
+        <div className="profile-section">
+          <div className="hidden sm:block text-right">
             <p className="text-sm font-semibold text-white">John Doe</p>
             <p className="text-[11px] text-[#94A3B8]">The Matrix</p>
           </div>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3B82F6] to-[#9333EA] flex items-center justify-center font-bold text-xs">
+          <div className="user-avatar">
             JD
           </div>
-          <ChevronDown size={14} className="text-[#94A3B8]" />
+          <ChevronDown size={14} className="hidden sm:block text-[#94A3B8]" />
         </div>
       </div>
     </header>

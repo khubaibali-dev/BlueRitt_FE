@@ -8,6 +8,7 @@ module.exports = {
         brand: {
           bg: "var(--brand-bg)",
           card: "var(--brand-card)",
+          "card-alt": "var(--brand-card-alt)",
           border: "var(--brand-border)",
           borderGlow: "#2563EB",
           primary: "var(--brand-primary)",
@@ -27,7 +28,7 @@ module.exports = {
           "linear-gradient(160deg, #2563EB 0%, #9333EA 50%, #F05A2B 100%)",
       },
       fontFamily: {
-        sans: ["'Work Sans'", "'DM Sans'", "sans-serif"],
+        sans: ["'Work Sans'"],
       },
       boxShadow: {
         card: "0 0 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(37,99,235,0.25)",
