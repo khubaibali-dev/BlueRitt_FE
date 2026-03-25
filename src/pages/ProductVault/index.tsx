@@ -16,10 +16,10 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ title, count, image, im
   return (
     <div
       onClick={onClick}
-      className="group relative bg-[#04132B] border border-[#082656] rounded-[24px] overflow-hidden transition-all hover:border-[#3B82F6]/30 hover:shadow-2xl hover:-translate-y-1 cursor-pointer"
+      className="group relative vault-card cursor-pointer"
     >
       {/* Image Section */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#081421]">
+      <div className="vault-image-box">
         {isAll && images ? (
           <div className="grid grid-cols-2 grid-rows-2 h-full gap-1 p-1">
             {images.slice(0, 4).map((img, idx) => (
@@ -142,8 +142,8 @@ const ProductVault: React.FC = () => {
               ))}
 
               {/* Add New Collection Card */}
-              <div className="group relative aspect-[4/3] sm:aspect-auto sm:h-full min-h-[240px] border border-[#082656] rounded-[24px] flex flex-col items-center justify-center gap-3 transition-all hover:bg-white/5 hover:border-[#3B82F6]/50 cursor-pointer">
-                <div className="p-3 rounded-full bg-[#081421] text-blue-500 group-hover:scale-110 transition-transform">
+              <div className="group vault-add-card flex-col">
+                <div className="vault-icon-wrapper group-hover:scale-110">
                   <Plus size={32} />
                 </div>
                 <span className="text-white font-bold text-[15px] tracking-tight">Add New Collection</span>

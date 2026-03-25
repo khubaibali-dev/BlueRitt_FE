@@ -49,7 +49,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
       {/* Info Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 sm:mb-10">
         {/* Selected Product Card */}
-        <div className="bg-[#040D1B] border border-[#082656] rounded-[24px] p-6 sm:p-8 flex flex-col relative overflow-hidden group transition-all hover:border-blue-500/30 shadow-xl shadow-black/10">
+        <div className="vault-card-alt group">
           <div className="flex items-center gap-2 mb-6">
             <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400">
               <Box size={16} />
@@ -80,7 +80,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
         </div>
 
         {/* Selected Supplier Card */}
-        <div className="bg-[#040D1B] border border-[#082656] rounded-[24px] p-6 sm:p-8 flex flex-col relative overflow-hidden group transition-all hover:border-blue-500/30 shadow-xl shadow-black/10">
+        <div className="vault-card-alt group">
           <div className="flex items-center gap-2 mb-6">
             <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400">
               <Box size={16} />
@@ -118,7 +118,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
       {/* Profit Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 sm:mb-10">
         {/* Gross Profit Detail */}
-        <div className="bg-[#040D1B] border border-[#082656] rounded-[24px] p-6 sm:p-5 flex flex-col items-center gap-10 group overflow-hidden relative transition-all hover:border-blue-500/30 shadow-xl shadow-black/10">
+        <div className="vault-metric-card group">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-5">
               <div className="standard-icon-circle w-14 h-14 bg-[#081421] text-white shrink-0 shadow-lg shadow-blue-500/10">
@@ -142,7 +142,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
         </div>
 
         {/* Net Profit Detail */}
-        <div className="bg-[#040D1B] border border-[#082656] rounded-[24px] p-6 sm:p-5 flex flex-col items-center gap-10 group overflow-hidden relative transition-all hover:border-blue-500/30 shadow-xl shadow-black/10">
+        <div className="vault-metric-card group">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-5">
               <div className="standard-icon-circle w-14 h-14 bg-[#081421] text-white shrink-0 shadow-lg shadow-blue-600/10">
@@ -167,7 +167,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
       </div>
 
       {/* Calculation History Table */}
-      <div className="bg-[#040D1B] border border-[#082656] rounded-[24px] overflow-hidden shadow-xl shadow-black/10 transition-all hover:border-[#3B82F6]/30 group">
+      <div className="vault-table-container group">
         <div className="p-6 sm:p-5 flex items-center justify-between">
           <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Calculation History</h2>
         </div>

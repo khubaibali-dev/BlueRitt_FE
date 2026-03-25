@@ -1,64 +1,58 @@
 import React, { useState } from "react";
 import { Search, ChevronDown, Info, Globe } from "lucide-react";
 import shadowBg from "../../assets/images/dashboard1.png";
-import CalculatorAccordion from "./components/CalculatorAccordion";
-import CalculatorField from "./components/CalculatorField";
 import ResultPanels from "./components/ResultPanels";
 import MarginMaxTourModal from "./components/MarginMaxTourModal";
+import BasicTab from "./Basic/BasicTab";
+import AdvancedTab from "./Advance/AdvancedTab";
+
+import { useProfitCalculation } from "./hooks/useProfitCalculation";
 
 const ProfitCalculator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Basic" | "Advanced">("Basic");
   const [showTour, setShowTour] = useState(true);
 
-  // Calculator State
-  const [formData, setFormData] = useState({
-    sellingPrice: "19.99",
-    productQuantity: "100",
-    manufacturingCost: "12.99",
-    shippingCost: "2.50",
-    otherSourcingCost: "1.00",
-    orderQuantity: "100",
-    fulfillmentCost: "4.50",
-    marketingBudget: "500",
-    graphicsCost: "150",
-    reviewerCost: "200",
-    additionalCost: "0.00"
-  });
+  const {
+    formData,
+    handleFieldChange,
+    totalRevenue,
+    sourcingCostUnit,
+    totalSourcingCost,
+    fulfillmentCostUnit,
+    totalFulfillmentCost,
+    marketingCostUnit,
+    totalMarketingCost,
+    graphicsCostUnit,
+    totalGraphicsCost,
+    reviewerCostUnit,
+    totalReviewerCost,
+    additionalCostUnit,
+    totalAdditionalCost,
+    taxesUnit,
+    totalTaxes,
+    grossProfitUnit,
+    totalGrossProfit,
+    netProfitUnit,
+    totalNetProfit,
+  } = useProfitCalculation();
 
-  const handleFieldChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  const displayProfitUnit = activeTab === "Advanced" ? netProfitUnit : grossProfitUnit;
+  const marginPerc = (parseFloat(formData.sellingPrice) || 0) > 0 ? ((parseFloat(displayProfitUnit) / (parseFloat(formData.sellingPrice) || 0)) * 100).toFixed(1) : "0.0";
+  const roiPerc = parseFloat(sourcingCostUnit) > 0 ? ((parseFloat(displayProfitUnit) / parseFloat(sourcingCostUnit)) * 100).toFixed(1) : "0.0";
 
-  // Derived Calculations
-  const sellingPrice = parseFloat(formData.sellingPrice) || 0;
-  const productQuantity = parseFloat(formData.productQuantity) || 0;
-  const mfgCost = parseFloat(formData.manufacturingCost) || 0;
-  const shipCost = parseFloat(formData.shippingCost) || 0;
-  const otherSrting = parseFloat(formData.otherSourcingCost) || 0;
-  
-  const totalRevenue = (sellingPrice * productQuantity).toFixed(2);
-  const sourcingCostUnit = (mfgCost + shipCost + otherSrting).toFixed(2);
-  const totalSourcingCost = (parseFloat(sourcingCostUnit) * productQuantity).toFixed(2);
-  
-  const fulfillmentCost = parseFloat(formData.fulfillmentCost) || 0;
-  const grossProfitUnit = (sellingPrice - parseFloat(sourcingCostUnit) - fulfillmentCost).toFixed(2);
-  const totalGrossProfit = (parseFloat(grossProfitUnit) * productQuantity).toFixed(2);
-  const marginPerc = sellingPrice > 0 ? ((parseFloat(grossProfitUnit) / sellingPrice) * 100).toFixed(1) : "0.0";
-  const roiPerc = parseFloat(sourcingCostUnit) > 0 ? ((parseFloat(grossProfitUnit) / parseFloat(sourcingCostUnit)) * 100).toFixed(1) : "0.0";
+  // ──────────────────────────────────────────────────────────────────────
 
   return (
     <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen">
       {/* Hero Banner Section */}
-      <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start  isolate overflow-hidden !min-h-0">
-        {/* Dashboard-style Background Image Setup */}
+      <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate overflow-hidden !min-h-0">
         <div className="absolute inset-0 z-[-1]">
           <img src={shadowBg} alt="" className="dashboard-banner-image" />
           <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
         </div>
 
-        {/* Hero Content */}
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl  text-white mb-2 tracking-tight text-center">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl text-white mb-2 tracking-tight text-center">
             Calculate Your Product Profit
           </h1>
           <p className="text-[14px] sm:text-[15px] text-slate-300 mb-2 font-medium text-center">
@@ -106,7 +100,7 @@ const ProfitCalculator: React.FC = () => {
             </span>
           </div>
 
-          {/* Toggle Switch */}
+          {/* Basic / Advanced Toggle */}
           <div className="flex justify-center w-full mt-4 mb-0">
             <div className="bg-[#030B1C]/5 px-2 py-2 backdrop-blur-xl flex items-center figma-pill-border overflow-hidden">
               <button
@@ -128,106 +122,56 @@ const ProfitCalculator: React.FC = () => {
 
       {/* Main Content Layout */}
       <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-14 relative z-10 flex flex-col gap-8">
-
-        {/* 2-Column Grid */}
         <div className="flex flex-col lg:flex-row gap-8 items-start pb-20">
 
           {/* Left Column: Form Accordions */}
           <div className="flex-1 w-full flex flex-col gap-4">
-            <CalculatorAccordion title="Product Revenue" defaultOpen>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <CalculatorField 
-                  label="Selling Price" 
-                  required 
-                  prefix="$" 
-                  value={formData.sellingPrice} 
-                  onChange={(val) => handleFieldChange("sellingPrice", val)} 
-                />
-                <CalculatorField 
-                  label="Product Quantity" 
-                  required 
-                  value={formData.productQuantity} 
-                  onChange={(val) => handleFieldChange("productQuantity", val)} 
-                />
-                <CalculatorField label="Revenue/Unit" prefix="$" value={formData.sellingPrice} readOnly />
-                <CalculatorField label="Total Revenue" prefix="$" value={totalRevenue} readOnly />
-              </div>
-            </CalculatorAccordion>
+            {/* Basic tab accordions — always visible */}
+            <BasicTab
+              formData={formData}
+              handleFieldChange={handleFieldChange as any}
+              totalRevenue={totalRevenue}
+              sourcingCostUnit={sourcingCostUnit}
+              totalSourcingCost={totalSourcingCost}
+              fulfillmentCostUnit={fulfillmentCostUnit}
+              totalFulfillmentCost={totalFulfillmentCost}
+            />
 
-            <CalculatorAccordion title="Product Sourcing Cost" defaultOpen>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <CalculatorField 
-                  label="Product Manufacturing" 
-                  required 
-                  prefix="$" 
-                  value={formData.manufacturingCost} 
-                  onChange={(val) => handleFieldChange("manufacturingCost", val)} 
-                />
-                <CalculatorField 
-                  label="Shipping Cost" 
-                  required 
-                  prefix="$"
-                  value={formData.shippingCost} 
-                  onChange={(val) => handleFieldChange("shippingCost", val)} 
-                />
-                <CalculatorField 
-                  label="Other Sourcing Costs" 
-                  prefix="$" 
-                  value={formData.otherSourcingCost} 
-                  onChange={(val) => handleFieldChange("otherSourcingCost", val)} 
-                />
-                <CalculatorField 
-                  label="Order Quantity" 
-                  required 
-                  value={formData.orderQuantity} 
-                  onChange={(val) => handleFieldChange("orderQuantity", val)} 
-                />
-                <CalculatorField label="Sourcing Cost/Unit" prefix="$" value={sourcingCostUnit} readOnly />
-                <CalculatorField label="Total Sourcing Cost" prefix="$" value={totalSourcingCost} readOnly />
-              </div>
-            </CalculatorAccordion>
-
-            <CalculatorAccordion title="Fulfillment Cost">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <CalculatorField 
-                  label="Fulfillment Cost/Unit" 
-                  prefix="$" 
-                  value={formData.fulfillmentCost} 
-                  onChange={(val) => handleFieldChange("fulfillmentCost", val)} 
-                />
-              </div>
-            </CalculatorAccordion>
-
-            <CalculatorAccordion title="Marketing and Ads Cost">
-              <div className="p-2 text-slate-400 text-[13px]">Marketing settings...</div>
-            </CalculatorAccordion>
-
-            <CalculatorAccordion title="Graphics Design Cost">
-              <div className="p-2 text-slate-400 text-[13px]">Graphics settings...</div>
-            </CalculatorAccordion>
-
-            <CalculatorAccordion title="Reviewer Program Cost">
-              <div className="p-2 text-slate-400 text-[13px]">Reviewer settings...</div>
-            </CalculatorAccordion>
-
-            <CalculatorAccordion title="Additional Costs">
-              <div className="p-2 text-slate-400 text-[13px]">Additional settings...</div>
-            </CalculatorAccordion>
+            {/* Advanced accordions — always visible, locked in Basic mode */}
+            <AdvancedTab
+              formData={formData}
+              handleFieldChange={handleFieldChange as any}
+              marketingCostUnit={marketingCostUnit}
+              totalMarketingCost={totalMarketingCost}
+              graphicsCostUnit={graphicsCostUnit}
+              totalGraphicsCost={totalGraphicsCost}
+              reviewerCostUnit={reviewerCostUnit}
+              totalReviewerCost={totalReviewerCost}
+              additionalCostUnit={additionalCostUnit}
+              totalAdditionalCost={totalAdditionalCost}
+              taxesUnit={taxesUnit}
+              totalTaxes={totalTaxes}
+              disabled={activeTab === "Basic"}
+            />
           </div>
 
           {/* Right Column: Sticky Results */}
-          <div className="w-full lg:w-[380px] shrink-0 sticky top-[40px] flex flex-col gap-6">
-            <ResultPanels 
+          <div className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-8 flex flex-col gap-6">
+            <ResultPanels
               grossProfitUnit={grossProfitUnit}
               totalGrossProfit={totalGrossProfit}
+              netProfitUnit={netProfitUnit}
+              totalNetProfit={totalNetProfit}
               marginPerc={marginPerc}
               roiPerc={roiPerc}
               quantity={formData.productQuantity}
+              isAdvanced={activeTab === "Advanced"}
             />
           </div>
 
         </div>
       </div>
+
       {/* Tour Modal */}
       {showTour && <MarginMaxTourModal onClose={() => setShowTour(false)} />}
     </div>

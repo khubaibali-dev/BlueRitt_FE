@@ -14,6 +14,7 @@ interface InputFieldProps {
   autoComplete?: string;
   required?: boolean;
   error?: string;
+  readOnly?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -29,6 +30,7 @@ const InputField: React.FC<InputFieldProps> = ({
   autoComplete,
   required = false,
   error = "",
+  readOnly = false,
 }) => {
   return (
     <div className="flex flex-col gap-[6px]">
@@ -45,7 +47,7 @@ const InputField: React.FC<InputFieldProps> = ({
         className={`
           flex items-center gap-3 px-4 py-[12px] rounded-lg
           bg-brand-inputBg border transition-all duration-200
-          focus-within:shadow-[0_0_0_2px_rgba(37,99,235,0.5)]
+          ${readOnly ? "opacity-70 cursor-default" : "focus-within:shadow-[0_0_0_2px_rgba(37,99,235,0.5)]"}
           ${error ? "border-red-500" : "border-brand-inputBorder"}
         `}
       >
@@ -70,6 +72,7 @@ const InputField: React.FC<InputFieldProps> = ({
           onChange={onChange}
           autoComplete={autoComplete}
           required={required}
+          readOnly={readOnly}
           className="
             flex-1 bg-transparent text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary 
             placeholder-[#99A1AF] outline-none border-none ring-0

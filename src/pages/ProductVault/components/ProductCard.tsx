@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MoreVertical, Star, TrendingUp, Box, DollarSign, BarChart3, MoveRight, ExternalLink, Trash2, Activity } from "lucide-react";
+import { MoreVertical, Star, TrendingUp, Box, DollarSign, BarChart3, MoveRight, ExternalLink, Trash2 } from "lucide-react";
 
 interface ProductCardProps {
   title: string;
@@ -31,10 +31,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       onClick={() => onAnalyze?.()}
-      className="bg-[#040D1B] border border-[#1E293B]/50 rounded-[28px] overflow-hidden flex flex-col transition-all hover:border-blue-500/30 hover:shadow-2xl group relative h-[600px] cursor-pointer"
+      className="vault-product-card group"
     >
       {/* Product Image Section (Exact Half Height) */}
-      <div className="relative h-1/2 w-full overflow-hidden bg-[#081421]">
+      <div className="vault-image-box h-1/2">
         <img src={image} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
 
         <div
