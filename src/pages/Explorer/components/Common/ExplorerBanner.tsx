@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
-import explorerBg from "../../../assets/images/explorer.png";
-import starImg from "../../../assets/images/star.png";
-import FilterDrawer from "./FilterDrawer";
-import PremiumSearchBar from "../../../components/common/search/PremiumSearchBar";
+import explorerBg from "../../../../assets/images/explorer.png";
+import starImg from "../../../../assets/images/star.png";
+import FilterDrawer from "../FilterDrawer/FilterDrawer";
+import PremiumSearchBar from "../../../../components/common/search/PremiumSearchBar";
 
 interface ExplorerBannerProps {
   onSearch: () => void;

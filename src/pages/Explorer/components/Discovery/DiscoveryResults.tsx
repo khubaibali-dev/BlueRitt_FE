@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search, ChevronDown, List, LayoutGrid, ChevronRight, ChevronLeft, Sparkles, Settings2, ShoppingBag, ShoppingCart } from "lucide-react";
 import DiscoveryProductCard from "./DiscoveryProductCard";
-import bgAnalysis from "../../../assets/images/explorer.png";
-import ProductDetailsDrawer from "./ProductDetailsDrawer";
-import SupplierSourceLink from "./SupplierSourceLink";
-import MetricCard from "./MetricCard";
-import CountrySelect from "../../../components/common/select/CountrySelect";
-import SelectField from "../../../components/common/select/SelectField";
-import SourceLinkProfitCalculator from "./SourceLinkProfitCalculator";
+import bgAnalysis from "../../../../assets/images/explorer.png";
+import ProductDetailsDrawer from "../ProductDetails/ProductDetailsDrawer";
+import SupplierSourceLink from "../SourceLink/SupplierSourceLink";
+import MetricCard from "../Common/MetricCard";
+import CountrySelect from "../../../../components/common/select/CountrySelect";
+import SelectField from "../../../../components/common/select/SelectField";
+import SourceLinkProfitCalculator from "../SourceLink/SourceLinkProfitCalculator";
 
 interface DiscoveryResultsProps {
    onBack: () => void;
 }
 
 const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
+   const location = useLocation();
+   const navigate = useNavigate();
    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
    const [country, setCountry] = useState("Pakistan");
    const [searchType, setSearchType] = useState("Product");
@@ -23,6 +26,13 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
    const [sourceProduct, setSourceProduct] = useState<any>(null);
    const [showProfitCalc, setShowProfitCalc] = useState(false);
    const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
+
+   useEffect(() => {
+      if (location.state?.autoSourceLink && location.state?.product) {
+         setSourceProduct(location.state.product);
+         setShowSourceLink(true);
+      }
+   }, [location.state]);
 
    const handleOpenSourceLink = (product: any) => {
       setSourceProduct(product);
@@ -107,7 +117,13 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
       return (
          <SupplierSourceLink 
             product={sourceProduct} 
-            onBack={() => setShowSourceLink(false)} 
+            onBack={() => {
+               if (location.state?.autoSourceLink) {
+                  navigate(-1);
+               } else {
+                  setShowSourceLink(false);
+               }
+            }} 
             onCalculateProfit={handleOpenProfitCalc}
          />
       );

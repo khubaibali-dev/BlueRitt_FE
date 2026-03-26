@@ -1,7 +1,7 @@
 import React from "react";
-import badgeImg from "../../../assets/images/Badge.png";
-import aiIcon from "../../../assets/images/Icon.png";
-import starImg from "../../../assets/images/star.png";
+import badgeImg from "../../../../assets/images/Badge.png";
+import aiIcon from "../../../../assets/images/Icon.png";
+import starImg from "../../../../assets/images/star.png";
 
 interface AnalyzingScreenProps {
   onCancel?: () => void;

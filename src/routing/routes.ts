@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import AuthLayout from "../layouts/AuthLayout";
-import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardLayout from "../layouts/Layout";
 
 const LoginPage = lazy(() => import("../pages/UserAuth/Login"));
 const SignupPage = lazy(() => import("../pages/UserAuth/SignUp/SignupForm"));
@@ -14,6 +14,9 @@ const SettingsPage = lazy(() => import("../pages/Settings"));
 const AddOnsPage = lazy(() => import("../pages/AddOns"));
 const ProfitCalculatorPage = lazy(() => import("../pages/ProfitCalculator"));
 const ProductVaultPage = lazy(() => import("../pages/ProductVault"));
+const TikTokTrendsPage = lazy(() => import("../pages/SocialPulse/TiktokTrends/TikTokTrends"));
+const AmazonTrendsPage = lazy(() => import("../pages/SocialPulse/AmazonTrends/AmazonTrends"));
+const InfluencerLinkPage = lazy(() => import("../pages/SocialPulse/InfluencerLink/InfluencerLink"));
 
 type RouteType = {
   path: string;
@@ -93,6 +96,24 @@ const routes: RouteType[] = [
   {
     path: "/products",
     element: ProductVaultPage,
+    layout: DashboardLayout,
+    isProtected: false,
+  },
+  {
+    path: "/tiktok-trends",
+    element: TikTokTrendsPage,
+    layout: DashboardLayout,
+    isProtected: false,
+  },
+  {
+    path: "/amazon-trends",
+    element: AmazonTrendsPage,
+    layout: DashboardLayout,
+    isProtected: false,
+  },
+  {
+    path: "/influencer-link",
+    element: InfluencerLinkPage,
     layout: DashboardLayout,
     isProtected: false,
   },

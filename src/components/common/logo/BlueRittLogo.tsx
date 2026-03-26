@@ -2,18 +2,23 @@ import logo from "../../../assets/images/logo.png";
 import whitelogo from "../../../assets/images/whitelogo.png";
 import { useTheme } from "../../../context/ThemeContext";
 
-const BlueRittLogo = ({ className = "" }) => {
+interface BlueRittLogoProps {
+  className?: string;
+  isCollapsed?: boolean;
+}
+
+const BlueRittLogo: React.FC<BlueRittLogoProps> = ({ className = "", isCollapsed = false }) => {
   const { theme } = useTheme();
   
   // Use whitelogo for light mode (white mode) and logo for dark mode
   const logoSrc = theme === "light" ? whitelogo : logo;
 
   return (
-    <div className={`flex items-center ${className}`}>
+    <div className={`flex items-center transition-all duration-300 ${isCollapsed ? "justify-center w-full" : ""} ${className}`}>
       <img 
         src={logoSrc} 
         alt="BlueRitt Logo" 
-        className="h-[26px] w-auto object-contain block"
+        className={`object-contain block transition-all duration-300 ${isCollapsed ? "h-[30px] w-[30px] min-w-[30px]" : "h-[26px] w-auto"}`}
       />
     </div>
   );

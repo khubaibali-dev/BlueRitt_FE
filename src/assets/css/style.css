@@ -681,8 +681,85 @@
   }
 
   .sidebar-item-active {
-    background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%);
-    @apply text-white rounded-[12px] !important;
+    background: linear-gradient(91.34deg, rgba(0, 0, 0, 0.3) 0.45%, rgba(78, 116, 184, 0.3) 50%, rgba(21, 40, 80, 0.3) 99.55%);
+    @apply !text-white border border-white/10 !important;
+  }
+
+  .sidebar-item-open {
+    background: linear-gradient(91.34deg, rgba(0, 0, 0, 0.3) 0.45%, rgba(78, 116, 184, 0.3) 50%, rgba(21, 40, 80, 0.3) 99.55%);
+    @apply !text-white border border-white/5 !important;
+  }
+
+  .sidebar-submenu-item {
+    @apply w-full flex items-center gap-3 px-4 py-2 text-[#94A3B8] hover:text-white transition-all duration-300;
+  }
+
+  .sidebar-submenu-active {
+    background: linear-gradient(91.34deg, rgba(0, 0, 0, 0.3) 0.45%, rgba(13, 110, 253, 0.3) 50%, rgba(3, 30, 70, 0.3) 99.55%);
+    @apply !text-white shadow-xl shadow-blue-500/10 border border-blue-500/20 !important;
+  }
+
+  .sidebar-submenu-container {
+    @apply relative ml-4 pl-4 border-l border-white/5 space-y-1 mb-2 mt-1;
+  }
+
+  /* Trends Module Styles */
+  .upgrade-gradient-btn {
+    
+    @apply text-white px-5 py-2.5 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-red-500/10 active:scale-[0.98] hover:brightness-110 bg-brand-gradient;
+  }
+
+  .trend-card-glow {
+    @apply bg-[#04132B]  rounded-[12px] p-4 shadow-2xl relative overflow-hidden  transition-all hover:border-white/10;
+  }
+
+  .trend-progress-container {
+    @apply w-full h-1 bg-[#1E293B]/50 rounded-full relative mt-4 mb-1;
+  }
+
+  .trend-progress-fill {
+    background: linear-gradient(90deg, #F05A2B 0%, #E93E3E 50%, #E93E9E 100%);
+    @apply absolute top-0 left-0 h-full rounded-full transition-all duration-1000;
+  }
+
+  .trend-tab-active {
+    background: linear-gradient(90.17deg, #101B2B 0%, #101B2B 5%, #4871c7 100%);
+    @apply text-white border-none shadow-xl shadow-blue-500/10 !important;
+  }
+
+  .upgrade-badge {
+    background: linear-gradient(94.64deg, #155DFC -20.02%, #91086E 69.88%, #FF5900 121.08%);
+    @apply text-[11px] text-white px-3 py-1 rounded-full tracking-tighter flex items-center gap-0.5 ;
+  }
+ 
+  /* TikTok Trends Specific Styles */
+  .tiktok-banner-wrapper {
+    @apply relative w-full pt-12 pb-0 px-6 sm:px-10 overflow-hidden flex flex-col items-start min-h-[340px] sm:min-h-[420px] isolate;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+  }
+
+  .tiktok-banner-image {
+    @apply absolute top-0 left-0 w-full h-full object-cover object-top pointer-events-none opacity-100;
+    z-index: -1;
+  }
+
+  .figma-rect-border {
+    position: relative;
+    border-radius: 14px;
+  }
+  .figma-rect-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(to right, #155DFC, #840765, #FF5900);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
   }
 
   /* Pill variation of card border */
@@ -895,12 +972,12 @@
 
   /* Filter Drawer */
   .filter-drawer-backdrop {
-    @apply fixed inset-0 z-[9998] bg-black/60 backdrop-blur-[6px] transition-opacity duration-300;
+    @apply fixed inset-0 z-[9998] bg-black/40 backdrop-blur-[8px] transition-opacity duration-300;
   }
   .filter-drawer-panel {
     @apply fixed top-0 right-0 h-full z-[9999] flex flex-col transition-transform duration-300 ease-in-out;
     width: min(520px, 100vw);
-    background: #0D1B2E;
+    background: #051125;
     border-left: 1px solid rgba(255,255,255,0.06);
   }
   .filter-drawer-header {
@@ -964,7 +1041,33 @@
 
   /* Sidebar Styles */
   .sidebar-wrapper {
-    @apply w-[240px] h-screen bg-[#04132B] border-r border-[#1E293B] flex-col py-6 px-4 shrink-0 overflow-y-auto custom-scrollbar fixed lg:relative lg:flex z-40 transform transition-transform;
+    @apply h-screen bg-[#04132B] border-r border-[#1E293B] flex-col py-6 shrink-0 overflow-y-auto custom-scrollbar fixed lg:relative lg:flex z-40 transform transition-all duration-300;
+    width: 240px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .sidebar-collapsed {
+    width: 80px !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .sidebar-collapsed .sidebar-item {
+    @apply justify-center px-0 mx-0;
+  }
+
+  .sidebar-collapsed .sidebar-item span,
+  .sidebar-collapsed .sidebar-item .sidebar-badge {
+    @apply hidden;
+  }
+
+  .sidebar-collapsed .sidebar-logo-text {
+    @apply hidden;
+  }
+
+  .sidebar-collapsed .sidebar-item div {
+    @apply gap-0;
   }
   
   .sidebar-item {
@@ -974,12 +1077,27 @@
   .sidebar-item-active {
     @apply text-white shadow-lg font-semibold mx-2;
     background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
-    border: none;
+    border: none !important;
   }
   
   .sidebar-badge {
     @apply bg-[#EF4444] text-white text-[10px] px-1.5 py-0.5 rounded-full font-semibold;
   }
+
+  /* Submenu Styles */
+  .sidebar-submenu-container {
+    @apply flex flex-col gap-1 mt-1 mb-2 relative;
+  }
+
+  .sidebar-submenu-item {
+    @apply flex items-center gap-2.5 px-4 py-2 rounded-xl transition-all duration-200 text-gray-500 hover:text-white hover:bg-white/5 mx-2;
+  }
+
+  .sidebar-submenu-active {
+  @apply text-white shadow-lg font-semibold;
+  background: linear-gradient(90.17deg, #101B2B 0%, #101B2B 5%, #4871c7 100%);
+  border: none !important;
+}
 
   /* Usage Insights & Stats */
   .insight-card {
@@ -997,6 +1115,76 @@
   .bg-brand-gradient {
     background: linear-gradient(91.61deg, #D05942 -14.44%, #D4375F 118.02%);
     border: none;
+  }
+
+  /* Trend Product Card Styles */
+  .trend-product-card {
+    @apply bg-[#04132B] border border-[#1E293B] rounded-[24px] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/5 hover:translate-y-[-4px];
+  }
+
+  .product-img-badge {
+    @apply !static shrink-0 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center justify-center;
+    background: #155DFC33;
+    border: 1px solid #155DFC4D;
+    backdrop-blur: 4px;
+  }
+
+  .carousel-arrow {
+    @apply absolute top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#04132B]/60 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#1E293B];
+  }
+
+  .product-metric-grid {
+    @apply grid grid-cols-2 gap-3;
+  }
+
+  .product-metric-item {
+    @apply bg-[#04132B]/40 border border-[#082656] rounded-xl p-3 flex flex-col justify-center;
+  }
+
+  .product-metric-label {
+    @apply text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1 leading-none;
+  }
+
+  .product-metric-value {
+    @apply text-[15px] text-white font-bold leading-none;
+  }
+
+  .btn-product-details {
+    @apply figma-pill-border !px-4 !py-2.5 !text-[12px] !font-bold !text-white flex items-center justify-center gap-2;
+  }
+
+  .btn-discover-supplier {
+    @apply upgrade-gradient-btn !px-4 !py-2.5 !text-[12px] !font-bold flex items-center justify-center gap-2 !shadow-none;
+  }
+
+  /* Product Details Drawer Utilities */
+  .drawer-tab {
+    @apply flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-bold transition-all;
+  }
+  
+  .drawer-tab-active {
+    @apply bg-[#6366F126] text-[#818CF8] border border-[#818CF833];
+  }
+  
+  .drawer-tab-inactive {
+    @apply text-slate-400 hover:text-white hover:bg-white/5;
+  }
+
+  .demographics-bar-container {
+    @apply h-2.5 bg-[#0A1629] rounded-full overflow-hidden flex-1;
+  }
+
+  .demographics-bar-fill {
+    @apply h-full rounded-full transition-all duration-1000;
+    background: linear-gradient(90deg, #3B82F6 0%, #F59E0B 100%);
+  }
+
+  .hashtag-pill {
+    @apply bg-[#155DFC1A] border border-[#155DFC33] text-[#3B82F6] text-[11px] font-bold px-3 py-1.5 rounded-lg hover:bg-[#155DFC33] transition-all;
+  }
+
+  .engagement-icon-box {
+    @apply flex flex-col items-center gap-2 p-3 rounded-2xl  transition-all;
   }
 
   .upgrade-plan-btn {

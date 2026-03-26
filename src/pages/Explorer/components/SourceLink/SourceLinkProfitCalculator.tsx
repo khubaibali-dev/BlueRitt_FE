@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { ChevronLeft, Box, Star, Save, TrendingUp, Truck } from "lucide-react";
-import bgAnalysis from "../../../assets/images/explorer.png";
-import BasicTab from "../../ProfitCalculator/Basic/BasicTab";
-import AdvancedTab from "../../ProfitCalculator/Advance/AdvancedTab";
-import ResultPanels from "../../ProfitCalculator/components/ResultPanels";
-import { useProfitCalculation } from "../../ProfitCalculator/hooks/useProfitCalculation";
+import bgAnalysis from "../../../../assets/images/explorer.png";
+import BasicTab from "../../../ProfitCalculator/Basic/BasicTab";
+import AdvancedTab from "../../../ProfitCalculator/Advance/AdvancedTab";
+import ResultPanels from "../../../ProfitCalculator/components/ResultPanels";
+import { useProfitCalculation } from "../../../ProfitCalculator/hooks/useProfitCalculation";
+import SaveToVaultModal from "../Common/SaveToVaultModal";
 
 interface SourceLinkProfitCalculatorProps {
   product: any;
@@ -14,6 +15,7 @@ interface SourceLinkProfitCalculatorProps {
 
 const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product, supplier, onBack }) => {
   const [activeTab] = useState<"Basic" | "Advanced">("Basic");
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   // Helper to parse price range "$17.38-19.43" -> "17.38"
   const parseCost = (costStr: string) => {
@@ -71,7 +73,10 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
             <ChevronLeft size={16} /> Back
           </button>
 
-          <button className="bg-brand-gradient px-6 py-2 rounded-full text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-xl shadow-orange-900/20 font-inter">
+          <button 
+            onClick={() => setIsSaveModalOpen(true)}
+            className="bg-brand-gradient px-6 py-2.5 rounded-full text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-xl shadow-orange-900/20 font-inter"
+          >
             <Save size={16} /> Save to Product Vault
           </button>
         </div>
@@ -289,6 +294,13 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
           </div>
         </div>
       </div>
+      {/* Save to Vault Modal */}
+      {isSaveModalOpen && (
+        <SaveToVaultModal 
+          productTitle={product?.title || "Portable Blender"} 
+          onClose={() => setIsSaveModalOpen(false)} 
+        />
+      )}
     </div>
   );
 };

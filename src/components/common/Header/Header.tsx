@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../../context/ThemeContext";
 import { Sun, Moon, Bell, ChevronDown, Menu } from "lucide-react";
 
 interface DashboardHeaderProps {
@@ -12,10 +12,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
   return (
     <header className="dashboard-header">
       {/* Left: Greeting & Mobile Menu */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden text-[#94A3B8] hover:text-white"
+          className="text-[#94A3B8] hover:text-white transition-colors"
         >
           <Menu size={24} />
         </button>

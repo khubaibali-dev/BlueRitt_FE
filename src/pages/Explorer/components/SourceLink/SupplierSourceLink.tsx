@@ -13,7 +13,7 @@ import {
   Star,
   Calendar
 } from "lucide-react";
-import bgAnalysis from "../../../assets/images/explorer.png";
+import bgAnalysis from "../../../../assets/images/explorer.png";
 
 interface SupplierSourceLinkProps {
   product: any;
