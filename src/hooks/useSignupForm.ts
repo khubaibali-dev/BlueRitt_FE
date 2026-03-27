@@ -16,23 +16,23 @@ type SignupErrors = Partial<Record<keyof SignupFields, string>>;
 
 const validate = (fields: SignupFields): SignupErrors => {
   const errors: SignupErrors = {};
-  if (!fields.firstName) errors.firstName = "First name required hai.";
-  if (!fields.lastName) errors.lastName = "Last name required hai.";
+  if (!fields.firstName) errors.firstName = "First name is required.";
+  if (!fields.lastName) errors.lastName = "Last name is required.";
   if (!fields.email) {
-    errors.email = "Email required hai.";
+    errors.email = "Email address is required.";
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
-    errors.email = "Valid email address daalen.";
+    errors.email = "Please enter a valid email address.";
   }
   if (!fields.password) {
-    errors.password = "Password required hai.";
+    errors.password = "Password is required.";
   } else if (fields.password.length < 6) {
-    errors.password = "Password kam az kam 6 characters ka hona chahiye.";
+    errors.password = "Password must be at least 6 characters long.";
   }
   if (fields.password !== fields.confirmPassword) {
-    errors.confirmPassword = "Passwords match nahi karte.";
+    errors.confirmPassword = "Passwords do not match.";
   }
   if (!fields.termsAccepted) {
-    errors.termsAccepted = "Aapko terms accept karni hungi.";
+    errors.termsAccepted = "You must accept the terms and conditions.";
   }
   return errors;
 };

@@ -117,6 +117,12 @@ const routes: RouteType[] = [
     layout: DashboardLayout,
     isProtected: false,
   },
+  {
+    path: "*",
+    element: LoginPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
 ];
 
 export { routes, type RouteType };

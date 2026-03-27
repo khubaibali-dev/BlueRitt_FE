@@ -12,7 +12,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
   return (
     <header className="dashboard-header">
       {/* Left: Greeting & Mobile Menu */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-0">
         <button
           onClick={toggleSidebar}
           className="text-[#94A3B8] hover:text-white transition-colors"

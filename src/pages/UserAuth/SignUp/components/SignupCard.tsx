@@ -26,7 +26,7 @@ const SignupCard: React.FC = () => {
             Already have an account?{" "}
             <Link
               to="/"
-              className="text-[#3B82F6] font-semibold hover:underline transition-colors"
+              className="auth-link"
             >
               Log in
             </Link>
@@ -42,11 +42,11 @@ const SignupCard: React.FC = () => {
       </div>
 
       {/* ── NEED HELP ── */}
-      <p className="text-[13px] text-[#7A9ABF] text-center">
+      <p className="auth-help-text">
         Need help?{" "}
         <a
           href="/support"
-          className="text-[#3B82F6] font-semibold hover:underline transition-colors"
+          className="auth-help-link"
         >
           Contact Support
         </a>

@@ -22,11 +22,11 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       The background behind this container uses an image for the soft glows.
     */
     <div className="relative min-h-screen w-full bg-brand-bg flex items-center justify-center p-4 lg:p-10 overflow-auto transition-colors duration-300">
-      
+
       {/* --- Background Image (Behind the main container) --- */}
-      <img 
-        src={bgGlows} 
-        alt="" 
+      <img
+        src={bgGlows}
+        alt=""
         className="bg-glow-image transition-opacity duration-1000 opacity-100"
         aria-hidden="true"
       />
@@ -38,7 +38,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <header className="absolute top-0 left-0 w-full z-20 px-6 pt-6 lg:px-10 lg:pt-10 flex justify-between items-center">
           <div className="flex items-center gap-2">
             {isSelectPlanPage && (
-              <button 
+              <button
                 onClick={() => navigate(-1)}
                 className="flex items-center justify-center p-2 rounded-full hover:bg-brand-hover transition-colors text-brand-textPrimary"
                 aria-label="Go back"
@@ -48,7 +48,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             )}
             <BlueRittLogo />
           </div>
-          
+
           <button
             onClick={toggleTheme}
             className="p-2.5 rounded-full bg-brand-card border border-brand-border text-brand-textPrimary hover:bg-brand-inputBg transition-all duration-300 shadow-lg"
@@ -64,11 +64,11 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         </main>
 
         {/* Footer */}
-        <footer className="relative z-10 pb-8 text-center space-y-1">
-          <p className="text-[12px] text-brand-textSecondary">
+        <footer className="relative z-10 pb-8 text-center space-y-0.5 px-4">
+          <p className="text-[14px] sm:text-[16px] text-[#FFFFFFB2]">
             BlueRitt® is a proprietary product of ReverCe Technologies Ltd. UK
           </p>
-          <p className="text-[12px] text-brand-accent font-semibold">
+          <p className="text-[14px] sm:text-[16px] text-brand-accent font-semibold">
             © Copyright. All Rights Reserved
           </p>
         </footer>

@@ -256,7 +256,7 @@
 
   /* Card Inner Background */
   .brand-card-bg {
-    background: var(--brand-card);
+    background: #020B1A4D;
     transition: background-color 0.3s ease;
   }
 
@@ -494,10 +494,19 @@
     @apply mb-6;
   }
   .auth-title {
-    @apply text-[26px] md:text-[32px] font-semibold text-brand-textPrimary mb-2 tracking-tight;
+    @apply text-[28px] md:text-[32px] font-bold text-brand-textPrimary mb-2 tracking-tight;
   }
   .auth-subtitle {
-    @apply text-[14px] font-normal leading-[1.4] text-[#7A9ABF];
+    @apply text-[14px] font-medium leading-[1.4] text-[#FFFFFFB2];
+  }
+  .auth-link {
+    @apply text-[#568AFC] text-[14px] font-semibold hover:underline transition-colors;
+  }
+  .auth-help-text {
+    @apply text-[14px] text-[#FFFFFFB2] text-center;
+  }
+  .auth-help-link {
+    @apply text-[#568AFC] font-bold text-[16px] hover:underline transition-colors;
   }
   .otp-title {
     @apply auth-title;
@@ -509,25 +518,26 @@
     @apply text-[#3B82F6] font-semibold;
   }
   .otp-card {
-    @apply w-full figma-card-border brand-card-bg;
+    @apply w-full figma-card-border bg-[#020B1A4D];
   }
   .otp-card-content {
-    @apply px-8 pt-9 pb-8 text-center;
+    @apply px-1 pt-9 pb-8 text-center;
   }
   .otp-input-label {
-    @apply text-[14px] font-medium text-[#7A9ABF] mb-4 block;
+    @apply text-[16px] font-medium text-[#FFFFFF] mb-4 block;
   }
   .otp-inputs {
-    @apply flex justify-center gap-2 mb-8;
+    @apply flex justify-center gap-2 sm:gap-4 mb-8;
   }
   .otp-input {
-    @apply w-12 h-12 rounded-lg border border-[#1B3A5C] bg-[#0B1828] text-white text-center text-xl font-semibold focus:border-[#3B82F6] focus:outline-none transition-all;
+    @apply w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#1B3A5C] bg-[#04132B] text-white text-center text-lg sm:text-xl font-semibold focus:border-[#3B82F6] focus:outline-none transition-all;
+    border: 1.35px solid #082656;
   }
   .otp-footer {
-    @apply text-[13px] text-[#7A9ABF] text-center;
+    @apply text-[16px] text-[#FFFFFFB2] text-center;
   }
   .otp-resend {
-    @apply text-brand-primary font-semibold cursor-pointer hover:underline ml-1;
+    @apply text-[#155DFC] font-semibold cursor-pointer hover:underline ml-1;
   }
 
   /* Dashboard Specific Styles */
@@ -1292,15 +1302,15 @@
 
   /* Global Dashboard Header */
   .dashboard-header {
-    @apply h-[70px] bg-[#04132B] border-b border-[#1E293B] flex items-center justify-between px-4 sm:px-8 shrink-0;
+    @apply h-[70px] bg-[#04132B] border-b border-[#1E293B] flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-8 shrink-0;
   }
   
   .header-greeting {
-    @apply text-[16px] font-semibold text-white tracking-tight mt-2;
+    @apply text-[16px] font-semibold text-white tracking-tight mt-2 ml-4;
   }
   
   .header-subtitle {
-    @apply text-[12px] text-[#94A3B8];
+    @apply text-[12px] text-[#94A3B8] ml-4;
   }
   
   .theme-toggle-wrapper {

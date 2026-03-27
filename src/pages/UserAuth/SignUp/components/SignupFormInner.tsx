@@ -164,7 +164,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
               )}
             </div>
           </div>
-          <span className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary">
+          <span className="text-[14px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFFB2]">
             By creating an account you agree to our Terms & Conditions & Privacy Policy
           </span>
         </label>

@@ -9,7 +9,7 @@ import starImg from "../../../../assets/images/star.png";
 const LoginCard: React.FC = () => {
   return (
     <div className="w-full max-w-[500px] mx-auto flex flex-col items-center gap-5">
-      
+
       {/* ── HEADER ── */}
       <div className="flex flex-col items-center w-full">
         <div className="mb-4">
@@ -24,7 +24,7 @@ const LoginCard: React.FC = () => {
             Don&apos;t have an account?{" "}
             <Link
               to="/signup"
-              className="text-[#3B82F6] font-semibold hover:underline transition-colors"
+              className="auth-link"
             >
               Sign up
             </Link>
@@ -40,11 +40,11 @@ const LoginCard: React.FC = () => {
       </div>
 
       {/* ── NEED HELP ── */}
-      <p className="text-[13px] text-[#7A9ABF] text-center">
+      <p className="auth-help-text">
         Need help?{" "}
         <a
           href="/support"
-          className="text-[#3B82F6] font-semibold hover:underline transition-colors"
+          className="auth-help-link"
         >
           Contact Support
         </a>

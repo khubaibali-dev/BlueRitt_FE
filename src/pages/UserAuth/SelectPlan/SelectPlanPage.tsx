@@ -27,13 +27,13 @@ const SelectPlanPage: React.FC = () => {
   return (
     <div className="w-full max-w-[900px] mx-auto flex flex-col items-center gap-6 pb-12">
 
-      {/* ── TITLE ── */}
-      <div className="w-full flex flex-col items-center relative mb-4">
-        <div className="">
+      {/* ── HEADER ── */}
+      <div className="flex flex-col items-center w-full">
+        <div className="mb-4">
           <img src={starImg} alt="" className="brand-star-standard" />
         </div>
 
-        <div className="text-center mt-4">
+        <div className="text-center mb-2">
           <h1 className="auth-title">
             Choose Your Plan
           </h1>

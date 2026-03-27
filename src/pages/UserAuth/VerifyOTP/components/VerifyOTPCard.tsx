@@ -6,15 +6,20 @@ import starImg from "../../../../assets/images/star.png";
 const VerifyOTPCard: React.FC = () => {
   return (
     <div className="otp-container">
-      {/* --- HEADER --- */}
-      <div className="otp-header">
+      {/* ── HEADER ── */}
+      <div className="flex flex-col items-center w-full">
         <div className="mb-4">
           <img src={starImg} alt="" className="brand-star-standard" />
         </div>
-        <h1 className="otp-title">Check your email</h1>
-        <p className="otp-subtitle">
-          We've sent a verification code to <span className="otp-email">abc@gmail.com</span>
-        </p>
+
+        <div className="text-center mb-2">
+          <h1 className="auth-title">
+            Check your email
+          </h1>
+          <p className="auth-subtitle">
+            We've sent a verification code to <span className="otp-email">abc@gmail.com</span>
+          </p>
+        </div>
       </div>
 
       {/* --- CARD --- */}
@@ -31,8 +36,15 @@ const VerifyOTPCard: React.FC = () => {
               />
             ))}
           </div>
-          <PrimaryButton onClick={() => window.location.href = "/dashboard"}>Verify</PrimaryButton>
         </div>
+      </div>
+      <div className="w-full flex justify-center">
+        <PrimaryButton 
+          onClick={() => window.location.href = "/dashboard"}
+          className="!w-auto min-w-[220px]"
+        >
+          Verify
+        </PrimaryButton>
       </div>
 
       {/* --- FOOTER --- */}
