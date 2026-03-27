@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Sparkles } from "lucide-react";
+import { Search } from "lucide-react";
 
 const DiscoveryEmptyState: React.FC = () => {
   return (
