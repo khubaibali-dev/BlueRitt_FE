@@ -4,7 +4,7 @@ import bgAnalysis from "../../../../assets/images/explorer.png";
 import BasicTab from "../../../ProfitCalculator/Basic/BasicTab";
 import AdvancedTab from "../../../ProfitCalculator/Advance/AdvancedTab";
 import ResultPanels from "../../../ProfitCalculator/components/ResultPanels";
-import { useProfitCalculation } from "../../../ProfitCalculator/hooks/useProfitCalculation";
+import { useProfitCalculation } from "../../../../hooks/useProfitCalculation";
 import SaveToVaultModal from "../Common/SaveToVaultModal";
 
 interface SourceLinkProfitCalculatorProps {
@@ -73,7 +73,7 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
             <ChevronLeft size={16} /> Back
           </button>
 
-          <button 
+          <button
             onClick={() => setIsSaveModalOpen(true)}
             className="bg-brand-gradient px-6 py-2.5 rounded-full text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-xl shadow-orange-900/20 font-inter"
           >
@@ -296,9 +296,9 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
       </div>
       {/* Save to Vault Modal */}
       {isSaveModalOpen && (
-        <SaveToVaultModal 
-          productTitle={product?.title || "Portable Blender"} 
-          onClose={() => setIsSaveModalOpen(false)} 
+        <SaveToVaultModal
+          productTitle={product?.title || "Portable Blender"}
+          onClose={() => setIsSaveModalOpen(false)}
         />
       )}
     </div>

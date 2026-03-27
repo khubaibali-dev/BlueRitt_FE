@@ -6,7 +6,7 @@ import MarginMaxTourModal from "./components/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
 import AdvancedTab from "./Advance/AdvancedTab";
 
-import { useProfitCalculation } from "./hooks/useProfitCalculation";
+import { useProfitCalculation } from "../../hooks/useProfitCalculation";
 
 const ProfitCalculator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Basic" | "Advanced">("Basic");

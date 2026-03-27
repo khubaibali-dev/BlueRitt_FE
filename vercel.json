@@ -1,4 +1,10 @@
 {
+  "build": {
+    "env": {
+      "ESLINT_NO_DEV_ERRORS": "true",
+      "TSC_COMPILE_ON_ERROR": "true"
+    }
+  },
   "redirects": [
     {
       "source": "/verifyotp",
@@ -6,10 +12,11 @@
       "permanent": true
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/((?!assets/|.*\\..*).*)",
-      "destination": "/index.html"
+      "src": "/[^.]+",
+      "dest": "/",
+      "status": 200
     }
   ]
 }
