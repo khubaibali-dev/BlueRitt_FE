@@ -1,11 +1,11 @@
 import React from "react";
 import { Zap, BarChart3, Hash, Box } from "lucide-react";
-import googleIcon from "/src/assets/images/toolfusion_icons/google.png";
-import amzLogo from "/src/assets/images/toolfusion_icons/amz.png";
-import nbLogo from "/src/assets/images/toolfusion_icons/nb.png";
-import hepsyLogo from "/src/assets/images/toolfusion_icons/hepsy.png";
-import rakutenLogo from "/src/assets/images/toolfusion_icons/rakuten.png";
-import trustLogo from "/src/assets/images/toolfusion_icons/trust.png";
+import googleIcon from "../../assets/images/toolfusion_icons/google.png";
+import amzLogo from "../../assets/images/toolfusion_icons/amz.png";
+import nbLogo from "../../assets/images/toolfusion_icons/nb.png";
+import hepsyLogo from "../../assets/images/toolfusion_icons/hepsy.png";
+import rakutenLogo from "../../assets/images/toolfusion_icons/rakuten.png";
+import trustLogo from "../../assets/images/toolfusion_icons/trust.png";
 
 
 interface ToolItem {
