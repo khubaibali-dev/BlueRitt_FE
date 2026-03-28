@@ -1,11 +1,21 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { X } from "lucide-react";
+import InputField from "../../../../components/common/input/InputField";
+import SelectField, { SelectOption } from "../../../../components/common/select/SelectField";
 
 interface FilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const CATEGORY_OPTIONS: SelectOption[] = [
+  { label: "Electronics", value: "electronics" },
+  { label: "Home & Kitchen", value: "home-kitchen" },
+  { label: "Toys & Games", value: "toys-games" },
+  { label: "Beauty & Personal Care", value: "beauty-personal" },
+  { label: "Health & Household", value: "health-household" },
+];
 
 const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
   const [priceMin, setPriceMin] = useState("");
@@ -14,6 +24,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
   const [ratingMax, setRatingMax] = useState("");
   const [ratingCountMin, setRatingCountMin] = useState("");
   const [ratingCountMax, setRatingCountMax] = useState("");
+  const [category, setCategory] = useState("");
   const [amazonChoice, setAmazonChoice] = useState<"yes" | "no" | null>(null);
 
   const handleClear = () => {
@@ -23,6 +34,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
     setRatingMax("");
     setRatingCountMin("");
     setRatingCountMax("");
+    setCategory("");
     setAmazonChoice(null);
   };
 
@@ -49,24 +61,24 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
 
           {/* Price Range */}
           <div className="filter-section">
-            <label className="filter-section-label">Price Range</label>
+            <label className="filter-section-label">Price Range (US $)</label>
             <div className="filter-input-row">
               <div className="filter-input-wrap">
-                <input
+                <InputField
+                  id="priceMin"
                   type="number"
                   placeholder="Min ($)"
                   value={priceMin}
                   onChange={(e) => setPriceMin(e.target.value)}
-                  className="filter-input"
                 />
               </div>
               <div className="filter-input-wrap">
-                <input
+                <InputField
+                  id="priceMax"
                   type="number"
                   placeholder="Max ($)"
                   value={priceMax}
                   onChange={(e) => setPriceMax(e.target.value)}
-                  className="filter-input"
                 />
               </div>
             </div>
@@ -77,23 +89,21 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
             <label className="filter-section-label">Star Ratings (0-5)</label>
             <div className="filter-input-row">
               <div className="filter-input-wrap">
-                <input
+                <InputField
+                  id="ratingMin"
                   type="number"
                   placeholder="Min"
-                  min={0} max={5}
                   value={ratingMin}
                   onChange={(e) => setRatingMin(e.target.value)}
-                  className="filter-input"
                 />
               </div>
               <div className="filter-input-wrap">
-                <input
+                <InputField
+                  id="ratingMax"
                   type="number"
                   placeholder="Max"
-                  min={0} max={5}
                   value={ratingMax}
                   onChange={(e) => setRatingMax(e.target.value)}
-                  className="filter-input"
                 />
               </div>
             </div>
@@ -104,29 +114,41 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
             <label className="filter-section-label">Rating Count</label>
             <div className="filter-input-row">
               <div className="filter-input-wrap">
-                <input
+                <InputField
+                  id="ratingCountMin"
                   type="number"
                   placeholder="Min"
                   value={ratingCountMin}
                   onChange={(e) => setRatingCountMin(e.target.value)}
-                  className="filter-input"
                 />
               </div>
               <div className="filter-input-wrap">
-                <input
+                <InputField
+                  id="ratingCountMax"
                   type="number"
                   placeholder="Max"
                   value={ratingCountMax}
                   onChange={(e) => setRatingCountMax(e.target.value)}
-                  className="filter-input"
                 />
               </div>
             </div>
           </div>
 
-          {/* Amazon Choice */}
+          {/* Category Select */}
           <div className="filter-section">
-            <label className="filter-section-label">Amazon Choice</label>
+            <SelectField
+              id="category"
+              label="Product Category"
+              value={category}
+              options={CATEGORY_OPTIONS}
+              onChange={(val) => setCategory(val)}
+              placeholder="All Categories"
+            />
+          </div>
+
+          {/* Amazon Choice */}
+          <div className="filter-section border-t border-white/5 pt-6">
+            <label className="filter-section-label">Is Amazon Choice?</label>
             <div className="flex items-center gap-6 mt-2">
               <label className="filter-radio-label">
                 <input

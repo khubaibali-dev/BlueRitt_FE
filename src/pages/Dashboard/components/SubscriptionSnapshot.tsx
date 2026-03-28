@@ -1,4 +1,4 @@
-import { ShieldCheck } from "lucide-react";
+import { CircleCheck, ShieldCheck, TicketCheck } from "lucide-react";
 
 const SubscriptionSnapshot = () => (
   <div className="snapshot-card">
@@ -6,10 +6,10 @@ const SubscriptionSnapshot = () => (
       <div>
         <p className="snapshot-plan-label">Current Plan</p>
         <h4 className="snapshot-plan-name">Advance</h4>
-        <p className="snapshot-price">$39 <span className="text-sm font-normal opacity-60">/ Monthly</span></p>
+        <p className="snapshot-price">$39 <span className="text-sm  opacity-50">/ Monthly</span></p>
       </div>
       <span className="snapshot-status-badge">
-        <ShieldCheck size={14} /> Active
+        <CircleCheck size={14} /> Active
       </span>
     </div>
 
@@ -21,8 +21,8 @@ const SubscriptionSnapshot = () => (
         { label: "End Date", date: "16 Mar 2026" },
       ].map((item, i) => (
         <div key={i} className="snapshot-item">
-          <p className="text-[14px] text-white/50 mb-1 font-medium">{item.label}</p>
-          <p className="text-sm font-semibold text-white">{item.date}</p>
+          <p className="text-[14px] text-[#FFFFFFB2] mb-1 ">{item.label}</p>
+          <p className="text-[16px] font-semibold text-white">{item.date}</p>
         </div>
       ))}
     </div>

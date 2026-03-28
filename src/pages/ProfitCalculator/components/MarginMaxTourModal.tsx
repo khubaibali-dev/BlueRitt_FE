@@ -105,10 +105,12 @@ const MarginMaxTourModal: React.FC<MarginMaxTourModalProps> = ({ onClose }) => {
         </div>
 
         {/* Actions */}
-        <div className="tour-action-row">
-          <button onClick={onClose} className="tour-skip-btn">
-            Skip Tour
-          </button>
+        <div className={`tour-action-row ${currentStep === totalSteps ? '!justify-end' : 'justify-between'}`}>
+          {currentStep < totalSteps && (
+            <button onClick={onClose} className="tour-skip-btn">
+              Skip Tour
+            </button>
+          )}
           <button onClick={handleNext} className="tour-next-btn">
             {currentStep === totalSteps ? "Get Started" : "Next"} <ArrowRight size={16} />
           </button>

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Search, ChevronDown, Info, Globe } from "lucide-react";
+import { Search, Info, Globe } from "lucide-react";
 import shadowBg from "../../assets/images/dashboard1.png";
 import ResultPanels from "./components/ResultPanels";
 import MarginMaxTourModal from "./components/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
 import AdvancedTab from "./Advance/AdvancedTab";
+import FilterDropdown from "../../components/common/select/FilterDropdown";
+import { COUNTRY_OPTIONS } from "../../utils/Country";
 
 import { useProfitCalculation } from "../../hooks/useProfitCalculation";
 
@@ -40,27 +42,34 @@ const ProfitCalculator: React.FC = () => {
   const marginPerc = (parseFloat(formData.sellingPrice) || 0) > 0 ? ((parseFloat(displayProfitUnit) / (parseFloat(formData.sellingPrice) || 0)) * 100).toFixed(1) : "0.0";
   const roiPerc = parseFloat(sourcingCostUnit) > 0 ? ((parseFloat(displayProfitUnit) / parseFloat(sourcingCostUnit)) * 100).toFixed(1) : "0.0";
 
+  const [selectedMarketplace, setSelectedMarketplace] = useState("US");
+
+  const countryOptions = COUNTRY_OPTIONS.map((opt) => ({
+    ...opt,
+    code: opt.value.toLowerCase(),
+  }));
+
   // ──────────────────────────────────────────────────────────────────────
 
   return (
     <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen">
       {/* Hero Banner Section */}
-      <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate overflow-hidden !min-h-0">
-        <div className="absolute inset-0 z-[-1]">
+      <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible !min-h-0">
+        <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
           <img src={shadowBg} alt="" className="dashboard-banner-image" />
           <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
         </div>
 
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl text-white mb-2 tracking-tight text-center">
+          <h1 className="banner-heading-text !mb-1">
             Calculate Your Product Profit
           </h1>
-          <p className="text-[14px] sm:text-[15px] text-slate-300 mb-2 font-medium text-center">
+          <p className="auth-subtitle mb-6 text-center max-w-[600px]">
             Search by ASIN to auto-fill product details instantly
           </p>
 
           {/* ASIN Search Box */}
-          <div className="calculator-search-box">
+          <div className="calculator-search-box !z-[60]">
             <input
               type="text"
               placeholder="Search products e.g. Apple watch"
@@ -72,14 +81,16 @@ const ProfitCalculator: React.FC = () => {
                 <span className="text-[12px] text-white flex items-center gap-1.5 font-medium">
                   <Globe size={14} /> Marketplace:
                 </span>
-                <button className="flex items-center gap-2 bg-[#FFFFFF0D] hover:bg-white/10 border-none px-4 py-1.5 rounded-full text-[13px] font-medium text-white transition-colors">
-                  <img src="https://flagcdn.com/w20/us.png" alt="US Flag" className="w-[14px] h-auto rounded-sm" />
-                  United States
-                  <ChevronDown size={14} className="text-slate-400" />
-                </button>
+                <FilterDropdown
+                  value={selectedMarketplace}
+                  options={countryOptions}
+                  onChange={(opt) => setSelectedMarketplace(opt.value)}
+                  buttonClassName="flex items-center gap-2 bg-[#FFFFFF0D] hover:bg-[#FFFFFF1A] border border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-white transition-all shadow-sm w-[190px] justify-between whitespace-nowrap"
+                  dropdownWidth="w-[200px]"
+                />
               </div>
 
-              <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold shadow-lg shadow-orange-500/20 transition-all">
+              <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold transition-all">
                 <Search size={16} />
                 Search ASIN
               </button>

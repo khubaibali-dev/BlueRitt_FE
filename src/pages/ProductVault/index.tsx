@@ -52,10 +52,10 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ title, count, image, im
 
       {/* Content Section */}
       <div className="p-5">
-        <h3 className="text-white font-bold text-[16px] mb-0.5 tracking-tight group-hover:text-blue-400 transition-colors">
+        <h3 className="product-card-title text-[15px] mb-0.5 group-hover:text-blue-400 transition-colors">
           {title}
         </h3>
-        <p className="text-slate-400 text-[13px] font-medium">
+        <p className="text-[13px] font-medium" style={{ color: '#FFFFFFB0' }}>
           {count} products
         </p>
       </div>
@@ -128,8 +128,8 @@ const ProductVault: React.FC = () => {
         ) : (
           <div className="animate-in fade-in duration-500">
             <div className="mb-10">
-              <h1 className="text-3xl text-white mb-1 tracking-tight">Product Vault</h1>
-              <p className="text-slate-400 text-[15px]">Organize your saved products</p>
+              <h1 className="banner-heading-text !text-left !mb-1">Product Vault</h1>
+              <p className="auth-subtitle !text-left ml-4">Organize your saved products</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -142,9 +142,9 @@ const ProductVault: React.FC = () => {
               ))}
 
               {/* Add New Collection Card */}
-              <div className="group vault-add-card flex-col">
-                <div className="vault-icon-wrapper group-hover:scale-110">
-                  <Plus size={32} />
+              <div className="group vault-add-card flex-col !bg-[#04132B]">
+                <div className=" group-hover:scale-110">
+                  <Plus size={34} />
                 </div>
                 <span className="text-white font-bold text-[15px] tracking-tight">Add New Collection</span>
               </div>

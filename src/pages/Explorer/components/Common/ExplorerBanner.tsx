@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+import { SlidersHorizontal } from "lucide-react";
 import explorerBg from "../../../../assets/images/explorer.png";
 import starImg from "../../../../assets/images/star.png";
 import FilterDrawer from "../FilterDrawer/FilterDrawer";
 import PremiumSearchBar from "../../../../components/common/search/PremiumSearchBar";
+import FilterDropdown from "../../../../components/common/select/FilterDropdown";
+import { COUNTRY_OPTIONS } from "../../../../utils/Country";
+import { PRODUCT_FILTER_OPTIONS } from "../../../../utils/SearchOptions";
 
 interface ExplorerBannerProps {
   onSearch: () => void;
@@ -11,15 +14,24 @@ interface ExplorerBannerProps {
 
 const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
   const [filterOpen, setFilterOpen] = useState(false);
+  const [filterType, setFilterType] = useState(PRODUCT_FILTER_OPTIONS[0]);
+  const pakistanOption = COUNTRY_OPTIONS.find(opt => opt.value === "PK") || COUNTRY_OPTIONS[0];
+  const [selectedCountry, setSelectedCountry] = useState(pakistanOption);
 
   const handleSearchWithAI = () => {
     onSearch();
   };
 
+  // Map country options to include code for flags
+  const countryOptions = COUNTRY_OPTIONS.map((opt) => ({
+    ...opt,
+    code: opt.value, // ISO code for flagcdn
+  }));
+
   return (
-    <section className="explorer-banner-wrapper">
+    <section className="explorer-banner-wrapper relative overflow-visible">
       {/* Background Image Layer with Bottom Fade */}
-      <div className="absolute inset-0 z-[-1]">
+      <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[20px] sm:rounded-t-[32px]">
         <img
           src={explorerBg}
           alt=""
@@ -49,23 +61,27 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
 
         {/* Filter Row */}
         <div className="dashboard-filter-row">
-          <div className="dashboard-filter-group flex-wrap">
-            <button className="dashboard-filter-btn">
-              Product <ChevronDown size={14} className="opacity-50" />
-            </button>
-            <button className="dashboard-filter-btn gap-3">
-              <div className="flex flex-col gap-[2px] w-4">
-                <div className="h-[4px] w-full bg-[#006600]"></div>
-                <div className="h-[4px] w-full bg-[#006600]"></div>
-              </div>
-              Pakistan <ChevronDown size={14} className="opacity-50" />
-            </button>
+          <div className="dashboard-filter-group">
+            <FilterDropdown
+              value={filterType.value}
+              options={PRODUCT_FILTER_OPTIONS}
+              onChange={(opt) => setFilterType(opt)}
+              width="w-[140px]"
+              dropdownWidth="w-[140px]"
+            />
+            <FilterDropdown
+              value={selectedCountry.value}
+              options={countryOptions}
+              onChange={(opt) => setSelectedCountry(opt)}
+              width="w-[190px]"
+              dropdownWidth="w-[200px]"
+            />
           </div>
           <button
-            className="explorer-filter-override"
+            className="dashboard-filter-btn"
             onClick={() => setFilterOpen(true)}
           >
-            Filters <SlidersHorizontal size={14} className="ml-1 opacity-50" />
+            Filters <SlidersHorizontal size={18} className="text-white" />
           </button>
         </div>
 

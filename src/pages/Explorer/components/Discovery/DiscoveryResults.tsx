@@ -9,6 +9,8 @@ import MetricCard from "../Common/MetricCard";
 import CountrySelect from "../../../../components/common/select/CountrySelect";
 import SelectField from "../../../../components/common/select/SelectField";
 import SourceLinkProfitCalculator from "../SourceLink/SourceLinkProfitCalculator";
+import TopStatCard from "../Common/TopStatCard";
+import { PRODUCT_FILTER_OPTIONS } from "../../../../utils/SearchOptions";
 
 interface DiscoveryResultsProps {
    onBack: () => void;
@@ -19,7 +21,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
    const navigate = useNavigate();
    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
    const [country, setCountry] = useState("Pakistan");
-   const [searchType, setSearchType] = useState("Product");
+   const [searchType, setSearchType] = useState(PRODUCT_FILTER_OPTIONS[0].value);
    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
    const [selectedProduct, setSelectedProduct] = useState<any>(null);
    const [showSourceLink, setShowSourceLink] = useState(false);
@@ -115,15 +117,15 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
 
    if (showSourceLink) {
       return (
-         <SupplierSourceLink 
-            product={sourceProduct} 
+         <SupplierSourceLink
+            product={sourceProduct}
             onBack={() => {
                if (location.state?.autoSourceLink) {
                   navigate(-1);
                } else {
                   setShowSourceLink(false);
                }
-            }} 
+            }}
             onCalculateProfit={handleOpenProfitCalc}
          />
       );
@@ -147,41 +149,20 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
 
          {/* Top Header Row */}
          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div className="discovery-top-card-premium">
-               <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                     <div className="quick-action-icon-circle">
-                        <Search size={20} className="text-white" />
-                     </div>
-                     <span className="text-white font-semibold text-[15px] tracking-tight">Product Searches</span>
-                  </div>
-                  <span className="text-[26px] font-bold" style={{ color: '#FF5900' }}>612</span>
-               </div>
-            </div>
-            <div className="discovery-top-card-premium">
-               <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                     <div className="quick-action-icon-circle">
-                        <ShoppingBag size={20} className="text-white" />
-                     </div>
-                     <span className="text-white font-semibold text-[15px] tracking-tight">Supplier Discoveries</span>
-                  </div>
-                  <span className="text-[26px] font-bold" style={{ color: '#FF5900' }}>612</span>
-               </div>
-            </div>
-            <div className="discovery-top-card-premium">
-               <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                     <div className="quick-action-icon-circle">
-                        <ShoppingCart size={20} className="text-white" />
-                     </div>
-                     <span className="text-white font-semibold text-[15px] tracking-tight">Add-ons</span>
-                  </div>
-                  <button className="font-bold text-[16px] hover:opacity-80 transition-opacity whitespace-nowrap" style={{ color: '#FF5900' }}>
-                     Purchase Add Ons
-                  </button>
-               </div>
-            </div>
+            {[
+               { icon: Search, label: "Product Searches", value: "612" },
+               { icon: ShoppingBag, label: "Supplier Discoveries", value: "612" },
+               {
+                  icon: ShoppingCart,
+                  label: "Add-ons",
+                  action: {
+                     label: "Purchase Add Ons",
+                     onClick: () => console.log("Purchase Add-ons clicked"),
+                  },
+               },
+            ].map((stat, i) => (
+               <TopStatCard key={i} {...stat} />
+            ))}
          </div>
 
          {/* Main Filter Bar */}
@@ -198,11 +179,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
                      id="search-type"
                      value={searchType}
                      onChange={(v) => setSearchType(v)}
-                     options={[
-                        { label: "Product", value: "Product" },
-                        { label: "Supplier", value: "Supplier" },
-                        { label: "Brand", value: "Brand" }
-                     ]}
+                     options={PRODUCT_FILTER_OPTIONS}
                   />
                </div>
             </div>
@@ -220,9 +197,9 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
                <button className="bg-brand-gradient text-white px-5 h-[48px] rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-95 transition-all sm:w-full w-[180px]">
                   <Sparkles size={16} fill="white" className="text-white" /> Search with AI
                </button>
-               <button className="bg-[#1A1A2E]/60 backdrop-blur-sm border border-brand-inputBorder h-[48px] px-4 rounded-xl flex items-center justify-center gap-2 text-slate-300 hover:text-white transition-all hover:bg-white/10">
+               <button className="bg-[#1A1A2E]/60 backdrop-blur-sm border border-brand-inputBorder h-[48px] px-4 rounded-xl flex items-center justify-center gap-2 text-white hover:text-white transition-all hover:bg-white/10">
                   <span className="text-[14px] font-semibold">Filters</span>
-                  <Settings2 size={16} />
+                  <Settings2 size={16} className="text-white" />
                </button>
             </div>
          </div>
@@ -235,7 +212,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
          </div>
 
          <div className="flex justify-end mb-10 px-2 mt-4">
-            <button className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-bold text-white hover:bg-white/10 transition-all group">
+            <button className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10 transition-all group">
                Search Volume <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
          </div>
@@ -243,23 +220,23 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = ({ onBack }) => {
          {/* Results Controls */}
          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-0 mb-8 px-2">
             <div>
-               <h2 className="text-[24px] sm:text-[28px] text-white tracking-tight leading-tight mb-1">Discovery Results</h2>
-               <p className="text-[14px] sm:text-[15px] text-white/60 font-medium">6 products match your query</p>
+               <h2 className="text-[24px] sm:text-[20px] text-white tracking-tight leading-tight mb-1">Discovery Results</h2>
+               <p className="text-[14px] sm:text-[15px] text-[#FFFFFFB0]">6 products match your query</p>
             </div>
             <div className="flex items-center gap-3">
-               <button className="bg-[#121223] border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 text-white text-[13px] sm:text-[14px] font-bold hover:bg-white/5 transition-all">
-                  Sort by <ChevronDown size={14} className="opacity-60" />
+               <button className="bg-[#030F23] border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 text-white text-[13px] sm:text-[14px] font-bold hover:bg-white/5 transition-all">
+                  Sort by <ChevronDown size={18} className="" />
                </button>
-               <div className="bg-[#121223] border border-white/10 rounded-xl flex p-1">
+               <div className="bg-[#030F23] border border-white/10 rounded-xl flex p-1">
                   <button
                      onClick={() => setViewMode('grid')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white/10 text-white shadow-lg' : 'text-white hover:text-white'}`}
                   >
                      <LayoutGrid size={18} />
                   </button>
                   <button
                      onClick={() => setViewMode('list')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white/10 text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white/10 text-white shadow-lg' : 'text-white hover:text-white'}`}
                   >
                      <List size={18} />
                   </button>

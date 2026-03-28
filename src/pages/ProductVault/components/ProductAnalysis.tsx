@@ -26,14 +26,14 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
         <div className="flex flex-col gap-1 w-full md:w-auto">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 text-[13px] font-bold mb-3 transition-colors w-fit group"
+            className="flex items-center gap-2 text-white hover:text-blue-300 text-[14px] font-bold mb-3 transition-colors w-fit group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Vault
           </button>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-tight">
+          <h1 className="banner-heading-text !ml-[-15px] !mb-0">
             Product Vault with <span className="text-blue-400 break-words">{product.title.split(' ').slice(0, 3).join(' ')}...</span>
           </h1>
-          <p className="text-slate-400 text-[13px] sm:text-[14px]">Manage and analyze your saved products</p>
+          <p className="auth-subtitle">Manage and analyze your saved products</p>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">

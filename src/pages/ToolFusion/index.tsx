@@ -1,11 +1,11 @@
 import React from "react";
 import { Zap, BarChart3, Hash, Box } from "lucide-react";
-import googleLogo from "../../assets/images/toolfusion_icons/google.png";
-import amzLogo from "../../assets/images/toolfusion_icons/amz.png";
-import nbLogo from "../../assets/images/toolfusion_icons/nb.png";
-import hepsyLogo from "../../assets/images/toolfusion_icons/hepsy.png";
-import rakutenLogo from "../../assets/images/toolfusion_icons/rakuten.png";
-import trustLogo from "../../assets/images/toolfusion_icons/trust.png";
+import googleIcon from "/src/assets/images/toolfusion_icons/google.png";
+import amzLogo from "/src/assets/images/toolfusion_icons/amz.png";
+import nbLogo from "/src/assets/images/toolfusion_icons/nb.png";
+import hepsyLogo from "/src/assets/images/toolfusion_icons/hepsy.png";
+import rakutenLogo from "/src/assets/images/toolfusion_icons/rakuten.png";
+import trustLogo from "/src/assets/images/toolfusion_icons/trust.png";
 
 
 interface ToolItem {
@@ -55,7 +55,7 @@ const ToolFusionPage: React.FC = () => {
       id: "google-patent",
       name: "Google Patent Check",
       description: "Verify product patent status and avoid legal risks",
-      image: googleLogo,
+      image: googleIcon,
       actionText: "Verify Patent Status",
       isExternal: true,
     },
@@ -146,7 +146,7 @@ const ToolFusionPage: React.FC = () => {
         {/* Blueritt Tools Section */}
         <div className="tool-section">
           <div className="tool-section-header">
-            <h3 className="tool-section-title">Blueritt Tools</h3>
+            <h3 className="dashboard-card-title">Blueritt Tools</h3>
             <span className="tool-section-count">{bluerittTools.length} tools currently in use</span>
           </div>
           <div className="tool-list">

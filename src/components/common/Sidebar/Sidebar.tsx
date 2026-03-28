@@ -4,7 +4,6 @@ import {
   Search,
   Zap,
   BarChart3,
-  Share2,
   PlusCircle,
   Settings,
   HelpCircle,
@@ -31,15 +30,15 @@ interface NavItemProps {
   onToggle?: () => void;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ 
-  icon: Icon, 
-  label, 
-  to, 
-  badge, 
-  isCollapsed, 
-  children, 
-  isExpanded, 
-  onToggle 
+const NavItem: React.FC<NavItemProps> = ({
+  icon: Icon,
+  label,
+  to,
+  badge,
+  isCollapsed,
+  children,
+  isExpanded,
+  onToggle
 }) => {
   const location = useLocation();
   const hasChildren = children && children.length > 0;
@@ -54,11 +53,11 @@ const NavItem: React.FC<NavItemProps> = ({
         >
           <div className="flex items-center gap-3">
             <Icon size={20} />
-            <span className="text-sm font-medium">{label}</span>
+            <span className="text-[14px] font-semibold">{label}</span>
           </div>
-          <ChevronDown 
-            size={16} 
-            className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} 
+          <ChevronDown
+            size={16}
+            className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
           />
         </button>
 
@@ -73,7 +72,7 @@ const NavItem: React.FC<NavItemProps> = ({
                 }
               >
                 <child.icon size={18} />
-                <span className="text-[13px] font-medium">{child.label}</span>
+                <span className="text-[14px] font-semibold">{child.label}</span>
               </NavLink>
             ))}
           </div>
@@ -90,8 +89,8 @@ const NavItem: React.FC<NavItemProps> = ({
       }
     >
       <div className="flex items-center gap-3">
-        <Icon size={20} />
-        {!isCollapsed && <span className="text-sm font-medium">{label}</span>}
+        <Icon size={18} />
+        {!isCollapsed && <span className="text-[14px] font-semibold">{label}</span>}
       </div>
 
       {badge && !isCollapsed && (
@@ -113,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
   const [expandedMenus, setExpandedMenus] = useState<string[]>(["SocialPulse"]); // Default open SocialPulse as per user request
 
   const toggleMenu = (label: string) => {
-    setExpandedMenus(prev => 
+    setExpandedMenus(prev =>
       prev.includes(label) ? prev.filter(m => m !== label) : [...prev, label]
     );
   };
@@ -134,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         <div className={`flex ${isCollapsed ? "justify-center" : "justify-between"} items-center px-2 mb-10`}>
           <BlueRittLogo isCollapsed={isCollapsed} />
           {!isCollapsed && (
-            <button onClick={toggleSidebar} className="lg:hidden text-gray-400">
+            <button onClick={toggleSidebar} className="lg:hidden text-white pl-2">
               <X size={24} />
             </button>
           )}
@@ -146,11 +145,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
           <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} />
           <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} />
           <NavItem icon={BarChart3} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} />
-          
-          <NavItem 
-            icon={Radio} 
-            label="SocialPulse" 
-            to="/socialpulse" 
+
+          <NavItem
+            icon={Radio}
+            label="SocialPulse"
+            to="/socialpulse"
             isCollapsed={isCollapsed}
             isExpanded={expandedMenus.includes("SocialPulse")}
             onToggle={() => toggleMenu("SocialPulse")}

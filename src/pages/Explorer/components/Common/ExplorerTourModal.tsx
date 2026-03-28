@@ -69,7 +69,7 @@ const ExplorerTourModal: React.FC<ExplorerTourModalProps> = ({ onClose }) => {
 
       {/* Modal Content */}
       <div className="tour-modal-card">
-        <button onClick={onClose} className="tour-modal-close-btn">
+        <button onClick={onClose} className="tour-modal-close-btn ">
           <X size={20} />
         </button>
 
@@ -105,10 +105,12 @@ const ExplorerTourModal: React.FC<ExplorerTourModalProps> = ({ onClose }) => {
         </div>
 
         {/* Actions */}
-        <div className="tour-action-row">
-          <button onClick={handleNext} className="tour-skip-btn">
-            Skip Tour
-          </button>
+        <div className={`tour-action-row ${currentStep === totalSteps ? '!justify-end' : 'justify-between'}`}>
+          {currentStep < totalSteps && (
+            <button onClick={onClose} className="tour-skip-btn">
+              Skip Tour
+            </button>
+          )}
           <button onClick={handleNext} className="tour-next-btn">
             {currentStep === totalSteps ? "Get Started" : "Next"} <ArrowRight size={16} />
           </button>

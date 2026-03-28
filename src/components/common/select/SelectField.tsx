@@ -71,7 +71,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           <svg
-            className={`w-[22px] h-[22px] text-[#7A9ABF] transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            className={`w-[24px] h-[24px] text-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""
               }`}
             viewBox="0 0 20 20"
             fill="none"

@@ -15,8 +15,8 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon, title, value, progress 
         {icon}
       </div>
       <div>
-        <p className="text-white text-[15px] font-medium tracking-wide mb-1 lowercase">{title}</p>
-        <h4 className="text-white text-3xl font-bold tracking-tight">{value}</h4>
+        <p className="text-white text-[16px] font-semibold tracking-wide mb-1 lowercase">{title}</p>
+        <h4 className="text-white text-[24px] font-bold tracking-tight">{value}</h4>
       </div>
     </div>
 
@@ -37,11 +37,11 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon, title, value, progress 
 const UsageInsights: React.FC = () => {
   return (
     <section>
-      <div className="flex items-center justify-between mb-8">
-        <h3 className="text-white text-[20px] font-semibold tracking-[0.05em]">Usage Insights</h3>
-        <button className="upgrade-plan-btn">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <h3 className="text-white text-[20px] tracking-[0.05em]">Usage Insights</h3>
+        <button className="upgrade-plan-btn w-fit">
           <Crown size={18} />
-          UPGRADE YOUR PLAN
+          Upgrade Your Plan
         </button>
       </div>
 
@@ -58,13 +58,13 @@ const UsageInsights: React.FC = () => {
           value="612"
           progress={75}
         />
-        <div className="brand-card-bg rounded-[12px] p-8 flex flex-col items-center justify-center text-center h-[220px] insight-addon-bg">
+        <div className="brand-card-bg rounded-[12px] p-8 flex flex-col items-center justify-center text-center h-[190px] insight-addon-bg">
 
           <div className="mb-4">
-            <ShoppingCart size={42} className="text-white/20" />
+            <ShoppingCart size={36} className="text-white" />
           </div>
 
-          <h4 className="text-white text-lg font-semibold mb-1">Add-ons</h4>
+          <h4 className="text-white text-[16px] font-bold mb-1">Add-ons</h4>
           <p className="text-white/40 text-[13px]">Purchase Add Ons</p>
         </div>
       </div>

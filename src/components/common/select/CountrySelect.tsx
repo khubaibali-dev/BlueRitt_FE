@@ -72,7 +72,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
             </span>
           </div>
           <svg
-            className={`w-4 h-4 text-[#7A9ABF] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            className={`w-[24px] h-[24px] text-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"

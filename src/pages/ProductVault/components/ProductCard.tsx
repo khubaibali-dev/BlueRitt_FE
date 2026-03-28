@@ -76,22 +76,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Content Section (Exact Half Height) */}
       <div className="h-1/2 p-6 flex flex-col">
-        <h3 className="text-[14px] text-white font-medium leading-snug mb-4 line-clamp-3">
+        <h3 className="product-card-title text-[14px] leading-snug mb-4 line-clamp-3">
           {title}
         </h3>
 
         {/* Price and Growth */}
         <div className="flex items-end justify-between mb-2">
           <div className="flex flex-col">
-            <span className="text-2xl font-bold text-white tracking-tight">${price}</span>
-            <span className="text-[12px] text-slate-500 line-through">${oldPrice}</span>
+            <span className="product-price-primary text-2xl">${price}</span>
+            <span className="product-old-price-primary text-[12px]">${oldPrice}</span>
           </div>
           <div className="flex flex-col items-end">
-            <div className="flex items-center gap-1 bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full text-[10px] font-bold">
+            <div className="brand-tag flex items-center gap-1 bg-blue-500/10 !text-blue-400 !border-blue-500/20 text-[10px] font-bold">
               <TrendingUp size={10} />
               {growth}
             </div>
-            <span className="text-[10px] text-slate-500 font-medium mt-1">{ratings} ratings</span>
+            <span className="metric-label mt-1">{ratings} ratings</span>
           </div>
         </div>
 
@@ -101,22 +101,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="quick-action-icon-circle !w-8 !h-8 mb-1">
               <Box size={14} className="text-white" />
             </div>
-            <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">ASIN</span>
-            <span className="text-[10px] text-white/90 font-bold">{asin}</span>
+            <span className="metric-label text-[8px]">ASIN</span>
+            <span className="metric-value text-[10px]">{asin}</span>
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
             <div className="quick-action-icon-circle !w-8 !h-8 mb-1">
               <DollarSign size={14} className="text-white" />
             </div>
-            <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">OFFERS</span>
-            <span className="text-[10px] text-white/90 font-bold">{offers}</span>
+            <span className="metric-label text-[8px]">OFFERS</span>
+            <span className="metric-value text-[10px]">{offers}</span>
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
             <div className="quick-action-icon-circle !w-8 !h-8 mb-1">
               <BarChart3 size={14} className="text-white" />
             </div>
-            <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">SALES VOL</span>
-            <span className="text-[10px] text-white/90 font-bold">{salesVol}</span>
+            <span className="metric-label text-[8px]">SALES VOL</span>
+            <span className="metric-value text-[10px]">{salesVol}</span>
           </div>
         </div>
 

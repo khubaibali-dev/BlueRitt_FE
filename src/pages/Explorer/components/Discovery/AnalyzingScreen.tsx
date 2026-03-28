@@ -21,7 +21,7 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ onCancel }) => {
 
       <div className="relative z-10 flex flex-col items-center text-center space-y-8">
 
-        <h2 className="text-[28px] sm:text-[36px] font-medium text-white tracking-tight leading-snug max-w-[100%]">
+        <h2 className="text-[28px] sm:text-[32px] text-white tracking-tight leading-snug max-w-[100%]">
           Analysing your search with the AI..
         </h2>
         {/* Red circle with star icon - as seen in screenshot */}

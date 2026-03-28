@@ -4,61 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  /* Explorer Discovery Product Cards */
-  .discovery-card-list {
-    @apply bg-[#04132B] rounded-[24px] overflow-hidden border border-white/5 flex flex-row hover:border-white/10 transition-all shadow-xl shadow-black/20 p-4 gap-4 items-center;
-  }
-
-  .discovery-card-grid {
-    @apply bg-[#04132B] rounded-[24px] overflow-hidden border border-white/5 flex flex-col hover:border-white/10 transition-all shadow-xl shadow-black/20;
-  }
-
-  .product-img-wrapper-list {
-    @apply relative w-[140px] h-[120px] shrink-0 overflow-hidden rounded-xl;
-  }
-
-  .product-img-wrapper-grid {
-    @apply relative aspect-[4/3] overflow-hidden;
-  }
-
-  .product-metrics-row-list {
-    @apply mt-2.5 flex items-center gap-8;
-  }
-
-  .product-metrics-row-grid {
-    @apply grid grid-cols-2 gap-4 mt-6 px-6;
-  }
-
-  .product-price-section-list {
-    @apply flex flex-col justify-between items-end h-full py-0.5 ml-auto shrink-0 pr-2 min-w-[320px];
-  }
-
-  .brand-tag {
-    @apply rounded-full px-2.5 py-0.5 text-[9px] font-bold border;
-  }
-
-  .brand-tag-amazon {
-    @apply bg-[#FF590026] text-white border-[#FF590033];
-  }
-
-  .brand-tag-default {
-    @apply bg-white/5 border-white/10 text-slate-400;
-  }
-
-  .btn-product-details {
-    @apply figma-pill-border rounded-full py-2.5 text-white text-[12px] font-bold hover:bg-white/5 transition-colors flex items-center justify-center gap-2 outline-none px-5 h-[42px] whitespace-nowrap;
-  }
-
-  .btn-discover-supplier {
-    @apply bg-brand-gradient rounded-full py-2.5 text-white text-[12px] font-bold hover:opacity-90 transition-opacity whitespace-nowrap outline-none shadow-lg shadow-pink-500/20 px-5 h-[42px];
-  }
-
-  .discovery-top-card-premium {
-    @apply bg-[#04132B] rounded-[14px] p-6 border border-brand-inputBorder flex flex-col justify-center transition-all hover:border-white/10 shadow-lg shadow-black/20;
-  }
-}
-
 @layer base {
   :root {
     --brand-bg: #04132B;
@@ -110,6 +55,95 @@
     font-family: 'Work Sans', sans-serif;
     margin: 0;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  /* Explorer Discovery Product Cards */
+  /* Explorer Discovery Product Cards */
+  .discovery-card-list {
+    @apply bg-[#04132B] rounded-[24px] overflow-hidden border border-white/5 flex flex-col sm:flex-row hover:border-white/10 transition-all shadow-xl shadow-black/20 p-4 sm:p-4 gap-4 sm:items-center;
+  }
+
+  .discovery-card-grid {
+    @apply bg-[#04132B] rounded-[24px] overflow-hidden border border-white/5 flex flex-col hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full;
+  }
+
+  .product-img-wrapper-list {
+    @apply relative w-full sm:w-[140px] h-[200px] sm:h-[120px] shrink-0 overflow-hidden rounded-xl;
+  }
+
+  .product-img-wrapper-grid {
+    @apply relative aspect-[4/3] overflow-hidden;
+  }
+
+  .product-metrics-row-list {
+    @apply mt-2.5 flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-8;
+  }
+
+  .product-metrics-row-grid {
+    @apply grid grid-cols-2 gap-2 mt-6 px-[-3];
+  }
+
+  .product-price-section-list {
+    @apply flex flex-col justify-between items-start sm:items-end w-full sm:w-auto h-auto sm:h-full py-0.5 sm:ml-auto shrink-0 pr-2 sm:min-w-[320px] border-t sm:border-t-0 border-white/5 pt-4 sm:pt-0 mt-2 sm:mt-0;
+  }
+
+  .brand-tag {
+    @apply rounded-full px-2 sm:px-2.5 py-0.5 text-[8px] sm:text-[12px] border;
+  }
+
+  .brand-tag-amazon {
+    @apply bg-[#FF590026] text-[#FFFFFF] border-[#FF590033];
+  }
+
+  .brand-tag-default {
+    @apply bg-white/5 border-white/10 text-[#FFFFFF];
+  }
+
+  /* Standardized Data Classes (Discovery + Product Details) */
+  .metric-label {
+    @apply text-[10px] text-[#FFFFFFB0] tracking-widest;
+  }
+
+  .metric-value {
+    @apply text-[12px] text-[#FFFFFF] font-medium;
+  }
+
+  .product-card-title {
+    @apply text-[#FFFFFF] font-semibold text-[15px] sm:text-[14px] leading-tight line-clamp-2 transition-colors;
+  }
+
+  .product-price-primary {
+    @apply font-bold text-[#FFFFFF] leading-none;
+  }
+
+  .product-old-price-primary {
+    @apply text-[#FFFFFFB0] line-through font-medium;
+  }
+
+  .trending-badge-standard {
+    @apply bg-[#155DFC33] border border-blue-500/20 text-[#FFFFFF] rounded-full px-2 py-0.5 flex items-center gap-1.5 text-[10px] font-bold w-fit shrink-0;
+  }
+
+  .rating-text-standard {
+    @apply text-[12px] text-[#FFFFFFB0] font-medium;
+  }
+
+  .btn-brand-gradient {
+    @apply bg-brand-gradient rounded-full text-white font-bold hover:opacity-90 transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2;
+  }
+
+  .btn-product-details {
+    @apply figma-pill-border rounded-full py-2 sm:py-2.5 text-[#FFFFFF] text-[11px] sm:text-[12px]  hover:bg-white/5 transition-colors flex items-center justify-center gap-2 outline-none px-4 sm:px-5 h-[38px] sm:h-[42px] whitespace-nowrap;
+  }
+
+  .btn-discover-supplier {
+    @apply bg-brand-gradient rounded-full py-2 sm:py-2.5 text-[#FFFFFF] text-[11px] sm:text-[12px]  hover:opacity-90 transition-opacity whitespace-nowrap outline-none shadow-lg shadow-pink-500/20 px-4 sm:px-5 h-[38px] sm:h-[42px];
+  }
+
+  .discovery-top-card-premium {
+    @apply bg-[#04132B] rounded-[14px] p-6 border border-brand-inputBorder flex flex-col justify-center transition-all hover:border-white/10 shadow-lg shadow-black/20;
   }
 }
 
@@ -172,7 +206,7 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #1B3A5C;
+    background-color: #3F3F3F;
     border-radius: 10px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -554,9 +588,7 @@
   }
 
 .banner-heading-text {
-  @apply text-2xl sm:text-3xl md:text-[42px] lg:text-[48px]
-         text-white tracking-tight leading-[1.5]
-         max-w-[800px] mb-6 sm:mb-10 block;
+  @apply text-[28px] sm:text-[32px] md:text-[32px] text-white text-center mb-6 sm:mb-8 tracking-tight px-4 leading-tight block;
 }
 
   .dashboard-banner-image {
@@ -617,7 +649,30 @@
   }
 
   .search-ai-btn {
-    @apply bg-gradient-to-r from-[#F05A2B] to-[#EF4444] text-white px-4 mr-2 py-3 rounded-full text-[14px] font-semibold flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg shadow-orange-500/30 active:scale-95 whitespace-nowrap w-full sm:w-auto;
+    position: relative;
+    @apply bg-gradient-to-r from-[#F05A2B] to-[#EF4444] text-white px-4 mr-2 py-3 rounded-full text-[14px] font-semibold flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-95 whitespace-nowrap w-full sm:w-auto !outline-none focus:!ring-0 !shadow-none;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .search-ai-btn:focus, .search-ai-btn:active, .search-ai-btn:focus-visible {
+    @apply !outline-none !ring-0 !ring-offset-0 !shadow-none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .search-ai-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.2px;
+    background: linear-gradient(90deg, #234095 0%, rgba(158, 17, 97, 0.3) 50%, #FF5900 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
   }
 
   .filter-pill {
@@ -627,7 +682,7 @@
   }
 
   .quick-action-card {
-    @apply flex items-center gap-5 rounded-[12px] p-5 transition-all cursor-pointer;
+    @apply flex items-center gap-3 rounded-[12px] p-5 transition-all cursor-pointer;
     background: #04132B;
     border: 1px solid #082656;
     backdrop-filter: blur(38.5px);
@@ -928,15 +983,15 @@
 
   /* Dashboard Specific Banner Layout */
   .dashboard-filter-row {
-    @apply flex flex-wrap items-center justify-between w-full max-w-[840px] mb-4 sm:mb-5 gap-3 sm:gap-4 px-1;
+    @apply relative z-50 flex flex-wrap items-center justify-center sm:justify-between w-full max-w-[840px] mb-6 sm:mb-4 gap-3 sm:gap-4 px-4 sm:px-1;
   }
   
   .dashboard-filter-group {
-    @apply flex items-center gap-2 sm:gap-4;
+    @apply flex items-center gap-2 sm:gap-4 justify-center sm:justify-start;
   }
   
   .dashboard-filter-btn {
-    @apply filter-pill whitespace-nowrap text-[13px] sm:text-[14px] px-3 sm:px-5 py-2 sm:py-2.5;
+    @apply filter-pill whitespace-nowrap text-[12px] sm:text-[14px] px-3 sm:px-5 py-2 sm:py-2.5 flex items-center gap-2 hover:bg-white/5 transition-all text-white border-white/10;
   }
 
   /* Tour Modal Layout & Components */
@@ -950,28 +1005,28 @@
     @apply absolute inset-0 bg-black/40 backdrop-blur-[6px];
   }
   .tour-modal-card {
-    @apply w-full max-w-[480px] bg-[#0A1629] rounded-[16px] p-8 border border-white/5 relative shadow-2xl tour-modal-card-shadow;
+    @apply w-full max-w-[480px] h-[300px] bg-[#04132B] rounded-[16px] p-8 border border-white/5 relative shadow-2xl tour-modal-card-shadow flex flex-col;
   }
   .tour-modal-close-btn {
-    @apply absolute top-6 right-6 text-white/50 hover:text-white transition-colors;
+    @apply absolute top-8 right-8 text-white hover:text-white transition-colors;
   }
   .tour-modal-title {
-    @apply text-[20px] font-semibold text-white mb-3 pr-8;
+    @apply text-[18px] font-bold text-white mb-2 pr-8;
   }
   .tour-modal-desc {
-    @apply text-[13px] leading-relaxed text-[#A1A1AA] mb-8;
+    @apply text-[12px] leading-relaxed text-[#FFFFFFB0] mb-6;
   }
   .tour-progress-container {
-    @apply flex items-center gap-2 mb-4 w-full;
+    @apply flex items-center gap-2 mb-4 w-full mt-auto;
   }
   .tour-progress-track {
     @apply h-1 flex-1 rounded-full relative overflow-hidden bg-white/10;
   }
   .tour-step-text {
-    @apply text-[14px] text-white mb-8 font-medium;
+    @apply text-[12px] text-white/40 mb-6 font-medium uppercase tracking-wider;
   }
   .tour-action-row {
-    @apply flex items-center justify-between mt-2;
+    @apply flex items-center justify-between w-full;
   }
   .tour-skip-btn {
     @apply text-[14px] text-white/60 hover:text-white transition-colors font-medium;
@@ -1000,15 +1055,14 @@
     @apply text-white/50 hover:text-white transition-colors;
   }
   .filter-drawer-body {
-    @apply flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-8;
+    @apply flex-1 overflow-y-auto custom-scrollbar px-8 py-6 flex flex-col gap-8;
   }
   .filter-drawer-footer {
     @apply flex items-center justify-end gap-3 px-8 py-5 border-t border-white/5;
   }
 
-  .filter-section {}
   .filter-section-label {
-    @apply block text-[15px] font-semibold text-white mb-4;
+    @apply block text-[14px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFFB2] mb-2.5 cursor-default;
   }
   .filter-input-row {
     @apply flex items-center gap-4;
@@ -1091,7 +1145,8 @@
   }
   
   .sidebar-badge {
-    @apply bg-[#EF4444] text-white text-[10px] px-1.5 py-0.5 rounded-full font-semibold;
+    background: linear-gradient(81.39deg, #36438A -103.26%, rgba(244, 128, 255, 0.2) -60.9%, #CD5150 66.97%);
+    @apply text-white text-[12px] px-2 py-0.5 rounded-full font-semibold;
   }
 
   /* Submenu Styles */
@@ -1111,7 +1166,7 @@
 
   /* Usage Insights & Stats */
   .insight-card {
-    @apply brand-card-bg rounded-[12px] p-8 flex flex-col justify-between h-[220px] relative overflow-hidden;
+    @apply bg-[#04132B] rounded-[12px] p-5 flex flex-col justify-between h-[190px] relative overflow-hidden;
   }
   
   .insight-icon-circle {
@@ -1123,7 +1178,7 @@
   }
   
   .bg-brand-gradient {
-    background: linear-gradient(91.61deg, #D05942 -14.44%, #D4375F 118.02%);
+    background: linear-gradient(91.61deg, #D05942 -14.44%, #d73d64 118.02%);
     border: none;
   }
 
@@ -1198,7 +1253,7 @@
   }
 
   .upgrade-plan-btn {
-    @apply bg-brand-gradient text-white px-4 py-3 rounded-full text-xs font-bold tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#D05942]/20;
+    @apply bg-brand-gradient text-white px-4 py-3 rounded-full text-xs font-bold tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-2  shadow-[#D05942]/20;
   }
 
   /* Stats Section */
@@ -1211,16 +1266,21 @@
   }
   
   .explorer-stats-value {
-    @apply text-[32px] font-semibold text-[#109EF0] tracking-tight mb-1;
+    @apply text-[24px]  text-[#6291DE] tracking-tight mb-1;
   }
   
   .explorer-stats-label {
-    @apply text-white/40 text-[13px] font-medium tracking-wider uppercase;
+    @apply text-white text-[16px] font-medium tracking-wider uppercase;
+  }
+
+  /* Standard Dashboard Card */
+  .dashboard-card {
+    @apply bg-[#0E192B] border border-[#082656] rounded-[12px] p-6 sm:p-4 h-full;
   }
 
   /* Account Settings */
   .account-settings-card {
-    @apply bg-[#0E192B] border border-[#082656] rounded-[12px] p-6 sm:p-8 h-full;
+    @apply dashboard-card;
   }
   
   .account-setting-btn {
@@ -1228,30 +1288,30 @@
   }
   
   .account-setting-label {
-    @apply text-sm sm:text-[15px] font-medium text-white group-hover:opacity-80 transition-opacity;
+    @apply text-sm sm:text-[16px] text-white group-hover:opacity-80 transition-opacity;
   }
 
   /* Subscription Snapshot */
   .snapshot-card {
-    @apply rounded-[12px] p-6 sm:p-8 h-full;
-    background: linear-gradient(132.09deg, #155DFC -3.93%, #FF5900 102.16%);
+    @apply rounded-[12px] p-6 sm:p-6 h-full;
+    background: linear-gradient(132.09deg, #346fed -3.93%, #FF5900 102.16%);
     border: none;
   }
   
   .snapshot-plan-label {
-    @apply text-[11px] font-semibold text-white/60 tracking-widest mb-1;
+    @apply text-[14px]  text-[#DBEAFE] tracking-widest ;
   }
   
   .snapshot-plan-name {
-    @apply text-[22px] font-semibold text-white;
+    @apply text-[22px]  text-white;
   }
   
   .snapshot-price {
-    @apply text-[24px] font-semibold text-white mt-1;
+    @apply text-[24px]  text-white;
   }
   
   .snapshot-status-badge {
-    @apply bg-[#FFFFFF1A] text-white text-[13px] px-3 py-1 rounded-full font-semibold backdrop-blur-md flex items-center gap-1.5 border border-white/10 text-white;
+    @apply bg-[#FFFFFF1A] text-white text-[16px] px-3 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5 border border-white/20 text-white;
   }
   
   .snapshot-grid {
@@ -1264,32 +1324,40 @@
 
   /* Section Headers */
   .dashboard-section-title {
-    @apply text-[16px] font-semibold text-white tracking-widest mb-1;
+    @apply text-[20px] text-[#FFFFFF] tracking-widest mb-1;
+  }
+  
+  .dashboard-card-title {
+    @apply text-[15px] sm:text-[20px] text-white tracking-widest;
+  }
+  
+  .dashboard-card-header {
+    @apply mb-4 sm:mb-4 flex justify-between items-center;
   }
   
   .dashboard-section-subtitle {
-    @apply text-[12px] text-[#7A9ABF] font-medium;
+    @apply text-[14px] text-[#9F9F9F];
   }
 
   /* Recent Searches */
   .recent-searches-card {
-    @apply bg-[#0E192B] border border-[#082656] rounded-[12px] p-6 sm:p-8 h-full;
+    @apply dashboard-card;
   }
   
   .search-result-item {
-    @apply flex items-center justify-between cursor-pointer py-1;
+    @apply flex items-center justify-between cursor-pointer py-2 border-b border-white/5 last:border-0;
   }
   
   .product-img-wrapper {
-    @apply w-12 h-12 bg-[#1E293B] rounded-xl flex items-center justify-center p-2 overflow-hidden shadow-inner border border-white/5;
+    @apply w-10 h-10 sm:w-12 sm:h-12 bg-[#1E293B] rounded-xl flex items-center justify-center p-1.5 sm:p-2 overflow-hidden shadow-inner border border-white/5;
   }
   
   .product-title-text {
-    @apply text-sm font-semibold text-white truncate max-w-[200px] lg:max-w-[400px];
+    @apply text-[13px] sm:text-sm font-semibold text-white truncate;
   }
   
   .category-tag {
-    @apply bg-[#1E293B] text-[#94A3B8] text-[9px] px-2 py-0.5 rounded-md font-semibold uppercase;
+    @apply bg-[#1E293B] text-[#94A3B8] text-[8px] sm:text-[9px] px-2 py-0.5 rounded-md font-semibold uppercase;
   }
   
   .price-text {
@@ -1306,15 +1374,15 @@
   }
   
   .header-greeting {
-    @apply text-[16px] font-semibold text-white tracking-tight mt-2 ml-4;
+    @apply text-[14px]  text-white tracking-tight mt-2 ml-4;
   }
   
   .header-subtitle {
-    @apply text-[12px] text-[#94A3B8] ml-4;
+    @apply text-[14px] text-[#9F9F9F] ml-4;
   }
   
   .theme-toggle-wrapper {
-    @apply hidden sm:flex items-center bg-[#0F172A] p-1 rounded-full border border-[#334155];
+    @apply hidden sm:flex items-center bg-[#162C50] px-2 py-0.5 gap-[5.76px] rounded-full border border-[#334155];
   }
   
   .profile-section {
@@ -1362,11 +1430,11 @@
 }
 
 .tool-fusion-title {
-  @apply text-2xl sm:text-3xl md:text-[32px] font-semibold text-white mb-3 tracking-tight;
+  @apply dashboard-card-title;
 }
 
 .tool-fusion-subtitle {
-  @apply text-[14px] sm:text-[15px] text-slate-400 max-w-[600px] leading-relaxed;
+  @apply auth-subtitle !text-[14px] !text-[#9F9F9F]
 }
 
 .tool-section {
@@ -1382,7 +1450,7 @@
 }
 
 .tool-section-count {
-  @apply text-[12px] text-slate-500;
+  @apply text-[14px] text-[#9F9F9F];
 }
 
 .tool-list {
@@ -1426,7 +1494,7 @@
 }
 
 .tool-description {
-  @apply text-[12px] sm:text-[13px] text-slate-400 leading-relaxed max-w-full sm:max-w-[480px] opacity-80;
+  @apply text-[12px] sm:text-[13px] text-[#9F9F9F] leading-relaxed max-w-full sm:max-w-[480px] opacity-80;
 }
 
 .tool-action-btn {
@@ -1932,7 +2000,7 @@
 .verified-badge-premium {
   position: relative;
   border-radius: 9999px;
-  @apply flex items-center gap-1 px-2.5 py-0.5 font-bold text-[10px] text-[#2B7FFF];
+  @apply flex items-center gap-1 px-2.5 py-0.5 font-bold text-[10px] text-[#6291DE];
 }
 
 .verified-badge-premium::before {
@@ -2017,7 +2085,107 @@
   z-index: -1;
 }
 
+.gradient-border {
+  position: relative;
+  border-radius: 50%;
+  background: linear-gradient(
+    108.69deg,
+    #1C8134 3.34%,
+    rgba(31, 124, 53, 0.05) 45.18%,
+    #1C8134 102.22%
+  );
+  z-index: 0;
+}
 
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px; /* border thickness */
+  border-radius: 50%;
+  background: linear-gradient(
+    92.44deg,
+    #1C8134 3.68%,
+    #FFFFFF 43.28%,
+    #1C8134 97.28%
+  );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  z-index: -1;
+}
+
+.gradient-border-yellow {
+  position: relative;
+  border-radius: 50%;
+  background: linear-gradient(
+    108.69deg,
+    #C6A418 3.34%,
+    rgba(198, 164, 24, 0.05) 45.18%,
+    #C6A418 102.22%
+  );
+  z-index: 0;
+}
+
+.gradient-border-yellow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 50%;
+  background: linear-gradient(
+    92.44deg,
+    #C6A418 3.68%,
+    #FFFFFF 43.28%,
+    #C6A418 97.28%
+  );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  z-index: -1;
+}
+
+.gradient-border-red {
+  position: relative;
+  border-radius: 50%;
+  background: linear-gradient(
+    108.69deg,
+    #B84B5D 3.34%,
+    rgba(184, 75, 93, 0.05) 45.18%,
+    #B84B5D 102.22%
+  );
+  z-index: 0;
+}
+
+.gradient-border-red::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 50%;
+  background: linear-gradient(
+    92.44deg,
+    #cb5a6d 3.68%,
+    #FFFFFF 43.28%,
+    #cb5a6d 97.28%
+  );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  z-index: -1;
+}
 .tooltip-pro-border {
   position: absolute;
   inset: 0;
@@ -2026,7 +2194,7 @@
   background: linear-gradient(
     92.44deg,
     #155DFC 3.68%,
-    #CD5150 43.28%,
+    #cb5a6d 43.28%,
     #FF5900 97.28%
   );
   -webkit-mask:

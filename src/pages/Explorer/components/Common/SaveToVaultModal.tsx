@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { X, FolderOpen, Plus } from "lucide-react";
 import AlertToast from "../../../../components/common/Toast/AlertToast";
+import InputField from "../../../../components/common/input/InputField";
 
 interface SaveToVaultModalProps {
   productTitle: string;
@@ -47,7 +48,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
             <X size={20} />
           </button>
         </div>
-        <p className="text-slate-300 text-[12px] mb-4 line-clamp-1 ">{productTitle}</p>
+        <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">{productTitle}</p>
         <div className="h-px bg-white/5 mb-4" />
 
         {/* Content Section */}
@@ -74,7 +75,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
                     <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight ${selectedId === col.id ? "text-white" : "text-slate-200"}`}>
                       {col.name}
                     </h4>
-                    <p className="text-[12px] text-slate-500 font-medium">{col.count} items</p>
+                    <p className="text-[12px] text-[#FFFFFFB0] font-medium">{col.count} items</p>
                   </div>
                 </div>
               ))}
@@ -102,15 +103,14 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
                 <span className="text-[14px] font-bold text-white">Add New Collection</span>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">Collection Name</label>
-                <input
-                  autoFocus
+              <div className="mt-2">
+                <InputField
+                  id="collectionName"
+                  label="Collection Name"
                   type="text"
                   value={collectionName}
                   onChange={(e) => setCollectionName(e.target.value)}
                   placeholder="e.g., Summer Products 2025"
-                  className="w-full bg-[#04132B] border border-brand-inputBorder rounded-[10px] p-3.5 text-white text-[13px] placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 transition-all font-medium"
                 />
               </div>
             </div>
@@ -136,7 +136,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
                   title: "Collection Created!",
                   message: `New collection "${collectionName}" created successfully.`,
                 });
-                setTimeout(() => setIsAddingCollection(false) , 2000); // Collapse after toast starts
+                setTimeout(() => setIsAddingCollection(false), 2000); // Collapse after toast starts
               } else {
                 // Logic for Save to Collection
                 const selectedCol = collections.find(c => c.id === selectedId)?.name || "selected";
@@ -150,7 +150,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
             }}
             className={`flex-1 py-2.5 px-6 rounded-full text-[13px] font-bold text-white transition-all shadow-xl active:scale-[0.98] 
               ${isAddingCollection
-                ? "bg-gradient-to-r from-[#E93E3E] to-[#E93E9E] shadow-red-900/20"
+                ? "bg-brand-gradient shadow-red-900/20"
                 : "bg-brand-gradient shadow-orange-500/20"}`}
           >
             {isAddingCollection ? "Create & Save" : "Save to Collection"}
@@ -159,11 +159,11 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
       </div>
 
       {toast && (
-        <AlertToast 
-          type={toast.type} 
-          title={toast.title} 
-          message={toast.message} 
-          onClose={() => setToast(null)} 
+        <AlertToast
+          type={toast.type}
+          title={toast.title}
+          message={toast.message}
+          onClose={() => setToast(null)}
         />
       )}
     </div>
