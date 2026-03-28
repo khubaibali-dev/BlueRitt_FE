@@ -101,7 +101,9 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mt-2 mb-1 pr-2">
-                    <h4 className="text-[17px] font-bold text-white pr-4">{product.title}</h4>
+                    <h4 className="product-card-title pr-4 !text-[17px]">
+                      {product.title}
+                    </h4>
                     <div className="product-img-badge !static shrink-0">
                       {product.category}
                     </div>
@@ -124,12 +126,12 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     { icon: MessageCircle, label: "Comments", value: "3.2K" }
                   ].map((item, i) => (
                     <div key={i} className="engagement-icon-box !p-3 !rounded-[20px]">
-                      <div className="quick-action-icon-circle !w-9 !h-9 text-blue-400">
+                      <div className="standard-icon-circle !w-9 !h-9 text-blue-400">
                         <item.icon size={14} className="text-white" />
                       </div>
                       <div className="text-center">
-                        <span className="block text-[8px] text-slate-500 uppercase font-extrabold tracking-widest mb-0.5">{item.label}</span>
-                        <span className="block text-[12px] text-white font-black">{item.value}</span>
+                        <span className="product-metric-label block mb-0.5">{item.label}</span>
+                        <span className="product-metric-value block !text-[12px]">{item.value}</span>
                       </div>
                     </div>
                   ))}
@@ -147,8 +149,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     { label: "Impressions", value: product.metrics.impressions }
                   ].map((metric, i) => (
                     <div key={i} className="bg-[#04132B] border border-[#082656] rounded-[10px] p-3.5 flex flex-col justify-center">
-                      <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest mb-1 leading-none mb-2">{metric.label}</span>
-                      <span className="text-[13px] text-white font-black leading-none">{metric.value}</span>
+                      <span className="product-metric-label block mb-2">{metric.label}</span>
+                      <span className="product-metric-value block !text-[13px]">{metric.value}</span>
                     </div>
                   ))}
                 </div>
@@ -199,7 +201,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                             }}
                           />
                         </div>
-                        <span className="text-[12px] font-bold text-blue-500 w-10 text-right">{item.percentage}%</span>
+                        <span className="text-[12px] font-bold text-[#6291DE] w-10 text-right">{item.percentage}%</span>
                       </div>
                     ))}
                   </div>
@@ -211,26 +213,26 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
               {/* Analysis Header */}
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="text-[15px] text-white mb-1">{product.title}</h4>
-                  <span className="text-[20px] font-black text-white">{product.price}</span>
+                  <h4 className="product-card-title !mb-1">{product.title}</h4>
+                  <span className="product-price-primary !text-[20px]">{product.price}</span>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-2">
-                    <div className="!w-8 !h-8 quick-action-icon-circle flex items-center justify-center ">
+                    <div className="standard-icon-circle !w-8 !h-8 flex items-center justify-center ">
                       <Layout size={14} className="text-white" />
                     </div>
                     <div>
-                      <span className="block text-[9px] text-slate-500 uppercase font-black">Sales</span>
-                      <span className="block text-[12px] text-white font-bold">1,323</span>
+                      <span className="product-metric-label block">Sales</span>
+                      <span className="product-metric-value block !text-[12px]">1,323</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="!w-8 !h-8 quick-action-icon-circle flex items-center justify-center ">
+                    <div className="standard-icon-circle !w-8 !h-8 flex items-center justify-center ">
                       <Heart size={14} className="text-white" />
                     </div>
                     <div>
-                      <span className="block text-[9px] text-slate-500 uppercase font-black">Ratings</span>
-                      <span className="block text-[12px] text-white font-bold">4.3</span>
+                      <span className="product-metric-label block">Ratings</span>
+                      <span className="product-metric-value block !text-[12px]">4.3</span>
                     </div>
                   </div>
                 </div>
@@ -240,8 +242,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
               {/* Comparison Section */}
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-[15px]  text-white tracking-tight mt-4">TikTok Shop Analysis - {product.category}</h5>
-                  <p className="text-[12px] text-slate-500">Found <span className="text-orange-400">10 products</span> with pricing and sales data</p>
+                  <h5 className="text-[15px] font-semibold text-white tracking-tight mt-4">TikTok Shop Analysis - {product.category}</h5>
+                  <p className="text-[12px] text-[#9F9F9F]">Found <span className="text-orange-400 font-bold">10 products</span> with pricing and sales data</p>
                 </div>
 
                 <div className="space-y-10">
@@ -253,10 +255,12 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-4 mb-2">
-                          <h6 className="text-[13px] font-bold text-white leading-tight truncate">{product.title}</h6>
-                          <span className="bg-slate-800/80 text-[9px] text-slate-400 px-2 py-0.5 rounded-full shrink-0">By TikTok Shop</span>
+                          <h6 className="product-card-title !leading-tight truncate">{product.title}</h6>
+                          <div className="trending-badge-standard !px-2 !py-0.5">
+                             BY TIKTOK SHOP
+                          </div>
                         </div>
-                        <span className="text-[16px] font-black text-white">$13.07 <span className="text-[10px] text-slate-500 font-normal ml-1">USD</span></span>
+                        <span className="product-price-primary !text-[16px]">${product.price.replace('$','')} <span className="text-[10px] text-[#9F9F9F] font-normal ml-1 uppercase tracking-widest">USD</span></span>
                       </div>
                     </div>
                     <div className="border border-white/10" />
@@ -268,8 +272,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                         { label: "Impressions", value: "479.6K" }
                       ].map((m, idx) => (
                         <div key={idx} className="bg-[#04132B] border border-[#082656] rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
-                          <span className="text-[8px] text-slate-500 uppercase font-black mb-1.5">{m.label}</span>
-                          <span className="text-[12px] text-white font-bold">{m.value}</span>
+                          <span className="product-metric-label block mb-1.5">{m.label}</span>
+                          <span className="product-metric-value block !text-[12px]">{m.value}</span>
                         </div>
                       ))}
                     </div>
@@ -283,10 +287,12 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-4 mb-2">
-                          <h6 className="text-[13px] font-bold text-white leading-tight truncate">{product.title}</h6>
-                          <span className="bg-slate-800/80 text-[9px] text-slate-400 px-2 py-0.5 rounded-full shrink-0">By TikTok Shop</span>
+                          <h6 className="product-card-title !leading-tight truncate">{product.title}</h6>
+                          <div className="trending-badge-standard !px-2 !py-0.5">
+                             BY TIKTOK SHOP
+                          </div>
                         </div>
-                        <span className="text-[16px] font-black text-white">$13.07 <span className="text-[10px] text-slate-500 font-normal ml-1">USD</span></span>
+                        <span className="product-price-primary !text-[16px]">${product.price.replace('$','')} <span className="text-[10px] text-[#9F9F9F] font-normal ml-1 uppercase tracking-widest">USD</span></span>
                       </div>
                     </div>
                     <div className="grid grid-cols-4 gap-3">
@@ -298,8 +304,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                         { label: "Shipping", value: "Free" }
                       ].map((m, idx) => (
                         <div key={idx} className="bg-[#04132B] border border-[#082656] rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
-                          <span className="text-[8px] text-slate-500 uppercase font-black mb-1.5">{m.label}</span>
-                          <span className="text-[12px] text-white font-bold">{m.value}</span>
+                          <span className="product-metric-label block mb-1.5">{m.label}</span>
+                          <span className="product-metric-value block !text-[12px]">{m.value}</span>
                         </div>
                       ))}
                     </div>
@@ -311,9 +317,9 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
 
           {/* Footer Action - Now part of flow, not sticky */}
           <div className="flex justify-end mt-10 pb-2">
-            <button 
+            <button
               onClick={handleDiscoverSupplier}
-              className="w-full sm:w-auto upgrade-gradient-btn !rounded-full !px-10 !h-[40px] mt-4 flex items-center justify-center"
+              className="btn-discover-supplier !w-full sm:!w-auto !px-10 !h-[40px]"
             >
               Discover Suppliers
             </button>

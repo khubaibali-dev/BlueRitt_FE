@@ -1,32 +1,23 @@
-// src/components/common/select/CountrySelect.tsx
 import React, { useState, useRef, useEffect } from "react";
+import { countries, Country } from "../../../utils/countries";
 
-export interface Country {
-  name: string;
-  code: string;
-  flag: string;
-  dialCode: string;
-}
-
-export const countries: Country[] = [
-  { name: "Pakistan", code: "PK", flag: "🇵🇰", dialCode: "+92" },
-  { name: "United Kingdom", code: "GB", flag: "🇬🇧", dialCode: "+44" },
-  { name: "United States", code: "US", flag: "🇺🇸", dialCode: "+1" },
-  { name: "United Arab Emirates", code: "AE", flag: "🇦🇪", dialCode: "+971" },
-  { name: "Saudi Arabia", code: "SA", flag: "🇸🇦", dialCode: "+966" },
-  { name: "Canada", code: "CA", flag: "🇨🇦", dialCode: "+1" },
-  { name: "Australia", code: "AU", flag: "🇦🇺", dialCode: "+61" },
-  // Add more as needed
-];
+export { countries, type Country };
 
 interface CountrySelectProps {
   label?: string;
   value: string;
   onChange: (country: Country) => void;
   error?: string;
+  direction?: "up" | "down";
 }
 
-const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, error }) => {
+const CountrySelect: React.FC<CountrySelectProps> = ({ 
+  label, 
+  value, 
+  onChange, 
+  error,
+  direction = "down"
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -82,7 +73,12 @@ const CountrySelect: React.FC<CountrySelectProps> = ({ label, value, onChange, e
         </button>
 
         {isOpen && (
-          <div className="absolute z-[100] w-full mt-2 bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar">
+          <div 
+            className={`
+              absolute z-[100] w-full bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar
+              ${direction === "up" ? "bottom-full mb-2" : "mt-2"}
+            `}
+          >
             {countries.map((country) => (
               <button
                 key={country.code}

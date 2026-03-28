@@ -24,23 +24,25 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
       {/* Detail Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
         <div className="flex flex-col gap-1 w-full md:w-auto">
-          <button
+          {/* <button
             onClick={onBack}
             className="flex items-center gap-2 text-white hover:text-blue-300 text-[14px] font-bold mb-3 transition-colors w-fit group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Vault
-          </button>
+          </button> */}
           <h1 className="banner-heading-text !ml-[-15px] !mb-0">
-            Product Vault with <span className="text-blue-400 break-words">{product.title.split(' ').slice(0, 3).join(' ')}...</span>
+            Product Vault with <span className="">{product.title.split(' ').slice(0, 3).join(' ')}...</span>
           </h1>
           <p className="auth-subtitle">Manage and analyze your saved products</p>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none px-8 py-2 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-blue-500/10 transition-all shadow-lg active:scale-95">
+          <button
+            onClick={onBack}
+            className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em]">
             Move
           </button>
-          <button className="flex-1 sm:flex-none px-8 py-2 rounded-full bg-gradient-to-r from-[#D05942] to-[#D4375F] text-white text-[13px] font-bold hover:brightness-110 transition-all shadow-lg shadow-orange-500/20 active:scale-95">
+          <button className="flex-1 sm:flex-none px-8 py-2.5 rounded-full bg-brand-gradient text-white text-[13px] font-bold hover:brightness-110 transition-all shadow-lg shadow-orange-500/20 active:scale-95 uppercase tracking-[0.1em]">
             Remove
           </button>
         </div>
@@ -71,8 +73,8 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
                   <span className="text-[12px] text-slate-500 line-through tracking-wide">${product.oldPrice}</span>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">ASIN</span>
-                  <span className="text-[12px] sm:text-[13px] text-white font-bold bg-white/5 px-2 py-0.5 rounded border border-white/5">{product.asin}</span>
+                  <span className="product-metric-label">ASIN</span>
+                  <span className="product-metric-value !text-[12px] bg-white/5 px-2 py-0.5 rounded border border-white/5">{product.asin}</span>
                 </div>
               </div>
             </div>
@@ -102,7 +104,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
                   <span className="text-[12px] text-slate-500 line-through tracking-wide">${product.oldPrice}</span>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-slate-300 text-[10px] font-bold tracking-widest uppercase">
+                  <div className="product-metric-label">
                     CHINA
                   </div>
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] sm:text-[11px] font-bold">
@@ -125,7 +127,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
                 <Activity size={24} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] text-slate-400 font-medium tracking-wide">Gross Profit</span>
+                <span className="product-metric-label !text-slate-400 !text-[12px]">Gross Profit</span>
                 <span className="text-3xl sm:text-2xl font-bold text-white tracking-tight">$0.00</span>
               </div>
             </div>
@@ -149,7 +151,7 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
                 <TrendingUp size={24} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] text-slate-400 font-medium tracking-wide">Net Profit</span>
+                <span className="product-metric-label !text-slate-400 !text-[12px]">Net Profit</span>
                 <span className="text-3xl sm:text-2xl font-bold text-white tracking-tight">$0.00</span>
               </div>
             </div>
@@ -177,25 +179,25 @@ const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) =>
             <table className="min-w-full table-auto text-left">
               <thead>
                 <tr className="border-b border-white/5">
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 tracking-[0.12em] whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 tracking-[0.16em] uppercase whitespace-nowrap">
                     SR NO.
                   </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em] whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
                     PRODUCT SOURCING COST
                   </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em] whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
                     PRODUCT REVENUE
                   </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em] whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
                     GROSS PROFIT
                   </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em] whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
                     NET PROFIT
                   </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em] whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
                     MODIFIED AT
                   </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-[0.12em] text-right whitespace-nowrap">
+                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] text-right whitespace-nowrap">
                     ACTION
                   </th>
                 </tr>

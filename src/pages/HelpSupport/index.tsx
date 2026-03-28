@@ -41,8 +41,8 @@ const HelpSupportPage: React.FC = () => {
     <div className="help-page-container">
       {/* Header Section */}
       <div className="help-header-section">
-        <h1 className="help-title">Need Assistance? Reach Out Here</h1>
-        <p className="help-subtitle">
+        <h1 className="text-[20px] md:text-[32px]  text-white tracking-tight">Need Assistance? Reach Out Here</h1>
+        <p className="text-[14px] md:text-[16px] text-[#FFFFFF99] mt-1">
           Fill out the form below, and our support team will get back to you within 24 hours. For faster resolution,
           include details like error messages, account ID, or steps to reproduce the issue.
         </p>

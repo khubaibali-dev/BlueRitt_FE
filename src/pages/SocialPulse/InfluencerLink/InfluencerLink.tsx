@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Search, Info } from "lucide-react";
+import { Search, Info, Crown } from "lucide-react";
 import InfluencerHeader from "./components/InfluencerHeader";
 import InfluencerCard from "./components/InfluencerCard";
+import InfluencerDetailsDrawer from "./components/InfluencerDetailsDrawer";
 
 import influencerBanner from "../../../assets/images/tiktoktrends.png";
 
@@ -40,10 +41,17 @@ const mockInfluencerData = [
 
 const InfluencerLink: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedInfluencer, setSelectedInfluencer] = useState<any>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Searching for influencer:", searchQuery);
+  };
+
+  const openDrawer = (influencer: any) => {
+    setSelectedInfluencer(influencer);
+    setIsDrawerOpen(true);
   };
 
   return (
@@ -95,9 +103,9 @@ const InfluencerLink: React.FC = () => {
 
             {/* Upgrade Hint Text */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-1 w-full max-w-3xl mb-12">
-              <div className="flex items-center gap-2 text-slate-400">
+              <div className="flex items-center gap-2 text-[14px] text-[#FFFFFF99]">
                 <Info size={24} className="text-white" />
-                <span className="text-[14px] font-medium leading-none">
+                <span className="text-[14px] leading-none">
                   You can view up to <span className="font-black text-[#FF5900]">50</span> influencers • All Posted Products
                 </span>
                 <span className="w-1 h-1 rounded-full bg-slate-700 hidden sm:block" />
@@ -117,7 +125,11 @@ const InfluencerLink: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {mockInfluencerData.map((influencer, i) => (
-                  <InfluencerCard key={`top-${i}`} {...influencer} />
+                  <InfluencerCard 
+                    key={`top-${i}`} 
+                    {...influencer} 
+                    onViewDetails={() => openDrawer(influencer)}
+                  />
                 ))}
               </div>
             </div>
@@ -138,7 +150,11 @@ const InfluencerLink: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
             {/* Repeating mock for visual density */}
             {[...mockInfluencerData, ...mockInfluencerData].map((influencer, i) => (
-              <InfluencerCard key={`all-${i}`} {...influencer} />
+              <InfluencerCard 
+                key={`all-${i}`} 
+                {...influencer} 
+                onViewDetails={() => openDrawer(influencer)}
+              />
             ))}
           </div>
         </div>
@@ -153,11 +169,14 @@ const InfluencerLink: React.FC = () => {
         </div>
 
       </div>
+
+      <InfluencerDetailsDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        influencer={selectedInfluencer}
+      />
     </div>
   );
 };
-
-// Re-importing Crown locally for pagination if needed
-import { Crown } from "lucide-react";
 
 export default InfluencerLink;

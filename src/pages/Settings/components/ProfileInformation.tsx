@@ -70,6 +70,7 @@ const ProfileInformation: React.FC = () => {
             label="Country"
             value={profileData.country}
             onChange={(country) => handleChange("country", country.name)}
+            direction="down"
           />
 
           <InputField

@@ -630,8 +630,8 @@
 
   .calculator-search-box {
     @apply relative w-full max-w-3xl rounded-[20px] p-5 shadow-2xl mb-4 transition-all;
-    background: #53535333;
-    backdrop-filter: blur(4px);
+background: #53535333;
+    backdrop-filter: blur(8px);
   }
 
   .calculator-search-box::before {
@@ -1105,10 +1105,8 @@
 
   /* Sidebar Styles */
   .sidebar-wrapper {
-    @apply h-screen bg-[#04132B] border-r border-[#1E293B] flex-col py-6 shrink-0 overflow-y-auto custom-scrollbar fixed lg:relative lg:flex z-40 transform transition-all duration-300;
+    @apply h-screen bg-[#04132B] border-r border-[#1E293B] flex-col py-6 shrink-0 custom-scrollbar fixed lg:relative lg:flex z-40 transform transition-all duration-300;
     width: 240px;
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
   
   .sidebar-collapsed {
@@ -1416,13 +1414,25 @@
   animation-delay: 700ms;
 }
 
+.btn-secondary-standard {
+  @apply flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 h-[48px] bg-[#04132B] border border-[#082656] rounded-[14px] text-white text-[13px] font-bold hover:bg-white/5 transition-all whitespace-nowrap active:scale-95;
+}
+
+.trends-empty-title {
+  @apply text-[20px] sm:text-[24px] text-white font-semibold tracking-tight;
+}
+
+.trends-empty-desc {
+  @apply text-[14px] sm:text-[16px] text-[#FFFFFF99] leading-relaxed;
+}
+
 
 .tool-fusion-container {
-  @apply bg-brand-card-alt rounded-[24px] sm:rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen flex flex-col;
+  @apply bg-brand-card-alt rounded-[24px] sm:rounded-[32px] overflow-hidden relative shadow-2xl h-auto flex flex-col;
 }
 
 .tool-fusion-wrapper {
-  @apply p-5 sm:p-8 lg:p-12 mb-8 sm:mb-12;
+  @apply p-5 sm:p-8 lg:p-12;
 }
 
 .tool-fusion-header {
@@ -1438,11 +1448,11 @@
 }
 
 .tool-section {
-  @apply mb-12 sm:mb-16;
+  @apply mb-6 sm:mb-8;
 }
 
 .tool-section-header {
-  @apply flex items-center justify-between mb-6;
+  @apply flex items-center justify-between mb-3 sm:mb-4;
 }
 
 .tool-section-title {
@@ -1454,19 +1464,19 @@
 }
 
 .tool-list {
-  @apply brand-card-bg rounded-[20px] border border-[#082656] overflow-hidden divide-y divide-[#1E293B]/50;
+  @apply brand-card-bg rounded-[20px] border border-[#082656] overflow-hidden;
 }
 
 .tool-card {
-  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-6 lg:p-7 gap-6 sm:gap-4 transition-all;
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-2 lg:p-4 gap-6 sm:gap-4 transition-all;
 }
 
 .tool-card-content {
-  @apply flex items-start sm:items-center gap-4 sm:gap-6 w-full sm:w-auto;
+  @apply flex items-start sm:items-center gap-4 sm:gap-4 w-full sm:w-auto;
 }
 
 .tool-image-container {
-  @apply w-[54px] h-[40px] sm:w-[100px] sm:h-[54px] flex items-center justify-start shrink-0;
+  @apply w-[54px] h-[40px] sm:w-[100px] sm:h-[48px] flex items-center justify-start shrink-0;
 }
 
 .tool-image {
@@ -1490,7 +1500,7 @@
 }
 
 .tool-name {
-  @apply text-[15px] sm:text-[16px] font-semibold text-white mb-1 sm:mb-0.5 tracking-wide;
+  @apply text-[15px] sm:text-[16px] font-semibold text-white mb-1 mt-4 tracking-wide;
 }
 
 .tool-description {
@@ -1648,7 +1658,7 @@
 }
 
 .addon-balance-card {
-  @apply bg-[#04132B] rounded-[24px] p-8 border border-[#082656] flex flex-col items-center justify-center text-center gap-4 transition-all hover:border-[#3B82F6]/30 shadow-2xl;
+  @apply bg-[#04132B] rounded-[24px] p-4 border border-[#082656] flex flex-col items-center justify-center text-center gap-4 transition-all hover:border-[#3B82F6]/30 shadow-2xl;
 }
 
 .addon-balance-card-alt {
@@ -1657,15 +1667,15 @@
 }
 
 .addon-balance-label {
-  @apply text-[14px] font-medium text-slate-300;
+  @apply text-[16px] font-semibold text-white;
 }
 
 .addon-balance-value {
-  @apply text-[32px] font-bold text-white tracking-tight;
+  @apply text-[16px] font-bold text-white tracking-tight;
 }
 
 .addon-add-balance-text {
-  @apply text-[14px] text-slate-400 max-w-[240px];
+  @apply text-[14px] text-[#FFFFFF99] max-w-[240px];
 }
 
 .addon-add-balance-icon {
@@ -1693,15 +1703,15 @@
 }
 
 .addon-info-banner-title {
-  @apply text-[18px] font-bold text-white;
+  @apply text-[18px] font-semibold text-white;
 }
 
 .addon-info-banner-desc {
-  @apply text-[14px] text-slate-400 max-w-[800px];
+  @apply text-[14px] text-[#FFFFFF99] max-w-[820px];
 }
 
 .addon-section {
-  @apply bg-[#04132B]/50 border border-[#082656] rounded-[24px] p-6 mb-10 shadow-lg;
+  @apply bg-[#04132B] border border-[#082656] rounded-[24px] p-6 mb-10 shadow-lg;
 }
 
 .addon-section-header {
@@ -1726,7 +1736,7 @@
 }
 
 .addon-section-desc {
-  @apply text-[13px] text-slate-400;
+  @apply text-[14px] text-[#FFFFFF99] ;
 }
 
 .addon-cards-grid {
@@ -1734,7 +1744,7 @@
 }
 
 .addon-card {
-  @apply bg-[#081421] rounded-[24px] border border-transparent ring-1 ring-[#3B82F6]/30 p-8 flex flex-col items-center text-center transition-all relative hover:shadow-2xl hover:-translate-y-1;
+  @apply bg-[#041024] rounded-[24px] border border-transparent ring-1 ring-[#3B82F6]/30 p-8 flex flex-col items-center text-center transition-all relative hover:shadow-2xl hover:-translate-y-1;
 }
 
 .addon-card-popular {
@@ -1768,25 +1778,11 @@
 }
 
 .addon-purchase-btn {
-  @apply relative w-full py-2.5 px-6 rounded-full bg-[#020817] text-[11px] font-semibold text-white transition-all hover:bg-white/5 active:scale-95 tracking-[0.1em];
-}
-
-.addon-purchase-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: linear-gradient(to right, #155DFC, #840765, #FF5900);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
+  @apply figma-pill-border relative w-full py-2.5 px-2 rounded-full bg-[#020817] text-[12px] font-semibold text-white transition-all hover:bg-white/5 active:scale-95 tracking-[0.1em];
 }
 
 .addon-card-popular .addon-purchase-btn {
-  @apply bg-[#020817]/50;
+  @apply bg-[#041024];
 }
 
 /* Purchase Modal Styling */

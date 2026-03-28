@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Search,
@@ -28,6 +28,7 @@ interface NavItemProps {
   children?: { label: string; to: string; icon: React.ElementType }[];
   isExpanded?: boolean;
   onToggle?: () => void;
+  isAnyMenuExpanded?: boolean;
 }
 
 const NavItem: React.FC<NavItemProps> = ({
@@ -38,18 +39,22 @@ const NavItem: React.FC<NavItemProps> = ({
   isCollapsed,
   children,
   isExpanded,
-  onToggle
+  onToggle,
+  isAnyMenuExpanded
 }) => {
   const location = useLocation();
   const hasChildren = children && children.length > 0;
-  const isParentActive = location.pathname.startsWith(to) || (hasChildren && isExpanded);
+  // A parent is active if the current path matches child/parent path OR it is expanded
+  const isParentActive = hasChildren
+    ? children.some(child => location.pathname === child.to) || location.pathname === to || isExpanded
+    : location.pathname === to;
 
   if (hasChildren && !isCollapsed) {
     return (
       <div className="flex flex-col">
         <button
           onClick={onToggle}
-          className={`sidebar-item group !outline-none focus:!ring-0 ${isParentActive ? "sidebar-item-open" : ""}`}
+          className={`sidebar-item group !outline-none focus:!ring-0 ${isParentActive ? "sidebar-item-active" : ""}`}
         >
           <div className="flex items-center gap-3">
             <Icon size={20} />
@@ -67,6 +72,7 @@ const NavItem: React.FC<NavItemProps> = ({
               <NavLink
                 key={child.to}
                 to={child.to}
+                end
                 className={({ isActive }) =>
                   `sidebar-submenu-item group !outline-none focus:!ring-0 ${isActive ? "sidebar-submenu-active" : ""}`
                 }
@@ -84,9 +90,12 @@ const NavItem: React.FC<NavItemProps> = ({
   return (
     <NavLink
       to={to}
-      className={({ isActive }) =>
-        isActive ? "sidebar-item sidebar-item-active group !outline-none focus:!ring-0" : "sidebar-item group !outline-none focus:!ring-0"
-      }
+      end
+      className={({ isActive }) => {
+        // If some other menu is expanded, this item should NOT be highlighted
+        const effectiveActive = isActive && !isAnyMenuExpanded;
+        return effectiveActive ? "sidebar-item sidebar-item-active group !outline-none focus:!ring-0" : "sidebar-item group !outline-none focus:!ring-0"
+      }}
     >
       <div className="flex items-center gap-3">
         <Icon size={18} />
@@ -109,13 +118,29 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar }) => {
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(["SocialPulse"]); // Default open SocialPulse as per user request
+  const location = useLocation();
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+
+  // Auto-close menu when navigating to a route not within that menu
+  useEffect(() => {
+    const isChildRoute = ["/tiktok-trends", "/amazon-trends", "/influencer-link"].includes(location.pathname);
+
+    // If we're on a top-level route (like Dashboard, ToolFusion, etc.), close all submenus
+    if (!isChildRoute) {
+      setExpandedMenus([]);
+    } else {
+      // If we're on a child route, ensure its parent is open
+      setExpandedMenus(["SocialPulse"]);
+    }
+  }, [location.pathname]);
 
   const toggleMenu = (label: string) => {
     setExpandedMenus(prev =>
-      prev.includes(label) ? prev.filter(m => m !== label) : [...prev, label]
+      prev.includes(label) ? [] : [label] // Only allow one at a time
     );
   };
+
+  const isAnyMenuExpanded = expandedMenus.length > 0;
 
   return (
     <>
@@ -129,8 +154,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
       <aside
         className={`sidebar-wrapper ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} ${isCollapsed ? "sidebar-collapsed" : ""}`}
       >
-        {/* Logo and Close Button */}
-        <div className={`flex ${isCollapsed ? "justify-center" : "justify-between"} items-center px-2 mb-10`}>
+        {/* Fixed Logo and Close Button Header */}
+        <div className={`shrink-0 flex px-4 ${isCollapsed ? "justify-center" : "justify-between"} items-center mb-10`}>
           <BlueRittLogo isCollapsed={isCollapsed} />
           {!isCollapsed && (
             <button onClick={toggleSidebar} className="lg:hidden text-white pl-2">
@@ -139,36 +164,41 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
           )}
         </div>
 
-        {/* Main Nav */}
-        <nav className="flex-1 space-y-1">
-          <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} />
-          <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} />
-          <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} />
-          <NavItem icon={BarChart3} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} />
+        {/* Scrollable Navigation Area */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+          {/* Main Nav */}
+          <nav className="flex-1 space-y-1 px-3">
+            <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={BarChart3} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
 
-          <NavItem
-            icon={Radio}
-            label="SocialPulse"
-            to="/socialpulse"
-            isCollapsed={isCollapsed}
-            isExpanded={expandedMenus.includes("SocialPulse")}
-            onToggle={() => toggleMenu("SocialPulse")}
-            children={[
-              { label: "TikTok Trends", to: "/tiktok-trends", icon: Hash },
-              { label: "Amazon Trends", to: "/amazon-trends", icon: ShoppingBag },
-              { label: "Influencer Link", to: "/influencer-link", icon: Star },
-            ]}
-          />
+            <NavItem
+              icon={Radio}
+              label="SocialPulse"
+              to="/socialpulse"
+              isCollapsed={isCollapsed}
+              isExpanded={expandedMenus.includes("SocialPulse")}
+              onToggle={() => toggleMenu("SocialPulse")}
+              isAnyMenuExpanded={isAnyMenuExpanded}
+              children={[
+                { label: "TikTok Trends", to: "/tiktok-trends", icon: Hash },
+                { label: "Amazon Trends", to: "/amazon-trends", icon: ShoppingBag },
+                { label: "Influencer Link", to: "/influencer-link", icon: Star },
+              ]}
+            />
 
-          <NavItem icon={FolderOpen} label="Product Vault" to="/products" badge="24" isCollapsed={isCollapsed} />
-        </nav>
+            <NavItem icon={FolderOpen} label="Product Vault" to="/products" badge="24" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+          </nav>
 
-        {/* Bottom Nav */}
-        <div className="pt-6 mt-6 border-t border-[#1E293B] space-y-1">
-          <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} />
-          <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} />
-          <NavItem icon={HelpCircle} label="Help & Support" to="/help" isCollapsed={isCollapsed} />
-          <NavItem icon={LogOut} label="Log Out" to="/logout" isCollapsed={isCollapsed} />
+          {/* Bottom Nav */}
+          <div className="pt-6 space-y-1 px-3 mb-[-14px]">
+            <div className="mt-auto border-t border-[#1E293B] mb-4" />
+            <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={HelpCircle} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={LogOut} label="Log Out" to="/logout" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+          </div>
         </div>
       </aside>
     </>

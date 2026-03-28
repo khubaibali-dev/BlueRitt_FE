@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Search, Info, Globe } from "lucide-react";
-import shadowBg from "../../assets/images/dashboard1.png";
+import shadowBg from "../../assets/images/marganmax.png";
 import ResultPanels from "./components/ResultPanels";
 import MarginMaxTourModal from "./components/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
@@ -57,7 +57,24 @@ const ProfitCalculator: React.FC = () => {
       <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible !min-h-0">
         <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
           <img src={shadowBg} alt="" className="dashboard-banner-image" />
-          <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
+          {/* Centered Rounded Glow - Covers Heading to Info icon area */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 top-[10%] w-full max-w-4xl h-[70%] rounded-[100px] blur-[80px] opacity-80"
+            style={{
+              background: "linear-gradient(20deg, #020617 0%, #2648a7ff 50%, #e4e3e3ff 100%)"
+            }}
+          />
+          {/* Bottom High-Intensity Blur Layer - Masked for seamless transition */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-[260px] pointer-events-none"
+            style={{
+              backdropFilter: "blur(100px)",
+              background: "linear-gradient(to top, #020617 0%, rgba(36, 66, 113, 0.4) 50%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to top, black 50%, transparent 100%)",
+              maskImage: "linear-gradient(to top, black 50%, transparent 100%)"
+            }}
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent pointer-events-none" />
         </div>
 
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
@@ -112,7 +129,7 @@ const ProfitCalculator: React.FC = () => {
           </div>
 
           {/* Basic / Advanced Toggle */}
-          <div className="flex justify-center w-full mt-4 mb-0">
+          <div className="flex justify-center w-full mt-8 mb-0">
             <div className="bg-[#030B1C]/5 px-2 py-2 backdrop-blur-xl flex items-center figma-pill-border overflow-hidden">
               <button
                 onClick={() => setActiveTab("Basic")}

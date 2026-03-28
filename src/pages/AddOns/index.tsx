@@ -87,7 +87,7 @@ const AddOns: React.FC = () => {
             <ShoppingCart size={28} />
           </div>
           <div className="addon-add-balance-content">
-            <span className="addon-balance-value text-[18px]">Add Balance</span>
+            <span className="addon-balance-value text-[16px]">Add Balance</span>
             <p className="addon-add-balance-text">Purchase Balance for Add Ons</p>
           </div>
         </div>

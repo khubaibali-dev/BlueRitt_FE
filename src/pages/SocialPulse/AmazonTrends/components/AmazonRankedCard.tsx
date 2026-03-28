@@ -56,24 +56,24 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
 
       {/* Content Area */}
       <div className="p-5 space-y-3">
-        <h3 className="text-[15px] font-bold text-white leading-snug line-clamp-2 max-h-[42px] min-h-[42px]">
+        <h3 className="product-card-title min-h-[42px]">
           {title}
         </h3>
 
         <div className="flex items-center justify-between pt-1">
           <div className="flex flex-col">
-            <span className="text-[20px] font-black text-white leading-none">
+            <span className="product-price-primary">
               {price}
             </span>
             {oldPrice && (
-              <span className="text-[12px] text-slate-500 line-through mt-1.5 font-medium">
+              <span className="text-[12px] text-[#9F9F9F] line-through mt-0.5 font-medium">
                 {oldPrice}
               </span>
             )}
           </div>
 
           <div className="text-right">
-            <div className="product-img-badge !px-3 !py-1.5 flex items-center gap-0.5 !rounded-full shadow-lg">
+            <div className="trending-badge-standard !px-3 !py-1.5 flex items-center gap-0.5 !rounded-full shadow-lg">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} size={11} fill="#FFD700" className="text-[#FFD700]" />
               ))}

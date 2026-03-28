@@ -89,8 +89,8 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionName, o
           >
             <ArrowLeft size={16} /> Back to Vault
           </button>
-          <h1 className="text-3xl font-bold text-white tracking-tight">{collectionName}</h1>
-          <p className="text-slate-400 text-[14px]">Viewing {products.length} products in this collection</p>
+          <h1 className="banner-heading-text !mb-1">{collectionName}</h1>
+          <p className="auth-subtitle !text-left ml-4">Viewing {products.length} products in this collection</p>
         </div>
       </div>
 

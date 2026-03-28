@@ -81,13 +81,13 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-1">
               <h2 className="text-[22px] font-bold text-white tracking-tight">Product Details</h2>
-              <p className="text-[14px] text-slate-400 font-medium tracking-tight">Your Selected Product</p>
+              <p className="text-[14px] text-[#9F9F9F] font-medium tracking-tight">Your Selected Product</p>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-white/5 hover:text-white transition-all text-white/70"
+              className="p-1.5 rounded-lg hover:bg-white/5 hover:text-white transition-all text-white"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
           </div>
           <div className="mt-6 border-b border-[#1C263C]" />
@@ -102,15 +102,15 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
               <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-              <h4 className="text-[15px] font-bold text-white leading-tight mb-1">{product.title}</h4>
+              <h4 className="product-card-title mb-1">{product.title}</h4>
 
               <div className="flex items-center justify-between mt-auto">
                 <div className="flex flex-col">
-                  <span className="text-[20px] font-black text-white leading-none">
+                  <span className="product-price-primary">
                     {product.price}
                   </span>
                   {product.oldPrice && (
-                    <span className="text-[11px] text-slate-500 line-through mt-1 font-medium">
+                    <span className="text-[11px] text-[#9F9F9F] line-through mt-0.5 font-medium">
                       {product.oldPrice}
                     </span>
                   )}
@@ -170,13 +170,13 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
           {/* Footer inside scroll area */}
           <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 pb-2 border-t border-white/5">
             <button
-              className="w-full sm:w-auto px-10 h-[48px] figma-pill-border !rounded-full text-white text-[13px] font-bold hover:bg-white/5 transition-all flex items-center justify-center"
+              className="btn-product-details w-full sm:w-auto px-10 h-[48px] !rounded-full"
             >
               View on Amazon
             </button>
             <button
               onClick={handleDiscoverSupplier}
-              className="w-full sm:w-auto px-10 h-[48px] bg-brand-gradient !rounded-full text-white text-[13px] font-bold shadow-lg shadow-orange-500/10 active:scale-95 transition-all flex items-center justify-center"
+              className="btn-discover-supplier w-full sm:w-auto px-10 h-[48px] !rounded-full"
             >
               Discover Supplier
             </button>

@@ -157,7 +157,7 @@ const ToolFusionPage: React.FC = () => {
         </div>
 
         {/* Active Tools Section */}
-        <div>
+        <div className="tool-section">
           <div className="tool-section-header">
             <h3 className="tool-section-title">Active Tools</h3>
             <span className="tool-section-count">{activeTools.length} tools currently in use</span>

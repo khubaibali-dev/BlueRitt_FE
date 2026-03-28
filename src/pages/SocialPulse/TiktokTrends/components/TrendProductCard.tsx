@@ -42,7 +42,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({ title, image, categ
           alt={title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        
+
         {/* Carousel Overlays */}
         <button className="carousel-arrow left-4">
           <ChevronLeft size={20} />
@@ -55,7 +55,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({ title, image, categ
       {/* Content Section */}
       <div className="p-7">
         <div className="flex items-start justify-between gap-3 mb-5">
-          <h3 className="text-white font-bold text-[18px] line-clamp-2 group-hover:text-blue-400 transition-colors flex-1">
+          <h3 className="product-card-title flex-1 !text-[18px] group-hover:text-blue-400">
             {title}
           </h3>
           <div className="product-img-badge !static shrink-0">
@@ -85,15 +85,15 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({ title, image, categ
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pt-1">
-          <button 
+          <button
             onClick={() => onDetailsClick?.()}
-            className="w-full sm:flex-1 figma-pill-border !rounded-full !px-2.5 !py-2.5 text-[11px] sm:text-[11.5px] font-bold text-white flex items-center justify-center gap-1.5 hover:bg-white/5 transition-all h-[40px] sm:h-auto"
+            className="btn-product-details w-full sm:flex-1 !rounded-full !font-normal !px-2.5 !py-2.5"
           >
-            Product Details <ExternalLink size={13} className="opacity-60" />
+            Product Details <ExternalLink size={14} className="" />
           </button>
-          <button 
+          <button
             onClick={handleDiscoverSupplier}
-            className="w-full sm:flex-1 upgrade-gradient-btn !rounded-full !px-2.5 !py-2.5 text-[11px] sm:text-[11.5px] font-bold flex items-center justify-center !shadow-none whitespace-nowrap h-[40px] sm:h-auto"
+            className="btn-discover-supplier w-full sm:flex-1 !font-normal !rounded-full !px-2.5 !py-2.5"
           >
             Discover Supplier
           </button>

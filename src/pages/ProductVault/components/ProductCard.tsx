@@ -76,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Content Section (Exact Half Height) */}
       <div className="h-1/2 p-6 flex flex-col">
-        <h3 className="product-card-title text-[14px] leading-snug mb-4 line-clamp-3">
+        <h3 className="product-card-title line-clamp-2">
           {title}
         </h3>
 
@@ -98,31 +98,31 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Metrics Section */}
         <div className="grid grid-cols-3 gap-2 py-4 border-t border-white/5 mt-auto">
           <div className="flex flex-col items-center gap-1 text-center">
-            <div className="quick-action-icon-circle !w-8 !h-8 mb-1">
+            <div className="standard-icon-circle !w-8 !h-8 mb-1">
               <Box size={14} className="text-white" />
             </div>
-            <span className="metric-label text-[8px]">ASIN</span>
-            <span className="metric-value text-[10px]">{asin}</span>
+            <span className="product-metric-label !text-[8px]">ASIN</span>
+            <span className="product-metric-value !text-[10px]">{asin}</span>
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
-            <div className="quick-action-icon-circle !w-8 !h-8 mb-1">
+            <div className="standard-icon-circle !w-8 !h-8 mb-1">
               <DollarSign size={14} className="text-white" />
             </div>
-            <span className="metric-label text-[8px]">OFFERS</span>
-            <span className="metric-value text-[10px]">{offers}</span>
+            <span className="product-metric-label !text-[8px]">OFFERS</span>
+            <span className="product-metric-value !text-[10px]">{offers}</span>
           </div>
           <div className="flex flex-col items-center gap-1 text-center">
-            <div className="quick-action-icon-circle !w-8 !h-8 mb-1">
+            <div className="standard-icon-circle !w-8 !h-8 mb-1">
               <BarChart3 size={14} className="text-white" />
             </div>
-            <span className="metric-label text-[8px]">SALES VOL</span>
-            <span className="metric-value text-[10px]">{salesVol}</span>
+            <span className="product-metric-label !text-[8px]">SALES VOL</span>
+            <span className="product-metric-value !text-[10px]">{salesVol}</span>
           </div>
         </div>
 
         {/* Action Button */}
-        <button className="w-full py-3 mt-4 text-white text-[13px] font-bold transition-all active:scale-95 figma-pill-border hover:bg-white/5">
-          Save My Search
+        <button className="w-full py-2.5 mt-4 text-white text-[11px] font-bold transition-all active:scale-95 figma-pill-border hover:bg-white/5 uppercase tracking-[0.1em]">
+          Analyze Product
         </button>
       </div>
     </div>
