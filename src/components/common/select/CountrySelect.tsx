@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import ReactDOM from "react-dom";
 import { countries, Country } from "../../../utils/countries";
 
 export { countries, type Country };
@@ -20,8 +21,32 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
 
   const selectedCountry = countries.find(c => c.name === value) || countries[0];
+
+  useEffect(() => {
+    const updatePosition = () => {
+      if (isOpen && buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setCoords({
+          top: direction === "up" ? rect.top : rect.bottom,
+          left: rect.left,
+          width: rect.width
+        });
+      }
+    };
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [isOpen, direction]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,6 +68,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
 
       <div className="relative">
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`
@@ -72,12 +98,17 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           </svg>
         </button>
 
-        {isOpen && (
+        {isOpen && ReactDOM.createPortal(
           <div 
             className={`
-              absolute z-[100] w-full bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar
-              ${direction === "up" ? "bottom-full mb-2" : "mt-2"}
+              absolute z-[9999] bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar
             `}
+            style={{
+              top: (direction === "up" ? coords.top - 8 : coords.top + 8) + window.scrollY,
+              left: coords.left + window.scrollX,
+              width: coords.width,
+              transform: direction === "up" ? "translateY(-100%)" : "none"
+            }}
           >
             {countries.map((country) => (
               <button
@@ -97,7 +128,8 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
                 <span className="text-[14px] text-brand-textPrimary">{country.name}</span>
               </button>
             ))}
-          </div>
+          </div>,
+          document.body
         )}
       </div>
 
