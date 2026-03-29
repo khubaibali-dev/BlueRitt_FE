@@ -21,6 +21,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
 
@@ -50,13 +51,16 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const isOutsideTrigger = dropdownRef.current && !dropdownRef.current.contains(event.target as Node);
+      const isOutsidePortal = portalRef.current && !portalRef.current.contains(event.target as Node);
+      
+      if (isOpen && isOutsideTrigger && isOutsidePortal) {
         setIsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   return (
     <div className="flex flex-col gap-[6px]" ref={dropdownRef}>
@@ -100,6 +104,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
 
         {isOpen && ReactDOM.createPortal(
           <div 
+            ref={portalRef}
             className={`
               absolute z-[9999] bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar
             `}
