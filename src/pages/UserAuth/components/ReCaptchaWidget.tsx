@@ -15,12 +15,12 @@ const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => {
       <div className="relative group">
         <div className="absolute -inset-1 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
         <div className="scale-[0.9] sm:scale-1 origin-center transition-transform duration-300">
-          <ReCAPTCHA
+          {/* <ReCAPTCHA
             key={theme}
             sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
             theme={theme}
             onChange={(token) => onVerify(token || "")}
-          />
+          /> */}
         </div>
       </div>
 
