@@ -17,6 +17,7 @@ const ProductVaultPage = lazy(() => import("../pages/ProductVault"));
 const TikTokTrendsPage = lazy(() => import("../pages/SocialPulse/TiktokTrends/TikTokTrends"));
 const AmazonTrendsPage = lazy(() => import("../pages/SocialPulse/AmazonTrends/AmazonTrends"));
 const InfluencerLinkPage = lazy(() => import("../pages/SocialPulse/InfluencerLink/InfluencerLink"));
+const ForgotPasswordPage = lazy(() => import("../pages/UserAuth/ForgotPassword"));
 
 type RouteType = {
   path: string;
@@ -30,6 +31,18 @@ const routes: RouteType[] = [
   {
     path: "/",
     element: LoginPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/login",
+    element: LoginPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/forgot-password",
+    element: ForgotPasswordPage,
     layout: AuthLayout,
     isProtected: false,
   },

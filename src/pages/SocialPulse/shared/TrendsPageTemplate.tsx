@@ -17,6 +17,7 @@ interface MetricData {
   progress?: number;
   subtitle?: string;
   isAddon?: boolean;
+  onClick?: () => void;
 }
 
 interface TrendsPageTemplateProps {
@@ -39,6 +40,13 @@ interface TrendsPageTemplateProps {
   ) => React.ReactNode;
   filterDrawer?: (isOpen: boolean, onClose: () => void) => React.ReactNode;
   detailsDrawer?: (isOpen: boolean, onClose: () => void, product: any) => React.ReactNode;
+  // Controlled props
+  activeTab?: string;
+  onTabChange?: (value: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (value: string) => void;
+  onSearch?: (e: React.FormEvent) => void;
+  hasSearched?: boolean;
 }
 
 const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
@@ -51,19 +59,51 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   searchBtnText,
   renderContent,
   filterDrawer,
-  detailsDrawer
+  detailsDrawer,
+  activeTab: controlledActiveTab,
+  onTabChange: controlledOnTabChange,
+  searchQuery: controlledSearchQuery,
+  onSearchChange: controlledOnSearchChange,
+  onSearch: controlledOnSearch,
+  hasSearched: controlledHasSearched,
 }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0].value);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [internalActiveTab, setInternalActiveTab] = useState(tabs[0].value);
+  const [internalSearchQuery, setInternalSearchQuery] = useState("");
+  const [internalHasSearched, setInternalHasSearched] = useState(false);
+
+  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
+  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+  const hasSearched = controlledHasSearched !== undefined ? controlledHasSearched : internalHasSearched;
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setHasSearched(true);
+    if (controlledOnSearch) {
+      controlledOnSearch(e);
+    } else {
+      setInternalHasSearched(true);
+    }
+  };
+
+  const handleTabChange = (value: string) => {
+    if (controlledOnTabChange) {
+      controlledOnTabChange(value);
+    } else {
+      setInternalActiveTab(value);
+      setInternalHasSearched(false);
+    }
+  };
+
+  const handleSearchChange = (value: string) => {
+    if (controlledOnSearchChange) {
+      controlledOnSearchChange(value);
+    } else {
+      setInternalSearchQuery(value);
+    }
   };
 
   return (
@@ -85,10 +125,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
               <TrendsTabs
                 options={tabs}
                 activeTab={activeTab}
-                onTabChange={(value) => {
-                  setActiveTab(value);
-                  setHasSearched(false);
-                }}
+                onTabChange={handleTabChange}
               />
             </div>
 
@@ -118,7 +155,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder={searchPlaceholder[activeTab] || "Search..."}
               className="w-full bg-transparent py-4 pl-14 pr-6 text-white text-[15px] placeholder-slate-500 outline-none transition-all"
             />

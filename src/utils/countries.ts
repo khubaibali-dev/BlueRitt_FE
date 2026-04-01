@@ -6,9 +6,9 @@ export interface Country {
 }
 
 export const countries: Country[] = [
+  { name: "United States", code: "US", flag: "🇺🇸", dialCode: "+1" },
   { name: "Pakistan", code: "PK", flag: "🇵🇰", dialCode: "+92" },
   { name: "United Kingdom", code: "GB", flag: "🇬🇧", dialCode: "+44" },
-  { name: "United States", code: "US", flag: "🇺🇸", dialCode: "+1" },
   { name: "United Arab Emirates", code: "AE", flag: "🇦🇪", dialCode: "+971" },
   { name: "Saudi Arabia", code: "SA", flag: "🇸🇦", dialCode: "+966" },
   { name: "Canada", code: "CA", flag: "🇨🇦", dialCode: "+1" },

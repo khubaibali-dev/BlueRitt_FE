@@ -80,11 +80,11 @@
   }
 
   .product-img-wrapper-list {
-    @apply relative w-full sm:w-[140px] h-[200px] sm:h-[120px] shrink-0 overflow-hidden rounded-xl;
+    @apply relative w-full sm:w-[140px] h-[180px] sm:h-[120px] shrink-0 overflow-hidden rounded-xl bg-white p-3;
   }
 
   .product-img-wrapper-grid {
-    @apply relative aspect-[4/3] overflow-hidden;
+    @apply relative w-full h-[300px] overflow-hidden bg-white p-8;
   }
 
   .product-metrics-row-list {
@@ -100,7 +100,7 @@
   }
 
   .brand-tag {
-    @apply rounded-full px-2 sm:px-2.5 py-0.5 text-[8px] sm:text-[12px] border;
+    @apply rounded-full px-2 sm:px-2.5 py-0.5 text-[8px] sm:text-[12px] border whitespace-nowrap;
   }
 
   .brand-tag-amazon {
@@ -109,6 +109,14 @@
 
   .brand-tag-default {
     @apply bg-white/5 border-white/10 text-[#FFFFFF];
+  }
+  
+  .brand-tag-climate {
+    @apply bg-[#00FF001A] text-white border-[#00FF0033];
+  }
+
+  .brand-tag-prime {
+    @apply bg-[#00A8E11A] text-white border-[#00A8E133];
   }
 
   /* Standardized Data Classes (Discovery + Product Details) */
@@ -158,6 +166,20 @@
 }
 
 @layer utilities {
+  /* Skeleton Loading */
+  .skeleton-bg {
+    @apply bg-white/5 border border-white/5 rounded-lg overflow-hidden;
+  }
+  
+  .skeleton-pulse {
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
   /* === FIGMA CARD: gradient border via pseudo-element === */
   .figma-card-border {
     position: relative;
@@ -209,6 +231,7 @@
   /* === NEW STANDARD CLASSES === */
   
   /* Custom Scrollbar for inner containers */
+  /* Custom Scrollbar for inner containers */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
@@ -216,11 +239,11 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #3F3F3F;
+    background-color: #1E293B;
     border-radius: 10px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #3B82F6;
+    background-color: #334155;
   }
   /* Background glow image */
   .bg-glow-image {
@@ -737,41 +760,45 @@ background: #53535333;
     backdrop-filter: blur(38.5px);
     @apply rounded-[12px] p-6 relative overflow-hidden;
   }
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #1E293B;
-    border-radius: 10px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #334155;
-  }
+
 
   .sidebar-item {
     @apply w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-[#94A3B8] hover:bg-white/5 hover:text-white;
   }
 
   .sidebar-item-active {
-    background: linear-gradient(90deg, #000000 0%, #6291DE 100%);
-    @apply !text-white border border-white/10 !important;
+  background: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%),
+    linear-gradient(60deg, #04132B 0%, #6291DE 40%, #3A6FD8 70%, #04132B 95%) !important;
+  
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  @apply !text-white !important;
+  border-radius: 12px !important;
+}
+
+  .socialpulse-active {
+    background: linear-gradient(91.34deg, rgba(0, 0, 0, 0.3) 0.45%, rgba(78, 116, 184, 0.3) 50%, rgba(21, 40, 80, 0.3) 99.55%) !important;
+    @apply !text-white !important;
+    border-radius: 12px !important;
   }
 
   .sidebar-item-open {
-    background: linear-gradient(90deg, #000000 0%, #6291DE 100%);
-    @apply !text-white border border-white/5 !important;
+    background: linear-gradient(90deg, #04132B 0%, #6291DE 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    @apply !text-white !important;
+    border-radius: 12px !important;
   }
 
   .sidebar-submenu-item {
-    @apply w-full flex items-center gap-3 px-4 py-2 text-[#94A3B8] hover:text-white transition-all duration-300;
+    @apply w-full flex items-center gap-3 px-4 py-2 text-[#94A3B8] hover:text-white transition-all duration-300 mt-2;
   }
 
   .sidebar-submenu-active {
-    background: linear-gradient(90deg, #000000 10%, #6291DE 100%);
-    @apply !text-white shadow-xl shadow-blue-500/10 border border-blue-500/20 !important;
+   background: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%),
+    linear-gradient(60deg, #04132B 0%, #6291DE 40%, #3A6FD8 70%, #04132B 95%) !important;
+    @apply !text-white shadow-xl shadow-blue-500/10 border border-white/10 !important;
+    border-radius: 12px !important;
   }
 
   .sidebar-submenu-container {
@@ -1115,7 +1142,7 @@ background: #53535333;
 
   /* Sidebar Styles */
   .sidebar-wrapper {
-    @apply h-screen bg-[#04132B] border-r border-[#1E293B] flex-col py-6 shrink-0 custom-scrollbar fixed lg:relative lg:flex z-40 transform transition-all duration-300;
+    @apply h-screen bg-[#04132B] border-r border-[#1E293B] flex-col py-6 shrink-0 fixed lg:relative lg:flex z-40 transform transition-all duration-300 overflow-hidden;
     width: 240px;
   }
   

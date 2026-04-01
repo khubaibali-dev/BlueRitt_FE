@@ -38,10 +38,10 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
     <div className="bg-[#04132B] rounded-[20px] transition-all duration-300 border border-[#082656] shadow-2xl relative w-full mb-0 overflow-hidden">
       {/* Header (Trigger) */}
       <div
-        className="w-full flex items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50 rounded-[20px] cursor-pointer"
+        className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50 rounded-[20px] cursor-pointer gap-y-4"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-4 sm:gap-3 flex-1">
+        <div className="flex items-center gap-4 sm:gap-3 flex-1 min-w-[200px]">
           {icon && (
             <div className="standard-icon-circle w-[36px] h-[36px] sm:w-[42px] sm:h-[42px] shrink-0">
               {icon}
@@ -55,9 +55,11 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
           {headerRight && (
-            <div onClick={(e) => e.stopPropagation()}>{headerRight}</div>
+            <div className="flex-1 sm:flex-initial" onClick={(e) => e.stopPropagation()}>
+              {headerRight}
+            </div>
           )}
           <div
             className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""

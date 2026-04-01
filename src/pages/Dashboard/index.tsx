@@ -1,5 +1,5 @@
-
 import React from "react";
+import { Link } from "react-router-dom";
 import Banner from "./components/Banner";
 import QuickActions from "./components/QuickActions";
 import SubscriptionSnapshot from "./components/SubscriptionSnapshot";
@@ -27,9 +27,12 @@ const DashboardPage: React.FC = () => {
                 <h3 className="dashboard-card-title">Subscription Snapshot</h3>
               </div>
               <SubscriptionSnapshot />
-              <button className="w-full sm:w-fit px-8 sm:px-12 mt-6 text-white py-3.5 sm:py-4 !rounded-full text-[14px] sm:text-xs font-semibold figma-pill-border hover:bg-white/5 transition-all tracking-[0.2em] relative block text-center">
+              <Link 
+                to="/settings?tab=subscription"
+                className="w-full sm:w-fit px-8 sm:px-12 mt-6 text-white py-3.5 sm:py-4 !rounded-full text-[14px] sm:text-xs font-semibold figma-pill-border hover:bg-white/5 transition-all tracking-[0.2em] relative block text-center"
+              >
                 Fill Balance for Add-ons
-              </button>
+              </Link>
             </div>
             <div className="flex flex-col h-full mt-2 xl:mt-0">
               <div className="dashboard-card-header mt-8">

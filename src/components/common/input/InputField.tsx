@@ -4,6 +4,7 @@ import React from "react";
 interface InputFieldProps {
   id: string;
   label?: string;
+  labelRight?: React.ReactNode;
   type?: string;
   placeholder?: string;
   value: string;
@@ -20,6 +21,7 @@ interface InputFieldProps {
 const InputField: React.FC<InputFieldProps> = ({
   id,
   label,
+  labelRight,
   type = "text",
   placeholder = "",
   value,
@@ -34,13 +36,18 @@ const InputField: React.FC<InputFieldProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-[6px]">
-      {label && (
-        <label
-          htmlFor={id}
-          className="text-[12px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFF]"
-        >
-          {label}
-        </label>
+      {(label || labelRight) && (
+        <div className="flex justify-between items-center pr-1">
+          {label && (
+            <label
+              htmlFor={id}
+              className="text-[12px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFF]"
+            >
+              {label}
+            </label>
+          )}
+          {labelRight && <div className="flex-shrink-0">{labelRight}</div>}
+        </div>
       )}
 
       <div

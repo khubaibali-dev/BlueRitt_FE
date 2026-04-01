@@ -1,76 +1,164 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  Info,
-  Box,
-  TrendingUp,
-  Truck,
-  Zap,
-  CheckCircle,
-  ShieldCheck,
-  Award,
-  Star,
-  Calendar
 } from "lucide-react";
 import bgAnalysis from "../../../../assets/images/explorer.png";
-import AIMatchScore from "./AIMatchScore";
+import AmazonProductCard from "../Common/Cards/AmazonProductCard";
+import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
+import SelectField from "../../../../components/common/select/SelectField";
 
 interface SupplierSourceLinkProps {
   product: any;
+  suppliers?: any[]; // Passed from results screen
   onBack: () => void;
   onCalculateProfit: (supplier: any) => void;
 }
 
-const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, onBack, onCalculateProfit }) => {
-  // Mock data for recommended suppliers
-  const suppliers = [
-    {
-      id: "1601481983321",
-      name: "Shenzhen Iwonlex Technology Co., Ltd.",
-      contact: "Cherry Zhou",
-      minOrder: "1 set",
-      cost: "$17.38-19.43",
-      country: "China",
-      rating: 4.6,
-      age: "4 years",
-      matchScore: 84.64,
-      verified: true,
-      tradeAssurance: true,
-      goldSupplier: true,
-      image: product?.image // Using same image for mock
-    },
-    {
-      id: "1601481983322",
-      name: "Shenzhen Iwonlex Technology Co., Ltd.",
-      contact: "Cherry Zhou",
-      minOrder: "1 set",
-      cost: "$17.38-19.43",
-      country: "China",
-      rating: 4.6,
-      age: "4 years",
-      matchScore: 62.64,
-      verified: true,
-      tradeAssurance: true,
-      goldSupplier: true,
-      image: product?.image
-    },
-    {
-      id: "1601481983323",
-      name: "Shenzhen Iwonlex Technology Co., Ltd.",
-      contact: "Cherry Zhou",
-      minOrder: "1 set",
-      cost: "$17.38-19.43",
-      country: "China",
-      rating: 4.6,
-      age: "4 years",
-      matchScore: 20.25,
-      verified: true,
-      tradeAssurance: true,
-      goldSupplier: true,
-      image: product?.image
-    }
+const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, suppliers: incomingSuppliers, onBack, onCalculateProfit }) => {
+  const [copy, setCopy] = useState(false);
+  const [sortBy, setSortBy] = useState<string>("default");
+
+  const SORT_OPTIONS = [
+    { label: "Default", value: "default" },
+    { label: "Min Rating", value: "rating_low" },
+    { label: "Max Rating", value: "rating_high" },
+    { label: "Min Order Quantity", value: "moq_low" },
+    { label: "Max Order Quantity", value: "moq_high" },
+    { label: "Min Store Age Years", value: "age_low" },
+    { label: "Max Store Age Years", value: "age_high" },
+    { label: "Min Manufacturing Cost", value: "cost_low" },
+    { label: "Max Manufacturing Cost", value: "cost_high" },
   ];
+
+  const parsePriceRange = (priceStr: string): number => {
+    if (!priceStr || priceStr === "N/A") return 0;
+    // Extract first numeric value (e.g. from "$1.20 - $2.50" or "$1.20")
+    const matches = priceStr.match(/(\d+(?:\.\d+)?)/);
+    return matches ? parseFloat(matches[1]) : 0;
+  };
+
+  const parseMOQ = (moqStr: string): number => {
+    if (!moqStr || moqStr === "N/A") return 0;
+    const matches = moqStr.match(/(\d+)/);
+    return matches ? parseInt(matches[1]) : 0;
+  };
+
+  const parseStoreAge = (ageStr: string): number => {
+    if (!ageStr || ageStr === "N/A") return 0;
+    const matches = ageStr.match(/(\d+)/);
+    return matches ? parseInt(matches[1]) : 0;
+  };
+
+  const handleCopy = (url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopy(true);
+    setTimeout(() => setCopy(false), 2000);
+  };
+
+  // Normalize the selected product data
+  const normalizedProduct = React.useMemo(() => {
+    if (!product) return null;
+
+    // Build tags dynamically
+    const tags: string[] = [];
+    if (product.is_best_seller) tags.push("Best Seller");
+    if (product.is_amazon_choice) tags.push("Amazon Choice");
+    if (product.is_prime) tags.push("Prime");
+    if (product.climate_pledge_friendly) tags.push("Climate Pledge");
+
+
+    console.log(product, "product")
+    return {
+      title: product.product_title || product.title || "Selected Product",
+      image: product.product_photo || product.image || "",
+      price: product.product_price?.toString().replace("$", "") || product.price?.toString().replace("$", "") || "0.00",
+      oldPrice: product.product_original_price?.toString().replace("$", "") || product.oldPrice?.toString().replace("$", "") || product.product_price?.toString().replace("$", "") || "0.00",
+      asin: product.asin || "N/A",
+      salesVol: product.sales_volume || product.salesVol || "N/A",
+      offers: product.product_num_offers?.toString() || product.offers?.toString() || "1",
+      seller: product.product_seller_name || product.seller || product.product_offers?.[0]?.seller || "Amazon.com",
+      shipsFrom: product.ships_from || product.shipsFrom || product.product_offers?.[0]?.ships_from || product.delivery || "Amazon",
+      country: product.seller_country || product.country || "US",
+      rating: parseFloat(product.product_star_rating || product.rating || "4.5"),
+      numRatings: product.product_num_ratings || product.ratings || "0",
+      product_url: product.product_url || product.product_url || "",
+      dimensions: product.product_information?.["Product Dimensions"] || product.dimensions || "N/A",
+      weight: product.product_information?.["Item Weight"] || product.weight || "N/A",
+      tags: tags.length > 0 ? tags : (product.tags || [])
+    };
+  }, [product]);
+
+  // Map incoming suppliers to the format expected by the UI
+  const suppliers = React.useMemo(() => {
+    if (!incomingSuppliers || incomingSuppliers.length === 0) return [];
+
+    return incomingSuppliers.map((s: any, index: number) => {
+
+      if (s.name && s.cost) return s;
+
+      const fixUrl = (url?: string) => {
+        if (!url) return "";
+        return url.startsWith("//") ? `https:${url}` : url;
+      };
+
+      const item = s.item || s;
+      const seller = item.seller_store || s.seller || {};
+      let imageUrl = fixUrl(item.product_photo || item.image);
+      if (!imageUrl && item.images && Array.isArray(item.images) && item.images.length > 0) {
+        imageUrl = fixUrl(item.images[0]);
+      }
+      if (!imageUrl) imageUrl = normalizedProduct?.image;
+
+      return {
+        id: item.itemId,
+        name: item.title || seller.storeName || "Elite Global Sourcing",
+        price:
+          item.sku_listing.def.priceModule.priceFormatted ||
+          item.sku.def.priceModule.priceList[0].minPrice,
+        currency: item.sku.def.priceModule.currencyCode,
+        storeName: item.company.companyName || "Direct Factory",
+        contact: item.company.companyContact?.name || "Direct Factory",
+        minOrder: item.sku.def.quantityModule.minOrder.quantityFormatted || "100+ units",
+        country: item.company_details.companyAddress.country || "CN",
+        rating: item.seller_store?.storeEvaluates?.[4]?.score,
+        storeAge: item.seller_store.storeAge || "5 YRS",
+        ai_match_score: (Number(s.score || s.absolute_score || s.matchScore || s.ai_match_score || (95 - index * 5))).toFixed(2),
+        isGoldMember: item.company_details.status.gold,
+        isVerified: item.company_details.status.verified,
+        TradeAssurance: item.company_details.status.tradeAssurance,
+        isAssessed: item.company_details.status.assessed,
+        image: imageUrl,
+        storeUrl: item.seller_store.storeUrl,
+      };
+    });
+  }, [incomingSuppliers, normalizedProduct]);
+
+  const sortedSuppliers = useMemo(() => {
+    let sorted = [...suppliers];
+    switch (sortBy) {
+      case "rating_low":
+        return sorted.sort((a, b) => (parseFloat(a.rating) || 0) - (parseFloat(b.rating) || 0));
+      case "rating_high":
+        return sorted.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+      case "moq_low":
+        return sorted.sort((a, b) => parseMOQ(a.minOrder) - parseMOQ(b.minOrder));
+      case "moq_high":
+        return sorted.sort((a, b) => parseMOQ(b.minOrder) - parseMOQ(a.minOrder));
+      case "age_low":
+        return sorted.sort((a, b) => parseStoreAge(a.storeAge) - parseStoreAge(b.storeAge));
+      case "age_high":
+        return sorted.sort((a, b) => parseStoreAge(b.storeAge) - parseStoreAge(a.storeAge));
+      case "cost_low":
+        return sorted.sort((a, b) => parsePriceRange(a.price) - parsePriceRange(b.price));
+      case "cost_high":
+        return sorted.sort((a, b) => parsePriceRange(b.price) - parsePriceRange(a.price));
+      default:
+        return sorted;
+    }
+  }, [suppliers, sortBy]);
+
+  if (!normalizedProduct) return null;
 
   return (
     <div className="discovery-results px-6 sm:px-4 py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-[#051125] rounded-[24px] isolate min-h-screen overflow-hidden">
@@ -131,235 +219,42 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, onBack
           </p>
         </div>
 
-        {/* Selected Product Panel */}
-        <div className="discovery-card-list flex-col !p-0 mb-12 isolate">
-          <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2 w-full">
-            <Box size={14} className="text-[#FF5900]" />
-            <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">
-              Selected Product
-            </span>
-          </div>
-
-          <div className="p-4 sm:p-5 w-full">
-            <div className="flex flex-col lg:flex-row gap-5 items-start">
-              {/* Product Image */}
-              <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-2xl mx-auto lg:mx-0 shrink-0">
-                <img src={product?.image} alt="" className="w-full h-full object-cover" />
-              </div>
-
-              {/* Product Info & Metrics */}
-              <div className="flex-1 w-full flex flex-col gap-4">
-                <div className="flex flex-col lg:flex-row justify-between items-start gap-2 mt-1">
-                  <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[600px] text-center lg:text-left">
-                    {product?.title}
-                  </h3>
-                  <div className="flex items-baseline gap-2 shrink-0 self-center lg:self-auto">
-                    <span className="product-old-price-primary text-[14px]">${product?.oldPrice}</span>
-                    <span className="product-price-primary text-[22px]">${product?.price}</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center lg:justify-between gap-y-5 lg:gap-y-4">                  {/* Core Metrics Grid */}
-                  <div className="product-metrics-row-list !mt-0">
-                    <div className="flex items-center gap-3">
-                      <Box size={14} className="text-slate-400 shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="metric-label leading-none mb-1">ASIN</span>
-                        <span className="metric-value leading-none">{product?.asin}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <TrendingUp size={14} className="text-slate-400 shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="metric-label leading-none mb-1">MONTHLY SALES VOL</span>
-                        <span className="metric-value leading-none">{product?.salesVol}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-400 font-bold text-[16px] shrink-0 leading-none">%</span>
-                      <div className="flex flex-col">
-                        <span className="metric-label leading-none mb-1">OFFERS</span>
-                        <span className="metric-value leading-none">{product?.offers} sellers</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Truck size={14} className="text-slate-400 shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="metric-label leading-none mb-1">DELIVERY</span>
-                        <span className="metric-value leading-none">Free</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Badges & Rating */}
-                  <div className="flex flex-wrap items-center gap-3 justify-center">
-                    <div className="flex items-center gap-2">
-                      <span className="brand-tag brand-tag-default px-3 py-1">Electronics</span>
-                      <span className="brand-tag brand-tag-amazon px-3 py-1">Amazon Choice</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={14} fill={i < 4 ? "#FFC107" : "transparent"} className={i < 4 ? "text-[#FFC107]" : "text-slate-400"} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Secondary Metrics Grid - Dynamic Balancing to maximize 1400px layout */}
-            <div className="grid grid-cols-2 md:flex md:flex-row items-stretch gap-2 mt-4">
-              <div className="flex-[1.6] bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors">
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">Seller Name</span>
-                <span className="text-[11px] text-white font-bold leading-tight">DataVision Computer Video</span>
-              </div>
-              <div className="flex-[1.6] bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors">
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">Ships From</span>
-                <span className="text-[11px] text-white font-bold leading-tight">DataVision Computer Video</span>
-              </div>
-              <div className="flex-[1.2] bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors">
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">Seller Country</span>
-                <span className="text-[11px] text-white font-bold leading-tight">US</span>
-              </div>
-              <div className="flex-[1.2] bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors">
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">Seller Rating</span>
-                <span className="text-[11px] text-white font-bold leading-tight">4.0</span>
-              </div>
-              <div className="flex-[1.4] bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors">
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">Item Dimensions</span>
-                <span className="text-[11px] text-white font-bold leading-tight">9.4×3×1.2 in</span>
-              </div>
-              <div className="flex-[1] bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors">
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">Item Weight</span>
-                <span className="text-[11px] text-white font-bold leading-tight">1.28 oz</span>
-              </div>
-            </div>
-
-            {/* Panel Footer Actions */}
-            <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 w-full border-t border-white/5 pt-5">
-              <button className="flex-1 sm:flex-none btn-product-details !px-8 !h-[42px] !font-bold">
-                Copy Seller Link
-              </button>
-              <button className="flex-1 sm:flex-none btn-discover-supplier !px-10 !h-[42px] !font-bold">
-                Open Product
-              </button>
-            </div>
-          </div>
-        </div>
+        <AmazonProductCard
+          product={normalizedProduct}
+          variant="selected"
+          onCopyLink={() => handleCopy(normalizedProduct.product_url)}
+          onOpenProduct={() => window.open(normalizedProduct.product_url, '_blank')}
+          isCopied={copy}
+        />
 
         {/* Suppliers Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 px-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 mt-8 px-2">
           <div className="flex items-start sm:items-center gap-2 sm:gap-3">
-            <span className="text-[#FF5900] text-[20px] sm:text-[24px] font-black mt-0.5 sm:mt-0 shrink-0">6</span>
+            <span className="text-[#FF5900] text-[20px] sm:text-[24px] font-black mt-0.5 sm:mt-0 shrink-0">{suppliers.length}</span>
             <h2 className="text-[16px] sm:text-[20px] text-white tracking-tight leading-snug">
-              Recommended Suppliers for your product & AI Match Scores
+              Recommended Alibaba Suppliers for Your Product & AI Match Scores
             </h2>
           </div>
-          <button className="bg-[#04132B] border border-brand-inputBorder rounded-xl px-4 py-2 flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto text-white text-[13px] sm:text-[14px] hover:bg-white/5 transition-all shrink-0">
-            <span className="font-semibold">Sort By</span>
-            <ChevronRight size={14} className="rotate-90 text-slate-400" />
-          </button>
+          <div className="w-[200px] h-fit">
+            <SelectField
+              id="supplier-sort"
+              value={sortBy}
+              onChange={(v) => setSortBy(v)}
+              options={SORT_OPTIONS}
+              placeholder="Sort By"
+            />
+          </div>
         </div>
 
-        {/* Supplier Cards List */}
-        <div className="space-y-4">
-          {suppliers.map((supplier, i) => (
-            <div key={i} className="discovery-card-list !flex-col !gap-0 !p-6 !items-stretch group shadow-2xl">
-              <div className="flex flex-col lg:flex-row gap-10">
-                {/* Left: Supplier Image & Title */}
-                <div className="flex flex-col sm:flex-row gap-5 flex-1">
-                  <div className="product-img-wrapper-list !w-32 !h-32 shadow-2xl mx-auto sm:mx-0 shrink-0">
-                    <img src={supplier.image} alt="" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 flex flex-col justify-center">
-                    <h3 className="product-card-title text-center sm:text-left text-[16px] sm:text-[18px] mb-4 lg:max-w-[800px]">
-                      {supplier.name} {/* Using supplier name as description placeholder since that was the original behavior or title text */}
-                      2025 New Design App Tracker Smart Watch GPS Sports Smartwatch 10-Day Battery Life Waterproof IP67 Sleep Call Answering Features
-                    </h3>
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-2.5">
-                      <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
-                        <CheckCircle size={10} /> Verified
-                      </div>
-                      <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
-                        <ShieldCheck size={10} /> Trade Assurance
-                      </div>
-                      <div className="brand-tag text-[#FFFFFF] border-[#8B5CF64D] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase" style={{ background: 'linear-gradient(90deg, rgba(255, 89, 0, 0.2) 0%, rgba(255, 0, 230, 0.2) 100%)' }}>
-                        <Award size={10} /> Gold Supplier
-                      </div>
-                      <div className="brand-tag brand-tag-default !px-3 !py-1 flex items-center gap-1.5 font-bold text-[10px]">
-                        <Star size={10} fill="#FFC107" className="text-[#FFC107]" /> {supplier.rating}
-                      </div>
-                      <div className="brand-tag brand-tag-default !px-3 !py-1 flex items-center gap-1.5 font-bold text-[10px]">
-                        <Calendar size={10} /> Store Age: {supplier.age}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI Match Score Side Circle */}
-                <AIMatchScore score={supplier.matchScore} />
-              </div>
-
-              {/* Supplier Grid Details Container */}
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-10 items-end mt-8 pt-6 border-t border-white/5">
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <Zap size={14} className="text-slate-400 shrink-0" />
-                      <span className="metric-label !text-slate-400">STORE</span>
-                    </div>
-                    <span className="metric-value">{supplier.name}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-slate-400 shrink-0" />
-                      <span className="metric-label !text-slate-400">CONTACT</span>
-                    </div>
-                    <span className="metric-value">{supplier.contact}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <Truck size={14} className="text-[#FF5900] shrink-0" />
-                      <span className="metric-label ">MANUFACTURING COST</span>
-                    </div>
-                    <span className="metric-value text-[#FF5900] text-[15px] font-bold tracking-tight">{supplier.cost}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <Box size={14} className="text-slate-400 shrink-0" />
-                      <span className="metric-label !text-slate-400">ITEM ID</span>
-                    </div>
-                    <span className="metric-value">{supplier.id}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp size={14} className="text-slate-400 shrink-0" />
-                      <span className="metric-label !text-slate-400">MIN. ORDER QTY</span>
-                    </div>
-                    <span className="metric-value">{supplier.minOrder}</span>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <Info size={14} className="text-slate-400 shrink-0" />
-                      <span className="metric-label !text-slate-400">COUNTRY</span>
-                    </div>
-                    <span className="metric-value">{supplier.country}</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
-                  <button
-                    onClick={() => onCalculateProfit(supplier)}
-                    className="flex-1 lg:flex-none btn-discover-supplier !px-10"
-                  >
-                    Calculate Profit
-                  </button>
-                  <button className="flex-1 lg:flex-none btn-product-details !px-10">
-                    Contact Seller
-                  </button>
-                </div>
-              </div>
-            </div>
+        <div className="space-y-4 pt-6">
+          {sortedSuppliers.map((supplier, i) => (
+            <AlibabaSupplierCard
+              key={i}
+              supplier={supplier}
+              variant="result-item"
+              onCalculateProfit={() => onCalculateProfit(supplier)}
+              onContactSeller={() => window.open(supplier.storeUrl, "_blank")}
+            />
           ))}
         </div>
       </div>

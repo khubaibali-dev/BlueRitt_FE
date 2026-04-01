@@ -1,57 +1,170 @@
-// src/context/AuthContext.tsx
+import { InternalAxiosRequestConfig } from "axios";
 import {
   createContext,
   useState,
-  useContext,
+  ReactNode,
   useEffect,
   useLayoutEffect,
-  ReactNode,
+  useContext,
+  startTransition,
+  useRef,
 } from "react";
-import { InternalAxiosRequestConfig } from "axios";
+
 import api from "../api";
-import { refreshToken } from "../api/auth";
-import {
-  getAccessToken,
-  storeAccessToken,
-} from "../utils/tokenStorage";
+import { getUserDetails, refreshToken } from "../api/auth";
+import { TUser, TSearchQuota, TSubscriptionStatus } from "../types/user";
+import { ACCESS_TOKEN_KEY, storeAccessToken, getAccessToken } from "../utils/tokenStorage";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateUserQuotaData, prefetchUserQuotaData } from "../utils/prefetch";
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-type AuthContextType = {
+type UserAuthContextType = {
   accessToken: string;
   setAccessToken: (token: string) => void;
+  currentUser: TUser;
+  setCurrentUser: React.Dispatch<React.SetStateAction<TUser>>;
   loading: boolean;
+  needsSubscription: boolean;
+  dueDate: string;
 };
 
-const AuthContext = createContext<AuthContextType>({
+type TUserAuthContextProviderProps = {
+  children: ReactNode;
+};
+
+const initialUser: TUser = {
+  firstName: "",
+  lastName: "",
+  fullName: "",
+  email: "",
+  phone: "",
+  searchQuota: undefined,
+  subscriptionStatus: undefined,
+  dueDate: "",
+};
+
+const userAuthContext = createContext<UserAuthContextType>({
   accessToken: "",
   setAccessToken: () => {},
+  currentUser: initialUser,
+  setCurrentUser: () => {},
   loading: true,
+  needsSubscription: false,
+  dueDate: "",
 });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [accessToken, setAccessTokenState] = useState<string>(() =>
-    getAccessToken()
-  );
-  const [loading, setLoading] = useState(true);
+const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
+  children,
+}) => {
+  const queryClient = useQueryClient();
 
+  // Use state to track token for component rerenders, but always read/write from localStorage
+  const [accessToken, setAccessTokenState] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return getAccessToken();
+    }
+    return "";
+  });
+  const [currentUser, setCurrentUser] = useState<TUser>(initialUser);
+  const [loading, setLoading] = useState(true);
+  const [needsSubscription, setNeedsSubscription] = useState(false);
+  const [hasCheckedSubscription, setHasCheckedSubscription] = useState(false);
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
+
+  // Use ref to store the refresh promise to prevent race conditions
+  const refreshPromiseRef = useRef<Promise<string> | null>(null);
+
+  // Create a function to update both state and localStorage
   const setAccessToken = (token: string) => {
     storeAccessToken(token);
     setAccessTokenState(token);
   };
 
-  // On mount: try existing token, else refresh
+  const checkSubscriptionStatus = (user: TUser) => {
+    // If we haven't checked subscription yet and user data is loaded
+    if (!hasCheckedSubscription && user.email && user.subscriptionStatus) {
+      setHasCheckedSubscription(true);
+
+      const hasActiveSubscription =
+        user.subscriptionStatus.has_active_subscription;
+      const isOnTrial = user.subscriptionStatus.on_trial;
+
+      // If user doesn't have an active subscription and is not on trial
+      if (!hasActiveSubscription && !isOnTrial) {
+        setNeedsSubscription(true);
+      } else {
+        setNeedsSubscription(false);
+      }
+    }
+  };
+
+  const fetchUserDetails = async () => {
+    try {
+      // Get token from localStorage to ensure we have the latest value
+      const token = getAccessToken();
+      if (!token || isRequestInProgress) return;
+
+      setIsRequestInProgress(true);
+      const response = await getUserDetails();
+      const userProfile = response.data;
+
+      const updatedUser = {
+        email: userProfile.email,
+        firstName: userProfile.profile.first_name,
+        lastName: userProfile.profile.last_name,
+        fullName: userProfile.profile.full_name,
+        phone: userProfile.profile.phone,
+        searchQuota: userProfile.search_quota as TSearchQuota,
+        subscriptionStatus:
+          userProfile.subscription_status as TSubscriptionStatus,
+        dueDate: userProfile.subscription_status.due_on,
+      };
+
+      setCurrentUser(updatedUser);
+
+      // Update React Query cache with fresh user data (non-blocking)
+      startTransition(() => {
+        queryClient.setQueryData(['user', 'subscription', 'search_quota'], userProfile);
+      });
+
+      // Prefetch user quota data for future use (only when authenticated)
+      prefetchUserQuotaData(queryClient).catch(error => {
+        console.error('Failed to prefetch user quota data:', error);
+      });
+
+      // Redirect user from login page to home page if authenticated
+      if (window.location.pathname === '/' || window.location.pathname === '/login' || window.location.pathname === '/verify-otp') {
+        window.location.href = '/dashboard';
+      }
+
+      // Check if user needs to be redirected to subscription page
+      checkSubscriptionStatus(updatedUser);
+    } catch (error: any) {
+      console.error("Error fetching user details:", error);
+      // Only reset on authentication errors
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        setAccessToken("");
+        setCurrentUser(initialUser);
+      }
+    } finally {
+      setIsRequestInProgress(false);
+    }
+  };
+
   useEffect(() => {
-    const init = async () => {
+    const fetchAccessToken = async () => {
       try {
-        const existing = getAccessToken();
-        if (existing) {
-          setAccessTokenState(existing);
+        // Check if we already have a token in localStorage
+        const existingToken = getAccessToken();
+        if (existingToken) {
+          setAccessTokenState(existingToken); // Update state from localStorage
         } else {
-          const res = await refreshToken();
-          setAccessToken(res.data.access);
+          // If no token exists, try to get a new one
+          const response = await refreshToken();
+          setAccessToken(response.data.access);
         }
       } catch {
         setAccessToken("");
@@ -59,59 +172,151 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     };
-    init();
+
+    fetchAccessToken();
   }, []);
 
-  // Attach Bearer token to every request
+  // Periodically fetch user details
+  useEffect(() => {
+    // Only set up interval if we have an access token
+    if (!accessToken) return;
+
+    // Initial fetch
+    fetchUserDetails();
+
+    // Set up periodic fetching (every 5 minutes)
+    const intervalId = setInterval(() => {
+      fetchUserDetails();
+    }, 5 * 60 * 1000);
+
+    // Clean up the interval on unmount or when accessToken changes
+    return () => clearInterval(intervalId);
+  }, [accessToken, hasCheckedSubscription]);
+
   useLayoutEffect(() => {
-    const reqInterceptor = api.interceptors.request.use(
+    const authInterceptor = api.interceptors.request.use(
       (config: CustomAxiosRequestConfig) => {
+        // Always get the latest token from localStorage
         const token = !config._retry && getAccessToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
+        config.headers.Authorization =
+          token
+            ? `Bearer ${token}`
+            : config.headers.Authorization;
         return config;
       }
     );
-    return () => api.interceptors.request.eject(reqInterceptor);
+
+    /**
+     * Handling the case where the app refreshed and only the new access token is retrieved via tha refreshToken API call.
+     * If the token changes and we dont have the details for the current user, we make the API call to /me endpoint.
+     */
+    if (accessToken && currentUser === initialUser && !isRequestInProgress) {
+      fetchUserDetails();
+    }
+
+    return () => {
+      api.interceptors.request.eject(authInterceptor);
+    };
   }, [accessToken]);
 
-  // Auto-refresh on 401/403
   useLayoutEffect(() => {
-    const resInterceptor = api.interceptors.response.use(
-      (res) => res,
+    const refreshInterceptor = api.interceptors.response.use(
+      (response) => response,
       async (error) => {
-        const original = error.config as CustomAxiosRequestConfig;
-        const isRefreshEndpoint = original.url?.includes("auth/refresh");
-        if (
-          !isRefreshEndpoint &&
-          (error.response?.status === 401 || error.response?.status === 403)
-        ) {
+        const originalRequest = error.config as CustomAxiosRequestConfig;
+        const isRefreshTokenEndpoint =
+          originalRequest.url?.includes("auth/refresh");
+        
+        // If refresh token endpoint is giving 401, then do not try to refresh the token
+        if (!isRefreshTokenEndpoint && error.response && (error.response.status === 403 || error.response.status === 401)) {
+          // If there's no refresh in progress, start one
+          if (!refreshPromiseRef.current) {
+            refreshPromiseRef.current = (async () => {
+              try {
+                const response = await refreshToken();
+                const newToken = response.data.access;
+                
+                // Store the new token in localStorage and update state
+                setAccessToken(newToken);
+                
+                return newToken;
+              } catch (refreshError) {
+                // Clear both localStorage and state on refresh failure
+                setAccessToken("");
+                setCurrentUser(initialUser);
+                // Clear user quota cache on logout
+                invalidateUserQuotaData(queryClient);
+                
+                throw refreshError;
+              } finally {
+                // Always clear the promise when done (success or failure)
+                refreshPromiseRef.current = null;
+              }
+            })();
+          }
+
+          // Wait for the refresh to complete
           try {
-            const res = await refreshToken();
-            setAccessToken(res.data.access);
-            original.headers.Authorization = `Bearer ${res.data.access}`;
-            original._retry = true;
-            return api(original);
+            const newToken = await refreshPromiseRef.current;
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            originalRequest._retry = true;
+            return api(originalRequest);
           } catch {
-            setAccessToken("");
+            return Promise.reject(error);
           }
         }
+
         return Promise.reject(error);
       }
     );
-    return () => api.interceptors.response.eject(resInterceptor);
+
+    return () => {
+      api.interceptors.response.eject(refreshInterceptor);
+    };
   }, []);
 
+  // Listen for storage events from other tabs
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === ACCESS_TOKEN_KEY) {
+        if (!event.newValue) {
+          setAccessTokenState("");
+          setCurrentUser(initialUser);
+        } else if (event.newValue !== accessToken) {
+          setAccessTokenState(event.newValue);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [accessToken]);
+
   return (
-    <AuthContext.Provider value={{ accessToken, setAccessToken, loading }}>
+    <userAuthContext.Provider
+      value={{
+        accessToken,
+        setAccessToken,
+        currentUser,
+        setCurrentUser,
+        loading,
+        needsSubscription,
+        dueDate: currentUser.dueDate || "",
+      }}
+    >
       {children}
-    </AuthContext.Provider>
+    </userAuthContext.Provider>
   );
 };
 
+export { AuthProvider as default, AuthProvider, userAuthContext };
+
 export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const context = useContext(userAuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within a UserAuthContextProvider');
+  }
+  return context;
 };

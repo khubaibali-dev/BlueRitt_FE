@@ -16,6 +16,7 @@ interface ToolItem {
   image?: string;
   actionText: string;
   isExternal?: boolean;
+  link?: string;
 }
 
 const ToolFusionPage: React.FC = () => {
@@ -58,6 +59,7 @@ const ToolFusionPage: React.FC = () => {
       image: googleIcon,
       actionText: "Verify Patent Status",
       isExternal: true,
+      link: "https://patents.google.com/",
     },
     {
       id: "amz-data",
@@ -66,6 +68,7 @@ const ToolFusionPage: React.FC = () => {
       image: amzLogo,
       actionText: "Optimize Product Strategy",
       isExternal: true,
+      link: "https://amzdatastudio.com/",
     },
     {
       id: "barcode",
@@ -74,6 +77,7 @@ const ToolFusionPage: React.FC = () => {
       image: nbLogo,
       actionText: "Get Your Badcodes",
       isExternal: true,
+      link: "https://nationwidebarcode.com/purchase-barcodes/barcodes-for-amazon/",
     },
     {
       id: "heepsy",
@@ -82,6 +86,7 @@ const ToolFusionPage: React.FC = () => {
       image: hepsyLogo,
       actionText: "Find Perfect Influencers",
       isExternal: true,
+      link: "https://www.heepsy.com/",
     },
     {
       id: "rakuten",
@@ -90,6 +95,7 @@ const ToolFusionPage: React.FC = () => {
       image: rakutenLogo,
       actionText: "Start Earning Cashbacks",
       isExternal: true,
+      link: "https://www.rakuten.com/extension",
     },
     {
       id: "trustpilot",
@@ -98,6 +104,7 @@ const ToolFusionPage: React.FC = () => {
       image: trustLogo,
       actionText: "Check Supplier Ratings",
       isExternal: true,
+      link: "https://www.trustpilot.com/",
     },
   ];
 
@@ -124,7 +131,7 @@ const ToolFusionPage: React.FC = () => {
           </p>
         </div>
       </div>
-      <button className="tool-action-btn">
+      <button className="tool-action-btn" onClick={() => window.open(tool.link, "_blank")}>
         {tool.actionText}
       </button>
     </div>

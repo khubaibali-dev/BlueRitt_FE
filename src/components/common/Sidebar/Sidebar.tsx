@@ -54,7 +54,7 @@ const NavItem: React.FC<NavItemProps> = ({
       <div className="flex flex-col">
         <button
           onClick={onToggle}
-          className={`sidebar-item group !outline-none focus:!ring-0 ${isParentActive ? "sidebar-item-active" : ""}`}
+          className={`sidebar-item group !outline-none focus:!ring-0 ${isParentActive ? (label === "SocialPulse" ? "socialpulse-active" : "sidebar-item-active") : ""}`}
         >
           <div className="flex items-center gap-3">
             <Icon size={20} />
@@ -94,7 +94,8 @@ const NavItem: React.FC<NavItemProps> = ({
       className={({ isActive }) => {
         // If some other menu is expanded, this item should NOT be highlighted
         const effectiveActive = isActive && !isAnyMenuExpanded;
-        return effectiveActive ? "sidebar-item sidebar-item-active group !outline-none focus:!ring-0" : "sidebar-item group !outline-none focus:!ring-0"
+        const activeClass = label === "SocialPulse" ? "socialpulse-active" : "sidebar-item-active";
+        return effectiveActive ? `sidebar-item ${activeClass} group !outline-none focus:!ring-0` : "sidebar-item group !outline-none focus:!ring-0"
       }}
     >
       <div className="flex items-center gap-3">
@@ -192,7 +193,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
           </nav>
 
           {/* Bottom Nav */}
-          <div className="pt-6 space-y-1 px-3 mb-[-14px]">
+          <div className="pt-6 space-y-1 px-3 mb-6">
             <div className="mt-auto border-t border-[#1E293B] mb-4" />
             <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />

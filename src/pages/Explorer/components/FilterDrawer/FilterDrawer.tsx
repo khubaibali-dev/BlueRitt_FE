@@ -1,31 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import ReactDOM from "react-dom";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import InputField from "../../../../components/common/input/InputField";
 import SelectField, { SelectOption } from "../../../../components/common/select/SelectField";
+import { getAmazonCategoriesandSubcategories } from "../../../../api/product";
+
+export interface FilterState {
+  min_price?: number;
+  max_price?: number;
+  min_star_rating?: number;
+  max_star_rating?: number;
+  min_reviews?: number;
+  max_reviews?: number;
+  category?: string;
+  is_amazon_choice?: boolean;
+}
 
 interface FilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  onApply: (filters: FilterState) => void;
+  initialFilters?: FilterState;
+  country?: string;
 }
 
-const CATEGORY_OPTIONS: SelectOption[] = [
-  { label: "Electronics", value: "electronics" },
-  { label: "Home & Kitchen", value: "home-kitchen" },
-  { label: "Toys & Games", value: "toys-games" },
-  { label: "Beauty & Personal Care", value: "beauty-personal" },
-  { label: "Health & Household", value: "health-household" },
-];
+const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, initialFilters, country = "US" }) => {
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["amazon-categories-subcategories", country],
+    queryFn: () => getAmazonCategoriesandSubcategories(country),
+    enabled: isOpen,
+    staleTime: 1000 * 60 * 60, // 1 hour
+  });
 
-const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
-  const [ratingMin, setRatingMin] = useState("");
-  const [ratingMax, setRatingMax] = useState("");
-  const [ratingCountMin, setRatingCountMin] = useState("");
-  const [ratingCountMax, setRatingCountMax] = useState("");
-  const [category, setCategory] = useState("");
-  const [amazonChoice, setAmazonChoice] = useState<"yes" | "no" | null>(null);
+  const categoriesList: SelectOption[] = useMemo(() => {
+    const resData = (categoriesData as any)?.data?.res || (categoriesData as any)?.res || [];
+    if (!Array.isArray(resData)) return [];
+    return resData.map((cat: any) => ({
+      label: cat.category,
+      value: cat.category,
+    }));
+  }, [categoriesData]);
+
+  const [priceMin, setPriceMin] = useState(initialFilters?.min_price?.toString() || "");
+  const [priceMax, setPriceMax] = useState(initialFilters?.max_price?.toString() || "");
+  const [ratingMin, setRatingMin] = useState(initialFilters?.min_star_rating?.toString() || "");
+  const [ratingMax, setRatingMax] = useState(initialFilters?.max_star_rating?.toString() || "");
+  const [ratingCountMin, setRatingCountMin] = useState(initialFilters?.min_reviews?.toString() || "");
+  const [ratingCountMax, setRatingCountMax] = useState(initialFilters?.max_reviews?.toString() || "");
+  const [category, setCategory] = useState(initialFilters?.category || "");
+
+  const [amazonChoice, setAmazonChoice] = useState<"yes" | "no" | null>(
+    initialFilters?.is_amazon_choice === true ? "yes" : (initialFilters?.is_amazon_choice === false ? "no" : null)
+  );
+
 
   const handleClear = () => {
     setPriceMin("");
@@ -36,19 +64,31 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
     setRatingCountMax("");
     setCategory("");
     setAmazonChoice(null);
+    onApply({});
+  };
+
+  const handleApply = () => {
+    onApply({
+      min_price: priceMin ? parseFloat(priceMin) : undefined,
+      max_price: priceMax ? parseFloat(priceMax) : undefined,
+      min_star_rating: ratingMin ? parseFloat(ratingMin) : undefined,
+      max_star_rating: ratingMax ? parseFloat(ratingMax) : undefined,
+      min_reviews: ratingCountMin ? parseInt(ratingCountMin) : undefined,
+      max_reviews: ratingCountMax ? parseInt(ratingCountMax) : undefined,
+      category: category || undefined,
+      is_amazon_choice: amazonChoice === "yes" ? true : (amazonChoice === "no" ? false : undefined),
+    });
+    onClose();
   };
 
   const drawerContent = (
     <>
-      {/* Backdrop */}
       <div
         className={`filter-drawer-backdrop ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         onClick={onClose}
       />
 
-      {/* Drawer Panel */}
       <div className={`filter-drawer-panel ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
-        {/* Header */}
         <div className="filter-drawer-header">
           <h3 className="filter-drawer-title">Filters</h3>
           <button onClick={onClose} className="filter-drawer-close">
@@ -56,18 +96,15 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Body */}
         <div className="filter-drawer-body">
-
-          {/* Price Range */}
           <div className="filter-section">
-            <label className="filter-section-label">Price Range (US $)</label>
+            <label className="filter-section-label">Price Range ({country === "US" ? "$" : country})</label>
             <div className="filter-input-row">
               <div className="filter-input-wrap">
                 <InputField
                   id="priceMin"
                   type="number"
-                  placeholder="Min ($)"
+                  placeholder="Min"
                   value={priceMin}
                   onChange={(e) => setPriceMin(e.target.value)}
                 />
@@ -76,7 +113,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
                 <InputField
                   id="priceMax"
                   type="number"
-                  placeholder="Max ($)"
+                  placeholder="Max"
                   value={priceMax}
                   onChange={(e) => setPriceMax(e.target.value)}
                 />
@@ -84,7 +121,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Star Ratings */}
           <div className="filter-section">
             <label className="filter-section-label">Star Ratings (0-5)</label>
             <div className="filter-input-row">
@@ -109,7 +145,6 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Rating Count */}
           <div className="filter-section">
             <label className="filter-section-label">Rating Count</label>
             <div className="filter-input-row">
@@ -134,52 +169,63 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Category Select */}
           <div className="filter-section">
-            <SelectField
-              id="category"
-              label="Product Category"
-              value={category}
-              options={CATEGORY_OPTIONS}
-              onChange={(val) => setCategory(val)}
-              placeholder="All Categories"
-            />
+            <label className="filter-section-label">Product Category</label>
+            {isCategoriesLoading ? (
+              <div className="flex items-center gap-2 text-white/50 text-[13px] py-3 px-4 bg-white/5 rounded-xl border border-white/5">
+                <Loader2 size={16} className="animate-spin" />
+                Loading categories...
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <SelectField
+                  id="filter-category"
+                  value={category}
+                  options={categoriesList}
+                  onChange={(val) => {
+                    setCategory(val);
+                  }}
+                  placeholder="All Categories"
+                />
+              </div>
+            )}
           </div>
 
-          {/* Amazon Choice */}
-          <div className="filter-section border-t border-white/5 pt-6">
-            <label className="filter-section-label">Is Amazon Choice?</label>
-            <div className="flex items-center gap-6 mt-2">
-              <label className="filter-radio-label">
-                <input
-                  type="radio"
-                  name="amazon-choice"
-                  checked={amazonChoice === "yes"}
-                  onChange={() => setAmazonChoice("yes")}
-                  className="filter-radio"
-                />
-                Yes
-              </label>
-              <label className="filter-radio-label">
-                <input
-                  type="radio"
-                  name="amazon-choice"
-                  checked={amazonChoice === "no"}
-                  onChange={() => setAmazonChoice("no")}
-                  className="filter-radio"
-                />
-                No
-              </label>
+          <div className="filter-section border-t border-white/5 pt-6 space-y-6">
+            <div className="space-y-4">
+              <label className="filter-section-label">Is Amazon Choice?</label>
+              <div className="flex items-center gap-6">
+                <label className="filter-radio-label">
+                  <input
+                    type="radio"
+                    name="amazon-choice"
+                    checked={amazonChoice === "yes"}
+                    onChange={() => setAmazonChoice("yes")}
+                    className="filter-radio"
+                  />
+                  Yes
+                </label>
+                <label className="filter-radio-label">
+                  <input
+                    type="radio"
+                    name="amazon-choice"
+                    checked={amazonChoice === "no"}
+                    onChange={() => setAmazonChoice("no")}
+                    className="filter-radio"
+                  />
+                  No
+                </label>
+              </div>
             </div>
+
           </div>
         </div>
 
-        {/* Footer Actions */}
         <div className="filter-drawer-footer">
           <button onClick={handleClear} className="filter-clear-btn figma-pill-border">
             Clear Filters
           </button>
-          <button onClick={onClose} className="filter-apply-btn bg-brand-gradient">
+          <button onClick={handleApply} className="filter-apply-btn bg-brand-gradient">
             Apply Filters
           </button>
         </div>

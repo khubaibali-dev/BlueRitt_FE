@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { ChevronLeft, Box, Star, Save, TrendingUp, Truck } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import AmazonProductCard from "../Common/Cards/AmazonProductCard";
+import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
 import BasicTab from "../../../ProfitCalculator/Basic/BasicTab";
 import AdvancedTab from "../../../ProfitCalculator/Advance/AdvancedTab";
@@ -16,6 +18,35 @@ interface SourceLinkProfitCalculatorProps {
 const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product, supplier, onBack }) => {
   const [activeTab] = useState<"Basic" | "Advanced">("Basic");
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+
+  // Normalize the selected product data (mirrors SupplierSourceLink logic)
+  const normalizedProduct = React.useMemo(() => {
+    if (!product) return null;
+
+    const tags: string[] = [];
+    if (product.is_best_seller) tags.push("Best Seller");
+    if (product.is_amazon_choice) tags.push("Amazon Choice");
+    if (product.is_prime) tags.push("Prime");
+    if (product.climate_pledge_friendly) tags.push("Climate Pledge");
+
+    return {
+      title: product.product_title || product.title || "Selected Product",
+      image: product.product_photo || product.image || "",
+      price: product.product_price?.toString().replace("$", "") || product.price?.toString().replace("$", "") || "0.00",
+      oldPrice: product.product_original_price?.toString().replace("$", "") || product.oldPrice?.toString().replace("$", "") || product.product_price?.toString().replace("$", "") || "0.00",
+      asin: product.asin || "N/A",
+      salesVol: product.sales_volume || product.salesVol || "N/A",
+      offers: product.product_num_offers?.toString() || product.offers?.toString() || "1",
+      seller: product.product_seller_name || product.seller || product.product_offers?.[0]?.seller || "Amazon.com",
+      shipsFrom: product.ships_from || product.shipsFrom || product.product_offers?.[0]?.ships_from || product.delivery || "Amazon",
+      country: product.seller_country || product.country || "US",
+      rating: parseFloat(product.product_star_rating || product.rating || "4.5"),
+      numRatings: product.product_num_ratings || product.ratings || "0",
+      dimensions: product.product_information?.["Product Dimensions"] || product.product_details?.["Product Dimensions"] || product.product_information?.["Package Dimensions"] || product.dimensions || "N/A",
+      weight: product.product_information?.["Item Weight"] || product.product_details?.["Item Weight"] || product.weight || "N/A",
+      tags: tags.length > 0 ? tags : (product.tags || [])
+    };
+  }, [product]);
 
   // Helper to parse price range "$17.38-19.43" -> "17.38"
   const parseCost = (costStr: string) => {
@@ -47,8 +78,8 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
     netProfitUnit,
     totalNetProfit,
   } = useProfitCalculation({
-    sellingPrice: product?.price?.toString() || "0.00",
-    manufacturingCost: parseCost(supplier?.cost),
+    sellingPrice: normalizedProduct?.price || "0.00",
+    manufacturingCost: parseCost(supplier?.cost || supplier?.price),
   });
 
   const displayProfitUnit = activeTab !== "Advanced" ? netProfitUnit : grossProfitUnit;
@@ -93,145 +124,17 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
 
         {/* Top Panels Hooked together */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-12">
-          {/* Selected Product Card */}
-          <div className="bg-[#04132B]/60 backdrop-blur-md border border-brand-inputBorder rounded-[24px] overflow-hidden shadow-2xl relative p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <Box size={14} className="text-[#FF5900]" />
-              <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">
-                Selected Product
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <div className="w-20 h-20 rounded-xl overflow-hidden border border-white/10 shrink-0">
-                <img src={product?.image} alt="" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="product-card-title text-[15px] sm:text-[16px] mb-2">{product?.title}</h3>
-                    <div className="flex items-center gap-3">
-                      <span className="brand-tag brand-tag-default font-bold uppercase tracking-wider !px-3 !py-1 text-[10px]">Electronics</span>
-                      <span className="brand-tag brand-tag-amazon font-bold uppercase tracking-wider !px-3 !py-1 text-[10px]">Amazon Choice</span>
-                      <div className="flex gap-0.5 ml-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={10} fill={i < 4 ? "#FFC107" : "transparent"} className={i < 4 ? "text-[#FFC107]" : "text-slate-600"} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="product-old-price-primary text-[12px] block mb-1">${product?.oldPrice}</span>
-                    <span className="product-price-primary text-[24px] block leading-none">${product?.price}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <AmazonProductCard
+            product={normalizedProduct}
+            variant="selected"
+            isCalculator={true}
+          />
 
-            {/* Metrics Grid - Moved Below and restored icons */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-2 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="quick-action-icon-circle !w-6 !h-6">
-                  <Box size={14} className="text-white" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="metric-label leading-none mb-0.5">ASIN</span>
-                  <span className="metric-value leading-none">{product?.asin}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="quick-action-icon-circle !w-6 !h-6">
-                  <TrendingUp size={14} className="text-white" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="metric-label leading-none mb-0.5">MONTHLY SALES VOL</span>
-                  <span className="metric-value leading-none">{product?.salesVol}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="quick-action-icon-circle !w-6 !h-6">
-                  <span className="text-white font-bold text-[12px]">%</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="metric-label leading-none mb-0.5">OFFERS</span>
-                  <span className="metric-value leading-none">{product?.offers} sellers</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="quick-action-icon-circle !w-6 !h-6">
-                  <Truck size={14} className="text-white" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="metric-label leading-none mb-0.5">DELIVERY</span>
-                  <span className="metric-value leading-none">Free</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Selected Supplier Card */}
-          <div className="bg-[#04132B]/60 backdrop-blur-md border border-brand-inputBorder rounded-[24px] overflow-hidden shadow-2xl relative p-4">
-            <div className="flex items-center gap-2 mb-6">
-              <Box size={14} className="text-[#FF5900]" />
-              <span className="text-[11px] text-[#FF5900] font-black tracking-[0.15em] uppercase">
-                Selected Supplier
-              </span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2 mb-2">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden border border-white/5 shrink-0 bg-[#081421]">
-                <img src={supplier?.image} alt="" className="w-full h-full object-cover p-2" />
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="product-card-title text-[15px] sm:text-[16px] leading-tight max-w-[450px]">
-                    2025 New Design App Tracker Smart Watch GPS Sports..
-                  </h3>
-                  <div className="flex gap-0.5 mt-1 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={12} fill={i < 4 ? "#FFC107" : "transparent"} className={i < 4 ? "text-[#FFC107]" : "text-white/20"} />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 mt-1">
-                  <span className="brand-tag brand-tag-default border-[#00D1FF33] text-white/90 text-[10px] font-bold px-3 py-1">Verified</span>
-                  <span className="brand-tag brand-tag-default border-[#00D1FF33] text-white/90 text-[10px] font-bold px-3 py-1">Trade Assurance</span>
-                  <span className="brand-tag brand-tag-default border-[#00D1FF33] text-white/90 text-[10px] font-bold px-3 py-1">Store Age: {supplier?.age || "4 years"}</span>
-                  <span className="brand-tag border-[#8B5CF64D] text-white text-[10px] font-bold px-3 py-1" style={{ background: 'linear-gradient(90deg, rgba(255, 89, 0, 0.2) 0%, rgba(255, 0, 230, 0.2) 100%)' }}>Gold</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Supplier Info Grid - Reorganized into 2 Rows */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr,1fr] gap-y-4 gap-x-4 lg:gap-x-12 border-t border-white/5 pt-3 mt-1">
-              <div className="flex flex-col">
-                <span className="metric-label mb-1">Store</span>
-                <span className="metric-value leading-tight">Shenzhen Iwonlex Technology Co., Ltd.</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="metric-label mb-1 ">Manufacturing Cost</span>
-                <span className="metric-value text-[#FF5900] text-[15px] font-black tracking-tight">{supplier?.cost || "$17.38-19.43"}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-7 gap-x-4 lg:gap-x-12 mt-4">
-              <div className="flex flex-col">
-                <span className="metric-label mb-1">Seller</span>
-                <span className="metric-value">{supplier?.contact || "Cherry Zhou"}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="metric-label mb-1">Item ID</span>
-                <span className="metric-value">{supplier?.id || "1601481983321"}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="metric-label mb-1">Min. Order Qty</span>
-                <span className="metric-value">{supplier?.minOrder || "1 set"}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="metric-label mb-1">Country</span>
-                <span className="metric-value">{supplier?.country || "China"}</span>
-              </div>
-            </div>
+          <div className="mt-8 lg:mt-0">
+            <AlibabaSupplierCard
+              supplier={supplier}
+              variant="selected"
+            />
           </div>
         </div>
 

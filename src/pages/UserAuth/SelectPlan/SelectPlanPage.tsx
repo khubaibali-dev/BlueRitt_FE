@@ -68,6 +68,7 @@ const SelectPlanPage: React.FC = () => {
           <PackageDetailsPanel
             packageData={selectedPackage}
             billingCycle={billingCycle}
+            packageType={packageType}
           />
         </div>
       </div>

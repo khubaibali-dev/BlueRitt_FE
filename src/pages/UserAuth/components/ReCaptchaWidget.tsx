@@ -11,27 +11,28 @@ const ReCaptchaWidget: React.FC<ReCaptchaWidgetProps> = ({ onVerify }) => {
   const { theme } = useTheme();
 
   return (
-    <div className="flex flex-col gap-[6px] w-full">
-      <div
-        className="
-          flex items-center justify-center rounded-lg
-         
-          overflow-hidden py-3 transition-colors duration-300
-        "
-      >
-        {/* 
-          Google reCAPTCHA is ~304px wide. 
-          We scale it to fill the container width more naturally while keeping it crisp.
-        */}
-        <div className="scale-105 sm:scale-115 origin-center transition-transform duration-300">
+    <div className="flex flex-col items-center justify-center p-2 ">
+      <div className="relative group">
+        <div className="absolute -inset-1 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+        <div className="scale-[0.9] sm:scale-1 origin-center transition-transform duration-300">
           <ReCAPTCHA
             key={theme}
-            sitekey="6LcKJoosAAAAAL1Q4t2sbAXzExvdieXu1wz62Yl2"
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
             theme={theme}
             onChange={(token) => onVerify(token || "")}
           />
         </div>
       </div>
+
+      {/* --- Dev Bypass --- */}
+      {/* {window.location.hostname === "localhost" && (
+        <button
+          type="button"
+          onClick={() => onVerify("dev-bypass-token")}
+          className="mt-4 px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-white/40 hover:text-white/80 border border-white/10 hover:border-brand-primary/50 rounded-lg transition-all"
+        >
+        </button>
+      )} */}
     </div>
   );
 };

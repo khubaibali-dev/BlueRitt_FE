@@ -12,6 +12,10 @@ const ExplorerPage: React.FC = () => {
   const [showTour, setShowTour] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isResultsView, setIsResultsView] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchCountry, setSearchCountry] = useState("US");
+  const [searchType, setSearchType] = useState("product");
+  const [isDetailedLoading, setIsDetailedLoading] = useState(false);
 
   useEffect(() => {
     if (location.state?.autoSourceLink) {
@@ -20,34 +24,43 @@ const ExplorerPage: React.FC = () => {
     }
   }, [location.state]);
 
-  const handleSearch = () => {
+  const handleSearch = (query: string, country: string, type: string = "product") => {
+    setSearchQuery(query);
+    setSearchCountry(country);
+    setSearchType(type);
     setIsAnalyzing(true);
-    setIsResultsView(false);
-    // Simulate analysis time
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setIsResultsView(true);
-    }, 3000);
+    setIsDetailedLoading(false);
+    setIsResultsView(true);
   };
 
   return (
     <div className={`bg-brand-card-alt rounded-[32px] relative shadow-2xl transition-all duration-500 ${isAnalyzing ? 'h-[600px] overflow-hidden' : 'min-h-[600px] overflow-visible'} ${isResultsView ? 'bg-[#0E0C1B]' : ''}`}>
-      {isAnalyzing ? (
-        <AnalyzingScreen onCancel={() => setIsAnalyzing(false)} />
-      ) : isResultsView ? (
-        <DiscoveryResults onBack={() => setIsResultsView(false)} />
+      {isResultsView ? (
+        <DiscoveryResults
+          onBack={() => setIsResultsView(false)}
+          initialQuery={searchQuery}
+          initialCountry={searchCountry}
+          initialSearchType={searchType}
+          onLoadingChange={(isLoading, isDetailed) => {
+            setIsAnalyzing(isLoading);
+            setIsDetailedLoading(!!isDetailed);
+          }}
+        />
       ) : (
         <div className="pb-12 animate-in fade-in duration-500">
-          {/* Explorer Banner - uses rounded-t-[32px] internally via explorer-banner-wrapper */}
           <ExplorerBanner onSearch={handleSearch} />
 
-          {/* Usage Insights Section - with horizontal padding */}
           <div className="px-6 sm:px-10 space-y-8 mt-8">
             <UsageInsights />
             <ExplorerStats />
-            {/* Stats Divider / Footer */}
           </div>
         </div>
+      )}
+      {isAnalyzing && (
+        <AnalyzingScreen
+          onCancel={() => setIsAnalyzing(false)}
+          isDetailed={isDetailedLoading}
+        />
       )}
 
       {/* Tour Modal */}

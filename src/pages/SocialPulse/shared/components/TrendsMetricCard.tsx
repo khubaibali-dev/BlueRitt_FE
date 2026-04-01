@@ -9,6 +9,7 @@ interface TrendsMetricCardProps {
   progress?: number;
   subtitle?: string;
   isAddon?: boolean;
+  onClick?: () => void;
 }
 
 const TrendsMetricCard: React.FC<TrendsMetricCardProps> = ({
@@ -17,15 +18,20 @@ const TrendsMetricCard: React.FC<TrendsMetricCardProps> = ({
   icon,
   progress,
   subtitle,
-  isAddon
+  isAddon,
+  onClick
 }) => {
   const Icon = (LucideIcons as any)[icon] || LucideIcons.HelpCircle;
 
   if (isAddon) {
     return (
-      <div className="flex-1 w-full sm:min-w-[280px] rounded-[12px] p-4 flex flex-col items-center justify-center text-center gap-3 transition-all hover:border-blue-500/20 group 
+      <div 
+        onClick={onClick}
+        className={`flex-1 w-full sm:min-w-[280px] rounded-[12px] p-4 flex flex-col items-center justify-center text-center gap-3 transition-all hover:border-blue-500/20 group 
+${onClick ? 'cursor-pointer' : ''}
 bg-[linear-gradient(135deg,#082553_0%,#04132B_100%)] 
-shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]">
+shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
+      >
         <div className="flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
           <ShoppingCart size={26} className="text-white" />
         </div>

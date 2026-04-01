@@ -14,23 +14,15 @@ interface TrendProductCardProps {
     impressions: string;
   };
   onDetailsClick?: () => void;
+  onDiscoverSupplier?: () => void;
 }
 
-const TrendProductCard: React.FC<TrendProductCardProps> = ({ title, image, category, price = "$10.90", metrics, onDetailsClick }) => {
-  const navigate = useNavigate();
+const TrendProductCard: React.FC<TrendProductCardProps> = ({ title, image, category, price = "$10.90", metrics, onDetailsClick, onDiscoverSupplier }) => {
 
   const handleDiscoverSupplier = () => {
-    navigate("/explorer", {
-      state: {
-        product: {
-          title,
-          image,
-          category,
-          price,
-        },
-        autoSourceLink: true
-      }
-    });
+    if (onDiscoverSupplier) {
+      onDiscoverSupplier();
+    }
   };
 
   return (

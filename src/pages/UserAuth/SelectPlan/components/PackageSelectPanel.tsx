@@ -127,7 +127,7 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-[15px] text-brand-textPrimary dark:text-white tracking-wide">
-                        {pkg.name}
+                        {packageType === "Prepaid" ? `Prepaid ${pkg.name}` : pkg.name}
                       </span>
                       {pkg.isPopular && (
                         <span className="pkg-current-plan-badge text-[10px] font-semibold text-white px-2 py-[2px] rounded-full">
@@ -135,8 +135,11 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
                         </span>
                       )}
                     </div>
-                    <p className="text-[12px] text-brand-textSecondary dark:text-[#7A9ABF] truncate">
-                      {pkg.tagline}
+                    <p className="text-[12px] text-brand-textSecondary dark:text-[#7A9ABF] leading-tight">
+                      {packageType === "Prepaid" 
+                        ? (pkg.prepaidTagline || pkg.tagline)
+                        : pkg.tagline
+                      }
                     </p>
                   </div>
                 </button>

@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Layout, BarChart2, Share2, Heart, MessageCircle, Award, ChevronDown, ChevronUp } from "lucide-react";
+import { X, Layout, BarChart2, Share2, Heart, MessageCircle, Award, ChevronDown, ChevronUp, Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getTikTokShopAnalysis, formatNumber, getTikTokCreativeCenterProductDetails } from "../../../../api/tiktokTrends";
 
 interface TrendsProductDetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   product?: {
+    id: string;
     title: string;
     image: string;
     category: string;
@@ -16,15 +19,53 @@ interface TrendsProductDetailsDrawerProps {
       cpa: string;
       impressions: string;
     };
+    post_count: number;
+    review_count: number;
+    comment_count: number;
+    like_count: number;
+    share_count: number;
+    view_count: number;
   };
+  country?: string;
 }
 
-const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({ isOpen, onClose, product }) => {
+const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({ isOpen, onClose, product, country = "US" }) => {
   const [activeTab, setActiveTab] = useState<"Details" | "Analysis">("Details");
   const [isHashtagsExpanded, setIsHashtagsExpanded] = useState(true);
   const navigate = useNavigate();
 
+  // Real-time Analysis Query
+  const { data: analysisData, isLoading: isAnalysisLoading } = useQuery({
+    queryKey: ["tiktok-analysis", product?.title, country],
+    queryFn: () => getTikTokShopAnalysis(product?.title || "", country),
+    enabled: isOpen && activeTab === "Analysis" && !!product?.title,
+  });
+
+  // TikTok Creative Center Details Query
+  const { data: creativeData, isLoading: isCreativeLoading } = useQuery({
+    queryKey: ["tiktok-creative-center", product?.id],
+    queryFn: () => getTikTokCreativeCenterProductDetails(product?.id || ""),
+    enabled: isOpen && !!product?.id,
+  });
+
   if (!product) return null;
+
+  // Helper to map age_level to raw labels from API
+  const getAgeLabel = (level: number) => {
+    if (!level) return "18+";
+
+    // If it's a small index (1, 2, 3), map to standard start ages
+    const indexMapping: Record<number, number> = {
+      1: 18,
+      2: 25,
+      3: 35,
+      4: 45,
+      5: 55
+    };
+
+    const age = indexMapping[level] || level;
+    return `${age}+`;
+  };
 
   const handleDiscoverSupplier = () => {
     navigate("/explorer", {
@@ -35,7 +76,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
           category: product.category,
           price: product.price,
         },
-        autoSourceLink: true
+        autoSourceLink: true,
+        isTikTokSource: true
       }
     });
   };
@@ -104,13 +146,13 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     <h4 className="product-card-title pr-4 !text-[17px]">
                       {product.title}
                     </h4>
-                    <div className="product-img-badge !static shrink-0">
+                    <div className="product-img-badge !static shrink-0 !rounded-full !bg-white/5 !border-none">
                       {product.category}
                     </div>
                   </div>
                   <div className="flex items-baseline justify-between pt-1">
                     <span className="text-[22px] font-black text-white">{product.price}</span>
-                    <span className="product-img-badge">5.66 Views</span>
+                    <span className="product-img-badge !rounded-full !bg-white/5 !border-none">{formatNumber(product.view_count)} Views</span>
                   </div>
                 </div>
               </div>
@@ -120,10 +162,10 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                 <h5 className="text-[14px]  text-white tracking-tight">TikTok Engagement</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { icon: Award, label: "Posts", value: "253" },
-                    { icon: Heart, label: "Likes", value: "125.0K" },
-                    { icon: Share2, label: "Shares", value: "8.5K" },
-                    { icon: MessageCircle, label: "Comments", value: "3.2K" }
+                    { icon: Award, label: "Posts", value: formatNumber(product.post_count) },
+                    { icon: Heart, label: "Likes", value: formatNumber(product.like_count) },
+                    { icon: Share2, label: "Shares", value: formatNumber(product.share_count) },
+                    { icon: MessageCircle, label: "Comments", value: formatNumber(product.comment_count) }
                   ].map((item, i) => (
                     <div key={i} className="engagement-icon-box !p-3 !rounded-[20px]">
                       <div className="standard-icon-circle !w-9 !h-9 text-blue-400">
@@ -143,10 +185,10 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                 <h5 className="text-[14px]  text-white tracking-tight">Additional Metrics</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label: "CTR", value: product.metrics.ctr },
-                    { label: "CVR", value: product.metrics.cvr },
-                    { label: "CPA", value: product.metrics.cpa },
-                    { label: "Impressions", value: product.metrics.impressions }
+                    { label: "CTR", value: product.metrics?.ctr || "0.00" },
+                    { label: "CVR", value: product.metrics?.cvr || "0.00" },
+                    { label: "CPA", value: product.metrics?.cpa || "$0.00" },
+                    { label: "Impressions", value: product.metrics?.impressions || "0K" }
                   ].map((metric, i) => (
                     <div key={i} className="bg-[#04132B] border border-[#082656] rounded-[10px] p-3.5 flex flex-col justify-center">
                       <span className="product-metric-label block mb-2">{metric.label}</span>
@@ -169,9 +211,17 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                 </button>
                 {isHashtagsExpanded && (
                   <div className="flex flex-wrap gap-2.5 pt-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                    {['#lipsync', '#lipstick', '#lipcombo', '#lipgloss', '#wicked'].map((tag, i) => (
-                      <span key={i} className="hashtag-pill !px-4 !py-2 !rounded-full text-[12px]">{tag}</span>
-                    ))}
+                    {isCreativeLoading ? (
+                      [1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="h-8 w-20 bg-white/5 rounded-full skeleton-pulse" />
+                      ))
+                    ) : creativeData?.data?.info?.hashtags?.length ? (
+                      creativeData.data.info.hashtags.map((tag, i) => (
+                        <span key={i} className="hashtag-pill !px-4 !py-2 !rounded-full text-[12px]">#{tag}</span>
+                      ))
+                    ) : (
+                      <span className="text-[12px] text-slate-500 italic">No hashtags found</span>
+                    )}
                   </div>
                 )}
               </div>
@@ -183,27 +233,35 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                   <h6 className="text-[13px] font-medium text-slate-300 mb-6">Age Demographics</h6>
 
                   <div className="space-y-4">
-                    {[
-                      { range: "25+", percentage: 39 },
-                      { range: "18+", percentage: 33 },
-                      { range: "35+", percentage: 16 },
-                      { range: "45+", percentage: 7 },
-                      { range: "55+", percentage: 5 }
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-4">
-                        <span className="text-[12px] font-bold text-slate-400 w-8">{item.range}</span>
-                        <div className="h-4 bg-[#051125] rounded-full overflow-hidden flex-1 relative">
-                          <div
-                            className="h-full rounded-full absolute left-0 top-0 transition-all duration-1000"
-                            style={{
-                              width: `${item.percentage}%`,
-                              background: "linear-gradient(90deg, #A7CFFF 0%, #FFFFFF 50%, #FF9E6F 100%)"
-                            }}
-                          />
+                    {isCreativeLoading ? (
+                      [1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="flex items-center gap-4 skeleton-pulse">
+                          <div className="h-3 bg-white/10 rounded w-8" />
+                          <div className="h-4 bg-white/5 rounded-full flex-1" />
+                          <div className="h-3 bg-white/10 rounded w-10" />
                         </div>
-                        <span className="text-[12px] font-bold text-[#6291DE] w-10 text-right">{item.percentage}%</span>
+                      ))
+                    ) : creativeData?.data?.info?.audience_ages?.length ? (
+                      creativeData.data.info.audience_ages.map((item, i) => (
+                        <div key={i} className="flex items-center gap-4 animate-in fade-in slide-in-from-left-2 duration-700" style={{ animationDelay: `${i * 100}ms` }}>
+                          <span className="text-[12px] font-bold text-slate-400 w-8">{getAgeLabel(item.age_level)}</span>
+                          <div className="h-4 bg-[#051125] rounded-full overflow-hidden flex-1 relative">
+                            <div
+                              className="h-full rounded-full absolute left-0 top-0 transition-all duration-1000"
+                              style={{
+                                width: `${Math.min(item.score, 100)}%`,
+                                background: "linear-gradient(90deg, #A7CFFF 0%, #FFFFFF 50%, #FF9E6F 100%)"
+                              }}
+                            />
+                          </div>
+                          <span className="text-[12px] font-bold text-[#6291DE] w-10 text-right">{item.score}%</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-slate-500 text-[12px]">Audience data is not available for this product.</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
@@ -219,20 +277,11 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                 <div className="flex gap-4">
                   <div className="flex items-center gap-2">
                     <div className="standard-icon-circle !w-8 !h-8 flex items-center justify-center ">
-                      <Layout size={14} className="text-white" />
+                      <Star size={14} className="text-white" />
                     </div>
                     <div>
-                      <span className="product-metric-label block">Sales</span>
-                      <span className="product-metric-value block !text-[12px]">1,323</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="standard-icon-circle !w-8 !h-8 flex items-center justify-center ">
-                      <Heart size={14} className="text-white" />
-                    </div>
-                    <div>
-                      <span className="product-metric-label block">Ratings</span>
-                      <span className="product-metric-value block !text-[12px]">4.3</span>
+                      <span className="product-metric-label block">Rating</span>
+                      <span className="product-metric-value block !text-[12px]">{product.metrics?.ctr || "4.5"}</span>
                     </div>
                   </div>
                 </div>
@@ -243,73 +292,74 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
               <div className="space-y-6">
                 <div>
                   <h5 className="text-[15px] font-semibold text-white tracking-tight mt-4">TikTok Shop Analysis - {product.category}</h5>
-                  <p className="text-[12px] text-[#9F9F9F]">Found <span className="text-orange-400 font-bold">10 products</span> with pricing and sales data</p>
+                  <p className="text-[12px] text-[#9F9F9F]">
+                    {isAnalysisLoading ? (
+                      "Analyzing marketplace data..."
+                    ) : (
+                      <>Found <span className="text-orange-400 font-bold">{analysisData?.products?.length || 0} products</span> with pricing and sales data</>
+                    )}
+                  </p>
                 </div>
 
                 <div className="space-y-10">
-                  {/* Item 1: 4 Metrics */}
-                  <div className="space-y-4">
-                    <div className="flex gap-4">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
-                        <img src={product.image} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-4 mb-2">
-                          <h6 className="product-card-title !leading-tight truncate">{product.title}</h6>
-                          <div className="trending-badge-standard !px-2 !py-0.5">
-                             BY TIKTOK SHOP
+                  {isAnalysisLoading ? (
+                    // Analysis Skeletons
+                    [1, 2, 3].map((i) => (
+                      <div key={i} className="space-y-4 skeleton-pulse">
+                        <div className="flex gap-4">
+                          <div className="w-16 h-16 rounded-xl bg-white/5 shrink-0" />
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-white/10 rounded w-3/4" />
+                            <div className="h-4 bg-white/5 rounded w-1/4" />
                           </div>
                         </div>
-                        <span className="product-price-primary !text-[16px]">${product.price.replace('$','')} <span className="text-[10px] text-[#9F9F9F] font-normal ml-1 uppercase tracking-widest">USD</span></span>
-                      </div>
-                    </div>
-                    <div className="border border-white/10" />
-                    <div className="grid grid-cols-4 gap-3">
-                      {[
-                        { label: "CTR", value: "2.18" },
-                        { label: "CVR", value: "10.44" },
-                        { label: "CPA", value: "$47.57" },
-                        { label: "Impressions", value: "479.6K" }
-                      ].map((m, idx) => (
-                        <div key={idx} className="bg-[#04132B] border border-[#082656] rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
-                          <span className="product-metric-label block mb-1.5">{m.label}</span>
-                          <span className="product-metric-value block !text-[12px]">{m.value}</span>
+                        <div className="grid grid-cols-4 gap-3">
+                          {[1, 2, 3, 4].map((j) => (
+                            <div key={j} className="h-12 bg-white/5 rounded-lg" />
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Item 2: 5 Metrics */}
-                  <div className="space-y-4">
-                    <div className="flex gap-4">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
-                        <img src={product.image} className="w-full h-full object-cover" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-4 mb-2">
-                          <h6 className="product-card-title !leading-tight truncate">{product.title}</h6>
-                          <div className="trending-badge-standard !px-2 !py-0.5">
-                             BY TIKTOK SHOP
+                    ))
+                  ) : analysisData?.products?.length ? (
+                    analysisData.products.map((item: any, idx: number) => (
+                      <div key={idx} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <div className="flex gap-4">
+                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                            <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-4 mb-2">
+                              <h6 className="product-card-title !leading-tight truncate">{item.title}</h6>
+                              <div className="trending-badge-standard !px-2 !py-0.5">
+                                BY {item.shop_name?.toUpperCase() || "TIKTOK SHOP"}
+                              </div>
+                            </div>
+                            <span className="product-price-primary !text-[16px]">
+                              ${item.price.toFixed(2)} <span className="text-[10px] text-[#9F9F9F] font-normal ml-1 uppercase tracking-widest">{item.currency || "USD"}</span>
+                            </span>
                           </div>
                         </div>
-                        <span className="product-price-primary !text-[16px]">${product.price.replace('$','')} <span className="text-[10px] text-[#9F9F9F] font-normal ml-1 uppercase tracking-widest">USD</span></span>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-3">
-                      {[
-                        { label: "Sales", value: "3,658" },
-                        { label: "Rating", value: "4.5" },
-                        { label: "Reviews", value: "53" },
-                        { label: "Ships From", value: "US" },
-                        { label: "Shipping", value: "Free" }
-                      ].map((m, idx) => (
-                        <div key={idx} className="bg-[#04132B] border border-[#082656] rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
-                          <span className="product-metric-label block mb-1.5">{m.label}</span>
-                          <span className="product-metric-value block !text-[12px]">{m.value}</span>
+                        <div className="border border-white/10" />
+                        <div className="grid grid-cols-4 gap-3">
+                          {[
+                            { label: "Sales", value: item.sales_count >= 1000 ? `${(item.sales_count / 1000).toFixed(1)}K` : item.sales_count },
+                            { label: "Rating", value: item.product_rating },
+                            { label: "Reviews", value: item.review_count },
+                            { label: "Ships From", value: item.shipping_info?.ship_from || "US" }
+                          ].map((m, mIdx) => (
+                            <div key={mIdx} className="bg-[#04132B] border border-[#082656] rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
+                              <span className="product-metric-label block mb-1.5">{m.label}</span>
+                              <span className="product-metric-value block !text-[12px]">{m.value}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-10">
+                      <p className="text-slate-500">No additional shop analysis found for this keyword.</p>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

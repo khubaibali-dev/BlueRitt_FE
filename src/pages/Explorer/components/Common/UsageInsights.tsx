@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingUp, Briefcase, ShoppingCart, Crown } from "lucide-react";
+import { TrendingUp, Briefcase, ShoppingCart } from "lucide-react";
 
 interface InsightCardProps {
   icon: React.ReactNode;
@@ -37,14 +37,6 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon, title, value, progress 
 const UsageInsights: React.FC = () => {
   return (
     <section>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <h3 className="text-white text-[20px] tracking-[0.05em]">Usage Insights</h3>
-        <button className="upgrade-plan-btn w-fit">
-          <Crown size={18} />
-          Upgrade Your Plan
-        </button>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <InsightCard
           icon={<TrendingUp size={18} className="text-white" />}

@@ -51,10 +51,6 @@ const COUNTRY_OPTIONS = [
     label: "India",
     value: "IN",
   },
-  {
-    label: "Pakistan",
-    value: "PK",
-  },
 ];
 
 const countries = [
@@ -188,7 +184,6 @@ const countries = [
   "North Macedonia",
   "Norway",
   "Oman",
-  "Pakistan",
   "Palau",
   "Palestine",
   "Panama",

@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { X } from "lucide-react";
 import SelectField, { SelectOption } from "../../../../components/common/select/SelectField";
 
 interface TrendsFilterDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  country: string;
+  onCountryChange: (value: string) => void;
+  period: string;
+  onPeriodChange: (value: string) => void;
+  category: string;
+  onCategoryChange: (value: string) => void;
+  onApply: () => void;
+  onClear: () => void;
 }
 
 const countryOptions: SelectOption[] = [
@@ -14,6 +22,8 @@ const countryOptions: SelectOption[] = [
   { label: "France", value: "FR" },
   { label: "Canada", value: "CA" },
   { label: "Australia", value: "AU" },
+  { label: "Japan", value: "JP" },
+  { label: "Brazil", value: "BR" },
 ];
 
 const periodOptions: SelectOption[] = [
@@ -24,7 +34,7 @@ const periodOptions: SelectOption[] = [
 ];
 
 const categoryOptions: SelectOption[] = [
-  { label: "All Categories", value: "all" },
+  { label: "All Categories", value: "" },
   { label: "Technology", value: "tech" },
   { label: "Fashion", value: "fashion" },
   { label: "Health & Beauty", value: "beauty" },
@@ -33,22 +43,18 @@ const categoryOptions: SelectOption[] = [
   { label: "Kitchen & Dining", value: "kitchen" },
 ];
 
-const TrendsFilterDrawer: React.FC<TrendsFilterDrawerProps> = ({ isOpen, onClose }) => {
-  const [country, setCountry] = useState("UK");
-  const [period, setPeriod] = useState("30");
-  const [category, setCategory] = useState("all");
-
-  const handleClear = () => {
-    setCountry("UK");
-    setPeriod("30");
-    setCategory("all");
-  };
-
-  const handleApply = () => {
-    console.log("Applying filters:", { country, period, category });
-    onClose();
-  };
-
+const TrendsFilterDrawer: React.FC<TrendsFilterDrawerProps> = ({
+  isOpen,
+  onClose,
+  country,
+  onCountryChange,
+  period,
+  onPeriodChange,
+  category,
+  onCategoryChange,
+  onApply,
+  onClear
+}) => {
   return (
     <>
       {/* Backdrop */}
@@ -75,7 +81,7 @@ const TrendsFilterDrawer: React.FC<TrendsFilterDrawerProps> = ({ isOpen, onClose
             label="Country"
             value={country}
             options={countryOptions}
-            onChange={setCountry}
+            onChange={onCountryChange}
           />
 
           {/* Time Range Selection */}
@@ -84,7 +90,7 @@ const TrendsFilterDrawer: React.FC<TrendsFilterDrawerProps> = ({ isOpen, onClose
             label="Time Range"
             value={period}
             options={periodOptions}
-            onChange={setPeriod}
+            onChange={onPeriodChange}
           />
 
           {/* Category Selection */}
@@ -93,20 +99,20 @@ const TrendsFilterDrawer: React.FC<TrendsFilterDrawerProps> = ({ isOpen, onClose
             label="Category (Optional)"
             value={category}
             options={categoryOptions}
-            onChange={setCategory}
+            onChange={onCategoryChange}
           />
         </div>
 
         {/* Footer */}
         <div className="filter-drawer-footer !border-t-0 mt-auto pb-10">
           <button
-            onClick={handleClear}
+            onClick={onClear}
             className="filter-clear-btn flex-1 figma-pill-border !text-white !font-bold"
           >
             Clear Filters
           </button>
           <button
-            onClick={handleApply}
+            onClick={onApply}
             className="filter-apply-btn flex-1 !py-3 shadow-orange-500/20 bg-brand-gradient"
           >
             Apply Filters
