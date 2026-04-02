@@ -27,8 +27,7 @@ const AlibabaSupplierCard: React.FC<AlibabaSupplierCardProps> = ({
             </div>
             <div className="flex-1 flex flex-col justify-center">
               <h3 className="product-card-title mb-4 lg:max-w-[800px]">
-                {supplier.name} 
-                2025 New Design App Tracker Smart Watch GPS Sports Smartwatch 10-Day Battery Life Waterproof IP67 Sleep Call Answering Features
+                {supplier.name || "Alibaba Sourcing Partner"}
               </h3>
               <div className="flex flex-wrap justify-center sm:justify-start gap-2.5">
                 {supplier.isVerified && (
@@ -107,7 +106,7 @@ const AlibabaSupplierCard: React.FC<AlibabaSupplierCardProps> = ({
         </div>
         <div className="flex-1 flex flex-col justify-center">
           <h3 className="product-card-title mb-4 lg:max-w-[450px] leading-tight">
-            {supplier.name} 
+            {supplier.name}
             2025 New Design App Tracker Smart Watch GPS Sports Smartwatch 10-Day Battery Life Waterproof IP67 Sleep Call Answering Features
           </h3>
           <div className="flex flex-wrap gap-2">

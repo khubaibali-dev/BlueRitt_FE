@@ -1,67 +1,409 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import TrendsPageTemplate from "../shared/TrendsPageTemplate";
 import TrendsEmptyState from "../shared/components/TrendsEmptyState";
-import AmazonFilterDrawer from "./components/AmazonFilterDrawer";
 import AmazonProductCard from "./components/AmazonProductCard";
 import AmazonRankedCard from "./components/AmazonRankedCard";
 import AmazonProductDetailsDrawer from "./components/AmazonProductDetailsDrawer";
 import amazonBanner from "../../../assets/images/tiktoktrends.png";
-import { Package, Hash } from "lucide-react";
-
-const mockGeneralProductData = [
-  {
-    title: "Wireless Bluetooth Headphones Pro Max",
-    category: "Electronics",
-    price: "$24.99",
-    oldPrice: "$34.99",
-    rating: "4.5+",
-    views: "12.5K Views",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600",
-    metrics: { ctr: "4.12", cvr: "15.40", cpa: "$12.50", impressions: "1.2M" }
-  },
-  {
-    title: "Minimalist Leather Watch Series 7",
-    category: "Accessories",
-    price: "$24.50",
-    oldPrice: "$45.00",
-    rating: "4.8+",
-    views: "8.2K Views",
-    image: "https://images.unsplash.com/photo-1524592093030-057036733ec5?auto=format&fit=crop&q=80&w=600",
-    metrics: { ctr: "2.85", cvr: "12.15", cpa: "$25.40", impressions: "512.3K" }
-  },
-  {
-    title: "Eco-Friendly Bamboo Cutting Board Set",
-    category: "Kitchen",
-    price: "$29.99",
-    oldPrice: "$39.99",
-    rating: "4.2+",
-    views: "15.1K Views",
-    image: "https://images.unsplash.com/photo-1584305323473-d3921c172288?auto=format&fit=crop&q=80&w=600",
-    metrics: { ctr: "3.20", cvr: "9.80", cpa: "$14.90", impressions: "342.1K" }
-  }
-];
-
-const mockRankedData = [
-  { rank: 1, title: "Portable Blender USB Rechargeable - 380ml", price: "$24.99", oldPrice: "$34.99", rating: "4.5+", ratingCount: "2,326 ratings", image: "https://images.unsplash.com/photo-1584305323473-d3921c172288?auto=format&fit=crop&q=80&w=600" },
-  { rank: 2, title: "Portable Blender USB Rechargeable - 380ml", price: "$24.99", oldPrice: "$34.99", rating: "4.5+", ratingCount: "2,326 ratings", image: "https://images.unsplash.com/photo-1584305323473-d3921c172288?auto=format&fit=crop&q=80&w=600" },
-  { rank: 3, title: "Portable Blender USB Rechargeable - 380ml", price: "$24.99", oldPrice: "$34.99", rating: "4.5+", ratingCount: "2,326 ratings", image: "https://images.unsplash.com/photo-1584305323473-d3921c172288?auto=format&fit=crop&q=80&w=600" }
-];
+import { Package, Hash, ChevronRight } from "lucide-react";
+import {
+  amazonCountryOptions,
+  amazonTrendTypeOptions,
+  amazonSortOptions,
+  COUNTRY_OPTIONS
+} from "../../../utils/amazonFilterOptions";
+import SelectField from "../../../components/common/select/SelectField";
+import {
+  getTrendingProducts,
+  amazonTrendsSearch,
+  getAmazonTrendsBestSellers,
+  getAmazonTrendsProductsByCategory,
+  getAmazonTrendsProductDetails
+} from "../../../api/amazonTrends";
+import { getAmazonCategoriesandSubcategories, aliBabaProductMatcher } from "../../../api/product";
+import { useQuery } from "@tanstack/react-query";
+import TrendSkeleton from "../TiktokTrends/components/TrendSkeleton";
+import SupplierSourceLink from "../../Explorer/components/SourceLink/SupplierSourceLink";
+import SourceLinkProfitCalculator from "../../Explorer/components/SourceLink/SourceLinkProfitCalculator";
+import AnalyzingScreen from "../../Explorer/components/Discovery/AnalyzingScreen";
 
 const AmazonTrends: React.FC = () => {
+  const navigate = useNavigate();
+  // Filter States
+  const [country, setCountry] = useState("US");
+  const [marketplace, setMarketplace] = useState("US");
+  const [trendType, setTrendType] = useState("trending");
+  const [category, setCategory] = useState("all");
+  const [subCategory, setSubCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("default");
+
+  // Search & Content States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("product");
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Active search parameters (only update on Search Click)
+  const [activeSearchQuery, setActiveSearchQuery] = useState("");
+  const [activeCountry, setActiveCountry] = useState("US");
+  const [activeTrendType, setActiveTrendType] = useState("trending");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeSubCategory, setActiveSubCategory] = useState("all");
+
+  const [totalResults, setTotalResults] = useState(0);
+
+  // Discovery View States
+  const [view, setView] = useState<"list" | "discovery">("list");
+  const [selectedProductForDiscovery, setSelectedProductForDiscovery] = useState<any>(null);
+  const [discoverySuppliers, setDiscoverySuppliers] = useState<any[]>([]);
+  const [showProfitCalc, setShowProfitCalc] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Main Data Fetching Logic (Explorer Standard)
+  const { data: searchResponse, isLoading, isError } = useQuery({
+    queryKey: ["amazon-trends", activeSearchQuery, activeCountry, activeTrendType, activeCategory, activeSubCategory, sortBy],
+    queryFn: async () => {
+      const effectiveCategory = activeSubCategory !== 'all' ? activeSubCategory : (activeCategory !== 'all' ? activeCategory : undefined);
+      let results;
+
+      if (activeSearchQuery) {
+        results = await amazonTrendsSearch({
+          query: activeSearchQuery,
+          country: activeCountry,
+          category: effectiveCategory,
+          sort_by: sortBy
+        });
+      } else if (effectiveCategory) {
+        results = await getAmazonTrendsProductsByCategory({
+          category_id: effectiveCategory,
+          country: activeCountry,
+          sort_by: sortBy === 'default' ? 'RELEVANCE' : sortBy
+        });
+      } else {
+        if (activeTrendType === "trending") {
+          results = await getTrendingProducts({
+            country: activeCountry,
+            category: effectiveCategory
+          });
+        } else {
+          results = await getAmazonTrendsBestSellers({
+            country: activeCountry,
+            category: effectiveCategory,
+            type: activeTrendType.toUpperCase()
+          });
+        }
+      }
+
+      // Update total results count from the response
+      const total = (results as any)?.data?.total || (results as any)?.total || 0;
+      setTotalResults(total);
+
+      // Return the products array
+      const products = (results.data as any)?.products || (results.data as any)?.best_sellers || results.data || [];
+      return Array.isArray(products) ? products : [];
+    },
+    enabled: hasSearched,
+  });
+
+  const data = searchResponse || [];
+
+  // Fetch Categories from API (Explorer standard)
+  const { data: categoriesData } = useQuery({
+    queryKey: ["amazon-categories", country],
+    queryFn: () => getAmazonCategoriesandSubcategories(country),
+    staleTime: 1000 * 60 * 30, // 30 minutes cache
+  });
+
+  const categoriesList = useMemo(() => {
+    const list: any[] = [{ label: "All Categories", value: "all" }];
+    if (categoriesData?.data?.res) {
+      categoriesData.data.res.forEach((cat: any) => {
+        list.push({
+          label: cat.category,
+          value: cat.category,
+        });
+      });
+    }
+    return list;
+  }, [categoriesData]);
+
+  const subCategoriesList = useMemo(() => {
+    if (category === "all" || !categoriesData?.data?.res) return [{ label: "All Subcategories", value: "all" }];
+    const categoryData = categoriesData.data.res.find((cat: any) => cat.category === category);
+    if (categoryData && categoryData.subcategories) {
+      return [
+        { label: "All Subcategories", value: "all" },
+        ...categoryData.subcategories.map((sub: any) => ({
+          label: sub.subcategory_name,
+          value: sub.ids.subcategory_id,
+        })),
+      ];
+    }
+    return [{ label: "All Subcategories", value: "all" }];
+  }, [category, categoriesData]);
+
+  // Handle Category Change (Resets Subcategory and Search)
+  const handleCategoryChange = (val: string) => {
+    setCategory(val);
+    setSubCategory("all");
+    setSearchQuery("");
+  };
+
+  const handleSubCategoryChange = (val: string) => {
+    setSubCategory(val);
+    setSearchQuery("");
+  };
+
+  const handleCountryChange = (val: string) => {
+    setCountry(val);
+    setSearchQuery("");
+  };
+
+  const handleTrendTypeChange = (val: string) => {
+    setTrendType(val);
+    setSearchQuery("");
+  };
+
+  // Handle Search Trigger
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Synchronize current inputs to active search parameters (triggers useQuery)
+    setActiveSearchQuery(searchQuery);
+    setActiveCountry(country);
+    setActiveTrendType(trendType);
+    setActiveCategory(category);
+    setActiveSubCategory(subCategory);
+
+    setHasSearched(true);
+  };
+
+  const handleDiscoverSupplier = async (product: any) => {
+    setIsAnalyzing(true);
+    
+    let enrichedProduct = { ...product };
+    try {
+      // Fetch details to get dimensions, weight, and accurate seller info
+      const detailResponse = await getAmazonTrendsProductDetails({
+        asin: product.asin,
+        country: activeCountry || "US"
+      });
+      
+      const details = detailResponse?.data;
+      if (details) {
+        enrichedProduct = {
+          ...enrichedProduct,
+          product_seller_name: details.product_seller_name || details.seller?.name || enrichedProduct.product_seller_name,
+          ships_from: details.ships_from || details.delivery?.ships_from || enrichedProduct.ships_from,
+          product_information: details.product_information || details.product_details || {},
+          sales_volume: details.sales_volume || enrichedProduct.sales_volume,
+          product_star_rating: details.product_star_rating || enrichedProduct.rating,
+          product_num_ratings: details.product_num_ratings || enrichedProduct.numRatings,
+          product_url: details.product_url || enrichedProduct.product_url
+        };
+      }
+    } catch (error) {
+      console.error("Enrichment error:", error);
+    }
+
+    setSelectedProductForDiscovery(enrichedProduct);
+
+    try {
+      const response = await aliBabaProductMatcher({
+        asin: product.asin,
+        title: product.title || product.product_title,
+        country: activeCountry || "US",
+        limit: 25,
+        min_rating: 4.3
+      });
+
+      const suppliers = response.data?.data?.suppliers || response.data?.suppliers || [];
+      setDiscoverySuppliers(suppliers);
+      setView("discovery");
+    } catch (error) {
+      console.error("Discovery error:", error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // Frontend Sorting Logic
+  const parseSalesVolume = (vol: string): number => {
+    if (!vol || vol === "N/A" || vol === "0") return 0;
+    const match = vol.match(/(\d+(?:\.\d+)?)([KMB])?/i);
+    if (!match) return 0;
+    let val = parseFloat(match[1]);
+    const suffix = match[2]?.toUpperCase();
+    if (suffix === 'K') val *= 1000;
+    if (suffix === 'M') val *= 1000000;
+    if (suffix === 'B') val *= 1000000000;
+    return val;
+  };
+
+  const sortedData = useMemo(() => {
+    let sorted = [...data];
+    switch (sortBy) {
+      case "sales_low":
+        return sorted.sort((a, b) => parseSalesVolume(a.sales_volume || "") - parseSalesVolume(b.sales_volume || ""));
+      case "sales_high":
+        return sorted.sort((a, b) => parseSalesVolume(b.sales_volume || "") - parseSalesVolume(a.sales_volume || ""));
+      case "price_low":
+        return sorted.sort((a, b) => {
+          const priceA = parseFloat(a.product_price?.replace(/[$,]/g, "") || a.price?.replace(/[$,]/g, "") || "0");
+          const priceB = parseFloat(b.product_price?.replace(/[$,]/g, "") || b.price?.replace(/[$,]/g, "") || "0");
+          return priceA - priceB;
+        });
+      case "price_high":
+        return sorted.sort((a, b) => {
+          const priceA = parseFloat(a.product_price?.replace(/[$,]/g, "") || a.price?.replace(/[$,]/g, "") || "0");
+          const priceB = parseFloat(b.product_price?.replace(/[$,]/g, "") || b.price?.replace(/[$,]/g, "") || "0");
+          return priceB - priceA;
+        });
+      case "rating_low":
+        return sorted.sort((a, b) => parseFloat(a.product_star_rating || a.rating || "0") - parseFloat(b.product_star_rating || b.rating || "0"));
+      case "rating_high":
+        return sorted.sort((a, b) => parseFloat(b.product_star_rating || b.rating || "0") - parseFloat(a.product_star_rating || a.rating || "0"));
+      case "reviews_low":
+        return sorted.sort((a, b) => (a.product_num_ratings || a.ratingCount || 0) - (b.product_num_ratings || b.ratingCount || 0));
+      case "reviews_high":
+        return sorted.sort((a, b) => (b.product_num_ratings || b.ratingCount || 0) - (a.product_num_ratings || a.ratingCount || 0));
+      default:
+        return sorted;
+    }
+  }, [data, sortBy]);
+
+  // Inline Filters Section
+  const inlineFilters = (
+    <div className="bg-[#0A192F]/60 backdrop-blur-md border border-white/5 rounded-2xl p-6 shadow-xl animate-in fade-in slide-in-from-top-2 duration-500">
+      {activeTab === "product" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <SelectField
+            id="amazon-country"
+            label="Country"
+            value={country}
+            options={amazonCountryOptions}
+            onChange={handleCountryChange}
+          />
+          <SelectField
+            id="amazon-trend-type"
+            label="Trend Type"
+            value={trendType}
+            options={amazonTrendTypeOptions}
+            onChange={handleTrendTypeChange}
+          />
+          <SelectField
+            id="amazon-category"
+            label="Category"
+            value={category}
+            options={categoriesList}
+            onChange={handleCategoryChange}
+          />
+          <div className={category === 'all' ? 'opacity-50 pointer-events-none' : ''}>
+            <SelectField
+              id="amazon-subcategory"
+              label="Sub Category"
+              value={subCategory}
+              options={subCategoriesList}
+              onChange={handleSubCategoryChange}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl">
+          <SelectField
+            id="amazon-marketplace"
+            label="Marketplace"
+            value={marketplace}
+            options={COUNTRY_OPTIONS.map(c => ({ label: `${c.flag} ${c.name}`, value: c.code }))}
+            onChange={setMarketplace}
+          />
+          <SelectField
+            id="amazon-trend-type-profitable"
+            label="Trend Type"
+            value={trendType}
+            options={amazonTrendTypeOptions}
+            onChange={setTrendType}
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  if (showProfitCalc && selectedProductForDiscovery && selectedSupplier) {
+    return (
+      <SourceLinkProfitCalculator
+        product={selectedProductForDiscovery}
+        supplier={selectedSupplier}
+        sourceType="amazon"
+        onBack={() => setShowProfitCalc(false)}
+      />
+    );
+  }
+
+  if (view === "discovery" && selectedProductForDiscovery) {
+    return (
+      <SupplierSourceLink
+        product={selectedProductForDiscovery}
+        suppliers={discoverySuppliers}
+        sourceType="amazon"
+        onBack={() => setView("list")}
+        onCalculateProfit={(supplier) => {
+          setSelectedSupplier(supplier);
+          setShowProfitCalc(true);
+        }}
+      />
+    );
+  }
+
   return (
     <TrendsPageTemplate
       bannerImage={amazonBanner}
       title="Amazon Trends"
       subtitle="Discover viral products and high-volume keywords"
+      activeTab={activeTab}
+      onTabChange={(tab) => {
+        setActiveTab(tab);
+        setSearchQuery("");
+        setHasSearched(false);
+      }}
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      onSearch={handleSearch}
+      hasSearched={hasSearched}
+      showSearchForm={activeTab === "product"}
+      showFilterButton={false}
+      inlineFilters={inlineFilters}
+      sortBy={sortBy}
+      onSortByChange={setSortBy}
+      sortOptions={amazonSortOptions}
       tabs={[
         { label: "Product Trends", value: "product", icon: "Package" },
-        { label: "Keyword Trends", value: "keyword", icon: "Hash", showUpgradeBadge: true },
+        { label: "Turn Trends Profitable", value: "keyword", icon: "Hash", showUpgradeBadge: true },
       ]}
       metrics={[
         { label: "Amazon Trend Searches", value: "154", icon: "TrendingUp", progress: 45 },
         { label: "Supplier Discoveries", value: "423", icon: "Store", progress: 60 },
-        { isAddon: true, label: "Add-ons", subtitle: "Purchase or Upgrade Plan", icon: "ShoppingCart" },
+        { isAddon: true, label: "Add-ons", subtitle: "Purchase or Upgrade Plan", icon: "ShoppingCart", onClick: () => navigate("/addons") },
       ]}
+      metricsAction={
+        selectedProductForDiscovery && discoverySuppliers.length > 0 ? (
+          <button
+            onClick={() => setView('discovery')}
+            className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10"
+          >
+            Next <ChevronRight size={14} />
+          </button>
+        ) : undefined
+      }
+      analyzingScreen={
+        isAnalyzing && (
+          <AnalyzingScreen
+            onCancel={() => setIsAnalyzing(false)}
+            isDetailed={false}
+          />
+        )
+      }
       searchPlaceholder={{
         product: "Search for trending Amazon products...",
         keyword: "Search for trending Amazon keywords...",
@@ -70,68 +412,131 @@ const AmazonTrends: React.FC = () => {
         product: "Discover Trending Products",
         keyword: "Discover Trending Keywords",
       }}
-      renderContent={(activeTab, hasSearched, openDetails, setSelectedProduct) => (
-        <>
-          {activeTab === "product" && hasSearched ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {mockGeneralProductData.map((product: any, index: number) => (
-                <AmazonProductCard
-                  key={index}
-                  title={product.title}
-                  image={product.image}
-                  category={product.category}
-                  price={product.price}
-                  oldPrice={product.oldPrice}
-                  rating={product.rating}
-                  views={product.views}
-                  onDetailsClick={() => {
-                    setSelectedProduct(product);
-                    openDetails();
-                  }}
-                />
-              ))}
-            </div>
-          ) : activeTab === "keyword" && hasSearched ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 px-1">
-                <span className="text-[17px] font-bold text-orange-500">8</span>
-                <span className="text-[15px] font-medium text-slate-300">Keywords from Last 90 Days in United States</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {mockRankedData.map((item, index) => (
-                  <AmazonRankedCard
-                    key={index}
-                    rank={item.rank}
-                    title={item.title}
-                    price={item.price}
-                    oldPrice={item.oldPrice}
-                    rating={item.rating}
-                    ratingCount={item.ratingCount}
-                    image={item.image}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : activeTab === "product" ? (
+      renderContent={(tab, searched, openDetails, setSelectedProduct) => {
+        if (isLoading) {
+          return <TrendSkeleton type="product" count={6} />;
+        }
+
+        if (!searched) {
+          return (
             <TrendsEmptyState
-              title="Discover Amazon Trends"
-              description="Explore the most sought-after products on Amazon with real-time sales data and ranking insights."
-              Icon={Package}
+              title={tab === "product" ? "Discover Amazon Trends" : "Analyze Amazon Keywords"}
+              description={tab === "product" ? "Explore the most sought-after products on Amazon with real-time sales data and ranking insights." : "Identify high-volume search terms and competitive keywords to dominate the Amazon marketplace."}
+              Icon={tab === "product" ? Package : Hash}
             />
-          ) : (
+          );
+        }
+
+        if (isError) {
+          return (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <p className="text-red-400 font-medium text-lg">Oops! Something went wrong.</p>
+              <p className="text-slate-500">Please try again later or refine your search.</p>
+            </div>
+          );
+        }
+
+        if (searched && (!sortedData || sortedData.length === 0)) {
+          return (
             <TrendsEmptyState
-              title="Amazon Keyword Analysis"
-              description="Identify high-volume search terms and competitive keywords to dominate the Amazon marketplace."
-              Icon={Hash}
+              title="No Results Found"
+              description="We couldn't find any trends matching your criteria. Try adjusting your filters or search terms."
+              Icon={tab === "product" ? Package : Hash}
             />
-          )}
-        </>
-      )}
-      filterDrawer={(isOpen, onClose) => (
-        <AmazonFilterDrawer isOpen={isOpen} onClose={onClose} />
-      )}
+          );
+        }
+
+        return (
+          <div className="space-y-6">
+            {totalResults > 0 && (
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-medium text-white/90">
+                  <span className="text-blue-400 font-bold mr-2">{totalResults}</span>
+                  this amazon products found
+                </h2>
+              </div>
+            )}
+
+            {searched ? (
+              tab === "product" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {sortedData.map((product: any, index: number) => (
+                    <AmazonProductCard
+                      key={product.asin || index}
+                      title={product.product_title || product.title}
+                      image={product.product_photo || product.image}
+                      category={product.category || category}
+                      price={product.product_price || product.price}
+                      oldPrice={product.product_original_price}
+                      rating={product.product_star_rating}
+                      views={product.product_num_ratings ? `${product.product_num_ratings} Ratings` : "N/A"}
+                      onDetailsClick={() => {
+                        setSelectedProduct({
+                          asin: product.asin,
+                          title: product.product_title || product.title,
+                          image: product.product_photo || product.image,
+                          category: product.category || category,
+                          price: product.product_price || product.price,
+                          oldPrice: product.product_original_price,
+                          rating: product.product_star_rating,
+                          views: product.product_num_ratings ? `${product.product_num_ratings} Ratings` : "N/A",
+                          country: activeCountry
+                        });
+                        openDetails();
+                      }}
+                      onDiscoverSupplier={() => handleDiscoverSupplier(product)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {sortedData.map((item: any, index: number) => (
+                    <AmazonRankedCard
+                      key={item.asin || index}
+                      rank={item.rank || index + 1}
+                      title={item.product_title || item.title}
+                      price={item.product_price || item.price}
+                      image={item.product_photo || item.image}
+                      rating={item.product_star_rating}
+                      ratingCount={item.product_num_ratings ? `${item.product_num_ratings} ratings` : ""}
+                      onDetailsClick={() => {
+                        setSelectedProduct({
+                          asin: item.asin,
+                          title: item.product_title || item.title,
+                          image: item.product_photo || item.image,
+                          category: category,
+                          price: item.product_price || item.price,
+                          rating: item.product_star_rating,
+                          views: item.product_num_ratings ? `${item.product_num_ratings} Ratings` : "N/A",
+                          country: activeCountry
+                        });
+                        openDetails();
+                      }}
+                      onDiscoverSupplier={() => handleDiscoverSupplier(item)}
+                    />
+                  ))}
+                </div>
+              )
+            ) : (
+              <TrendsEmptyState
+                title={tab === "product" ? "Discover Amazon Trends" : "Analyze Amazon Keywords"}
+                description={tab === "product" ? "Explore the most sought-after products on Amazon with real-time sales data and ranking insights." : "Identify high-volume search terms and competitive keywords to dominate the Amazon marketplace."}
+                Icon={tab === "product" ? Package : Hash}
+              />
+            )}
+          </div>
+        );
+      }}
       detailsDrawer={(isOpen, onClose, product) => (
-        <AmazonProductDetailsDrawer isOpen={isOpen} onClose={onClose} product={product} />
+        <AmazonProductDetailsDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          product={product}
+          onDiscoverSupplier={() => {
+            onClose();
+            handleDiscoverSupplier(product);
+          }}
+        />
       )}
     />
   );

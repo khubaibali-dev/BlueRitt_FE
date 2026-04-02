@@ -1,5 +1,5 @@
 import React from "react";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star } from "lucide-react";
 
 interface AmazonRankedCardProps {
   rank: number;
@@ -9,23 +9,26 @@ interface AmazonRankedCardProps {
   rating: string;
   ratingCount: string;
   image: string;
+  onDetailsClick?: () => void;
+  onDiscoverSupplier: () => void;
 }
 
 const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
   rank,
   title,
   price,
-  oldPrice,
-  image
+  image,
+  onDetailsClick,
+  onDiscoverSupplier
 }) => {
   return (
     <div className="bg-[#051125] border border-[#082656] rounded-[24px] overflow-hidden flex flex-col group transition-all duration-300 hover:border-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/5">
       {/* Image Area */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[1/1.1] overflow-hidden">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#051125]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -45,17 +48,10 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
           </div>
         </div>
 
-        {/* Decorative Carousel Arrows */}
-        <button className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center text-white/70 hover:bg-black/40 hover:text-white transition-all opacity-0 group-hover:opacity-100">
-          <ChevronLeft size={20} />
-        </button>
-        <button className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center text-white/70 hover:bg-black/40 hover:text-white transition-all opacity-0 group-hover:opacity-100">
-          <ChevronRight size={20} />
-        </button>
       </div>
 
       {/* Content Area */}
-      <div className="p-5 space-y-3">
+      <div className="p-7 space-y-3">
         <h3 className="product-card-title min-h-[42px]">
           {title}
         </h3>
@@ -65,20 +61,23 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
             <span className="product-price-primary">
               {price}
             </span>
-            {oldPrice && (
-              <span className="text-[12px] text-[#9F9F9F] line-through mt-0.5 font-medium">
-                {oldPrice}
-              </span>
-            )}
           </div>
 
-          <div className="text-right">
-            <div className="trending-badge-standard !px-3 !py-1.5 flex items-center gap-0.5 !rounded-full shadow-lg">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={11} fill="#FFD700" className="text-[#FFD700]" />
-              ))}
-            </div>
-          </div>
+          <button
+            onClick={onDetailsClick}
+            className="flex-1 flex items-center justify-center p-2 rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20 hover:bg-orange-500/20 transition-all font-bold text-[11px]"
+          >
+            Product Details
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDiscoverSupplier();
+            }}
+            className="flex-1 flex items-center justify-center p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 transition-all font-bold text-[11px]"
+          >
+            Discover Suppliers
+          </button>
         </div>
       </div>
     </div>

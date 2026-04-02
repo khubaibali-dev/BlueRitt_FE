@@ -7,15 +7,24 @@ import bgAnalysis from "../../../../assets/images/explorer.png";
 import AmazonProductCard from "../Common/Cards/AmazonProductCard";
 import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import SelectField from "../../../../components/common/select/SelectField";
+import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
+import { formatNumber } from "../../../../api/tiktokTrends";
 
 interface SupplierSourceLinkProps {
   product: any;
   suppliers?: any[]; // Passed from results screen
+  sourceType?: 'amazon' | 'tiktok';
   onBack: () => void;
   onCalculateProfit: (supplier: any) => void;
 }
 
-const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, suppliers: incomingSuppliers, onBack, onCalculateProfit }) => {
+const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
+  product,
+  suppliers: incomingSuppliers,
+  sourceType = 'amazon',
+  onBack,
+  onCalculateProfit
+}) => {
   const [copy, setCopy] = useState(false);
   const [sortBy, setSortBy] = useState<string>("default");
 
@@ -71,21 +80,30 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, suppli
     console.log(product, "product")
     return {
       title: product.product_title || product.title || "Selected Product",
-      image: product.product_photo || product.image || "",
+      image: product.product_photo || product.image || product.image_url || "",
       price: product.product_price?.toString().replace("$", "") || product.price?.toString().replace("$", "") || "0.00",
       oldPrice: product.product_original_price?.toString().replace("$", "") || product.oldPrice?.toString().replace("$", "") || product.product_price?.toString().replace("$", "") || "0.00",
-      asin: product.asin || "N/A",
-      salesVol: product.sales_volume || product.salesVol || "N/A",
+      asin: product.asin || product.id || "N/A",
+      salesVol: product.sales_volume || product.salesVol || (product.sales_count ? formatNumber(product.sales_count) : "N/A"),
       offers: product.product_num_offers?.toString() || product.offers?.toString() || "1",
-      seller: product.product_seller_name || product.seller || product.product_offers?.[0]?.seller || "Amazon.com",
-      shipsFrom: product.ships_from || product.shipsFrom || product.product_offers?.[0]?.ships_from || product.delivery || "Amazon",
+      seller: product.product_seller_name || product.seller || product.product_offers?.[0]?.seller || (sourceType === 'tiktok' ? "TikTok Shop" : "Amazon.com"),
+      shipsFrom: product.ships_from || product.shipsFrom || product.product_offers?.[0]?.ships_from || (sourceType === 'tiktok' ? "TikTok" : "Amazon"),
       country: product.seller_country || product.country || "US",
       rating: parseFloat(product.product_star_rating || product.rating || "4.5"),
-      numRatings: product.product_num_ratings || product.ratings || "0",
-      product_url: product.product_url || product.product_url || "",
+      numRatings: product.product_num_ratings || product.ratings || product.review_count || "0",
+      product_url: product.itemUrl || product.product_url || product.url || product.ad_url || "",
       dimensions: product.product_information?.["Product Dimensions"] || product.dimensions || "N/A",
       weight: product.product_information?.["Item Weight"] || product.weight || "N/A",
-      tags: tags.length > 0 ? tags : (product.tags || [])
+      tags: tags.length > 0 ? tags : (product.tags || []),
+      metrics: product.metrics || { 
+        ctr: "0.0%", 
+        cvr: "0.0%", 
+        cpa: "$0.00", 
+        impressions: "0",
+        category: product.category_name || product.category || "",
+        subcategory1: "",
+        subcategory2: ""
+      }
     };
   }, [product]);
 
@@ -114,22 +132,27 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, suppli
         id: item.itemId,
         name: item.title || seller.storeName || "Elite Global Sourcing",
         price:
-          item.sku_listing.def.priceModule.priceFormatted ||
-          item.sku.def.priceModule.priceList[0].minPrice,
-        currency: item.sku.def.priceModule.currencyCode,
-        storeName: item.company.companyName || "Direct Factory",
-        contact: item.company.companyContact?.name || "Direct Factory",
-        minOrder: item.sku.def.quantityModule.minOrder.quantityFormatted || "100+ units",
-        country: item.company_details.companyAddress.country || "CN",
+          item?.sku_listing?.def?.priceModule?.priceFormatted ||
+          item?.sku_listing?.def?.priceModule?.price ||
+          item?.sku?.def?.priceModule?.priceList?.[0]?.minPrice ||
+          "N/A",
+        currency: item?.sku?.def?.priceModule?.currencyCode || item?.sku_listing?.def?.priceModule?.currencyCode || "$",
+        storeName: item?.company?.companyName || item?.company_details?.companyName || "Direct Factory",
+        contact: item?.company?.companyContact?.name || item?.company_details?.companyContact?.name || "Factory Direct",
+        minOrder: item?.sku?.def?.quantityModule?.minOrder?.quantityFormatted || 
+                  item?.sku?.def?.quantityModule?.minOrder?.quantity || 
+                  "100+ units",
+        country: item?.company_details?.companyAddress?.country || item?.company?.companyAddress?.country || "CN",
         rating: item.seller_store?.storeEvaluates?.[4]?.score,
         storeAge: item.seller_store.storeAge || "5 YRS",
         ai_match_score: (Number(s.score || s.absolute_score || s.matchScore || s.ai_match_score || (95 - index * 5))).toFixed(2),
         isGoldMember: item.company_details.status.gold,
-        isVerified: item.company_details.status.verified,
-        TradeAssurance: item.company_details.status.tradeAssurance,
-        isAssessed: item.company_details.status.assessed,
+        isVerified: item.company_details?.status?.verified,
+        TradeAssurance: item.company_details?.status?.tradeAssurance,
+        isAssessed: item.company_details?.status?.assessed,
         image: imageUrl,
-        storeUrl: item.seller_store.storeUrl,
+        storeUrl: fixUrl(seller.storeUrl || item.company_details?.storeUrl || item.company?.storeUrl),
+        itemUrl: fixUrl(item.itemUrl || item.productUrl),
       };
     });
   }, [incomingSuppliers, normalizedProduct]);
@@ -219,13 +242,33 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({ product, suppli
           </p>
         </div>
 
-        <AmazonProductCard
-          product={normalizedProduct}
-          variant="selected"
-          onCopyLink={() => handleCopy(normalizedProduct.product_url)}
-          onOpenProduct={() => window.open(normalizedProduct.product_url, '_blank')}
-          isCopied={copy}
-        />
+        {sourceType === 'tiktok' ? (
+          <TrendProductCard
+            title={normalizedProduct.title}
+            image={normalizedProduct.image}
+            category={product.category || "N/A"}
+            price={product.price || normalizedProduct.price}
+            metrics={normalizedProduct.metrics}
+            variant="selected"
+            onOpenProduct={() => {
+              const url = normalizedProduct.product_url || (suppliers.length > 0 ? suppliers[0].itemUrl : "");
+              if (url) window.open(url, '_blank');
+            }}
+            onCopyLink={() => {
+              const url = normalizedProduct.product_url || (suppliers.length > 0 ? suppliers[0].itemUrl : "");
+              if (url) handleCopy(url);
+            }}
+            isCopied={copy}
+          />
+        ) : (
+          <AmazonProductCard
+            product={normalizedProduct}
+            variant="selected"
+            onCopyLink={() => handleCopy(normalizedProduct.product_url)}
+            onOpenProduct={() => window.open(normalizedProduct.product_url, '_blank')}
+            isCopied={copy}
+          />
+        )}
 
         {/* Suppliers Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 mt-8 px-2">

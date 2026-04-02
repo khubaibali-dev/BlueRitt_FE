@@ -1092,7 +1092,12 @@ background: #53535333;
     @apply text-white/50 hover:text-white transition-colors;
   }
   .filter-drawer-body {
-    @apply flex-1 overflow-y-auto custom-scrollbar px-8 py-6 flex flex-col gap-8;
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
   }
   .filter-drawer-footer {
     @apply flex items-center justify-end gap-3 px-8 py-5 border-t border-white/5;

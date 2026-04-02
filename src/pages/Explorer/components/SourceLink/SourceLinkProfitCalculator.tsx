@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import AmazonProductCard from "../Common/Cards/AmazonProductCard";
 import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
+import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
 import BasicTab from "../../../ProfitCalculator/Basic/BasicTab";
 import AdvancedTab from "../../../ProfitCalculator/Advance/AdvancedTab";
@@ -12,10 +13,11 @@ import SaveToVaultModal from "../Common/SaveToVaultModal";
 interface SourceLinkProfitCalculatorProps {
   product: any;
   supplier: any;
+  sourceType?: 'amazon' | 'tiktok';
   onBack: () => void;
 }
 
-const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product, supplier, onBack }) => {
+const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product, supplier, sourceType = 'amazon', onBack }) => {
   const [activeTab] = useState<"Basic" | "Advanced">("Basic");
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
@@ -86,6 +88,8 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
   const marginPerc = (parseFloat(formData.sellingPrice) || 0) > 0 ? ((parseFloat(displayProfitUnit) / (parseFloat(formData.sellingPrice) || 0)) * 100).toFixed(1) : "0.0";
   const roiPerc = parseFloat(sourcingCostUnit) > 0 ? ((parseFloat(displayProfitUnit) / parseFloat(sourcingCostUnit)) * 100).toFixed(1) : "0.0";
 
+  if (!normalizedProduct) return null;
+
   return (
     <div className="discovery-results px-4 sm:px-4 py-6 sm:py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-[#051125] rounded-[24px] isolate min-h-screen overflow-hidden">
       {/* Background Image Layer */}
@@ -124,11 +128,23 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
 
         {/* Top Panels Hooked together */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-12">
-          <AmazonProductCard
-            product={normalizedProduct}
-            variant="selected"
-            isCalculator={true}
-          />
+          {sourceType === 'tiktok' ? (
+            <TrendProductCard
+              title={normalizedProduct.title}
+              image={normalizedProduct.image}
+              category={product.category || "Trending"}
+              price={`$${normalizedProduct.price}`}
+              metrics={product.metrics || {}}
+              variant="selected"
+              isCalculator={true}
+            />
+          ) : (
+            <AmazonProductCard
+              product={normalizedProduct}
+              variant="selected"
+              isCalculator={true}
+            />
+          )}
 
           <div className="mt-8 lg:mt-0">
             <AlibabaSupplierCard
@@ -171,22 +187,6 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
 
           {/* Right Column: Sticky Results */}
           <div className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-8 flex flex-col gap-6">
-            {/* <div className="flex justify-center w-full mb-4">
-              <div className="bg-[#030B1C]/5 p-1 backdrop-blur-xl flex items-center figma-pill-border overflow-hidden">
-                <button
-                  onClick={() => setActiveTab("Basic")}
-                  className={`px-8 py-1.5 rounded-full text-[12px] font-bold transition-all ${activeTab === 'Basic' ? 'bg-brand-gradient text-white' : 'text-slate-400 hover:text-white'}`}
-                >
-                  Basic
-                </button>
-                <button
-                  onClick={() => setActiveTab("Advanced")}
-                  className={`px-8 py-1.5 rounded-full text-[12px] font-bold transition-all ${activeTab === 'Advanced' ? 'bg-brand-gradient text-white' : 'text-slate-400 hover:text-white'}`}
-                >
-                  Advanced
-                </button>
-              </div>
-            </div> */}
 
             <ResultPanels
               grossProfitUnit={grossProfitUnit}

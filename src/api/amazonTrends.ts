@@ -110,19 +110,11 @@ export interface AmazonDealsResponse {
 export const amazonTrendsSearch = async ({
   query,
   country = 'US',
-  page = 1,
-  sort_by = 'RELEVANCE',
-  product_condition = 'ALL',
-  is_prime = false,
-  deals_and_discounts = 'NONE',
+  is_prime,
   min_price,
   max_price,
-  brand,
-  category_id,
   category,
-  seller_id,
-  four_stars_and_up,
-  language,
+ 
 }: {
   query: string;
   country?: string;
@@ -142,30 +134,27 @@ export const amazonTrendsSearch = async ({
 }): Promise<AmazonTrendsSearchResponse> => {
   const params: any = {
     query,
-    country,
-    page,
-    sort_by,
-    product_condition,
-    is_prime,
-    deals_and_discounts,
+    sort_by: "RELEVANCE",
+    country: country || "US",
+    product_condition: "ALL",
+    deals_and_discounts: "NONE",
+    min_star_rating: 0,
+    min_reviews: 0,
+    max_star_rating: 5,
+    max_reviews: 10000000,
   };
 
-  // Add optional parameters only if they have values
-  if (min_price && min_price > 0) params.min_price = min_price;
-  if (max_price && max_price > 0) params.max_price = max_price;
-  if (brand && brand.trim()) params.brand = brand.trim();
-  if (category_id && category_id.trim()) params.category_id = category_id.trim();
-  if (category && category.trim()) params.category = category.trim();
-  if (seller_id && seller_id.trim()) params.seller_id = seller_id.trim();
-  if (four_stars_and_up !== undefined) params.four_stars_and_up = four_stars_and_up;
-  if (language && language.trim()) params.language = language.trim();
+  if (min_price && min_price > 0) params.min = min_price;
+  if (max_price && max_price > 0) params.max = max_price;
+  if (category) params.category = category;
+  if (is_prime !== undefined) params.is_prime = is_prime;
 
-  // ✅ Use separate amazon-trends/search/ endpoint with separate quota
-  const response = await api.get('/products/amazon-trends/search/', {
+  const response = await api.get('/products/amazon-search/', {
     params,
   });
   return response.data;
 };
+
 
 // Get Trending Products (without search)
 export const getTrendingProducts = async ({
@@ -283,13 +272,18 @@ export const getAmazonTrendsProductsByCategory = async ({
 } = {}): Promise<AmazonTrendingResponse> => {
   const params: any = {
     category_id,
-    country,
+    country: country || 'US',
     page,
-    sort_by,
-    product_condition,
-    is_prime: is_prime.toString(),
-    deals_and_discounts,
-    four_stars_and_up: four_stars_and_up.toString(),
+    sort_by: sort_by || 'RELEVANCE',
+    product_condition: 'NEW',
+    deals_and_discounts: 'NONE',
+    min_star_rating: 0,
+    min_reviews: 0,
+    max_star_rating: 5,
+    max_reviews: 99999990,
+    max: 99999990,
+    is_prime: (is_prime ?? false).toString(),
+    four_stars_and_up: (four_stars_and_up ?? false).toString(),
   };
 
   if (min_price && min_price > 0) params.min_price = min_price;

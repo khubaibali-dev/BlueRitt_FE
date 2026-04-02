@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getAmazonTrendsProductDetails } from "../../../../api/amazonTrends";
 
 interface AmazonProductDetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   product?: {
+    asin: string;
     title: string;
     image: string;
     category: string;
@@ -13,12 +16,39 @@ interface AmazonProductDetailsDrawerProps {
     oldPrice?: string;
     rating?: string;
     views?: string;
+    country?: string;
   };
+  onDiscoverSupplier: () => void;
 }
 
-const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({ isOpen, onClose, product }) => {
-  const [expandedSections, setExpandedSections] = useState<string[]>(["Key Features"]);
-  const navigate = useNavigate();
+const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({ isOpen, onClose, product, onDiscoverSupplier }) => {
+  const [expandedSections, setExpandedSections] = useState<string[]>(["Key Features", "Product Description"]);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isFeaturesExpanded, setIsFeaturesExpanded] = useState(false);
+  const [isSpecsExpanded, setIsSpecsExpanded] = useState(false);
+  const [isReviewsExpanded, setIsReviewsExpanded] = useState(false);
+
+  // Fetch Detailed Product Info (consistent with Explorer standard)
+  const { data: detailsResponse, isLoading: isLoadingDetails } = useQuery({
+    queryKey: ["amazon-product-details", product?.asin, product?.country],
+    queryFn: () => getAmazonTrendsProductDetails({
+      asin: product?.asin || "",
+      country: product?.country || "US",
+      source: "amazon_search"
+    }),
+    enabled: isOpen && !!product?.asin,
+    staleTime: 1000 * 60 * 30, // 30 minutes cache
+  });
+
+  // Reset expansion states when product changes
+  React.useEffect(() => {
+    setIsDescriptionExpanded(false);
+    setIsFeaturesExpanded(false);
+    setIsSpecsExpanded(false);
+    setIsReviewsExpanded(false);
+  }, [product?.asin]);
+
+  const detailedData = detailsResponse?.data || null;
 
   if (!product) return null;
 
@@ -31,17 +61,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
   };
 
   const handleDiscoverSupplier = () => {
-    navigate("/explorer", {
-      state: {
-        product: {
-          title: product.title,
-          image: product.image,
-          category: product.category,
-          price: product.price,
-        },
-        autoSourceLink: true
-      }
-    });
+    onDiscoverSupplier();
   };
 
   const AccordionSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
@@ -104,6 +124,12 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
             <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
               <h4 className="product-card-title mb-1">{product.title}</h4>
 
+              {detailedData?.book_author_name && (
+                <p className="text-[12px] text-blue-400 font-medium mb-2">
+                  by {detailedData.book_author_name}
+                </p>
+              )}
+
               <div className="flex items-center justify-between mt-auto">
                 <div className="flex flex-col">
                   <span className="product-price-primary">
@@ -118,9 +144,9 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
 
                 <div className="flex flex-col items-end gap-1.5">
                   <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} size={12} fill="#FFD700" className="text-[#FFD700]" />
-                    ))}
+
+                    <Star size={12} fill="#FFD700" className="text-[#FFD700]" />
+                    <span className="text-[13.5px] font-bold text-white">{product.rating || "0.0"}</span>
                   </div>
                   <div className="px-2.5 py-1 bg-[#081421] border border-[#082656] rounded-full">
                     <span className="text-[10px] font-bold text-white tracking-wide">{product.views || "0 Views"}</span>
@@ -132,48 +158,175 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
 
           <div className="space-y-4 pt-4">
             <AccordionSection title="Product Description">
-              <p className="text-[13.5px] text-slate-400 leading-relaxed">
-                Discover the ultimate audio experience with the Wireless Bluetooth Headphones Pro Max. Engineered for precision and comfort, these headphones deliver studio-quality sound directly to your ears with advanced ANC technology.
-              </p>
+              {isLoadingDetails ? (
+                <div className="space-y-2 animate-pulse">
+                  <div className="h-4 bg-white/5 rounded w-full" />
+                  <div className="h-4 bg-white/5 rounded w-5/6" />
+                  <div className="h-4 bg-white/5 rounded w-4/6" />
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-[13.5px] text-slate-400 leading-relaxed">
+                    {(() => {
+                      const description = detailedData?.product_description || "No description available for this product.";
+                      if (!isDescriptionExpanded && description.length > 250) {
+                        return (
+                          <>
+                            {description.substring(0, 250)}...
+                            <button
+                              onClick={() => setIsDescriptionExpanded(true)}
+                              className="text-[13px] font-bold text-blue-500 hover:text-blue-400 ml-1.5 transition-colors"
+                            >
+                              Read More
+                            </button>
+                          </>
+                        );
+                      }
+                      return (
+                        <>
+                          {description}
+                          {description.length > 250 && (
+                            <button
+                              onClick={() => setIsDescriptionExpanded(false)}
+                              className="text-[13px] font-bold text-blue-500 hover:text-blue-400 ml-1.5 transition-colors"
+                            >
+                              Read Less
+                            </button>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </p>
+                </div>
+              )}
             </AccordionSection>
 
             <AccordionSection title="Key Features">
-              <ul className="space-y-4">
-                <li className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
-                    <span className="text-[13.5px] font-bold text-white">Hypertension Notifications: Apple Watch</span>
-                  </div>
-                  <p className="text-[13.5px] text-slate-500 ml-3.5 leading-relaxed">
-                    Series 11 can spot signs of chronic high blood pressure and notify you of possible hypertension.
-                  </p>
-                </li>
-                <li className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
-                    <span className="text-[13.5px] font-bold text-white">Hypertension Notifications: Apple Watch</span>
-                  </div>
-                  <p className="text-[13.5px] text-slate-500 ml-3.5 leading-relaxed">
-                    Series 11 can spot signs of chronic high blood pressure and notify you of possible hypertension.
-                  </p>
-                </li>
-              </ul>
+              {isLoadingDetails ? (
+                <div className="space-y-4 animate-pulse">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="flex gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-white/10 mt-1.5" />
+                      <div className="h-4 bg-white/5 rounded w-full" />
+                    </div>
+                  ))}
+                </div>
+              ) : (detailedData?.feature_bullets?.length > 0 || detailedData?.about_product?.length > 0) ? (
+                <div className="space-y-4">
+                  <ul className="space-y-4">
+                    {(detailedData.feature_bullets || detailedData.about_product)
+                      .slice(0, isFeaturesExpanded ? undefined : 5)
+                      .map((feature: string, idx: number) => (
+                        <li key={idx} className="flex gap-3">
+                          <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1.5 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                          <span className="text-[13.5px] text-slate-400 leading-relaxed">{feature}</span>
+                        </li>
+                      ))}
+                  </ul>
+
+                  {(detailedData.feature_bullets || detailedData.about_product).length > 5 && (
+                    <button
+                      onClick={() => setIsFeaturesExpanded(!isFeaturesExpanded)}
+                      className="text-[13px] font-bold text-blue-500 hover:text-blue-400 mt-2 transition-colors flex items-center gap-1"
+                    >
+                      {isFeaturesExpanded ? "Show Less" : `Show All (${(detailedData.feature_bullets || detailedData.about_product).length})`}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <p className="text-[13.5px] text-slate-500 italic">No key features specified.</p>
+              )}
             </AccordionSection>
 
             <AccordionSection title="Product Information">
-              <p className="text-[13.5px] text-slate-400 leading-relaxed">
-                Additional technical specifications and seller information would appear here, providing deep insights into the product's performance and market standing.
-              </p>
+              {isLoadingDetails ? (
+                <div className="grid grid-cols-2 gap-4 animate-pulse">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-10 bg-white/5 rounded-xl px-4 py-2" />
+                  ))}
+                </div>
+              ) : (detailedData?.product_information && Object.keys(detailedData.product_information).length > 0) || (detailedData?.product_details && Object.keys(detailedData.product_details).length > 0) ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-3">
+                    {Object.entries(detailedData.product_information || detailedData.product_details)
+                      .slice(0, isSpecsExpanded ? undefined : 5)
+                      .map(([key, value]: [string, any], idx) => (
+                        <div key={idx} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0 group hover:bg-white/[0.02] -mx-2 px-2 transition-colors rounded-lg">
+                          <span className="text-[13px] text-slate-500 font-medium">{key}</span>
+                          <span className="text-[13px] text-white/80 font-semibold text-right max-w-[60%] line-clamp-2">{String(value)}</span>
+                        </div>
+                      ))}
+                  </div>
+
+                  {Object.keys(detailedData.product_information || detailedData.product_details).length > 5 && (
+                    <button
+                      onClick={() => setIsSpecsExpanded(!isSpecsExpanded)}
+                      className="text-[13px] font-bold text-blue-500 hover:text-blue-400 transition-colors flex items-center gap-1"
+                    >
+                      {isSpecsExpanded ? "Show Less" : `Read More (${Object.keys(detailedData.product_information || detailedData.product_details).length})`}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <p className="text-[13.5px] text-slate-500 italic">Technical specifications are unavailable.</p>
+              )}
             </AccordionSection>
+
+            {/* {detailedData?.top_reviews && detailedData.top_reviews.length > 0 && (
+              <AccordionSection title="Top Customer Reviews">
+                <div className="space-y-6">
+                  {detailedData.top_reviews
+                    .slice(0, isReviewsExpanded ? undefined : 2)
+                    .map((review: any, idx: number) => (
+                      <div key={idx} className="space-y-3 pb-6 border-b border-white/5 last:border-0 last:pb-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  size={12}
+                                  fill={i < Math.floor(parseFloat(review.review_star_rating || "5")) ? "#FFD700" : "transparent"}
+                                  className={i < Math.floor(parseFloat(review.review_star_rating || "5")) ? "text-[#FFD700]" : "text-white/20"}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-[13.5px] font-bold text-white line-clamp-1">{review.review_title}</span>
+                          </div>
+                        </div>
+                        <p className="text-[13px] text-slate-400 leading-relaxed italic">
+                          "{review.review_comment || review.review_text}"
+                        </p>
+                        <div className="flex items-center justify-between pt-1">
+                          <span className="text-[11px] text-slate-500 font-medium">{review.review_author || "Amazon Customer"}</span>
+                          <span className="text-[11px] text-slate-600 italic">{review.review_date}</span>
+                        </div>
+                      </div>
+                    ))}
+
+                  {detailedData.top_reviews.length > 2 && (
+                    <button
+                      onClick={() => setIsReviewsExpanded(!isReviewsExpanded)}
+                      className="text-[13px] font-bold text-blue-500 hover:text-blue-400 transition-colors flex items-center gap-1"
+                    >
+                      {isReviewsExpanded ? "Read Less" : `Read More (${detailedData.top_reviews.length})`}
+                    </button>
+                  )}
+                </div>
+              </AccordionSection>
+            )} */}
           </div>
 
           {/* Footer inside scroll area */}
           <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-6 pb-2 border-t border-white/5">
-            <button
-              className="btn-product-details w-full sm:w-auto px-10 h-[48px] !rounded-full"
+            <a
+              href={detailedData?.product_url || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`btn-product-details flex items-center justify-center w-full sm:w-auto px-10 h-[48px] !rounded-full text-center ${!detailedData?.product_url ? 'opacity-50 pointer-events-none' : ''}`}
             >
               View on Amazon
-            </button>
+            </a>
             <button
               onClick={handleDiscoverSupplier}
               className="btn-discover-supplier w-full sm:w-auto px-10 h-[48px] !rounded-full"

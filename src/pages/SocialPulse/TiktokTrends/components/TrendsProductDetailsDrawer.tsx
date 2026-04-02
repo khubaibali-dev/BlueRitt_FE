@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Layout, BarChart2, Share2, Heart, MessageCircle, Award, ChevronDown, ChevronUp, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getTikTokShopAnalysis, formatNumber, getTikTokCreativeCenterProductDetails } from "../../../../api/tiktokTrends";
+import { getTikTokShopAnalysis, formatNumber, getTikTokCreativeCenterProductDetails, getTikTokCreativeCenterProducts } from "../../../../api/tiktokTrends";
 
 interface TrendsProductDetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  onDiscoverSupplier: () => void;
   product?: {
     id: string;
     title: string;
@@ -18,6 +19,9 @@ interface TrendsProductDetailsDrawerProps {
       cvr: string;
       cpa: string;
       impressions: string;
+      category?: string;
+      subcategory1?: string;
+      subcategory2?: string;
     };
     post_count: number;
     review_count: number;
@@ -25,11 +29,12 @@ interface TrendsProductDetailsDrawerProps {
     like_count: number;
     share_count: number;
     view_count: number;
+    category_name: string;
   };
   country?: string;
 }
 
-const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({ isOpen, onClose, product, country = "US" }) => {
+const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({ isOpen, onClose, onDiscoverSupplier, product, country = "US" }) => {
   const [activeTab, setActiveTab] = useState<"Details" | "Analysis">("Details");
   const [isHashtagsExpanded, setIsHashtagsExpanded] = useState(true);
   const navigate = useNavigate();
@@ -47,6 +52,19 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
     queryFn: () => getTikTokCreativeCenterProductDetails(product?.id || ""),
     enabled: isOpen && !!product?.id,
   });
+
+  // TikTok Creative Center Enriched Metrics Query
+  const { data: enrichedMetricsData, isLoading: isEnrichedLoading } = useQuery({
+    queryKey: ["tiktok-creative-center-metrics", product?.title, country],
+    queryFn: () => getTikTokCreativeCenterProducts({
+      keyword: product?.title || "",
+      country: country,
+      limit: 1
+    }),
+    enabled: isOpen && !!product?.title,
+  });
+
+  const enrichedMetrics = (enrichedMetricsData?.products?.[0]?.metrics || product?.metrics) as any;
 
   if (!product) return null;
 
@@ -68,18 +86,25 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
   };
 
   const handleDiscoverSupplier = () => {
-    navigate("/explorer", {
-      state: {
-        product: {
-          title: product.title,
-          image: product.image,
-          category: product.category,
-          price: product.price,
-        },
-        autoSourceLink: true,
-        isTikTokSource: true
-      }
-    });
+    const finalMetrics = enrichedMetrics || product?.metrics;
+
+    if (onDiscoverSupplier) {
+      onDiscoverSupplier();
+    } else {
+      navigate("/explorer", {
+        state: {
+          product: {
+            title: product.title,
+            image: product.image,
+            category: product.category,
+            price: product.price,
+            metrics: finalMetrics
+          },
+          autoSourceLink: true,
+          isTikTokSource: true
+        }
+      });
+    }
   };
 
   return (
@@ -185,14 +210,16 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                 <h5 className="text-[14px]  text-white tracking-tight">Additional Metrics</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label: "CTR", value: product.metrics?.ctr || "0.00" },
-                    { label: "CVR", value: product.metrics?.cvr || "0.00" },
-                    { label: "CPA", value: product.metrics?.cpa || "$0.00" },
-                    { label: "Impressions", value: product.metrics?.impressions || "0K" }
+                    { label: "CTR", value: enrichedMetrics?.ctr || "0.00" },
+                    { label: "CVR", value: enrichedMetrics?.cvr || "0.00" },
+                    { label: "CPA", value: enrichedMetrics?.cpa || "$0.00" },
+                    { label: "Impressions", value: enrichedMetrics?.impressions || "0K" },
+                    { label: "Category", value: enrichedMetrics?.category || product.category || "N/A" },
+                    { label: "Subcategory", value: enrichedMetrics?.subcategory1 || "N/A" }
                   ].map((metric, i) => (
-                    <div key={i} className="bg-[#04132B] border border-[#082656] rounded-[10px] p-3.5 flex flex-col justify-center">
+                    <div key={i} className={`bg-[#04132B] border border-[#082656] rounded-[10px] p-3.5 flex flex-col justify-center ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
                       <span className="product-metric-label block mb-2">{metric.label}</span>
-                      <span className="product-metric-value block !text-[13px]">{metric.value}</span>
+                      <span className="product-metric-value block !text-[13px]">{isEnrichedLoading ? "..." : metric.value}</span>
                     </div>
                   ))}
                 </div>

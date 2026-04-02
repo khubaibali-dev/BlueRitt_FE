@@ -264,6 +264,48 @@ export interface TikTokSearchParams {
 // API Functions
 
 /**
+ * Get trending TikTok products from Creative Center - Specific for TikTok Creative Center API
+ */
+export const getTikTokCreativeCenterProducts = async ({
+  country = 'US',
+  limit = 20,
+  page = 1,
+  category = '',
+  last = '7',
+  order_by = 'post',
+  order_type = 'desc',
+  keyword = '',
+}: {
+  country?: string;
+  limit?: number;
+  page?: number;
+  category?: string;
+  last?: string;
+  order_by?: string;
+  order_type?: string;
+  keyword?: string;
+} = {}): Promise<TikTokShopAnalysisResponse> => {
+  const params: any = {
+    country_code: country === 'GB' ? 'GB' : country,
+    limit,
+    page,
+    last,
+    order_by,
+    order_type,
+  };
+  if (category) params.category = category;
+  if (keyword) params.keyword = keyword;
+
+  const response = await api.get('/products/tiktok-trends/creative-center/', { params });
+  
+  // creative-center API returns data.list instead of data.products
+  const list = response.data?.data?.list || response.data?.list || [];
+  const transformed = await processApiResponse(response.data, list, category || '');
+  
+  return transformed;
+};
+
+/**
  * Get trending TikTok products without search - Updated for pagination like Amazon Trends
  */
 export const getTikTokTrendingProducts = async ({
@@ -726,6 +768,21 @@ export interface TikTokShopProduct {
     free_shipping: boolean;
     ship_from: string;
   };
+  metrics?: {
+    ctr: string;
+    cvr: string;
+    cpa: string;
+    impressions: string;
+    views: string;
+    post_count: number | string;
+    like_count: number | string;
+    share_count: number | string;
+    comment_count: number | string;
+    total_ad_spent: string;
+    play_rate_6s: string;
+    post_change: string;
+    e_com_type: string;
+  };
 }
 
 export interface TikTokShopAnalysisResponse {
@@ -900,11 +957,33 @@ const processApiResponse = async (data: any, products: any[], categoryId: string
       category_id: categoryId,
       category_name: product.category1 || product.category_name || 'Category',
       product_rating: parseFloat(product.product_rating || product.rating || '4.5'),
-      review_count: parseInt(product.comment_count || product.review_count || Math.floor(salesCount * 0.1).toString()),
+      review_count: parseInt(product.comment_count || product.comment || product.review_count || Math.floor(salesCount * 0.1).toString()),
       shipping_info: {
         free_shipping: product.free_shipping !== false, // Default to true unless explicitly false
         ship_from: product.ship_from || 'US'
-      }
+      },
+      // ✅ Enriched metrics from TikTok Creative Center API
+      metrics: {
+        ctr: product.ctr ? (String(product.ctr).includes('%') ? product.ctr : product.ctr + '%') : '0.0%',
+        cvr: product.cvr ? (String(product.cvr).includes('%') ? product.cvr : product.cvr + '%') : '0.0%',
+        cpa: product.cpa ? (String(product.cpa).includes('$') ? product.cpa : '$' + product.cpa) : '$0.00',
+        impressions: formatNumber(product.impression || product.impressions || product.views_count || 0),
+        views: formatNumber(product.impression || product.impressions || product.views_count || 0),
+        post_count: product.post || product.post_count || 0,
+        like_count: product.like || product.likes_count || 0,
+        share_count: product.share || product.shares_count || 0,
+        comment_count: product.comment || product.comments_count || product.comment_count || 0,
+        tot_ad_spent: product.cost ? (String(product.cost).includes('$') ? product.cost : '$' + formatNumber(product.cost)) : '$0.00',
+        total_ad_spent: product.cost ? (String(product.cost).includes('$') ? product.cost : '$' + formatNumber(product.cost)) : '$0.00',
+        play_rate_6s: product.play_six_rate ? (String(product.play_six_rate).includes('%') ? product.play_six_rate : product.play_six_rate + '%') : '0.0%',
+        post_change: product.post_change ? (String(product.post_change).includes('%') ? product.post_change : product.post_change + '%') : '0.0%',
+        e_com_type: product.ecom_type || 'L3',
+        category: product.first_ecom_category?.value || '',
+        subcategory1: product.second_ecom_category?.value || '',
+        subcategory2: product.third_ecom_category?.value || ''
+      },
+      product_url: product.itemUrl ? (product.itemUrl.startsWith('//') ? `https:${product.itemUrl}` : product.itemUrl) : 
+                  (product.product_url ? (product.product_url.startsWith('//') ? `https:${product.product_url}` : product.product_url) : '')
     };
   });
 
