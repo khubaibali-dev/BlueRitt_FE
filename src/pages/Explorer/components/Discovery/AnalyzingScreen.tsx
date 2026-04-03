@@ -4,11 +4,10 @@ import aiIcon from "../../../../assets/images/Icon.png";
 import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
 
 interface AnalyzingScreenProps {
-  onCancel?: () => void;
   isDetailed?: boolean;
 }
 
-const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ onCancel, isDetailed = false }) => {
+const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ isDetailed = false }) => {
   return (
     <div className="absolute inset-0 z-[50] flex flex-col items-center justify-center overflow-hidden rounded-[32px] animate-in fade-in duration-700 bg-brand-card-alt">
       {/* Background Image Layer */}
@@ -36,7 +35,7 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ onCancel, isDetailed 
 
         {/* Scanning Trends Pill */}
         <button
-          onClick={onCancel}
+          // onClick={onCancel}
           className="w-fit bg-blur text-white px-8 py-3 !rounded-full text-xs font-semibold figma-pill-border transition-all tracking-[0.2em] relative flex items-center gap-3 hover:bg-white/5 active:scale-95"
         >
           <img src={aiIcon} alt="" className="w-5 h-5 object-contain animate-spin duration-[4000ms]" />

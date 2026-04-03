@@ -79,10 +79,14 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-slate-400"} />
-              ))}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-0.5
+              bg-white/5 px-2 py-1 rounded-full shrink-0 border border-white/5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-slate-500"} />
+                ))}
+                <span className="text-[12px] font-bold text-white">{normalized.rating}</span>
+              </div>
             </div>
           </div>
           <div className="product-metrics-row-list">
@@ -155,8 +159,13 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
               </div>
               {normalized.growth && <div className="trending-badge-standard"><TrendingUp size={12} /> {normalized.growth}</div>}
             </div>
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg shrink-0">
-              <span className="rating-text-standard">{normalized.numRatings} ratings</span>
+            <div className="flex items-center gap-2 bg-white/5 px-2 py-1 rounded-full shrink-0 border border-white/5">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={11} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-slate-400"} />
+                ))}
+              </div>
+              <span className="text-[12px] font-bold text-white leading-none">{normalized.rating}</span>
             </div>
           </div>
           <div className="product-metrics-row-grid grid grid-cols-3 py-4 border-t border-white/5 mt-auto">
@@ -234,8 +243,13 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="flex items-center">{[...Array(5)].map((_, i) => (<Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-white/10"} />))}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-white/10"} />
+                      ))}
+                    </div>
+                    <span className="text-[12px] font-bold text-[#FFC107] leading-none">{normalized.rating}</span>
                     <span className="text-[10px] text-[#FFFFFFB2] font-bold">({normalized.numRatings})</span>
                   </div>
                 </div>

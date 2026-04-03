@@ -1,9 +1,11 @@
-// src/pages/Settings/components/ProfileInformation.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import InputField from "../../../components/common/input/InputField";
 import CountrySelect, { countries, Country } from "../../../components/common/select/CountrySelect";
+import { useAuth } from "../../../context/AuthContext";
+import { updateUserProfile } from "../../../api/auth";
+import { toast } from "react-toastify";
 
 interface ProfileFormData {
   firstName: string;
@@ -14,20 +16,52 @@ interface ProfileFormData {
 }
 
 const ProfileInformation: React.FC = () => {
+  const { currentUser, fetchUserDetails } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
   const [profileData, setProfileData] = useState<ProfileFormData>({
-    firstName: "Ali",
-    lastName: "Ahmad",
-    email: "reverce94@yopmail.com",
-    country: "Pakistan",
-    contactNumber: "123 4567 890",
+    firstName: "",
+    lastName: "",
+    email: "",
+    country: "",
+    contactNumber: "",
   });
+
+  // Sync with current user data when it loads or changes
+  useEffect(() => {
+    if (currentUser.email) {
+      setProfileData({
+        firstName: currentUser.firstName || "",
+        lastName: currentUser.lastName || "",
+        email: currentUser.email || "",
+        country: currentUser.country || "",
+        contactNumber: currentUser.phone || "",
+      });
+    }
+  }, [currentUser]);
 
   const handleChange = (field: keyof ProfileFormData, value: string) => {
     setProfileData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
-    console.log("Saving Profile...", profileData);
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await updateUserProfile({
+        first_name: profileData.firstName,
+        last_name: profileData.lastName,
+        phone: profileData.contactNumber,
+        country: profileData.country,
+      });
+
+      // Refresh user details globally
+      await fetchUserDetails();
+
+      toast.success("Profile updated successfully!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to update profile. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -43,14 +77,14 @@ const ProfileInformation: React.FC = () => {
           <InputField
             id="firstName"
             label="First Name"
-            placeholder="Ali"
+            placeholder="Enter first name"
             value={profileData.firstName}
             onChange={(e) => handleChange("firstName", e.target.value)}
           />
           <InputField
             id="lastName"
             label="Last Name"
-            placeholder="Ahmad"
+            placeholder="Enter last name"
             value={profileData.lastName}
             onChange={(e) => handleChange("lastName", e.target.value)}
           />
@@ -58,9 +92,10 @@ const ProfileInformation: React.FC = () => {
             id="email"
             type="email"
             label="Email"
-            placeholder="reverce94@yopmail.com"
+            placeholder="Enter email"
             value={profileData.email}
-            onChange={(e) => handleChange("email", e.target.value)}
+            readOnly={true}
+            onChange={() => { }} // Read-only but required by InputFieldProps
           />
         </div>
 
@@ -89,9 +124,11 @@ const ProfileInformation: React.FC = () => {
           <button
             type="button"
             onClick={handleSave}
-            className="bg-brand-gradient text-white px-10 py-2 sm:py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none"
+            disabled={isSaving}
+            className={`bg-brand-gradient text-white px-10 py-2 sm:py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${isSaving ? "opacity-70 cursor-not-allowed" : ""
+              }`}
           >
-            Save
+            {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>

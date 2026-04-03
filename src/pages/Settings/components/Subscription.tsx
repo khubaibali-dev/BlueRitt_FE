@@ -1,119 +1,227 @@
 import React, { useState } from "react";
 import { Crown, RefreshCw } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchAccountSummary, toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
+import { toast } from "react-toastify";
+import AddBalanceModal from "../../AddOns/AddBalanceModal";
+import CancelSubscriptionModal from "./CancelSubscriptionModal";
 
 const Subscription: React.FC = () => {
-  const [autoRenew, setAutoRenew] = useState(true);
+  const queryClient = useQueryClient();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const { data: summary, isLoading, isFetching } = useQuery({
+    queryKey: ['subscription', 'account_summary'],
+    queryFn: async () => {
+      const response = await fetchAccountSummary();
+      return response.data;
+    },
+    enabled: isOpen,
+  });
+
+  const today = new Date();
+  const dueDate = summary?.dueDate ? new Date(summary.dueDate) : today;
+  const isExpired = dueDate < today;
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
+  };
+
+  const onToggleAutoRenew = async () => {
+    try {
+      await toggleAutoRenew();
+      queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
+      toast.success(`Auto-renew ${summary?.autoRenew ? 'disabled' : 'enabled'} successfuly!`);
+    } catch {
+      toast.error("Failed to toggle auto-renew. Please try again.");
+    }
+  };
+
+  const handleCancelSubscription = () => {
+    setIsCancelModalOpen(true);
+  };
+
+  const confirmCancelSubscription = async () => {
+    setIsCancelling(true);
+    try {
+      await cancelSubscription("User requested cancellation via settings");
+      queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
+      toast.success("Subscription cancellation scheduled successfully.");
+      setIsCancelModalOpen(false);
+    } catch {
+      toast.error("Failed to cancel subscription. Please contact support.");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  const getStatusMessage = () => {
+    if (summary?.activeSubscription) {
+      if (summary.autoRenew) {
+        return `Your subscription is active and will automatically renew on ${summary.dueDate}.`;
+      }
+      return `Your subscription remains active and is scheduled for completion at the end of the current billing period. You will retain full access until ${summary.dueDate}.`;
+    }
+
+    if (!isExpired) {
+      return (
+        <>
+          Your subscription remains active and is scheduled for cancellation at the end of the current billing period.
+          <br />
+          <span className="flex justify-start">
+            {`You will retain full access until ${summary?.dueDate}.`}
+          </span>
+        </>
+      );
+    }
+
+    return "Your subscription is currently inactive and cancelled.";
+  };
 
   return (
-    <CollapsibleCard
-      title="Subscription"
-      subtitle="Manage your subscription and billing"
-      defaultOpen={true}
-      icon={
-        <div className="relative flex items-center justify-center">
-          <Crown size={24} className="text-white relative z-10" />
-        </div>
-      }
-    >
-      <div className="flex flex-col gap-6 w-full pb-2">
-        {/* Top Action Row */}
-        {/* Top Action Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-2">
-          <button className="flex items-center gap-2 text-[13px] font-semibold text-white hover:text-slate-300 transition-colors self-start">
-            <RefreshCw size={14} className="opacity-80" />
-            Refresh Data
-          </button>
-          
-          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto bg-[#030B1C]/30 sm:bg-transparent p-3 sm:p-0 rounded-[12px]">
-            <div className="flex flex-col sm:items-end">
-              <span className="text-[12px] sm:text-[14px] text-slate-400">Your balance:</span>
-              <span className="font-bold text-white text-[16px] sm:text-[18px]">$85.00</span>
-            </div>
-            <button className="px-5 py-2.5 rounded-full bg-brand-gradient hover:brightness-110 active:scale-95 text-white text-[13px] font-semibold transition-all shadow-lg shadow-orange-500/20 whitespace-nowrap">
-              Fill Balance
+    <>
+      <CollapsibleCard
+        title="Subscription"
+        subtitle="Manage your subscription and billing"
+        isOpen={isOpen}
+        onToggle={setIsOpen}
+        icon={
+          <div className="relative flex items-center justify-center">
+            <Crown size={24} className="text-white relative z-10" />
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-6 w-full pb-2">
+          {/* Top Action Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-2">
+            <button
+              onClick={handleRefresh}
+              disabled={isFetching}
+              className={`subscription-refresh-btn ${isFetching ? 'opacity-50 cursor-wait' : ''}`}
+            >
+              <RefreshCw size={14} className={`opacity-80 ${isFetching ? 'animate-spin' : ''}`} />
+              {isFetching ? 'Refreshing...' : 'Refresh Data'}
             </button>
-          </div>
-        </div>
 
-        {/* Details Block */}
-        <div className="bg-[#030B1C]/50 rounded-[12px] p-4 sm:p-6 pb-8 flex flex-col">
-          {/* Row 1 */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-4 border-b border-[#1E293B]/40 mb-4 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[14px] text-slate-400 uppercase tracking-wider font-semibold opacity-70">Current Plan</span>
-              <div className="flex flex-col">
-                <span className="font-bold text-white text-[16px]">Advance</span>
-                <button className="text-[#F05A2B] text-[13px] font-bold hover:underline text-left mt-0.5">Update Your Plan</button>
+            <div className="subscription-balance-display">
+              <div className="flex items-center gap-2">
+                <span className="subscription-balance-text">Your balance:</span>
+                <span className="subscription-balance-value">
+                  {isLoading ? "..." : (summary?.remainingBalance || "$0.00")}
+                </span>
               </div>
-            </div>
-            <div className="flex flex-wrap sm:flex-col gap-2 sm:gap-1.5 items-baseline sm:items-end">
-              <span className="text-[14px] text-slate-400">Due on <span className="font-bold text-white">16 Apr 2026</span></span>
-              <div className="px-2 py-0.5 bg-[#F05A2B]/10 rounded border border-[#F05A2B]/20">
-                <span className="text-[11px] font-bold text-[#F05A2B] uppercase tracking-tighter">Monthly</span>
-              </div>
+              <button
+                onClick={() => setIsBalanceModalOpen(true)}
+                className="px-5 py-2.5 rounded-full bg-brand-gradient hover:brightness-110 active:scale-95 text-white text-[13px] font-semibold transition-all shadow-lg shadow-orange-500/20 whitespace-nowrap"
+              >
+                Fill Balance
+              </button>
             </div>
           </div>
 
-          {/* Row 2 */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-4 border-b border-[#1E293B]/40 mb-4 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[14px] text-slate-400 uppercase tracking-wider font-semibold opacity-70">Last Filled Amount</span>
-              <div className="flex flex-col">
-                <span className="font-bold text-white text-[16px]">$39.00</span>
-                <button className="text-[#F05A2B] text-[13px] font-bold hover:underline text-left mt-0.5">Balance History</button>
+          {/* Details Block */}
+          <div className="subscription-details-card">
+            {/* Row 1: Plan and Due Date */}
+            <div className="subscription-info-row">
+              <div className="subscription-info-label-group">
+                <div className="subscription-info-label">
+                  Current Plan: <span className="subscription-info-value">{isLoading ? "Loading..." : (summary?.plan || "N/A")}</span>
+                </div>
+                <button className="subscription-link-orange">Update Your Plan</button>
+              </div>
+              <div className="subscription-info-value-group">
+                <div className="subscription-info-label">
+                  Due on <span className="subscription-info-value">{isLoading ? "..." : (summary?.dueDate || "N/A")}</span>
+                </div>
+                {summary?.billingCycle && (
+                  <span className="text-[12px] text-slate-400 font-medium">{summary.billingCycle}</span>
+                )}
               </div>
             </div>
-            <div className="flex items-center sm:items-end">
-              <span className="text-[13px] text-slate-300">16 Feb 2026</span>
-            </div>
-          </div>
 
-          {/* Row 3 */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-4 border-b border-[#1E293B]/40 mb-6 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[14px] text-slate-400 uppercase tracking-wider font-semibold opacity-70">Last Payment Cleared At</span>
-              <div className="flex flex-col">
-                <button className="text-[#F05A2B] text-[13px] font-bold hover:underline text-left">Payment History</button>
+            {/* Row 2: Last Filled */}
+            <div className="subscription-info-row">
+              <div className="subscription-info-label-group">
+                <div className="subscription-info-label">Last Filled Amount</div>
+                <button className="subscription-link-orange">Balance History</button>
+              </div>
+              <div className="subscription-info-value-group">
+                <span className="subscription-info-value">${summary?.lastFilledAmount || "0.00"}</span>
+                <span className="text-[13px] text-slate-300">{summary?.lastPaymentDate || "N/A"}</span>
               </div>
             </div>
-            <div className="flex items-center sm:items-end">
-              <span className="text-[13px] text-slate-300 font-medium">16 Feb 2026</span>
-            </div>
-          </div>
 
-          {/* Row 4 and Bottom text */}
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <span className="text-[14px] font-bold text-white">Renew Automatically</span>
-                <span className="text-[13px] text-slate-400 leading-tight">Your subscription will renew automatically every billing cycle.</span>
+            {/* Row 3: Last Payment */}
+            <div className="subscription-info-row-last">
+              <div className="subscription-info-label-group">
+                <div className="subscription-info-label">Last Payment Cleared At</div>
+                <button className="subscription-link-orange">Payment History</button>
               </div>
-              <div className="flex items-center self-start sm:self-center">
-                <button
-                  onClick={() => setAutoRenew(!autoRenew)}
-                  className={`
-                    relative w-[52px] h-[28px] rounded-full transition-all duration-300 outline-none
-                    ${autoRenew ? "bg-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.5)]" : "bg-slate-700"}
-                  `}
-                >
-                  <div
+              <div className="subscription-info-value-group">
+                <span className="text-[13px] text-slate-300 font-medium">{summary?.lastPaymentDate || "N/A"}</span>
+              </div>
+            </div>
+
+            {/* Row 4: Auto Renew */}
+            <div className="flex flex-col gap-4">
+              <div className="subscription-auto-renew-row">
+                <div className="subscription-auto-renew-info">
+                  <span className="subscription-auto-renew-title">Renew Automatically</span>
+                  <span className="subscription-auto-renew-desc">Your subscription will renew automatically</span>
+                </div>
+                <div className="flex items-center self-start sm:self-center">
+                  <button
+                    onClick={onToggleAutoRenew}
                     className={`
-                      absolute top-[3px] left-[3px] w-[22px] h-[22px] bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out
-                      ${autoRenew ? "translate-x-[24px]" : "translate-x-0"}
+                      relative w-[52px] h-[28px] rounded-full transition-all duration-300 outline-none
+                      ${summary?.autoRenew ? "bg-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.5)]" : "bg-slate-700"}
                     `}
-                  />
-                </button>
+                  >
+                    <div
+                      className={`
+                        absolute top-[3px] left-[3px] w-[22px] h-[22px] bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out
+                        ${summary?.autoRenew ? "translate-x-[24px]" : "translate-x-0"}
+                      `}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                {/* <p className="subscription-status-note">
+                  {isLoading ? "Fetching subscription status..." : getStatusMessage()}
+                </p> */}
+                {summary?.activeSubscription && (
+                  <button
+                    onClick={handleCancelSubscription}
+                    className="text-slate-400 hover:text-white/80 text-white underline text-[13px] w-fit font-bold transition-colors"
+                  >
+                    Cancel Subscription
+                  </button>
+                )}
               </div>
             </div>
-
-            <p className="text-[13px] text-slate-300 leading-relaxed pr-2 sm:pr-8 border-l-2 border-[#F05A2B]/40 pl-4 py-1 bg-white/5 rounded-r-lg">
-              Your subscription remains active and is scheduled for cancellation at the end of the current billing period. You will retain full access until 16 Apr 2026.
-            </p>
           </div>
         </div>
-      </div>
-    </CollapsibleCard>
+      </CollapsibleCard>
+
+      <AddBalanceModal
+        isOpen={isBalanceModalOpen}
+        onClose={() => setIsBalanceModalOpen(false)}
+        currentBalance={summary?.remainingBalance || "$0.00"}
+      />
+
+      <CancelSubscriptionModal
+        isOpen={isCancelModalOpen}
+        onConfirm={confirmCancelSubscription}
+        onClose={() => setIsCancelModalOpen(false)}
+        isCancelling={isCancelling}
+      />
+    </>
   );
 };
 

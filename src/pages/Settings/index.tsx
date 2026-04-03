@@ -5,6 +5,7 @@ import AdditionalInformation from "./components/AdditionalInformation";
 import ChangePassword from "./components/ChangePassword";
 import Subscription from "./components/Subscription";
 import Invoices from "./components/Invoices";
+import AddonsBalanceHistory from "./components/AddonsBalanceHistory";
 import Plans from "./components/Plans";
 
 const SettingsPage: React.FC = () => {
@@ -25,6 +26,7 @@ const SettingsPage: React.FC = () => {
         <ChangePassword />
         <Subscription />
         <Invoices />
+        <AddonsBalanceHistory />
         <Plans />
       </div>
     </div>

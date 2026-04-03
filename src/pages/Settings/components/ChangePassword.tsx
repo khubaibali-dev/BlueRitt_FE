@@ -4,7 +4,11 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import InputField from "../../../components/common/input/InputField";
 
+import { updatePassword } from "../../../api/auth";
+import { toast } from "react-toastify";
+
 const ChangePassword: React.FC = () => {
+  const [isSaving, setIsSaving] = useState(false);
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
@@ -21,9 +25,38 @@ const ChangePassword: React.FC = () => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleSave = () => {
-    console.log("Updating password...", passwords);
-    // Add logic for password update API call
+  const handleSave = async () => {
+    if (!passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword) {
+      toast.error("Please fill in all password fields.");
+      return;
+    }
+
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      toast.error("New passwords do not match.");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      await updatePassword({
+        current_password: passwords.currentPassword,
+        new_password: passwords.newPassword,
+        confirm_password: passwords.confirmPassword,
+      });
+      
+      toast.success("Password updated successfully!");
+      
+      // Clear form on success
+      setPasswords({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to update password. Please check your current password.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -95,9 +128,12 @@ const ChangePassword: React.FC = () => {
           <button
             type="button"
             onClick={handleSave}
-            className="bg-brand-gradient text-white px-10 py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none"
+            disabled={isSaving}
+            className={`bg-brand-gradient text-white px-10 py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${
+              isSaving ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            Save
+            {isSaving ? "Updating..." : "Save"}
           </button>
         </div>
       </div>

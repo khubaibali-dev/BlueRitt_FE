@@ -1,10 +1,6 @@
-import React from "react";
-import { X, ExternalLink, Users, TrendingUp, Eye } from "lucide-react";
-
-interface ProductItem {
-  image: string;
-  title: string;
-}
+import React, { useState, useEffect } from "react";
+import { X, ExternalLink, Users, TrendingUp, Eye, Loader2 } from "lucide-react";
+import { getInfluencerPosts, InfluencerPost } from "../../../../api/amazonTrends";
 
 interface InfluencerDetailsDrawerProps {
   isOpen: boolean;
@@ -20,30 +16,31 @@ interface InfluencerDetailsDrawerProps {
   };
 }
 
-const mockProducts: ProductItem[] = [
-  {
-    image: "https://images.unsplash.com/photo-1594484208280-efa00f9e990c?auto=format&fit=crop&q=80&w=200",
-    title: "JOICO Black Friday Favs"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1594484208280-efa00f9e990c?auto=format&fit=crop&q=80&w=200",
-    title: "JOICO Black Friday Favs"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1594484208280-efa00f9e990c?auto=format&fit=crop&q=80&w=200",
-    title: "JOICO Black Friday Favs"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1594484208280-efa00f9e990c?auto=format&fit=crop&q=80&w=200",
-    title: "JOICO Black Friday Favs"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1594484208280-efa00f9e990c?auto=format&fit=crop&q=80&w=200",
-    title: "JOICO Black Friday Favs"
-  },
-];
-
 const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpen, onClose, influencer }) => {
+  const [posts, setPosts] = useState<InfluencerPost[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!isOpen || !influencer?.name) return;
+
+      setIsLoading(true);
+      try {
+        const response = await getInfluencerPosts({ influencer_name: influencer.name });
+        if (response.status === "success" && response.data) {
+          setPosts(response.data.posts || []);
+        }
+      } catch (error) {
+        console.error("Error fetching influencer posts:", error);
+        setPosts([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [isOpen, influencer?.name]);
+
   if (!influencer) return null;
 
   return (
@@ -84,7 +81,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
                   className="p-[1px] rounded-full relative shadow-xl"
                   style={{ background: "linear-gradient(180deg, #FF5900 0%, #FF00FF 100%)" }}
                 >
-                  <div className="w-[84px] h-[84px] rounded-full overflow-hidden bg-[#04132B]">
+                    <div className="w-[84px] h-[84px] rounded-full overflow-hidden bg-[#04132B]">
                     <img src={influencer.image} alt={influencer.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -134,39 +131,65 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
                 <Eye size={20} className="text-white" />
               </div>
               <div className="flex flex-col items-center">
-                <span className="metric-label">Views</span>
-                <span className="text-[14px] font-bold text-white">8.5K</span>
+                <span className="metric-label">Posts</span>
+                <span className="text-[14px] font-bold text-white">{influencer.posts}</span>
               </div>
             </div>
           </div>
 
           {/* 4. Products List */}
-          <div className="space-y-3">
-            {mockProducts.map((product, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between p-3.5 bg-[#04132B] border border-[#082656] rounded-[16px] hover:border-blue-500/20 transition-all group/item shadow-lg"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-[56px] h-[56px] rounded-[12px] overflow-hidden border border-white/5">
-                    <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500" />
+          <div className="space-y-3 pb-4">
+            {isLoading ? (
+              // 5x Skeleton Cards
+              [...Array(5)].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-3.5 bg-[#04132B] border border-[#082656] rounded-[16px] animate-pulse"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-[56px] h-[56px] rounded-[12px] bg-white/5" />
+                    <div className="flex flex-col gap-2.5 flex-1 min-w-[200px]">
+                      <div className="h-4 w-3/4 bg-white/5 rounded-md" />
+                      <div className="h-3 w-1/4 bg-white/5 rounded-full" />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-[15px] font-bold text-white tracking-tight leading-tight">{product.title}</h4>
-                      <div className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">
-                        <span className="text-[11px] text-white tracking-wider">List</span>
+                  <div className="w-24 h-[38px] rounded-full bg-white/5" />
+                </div>
+              ))
+            ) : posts.length > 0 ? (
+              posts.map((post, idx) => (
+                <div
+                  key={post.post_id || idx}
+                  className="flex items-center justify-between p-3.5 bg-[#04132B] border border-[#082656] rounded-[16px] hover:border-blue-500/20 transition-all group/item shadow-lg"
+                >
+                  <div className="flex items-center gap-4 flex-1 overflow-hidden">
+                    <div className="w-[56px] h-[56px] rounded-[12px] overflow-hidden border border-white/5 shrink-0">
+                      <img src={post.post_thumbnail} alt={post.post_title} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div className="flex flex-col gap-1.5 flex-1 overflow-hidden">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-[15px] font-bold text-white tracking-tight leading-tight line-clamp-1">{post.post_title}</h4>
+                        <div className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit shrink-0">
+                          <span className="text-[11px] text-white tracking-wider">{post.post_type}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <button className="flex items-center gap-2.5 px-4 h-[38px] rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-blue-500/10 transition-all hover:opacity-100">
-                  View Product
-                  <ExternalLink size={14} />
-                </button>
+                  <button 
+                    onClick={() => window.open(post.post_url, "_blank")}
+                    className="flex items-center gap-2.5 px-4 h-[38px] rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-blue-500/10 transition-all hover:opacity-100 shrink-0 ml-4"
+                  >
+                    View Product
+                    <ExternalLink size={14} />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-white/40 italic">No products found for this influencer.</p>
               </div>
-            ))}
+            )}
           </div>
 
         </div>

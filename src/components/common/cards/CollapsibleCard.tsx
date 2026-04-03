@@ -8,6 +8,8 @@ interface CollapsibleCardProps {
   icon?: React.ReactNode;
   headerRight?: React.ReactNode;
   defaultOpen?: boolean;
+  isOpen?: boolean;
+  onToggle?: (isOpen: boolean) => void;
   children: React.ReactNode;
 }
 
@@ -17,11 +19,23 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   icon,
   headerRight,
   defaultOpen = false,
+  isOpen: controlledIsOpen,
+  onToggle,
   children,
 }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  const [height, setHeight] = useState<number | undefined>(defaultOpen ? undefined : 0);
+  const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  
+  const [height, setHeight] = useState<number | undefined>(isOpen ? undefined : 0);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const handleToggle = () => {
+    const nextState = !isOpen;
+    if (controlledIsOpen === undefined) {
+      setInternalIsOpen(nextState);
+    }
+    onToggle?.(nextState);
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -39,7 +53,7 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
       {/* Header (Trigger) */}
       <div
         className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3B82F6]/50 rounded-[20px] cursor-pointer gap-y-4"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
       >
         <div className="flex items-center gap-4 sm:gap-3 flex-1 min-w-[200px]">
           {icon && (

@@ -1,141 +1,50 @@
 import React from "react";
-import { Zap, BarChart3, Hash, Box } from "lucide-react";
-import googleIcon from "../../assets/images/toolfusion_icons/google.png";
-import amzLogo from "../../assets/images/toolfusion_icons/amz.png";
-import nbLogo from "../../assets/images/toolfusion_icons/nb.png";
-import hepsyLogo from "../../assets/images/toolfusion_icons/hepsy.png";
-import rakutenLogo from "../../assets/images/toolfusion_icons/rakuten.png";
-import trustLogo from "../../assets/images/toolfusion_icons/trust.png";
-
-
-interface ToolItem {
-  id: string;
-  name: string;
-  description: string;
-  icon?: React.ElementType;
-  image?: string;
-  actionText: string;
-  isExternal?: boolean;
-  link?: string;
-}
+import { useNavigate } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
+import { ToolItem, BLUERITT_TOOLS, ACTIVE_TOOLS } from "../../utils/ToolFusionOptions";
 
 const ToolFusionPage: React.FC = () => {
-  const bluerittTools: ToolItem[] = [
-    {
-      id: "intelliscan",
-      name: "IntelliScan",
-      description: "Discover trending products with AI insights",
-      icon: Zap,
-      actionText: "Explore Popular Products",
-    },
-    {
-      id: "marginmax",
-      name: "MarginMax",
-      description: "Calculate profits with precision",
-      icon: BarChart3,
-      actionText: "Calculate Profits",
-    },
-    {
-      id: "productvault",
-      name: "ProductVault",
-      description: "Save and organize winning products",
-      icon: Hash,
-      actionText: "Save Products",
-    },
-    {
-      id: "socialpulse",
-      name: "SocialPulse",
-      description: "Real-time social signal intelligence to spot rising product opportunities early.",
-      icon: Box,
-      actionText: "Start Trend Analysis",
-    },
-  ];
+  const navigate = useNavigate();
 
-  const activeTools: ToolItem[] = [
-    {
-      id: "google-patent",
-      name: "Google Patent Check",
-      description: "Verify product patent status and avoid legal risks",
-      image: googleIcon,
-      actionText: "Verify Patent Status",
-      isExternal: true,
-      link: "https://patents.google.com/",
-    },
-    {
-      id: "amz-data",
-      name: "AMZ Data Studio",
-      description: "Get insights on Amazon products, sales, and keyword data",
-      image: amzLogo,
-      actionText: "Optimize Product Strategy",
-      isExternal: true,
-      link: "https://amzdatastudio.com/",
-    },
-    {
-      id: "barcode",
-      name: "Nationwide Barcode",
-      description: "Buy authentic UPC barcodes for Amazon and retail platforms",
-      image: nbLogo,
-      actionText: "Get Your Badcodes",
-      isExternal: true,
-      link: "https://nationwidebarcode.com/purchase-barcodes/barcodes-for-amazon/",
-    },
-    {
-      id: "heepsy",
-      name: "Influencer Marketing (Heepsy)",
-      description: "Find influencers to promote and grow your product reach",
-      image: hepsyLogo,
-      actionText: "Find Perfect Influencers",
-      isExternal: true,
-      link: "https://www.heepsy.com/",
-    },
-    {
-      id: "rakuten",
-      name: "Rakuten Chrome Extension",
-      description: "Earn cashback on business-related online purchases easily",
-      image: rakutenLogo,
-      actionText: "Start Earning Cashbacks",
-      isExternal: true,
-      link: "https://www.rakuten.com/extension",
-    },
-    {
-      id: "trustpilot",
-      name: "Trustpilot",
-      description: "Check reviews and ratings of suppliers and distributors",
-      image: trustLogo,
-      actionText: "Check Supplier Ratings",
-      isExternal: true,
-      link: "https://www.trustpilot.com/",
-    },
-  ];
+  const ToolCard = ({ tool }: { tool: ToolItem }) => {
+    const handleAction = () => {
+      if (tool.isExternal) {
+        window.open(tool.link, "_blank");
+      } else if (tool.link) {
+        navigate(tool.link);
+      }
+    };
 
-  const ToolCard = ({ tool }: { tool: ToolItem }) => (
-    <div className="tool-card">
-      <div className="tool-card-content">
-        {tool.image ? (
-          <div className="tool-image-container">
-            <img
-              src={tool.image}
-              alt={tool.name}
-              className="tool-image"
-            />
+    return (
+      <div className="tool-card group">
+        <div className="tool-card-content">
+          {tool.image ? (
+            <div className="tool-image-container">
+              <img
+                src={tool.image}
+                alt={tool.name}
+                className="tool-image"
+              />
+            </div>
+          ) : tool.icon ? (
+            <div className="tool-icon-container">
+              <tool.icon size={20} className="tool-icon" />
+            </div>
+          ) : null}
+          <div className="tool-text-container">
+            <h4 className="tool-name">{tool.name}</h4>
+            <p className="tool-description">
+              {tool.description}
+            </p>
           </div>
-        ) : tool.icon ? (
-          <div className="tool-icon-container">
-            <tool.icon size={20} className="tool-icon" />
-          </div>
-        ) : null}
-        <div className="tool-text-container">
-          <h4 className="tool-name">{tool.name}</h4>
-          <p className="tool-description">
-            {tool.description}
-          </p>
         </div>
+        <button className="tool-action-btn" onClick={handleAction}>
+          {tool.actionText}
+          {tool.isExternal && <ArrowUpRight size={14} className="ml-1 opacity-50" />}
+        </button>
       </div>
-      <button className="tool-action-btn" onClick={() => window.open(tool.link, "_blank")}>
-        {tool.actionText}
-      </button>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="tool-fusion-container">
@@ -154,10 +63,10 @@ const ToolFusionPage: React.FC = () => {
         <div className="tool-section">
           <div className="tool-section-header">
             <h3 className="dashboard-card-title">Blueritt Tools</h3>
-            <span className="tool-section-count">{bluerittTools.length} tools currently in use</span>
+            <span className="tool-section-count">{BLUERITT_TOOLS.length} tools currently in use</span>
           </div>
           <div className="tool-list">
-            {bluerittTools.map((tool) => (
+            {BLUERITT_TOOLS.map((tool) => (
               <ToolCard key={tool.id} tool={tool} />
             ))}
           </div>
@@ -167,10 +76,10 @@ const ToolFusionPage: React.FC = () => {
         <div className="tool-section">
           <div className="tool-section-header">
             <h3 className="tool-section-title">Active Tools</h3>
-            <span className="tool-section-count">{activeTools.length} tools currently in use</span>
+            <span className="tool-section-count">{ACTIVE_TOOLS.length} tools currently in use</span>
           </div>
           <div className="tool-list">
-            {activeTools.map((tool) => (
+            {ACTIVE_TOOLS.map((tool) => (
               <ToolCard key={tool.id} tool={tool} />
             ))}
           </div>

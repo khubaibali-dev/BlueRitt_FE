@@ -105,8 +105,7 @@ export interface AmazonDealsResponse {
   remaining_quota?: number;
 }
 
-// Amazon Trends Search API
-// ✅ FIXED: Uses /products/amazon-trends/search/ endpoint with separate amazon_trends_search quota
+
 export const amazonTrendsSearch = async ({
   query,
   country = 'US',
@@ -210,7 +209,7 @@ export const getAmazonTrendsBestSellers = async ({
     params.language = language.trim();
   }
 
-  const response = await api.get('/products/amazon-trends/best-sellers/', {
+  const response = await api.get('/products/amazon-trends/best-sellers-by-category/', {
     params,
   });
   console.log('📊 getAmazonTrendsBestSellers response:', response.data);
@@ -250,9 +249,7 @@ export const getAmazonTrendsProductsByCategory = async ({
   country = 'US',
   page = 1,
   sort_by = 'RELEVANCE',
-  product_condition = 'ALL',
   is_prime = false,
-  deals_and_discounts = 'NONE',
   min_price,
   max_price,
   brand,
@@ -581,6 +578,28 @@ export interface InfluencerResponse {
   error?: string;
 }
 
+export interface InfluencerPost {
+  post_id: string;
+  post_type: string;
+  post_title: string;
+  post_url: string;
+  post_thumbnail: string;
+  [key: string]: any;
+}
+
+export interface InfluencerPostsData {
+  name: string;
+  country: string;
+  domain: string;
+  has_next_page: boolean;
+  posts: InfluencerPost[];
+}
+
+export interface InfluencerPostsResponse {
+  status: string;
+  data: InfluencerPostsData;
+}
+
 // Get influencer profile via backend API
 export const getInfluencerProfile = async (influencerName: string, country: string = 'US'): Promise<InfluencerResponse> => {
   try {
@@ -599,6 +618,37 @@ export const getInfluencerProfile = async (influencerName: string, country: stri
       status: 'error',
       error: error instanceof Error ? error.message : 'Unknown error'
     };
+  }
+};
+
+// Get influencer posts/products via backend API
+export const getInfluencerPosts = async ({
+  influencer_name,
+  country = 'US',
+  scope = 'ALL',
+  limit = 100,
+  offset = 0
+}: {
+  influencer_name: string;
+  country?: string;
+  scope?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<InfluencerPostsResponse> => {
+  try {
+    const response = await api.get('/products/amazon-trends/influencer-posts/', {
+      params: {
+        influencer_name,
+        country,
+        scope,
+        limit,
+        offset
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching posts for ${influencer_name}:`, error);
+    throw error;
   }
 };
 

@@ -12,8 +12,8 @@ import {
 
 import api from "../api";
 import { getUserDetails, refreshToken } from "../api/auth";
-import { TUser, TSearchQuota, TSubscriptionStatus } from "../types/user";
-import { ACCESS_TOKEN_KEY, storeAccessToken, getAccessToken } from "../utils/tokenStorage";
+import { TUser, TSearchQuota, TSubscriptionStatus, TUserFeatures } from "../types/user";
+import { ACCESS_TOKEN_KEY, storeAccessToken, getAccessToken, getShouldRefresh } from "../utils/tokenStorage";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateUserQuotaData, prefetchUserQuotaData } from "../utils/prefetch";
 
@@ -26,6 +26,7 @@ type UserAuthContextType = {
   setAccessToken: (token: string) => void;
   currentUser: TUser;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser>>;
+  fetchUserDetails: () => Promise<void>;
   loading: boolean;
   needsSubscription: boolean;
   dueDate: string;
@@ -41,6 +42,7 @@ const initialUser: TUser = {
   fullName: "",
   email: "",
   phone: "",
+  country: "",
   searchQuota: undefined,
   subscriptionStatus: undefined,
   dueDate: "",
@@ -51,6 +53,7 @@ const userAuthContext = createContext<UserAuthContextType>({
   setAccessToken: () => {},
   currentUser: initialUser,
   setCurrentUser: () => {},
+  fetchUserDetails: async () => {},
   loading: true,
   needsSubscription: false,
   dueDate: "",
@@ -105,19 +108,21 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
     try {
       // Get token from localStorage to ensure we have the latest value
       const token = getAccessToken();
-      if (!token || isRequestInProgress) return;
+      if (!token) return;
 
       setIsRequestInProgress(true);
       const response = await getUserDetails();
       const userProfile = response.data;
 
-      const updatedUser = {
+      const updatedUser: TUser = {
         email: userProfile.email,
         firstName: userProfile.profile.first_name,
         lastName: userProfile.profile.last_name,
         fullName: userProfile.profile.full_name,
         phone: userProfile.profile.phone,
+        country: userProfile.profile.country || "",
         searchQuota: userProfile.search_quota as TSearchQuota,
+        features: userProfile.features as TUserFeatures,
         subscriptionStatus:
           userProfile.subscription_status as TSubscriptionStatus,
         dueDate: userProfile.subscription_status.due_on,
@@ -159,10 +164,12 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
       try {
         // Check if we already have a token in localStorage
         const existingToken = getAccessToken();
+        const shouldRefresh = getShouldRefresh();
+
         if (existingToken) {
           setAccessTokenState(existingToken); // Update state from localStorage
-        } else {
-          // If no token exists, try to get a new one
+        } else if (shouldRefresh) {
+          // If no token exists, but flag is set, try to get a new one
           const response = await refreshToken();
           setAccessToken(response.data.access);
         }
@@ -301,6 +308,7 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
         setAccessToken,
         currentUser,
         setCurrentUser,
+        fetchUserDetails,
         loading,
         needsSubscription,
         dueDate: currentUser.dueDate || "",

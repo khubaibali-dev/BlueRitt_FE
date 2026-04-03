@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Search, List, LayoutGrid, ChevronRight, Sparkles, Settings2, ShoppingBag, ShoppingCart } from "lucide-react";
+import { useAuth } from "../../../../context/AuthContext";
 import DiscoveryProductCard from "./DiscoveryProductCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
 import ProductDetailsDrawer from "../ProductDetails/ProductDetailsDrawer";
@@ -23,6 +24,7 @@ interface DiscoveryResultsProps {
    initialQuery?: string;
    initialCountry?: string;
    initialSearchType?: string;
+   appliedFilters?: FilterState;
    onLoadingChange?: (isLoading: boolean, isDetailed?: boolean) => void;
 }
 
@@ -31,6 +33,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       initialQuery = "",
       initialCountry = "US",
       initialSearchType = "product",
+      appliedFilters,
       onLoadingChange
    } = props;
 
@@ -56,7 +59,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
    const [searchQuery, setSearchQuery] = useState(initialSearchType === "category" ? "" : initialQuery);
    const [activeSearchQuery, setActiveSearchQuery] = useState(initialSearchType === "category" ? "" : initialQuery);
-   const [filters, setFilters] = useState<FilterState>({} as FilterState);
+   const [filters, setFilters] = useState<FilterState>(appliedFilters || location.state?.appliedFilters || {} as FilterState);
 
    const [searchType, setSearchType] = useState(initialSearchType || PRODUCT_FILTER_OPTIONS[0].value);
    const [activeSearchType, setActiveSearchType] = useState(initialSearchType || PRODUCT_FILTER_OPTIONS[0].value);
@@ -360,6 +363,8 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       setShowProfitCalc(true);
    };
 
+   const { currentUser } = useAuth();
+
    // Real Insights from API - now pre-formatted from backend
    const insights = insightsResponse?.data?.metrics;
 
@@ -400,6 +405,19 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       );
    }
 
+   const stats = [
+      { icon: Search, label: "Product Searches", value: (currentUser.searchQuota?.amazon_search || 0).toLocaleString() },
+      { icon: ShoppingBag, label: "Supplier Discoveries", value: (currentUser.searchQuota?.supplier_discovery || 0).toLocaleString() },
+      {
+         icon: ShoppingCart,
+         label: "Add-ons",
+         action: {
+            label: "Purchase Add Ons",
+            onClick: () => navigate("/addons"),
+         },
+      },
+   ];
+
    return (
       <div className="discovery-results px-4 sm:px-4 py-10 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full overflow-hidden relative bg-[#030F23] rounded-[24px] isolate">
 
@@ -408,7 +426,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
             {hasViewedSourceLink && (
                <button
                   onClick={() => setShowSourceLink(true)}
-                  className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10 "
+                  className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10"
                >
                   Next <ChevronRight size={14} />
                </button>
@@ -422,18 +440,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
          {/* Top Header Row */}
          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {[
-               { icon: Search, label: "Product Searches", value: "612" },
-               { icon: ShoppingBag, label: "Supplier Discoveries", value: "612" },
-               {
-                  icon: ShoppingCart,
-                  label: "Add-ons",
-                  action: {
-                     label: "Purchase Add Ons",
-                     onClick: () => console.log("Purchase Add-ons clicked"),
-                  },
-               },
-            ].map((stat, i) => (
+            {stats.map((stat, i) => (
                <TopStatCard key={i} {...stat} />
             ))}
          </div>

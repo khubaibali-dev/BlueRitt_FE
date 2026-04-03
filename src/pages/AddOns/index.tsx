@@ -1,24 +1,25 @@
 import React from "react";
-import { Wallet, ShoppingCart, ShieldCheck, Search, Users, Calculator, TrendingUp, Zap } from "lucide-react";
+import { Wallet, ShoppingCart, ShieldCheck, Search, Users, Calculator, TrendingUp, Zap, HelpCircle } from "lucide-react";
 import PurchaseModal from "./PurchaseModal";
-
+import { useQuery } from "@tanstack/react-query";
+import { getActiveAddons, Addon } from "../../api/addons";
 
 interface AddonCardProps {
   amount: number | string;
-  label: string;
+  typeDisplay: string;
   price: string;
   popular?: boolean;
   saveBadge?: string;
   onPurchase: () => void;
 }
 
-const AddonCard: React.FC<AddonCardProps> = ({ amount, label, price, popular, saveBadge, onPurchase }) => (
+const AddonCard: React.FC<AddonCardProps> = ({ amount, typeDisplay, price, popular, saveBadge, onPurchase }) => (
   <div className={`addon-card ${popular ? "addon-card-popular" : ""}`}>
     {popular && <span className="addon-card-badge addon-badge-popular">Popular</span>}
     {saveBadge && <span className="addon-badge-save">{saveBadge}</span>}
 
     <div className="addon-card-amount">{amount}</div>
-    <div className="addon-card-label">{label}</div>
+    <div className="addon-card-label">{typeDisplay}</div>
     <div className="addon-card-price">{price}</div>
 
     <button className="addon-purchase-btn" onClick={onPurchase}>
@@ -52,19 +53,98 @@ const AddonSection: React.FC<AddonSectionProps> = ({ icon: Icon, title, descript
   </div>
 );
 
+const ICON_MAP: Record<string, React.ElementType> = {
+  no_of_gross_profit_calculations: Calculator,
+  no_of_net_profit_calculations: Calculator,
+  alibaba_match_per_product: Users,
+  tiktok_searches: TrendingUp,
+  tiktok_hashtag_search: TrendingUp,
+  amazon_search: Search,
+  amazon_trends_search: Zap,
+};
 
+const SECTION_ORDER = [
+  "Product Searches",
+  "Supplier Discoveries",
+  "MarginMax Gross Profit Search",
+  "MarginMax Net Profit Search",
+  "TikTok Product Searches",
+  "TikTok Trending Hashtags",
+  "Amazon Product Searches",
+];
+
+import AddBalanceModal from "./AddBalanceModal";
 
 const AddOns: React.FC = () => {
-  const [selectedAddon, setSelectedAddon] = React.useState<{
-    title: string;
-    amount: string;
-    price: string;
-    icon: React.ElementType;
-  } | null>(null);
+  const [selectedAddon, setSelectedAddon] = React.useState<Addon | null>(null);
+  const [isBalanceModalOpen, setIsBalanceModalOpen] = React.useState(false);
 
-  const handlePurchaseClick = (title: string, amount: string, price: string, icon: React.ElementType) => {
-    setSelectedAddon({ title, amount, price, icon });
+  const { data: addons, isLoading, isError } = useQuery({
+    queryKey: ["active-addons"],
+    queryFn: getActiveAddons,
+  });
+
+  const handlePurchaseClick = (addon: Addon) => {
+    setSelectedAddon(addon);
   };
+
+  // Group addons by type_display
+  const groupedAddons = React.useMemo(() => {
+    if (!addons) return {};
+    return addons.reduce((acc: Record<string, Addon[]>, addon) => {
+      let key = addon.type_display;
+      
+      // Coordinate title swaps and renames
+      if (key === "AI Supplier Matches") key = "Supplier Discoveries";
+      else if (key === "Amazon Product Searches") key = "Product Searches";
+      else if (key === "Product Searches") key = "Amazon Product Searches";
+
+      // Simplify description: remove numbers and specific lengths
+      let cleanDesc = "Searches";
+      if (addon.type.includes("profit_calculations")) {
+        cleanDesc = "Calculations";
+      } else if (addon.type === "alibaba_match_per_product") {
+        cleanDesc = "Discoveries";
+      }
+
+      if (!acc[key]) acc[key] = [];
+      acc[key].push({ ...addon, type_display: key, description: cleanDesc });
+      
+      // Sort by num_searches within the group
+      acc[key].sort((a, b) => a.num_searches - b.num_searches);
+      return acc;
+    }, {});
+  }, [addons]);
+
+  const sortedGroups = React.useMemo(() => {
+    return Object.entries(groupedAddons).sort(([titleA], [titleB]) => {
+      const indexA = SECTION_ORDER.indexOf(titleA);
+      const indexB = SECTION_ORDER.indexOf(titleB);
+      // If title not found in order, put at end
+      if (indexA === -1 && indexB === -1) return 0;
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }, [groupedAddons]);
+
+  const getIcon = (type: string) => ICON_MAP[type] || HelpCircle;
+
+  if (isLoading) {
+    return (
+      <div className="addons-page-container flex items-center justify-center min-h-[400px]">
+        <div className="text-white text-lg">Loading add-ons...</div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="addons-page-container flex items-center justify-center min-h-[400px]">
+        <div className="text-red-400 text-lg">Failed to load add-ons. Please try again.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="addons-page-container">
@@ -82,7 +162,10 @@ const AddOns: React.FC = () => {
           <div className="addon-balance-value">$90.00</div>
         </div>
 
-        <div className="addon-balance-card addon-balance-card-alt">
+        <div 
+          className="addon-balance-card addon-balance-card-alt cursor-pointer hover:bg-white/10 transition-colors"
+          onClick={() => setIsBalanceModalOpen(true)}
+        >
           <div className="addon-add-balance-icon">
             <ShoppingCart size={28} />
           </div>
@@ -105,87 +188,49 @@ const AddOns: React.FC = () => {
         </div>
       </div>
 
-      <AddonSection
-        icon={Search}
-        title="Amazon Product Searches"
-        description="Discover trending products from Amazon marketplaces"
-      >
-        <AddonCard amount="10" label="Searches" price="$5.00" onPurchase={() => handlePurchaseClick("Amazon Product Searches", "10", "$5.00", Search)} />
-        <AddonCard amount="20" label="Searches" price="$10.00" onPurchase={() => handlePurchaseClick("Amazon Product Searches", "20", "$10.00", Search)} />
-        <AddonCard amount="50" label="Searches" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Amazon Product Searches", "50", "$25.00", Search)} />
-        <AddonCard amount="100" label="Searches" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Amazon Product Searches", "100", "$50.00", Search)} />
-      </AddonSection>
+      {sortedGroups.map(([title, items]) => {
+        const firstItem = items[0];
+        const icon = getIcon(firstItem.type);
 
-      <AddonSection
-        icon={Users}
-        title="Supplier Discoveries"
-        description="Find verified suppliers for your products"
-      >
-        <AddonCard amount="10" label="Discoveries" price="$5.00" onPurchase={() => handlePurchaseClick("Supplier Discoveries", "10", "$5.00", Users)} />
-        <AddonCard amount="20" label="Discoveries" price="$10.00" onPurchase={() => handlePurchaseClick("Supplier Discoveries", "20", "$10.00", Users)} />
-        <AddonCard amount="50" label="Discoveries" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Supplier Discoveries", "50", "$25.00", Users)} />
-        <AddonCard amount="100" label="Discoveries" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Supplier Discoveries", "100", "$50.00", Users)} />
-      </AddonSection>
+        return (
+          <AddonSection
+            key={title}
+            icon={icon}
+            title={title}
+            description={firstItem.description}
+          >
+            {items.map((addon, index) => {
+              // Mark third and fourth items as popular/save badge as an example of dynamic logic
+              // In a real app, this might come from the backend or specific business rules
+              const isPopular = items.length > 2 && index === 2;
+              const hasSaveBadge = items.length > 2 && index >= 2;
 
-      <AddonSection
-        icon={Calculator}
-        title="Calculate Gross Profit"
-        description="Analyze your gross margins and profitability easily"
-      >
-        <AddonCard amount="10" label="Calculations" price="$5.00" onPurchase={() => handlePurchaseClick("Calculate Gross Profit", "10", "$5.00", Calculator)} />
-        <AddonCard amount="20" label="Calculations" price="$10.00" onPurchase={() => handlePurchaseClick("Calculate Gross Profit", "20", "$10.00", Calculator)} />
-        <AddonCard amount="50" label="Calculations" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Calculate Gross Profit", "50", "$25.00", Calculator)} />
-        <AddonCard amount="100" label="Calculations" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Calculate Gross Profit", "100", "$50.00", Calculator)} />
-      </AddonSection>
-
-      <AddonSection
-        icon={Calculator}
-        title="Calculate Net Profit"
-        description="Get a clear view of your net bottom-line results"
-      >
-        <AddonCard amount="10" label="Calculations" price="$5.00" onPurchase={() => handlePurchaseClick("Calculate Net Profit", "10", "$5.00", Calculator)} />
-        <AddonCard amount="20" label="Calculations" price="$10.00" onPurchase={() => handlePurchaseClick("Calculate Net Profit", "20", "$10.00", Calculator)} />
-        <AddonCard amount="50" label="Calculations" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Calculate Net Profit", "50", "$25.00", Calculator)} />
-        <AddonCard amount="100" label="Calculations" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Calculate Net Profit", "100", "$50.00", Calculator)} />
-      </AddonSection>
-
-      <AddonSection
-        icon={TrendingUp}
-        title="TikTok Trend Searches"
-        description="Stay ahead of the competition with TikTok insights"
-      >
-        <AddonCard amount="10" label="Searches" price="$5.00" onPurchase={() => handlePurchaseClick("TikTok Trend Searches", "10", "$5.00", TrendingUp)} />
-        <AddonCard amount="20" label="Searches" price="$10.00" onPurchase={() => handlePurchaseClick("TikTok Trend Searches", "20", "$10.00", TrendingUp)} />
-        <AddonCard amount="50" label="Searches" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("TikTok Trend Searches", "50", "$25.00", TrendingUp)} />
-        <AddonCard amount="100" label="Searches" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("TikTok Trend Searches", "100", "$50.00", TrendingUp)} />
-      </AddonSection>
-
-      <AddonSection
-        icon={TrendingUp}
-        title="TikTok Trending Hashtags"
-        description="Discover the hottest hashtags on TikTok daily"
-      >
-        <AddonCard amount="10" label="Discoveries" price="$5.00" onPurchase={() => handlePurchaseClick("TikTok Trending Hashtags", "10", "$5.00", TrendingUp)} />
-        <AddonCard amount="20" label="Discoveries" price="$10.00" onPurchase={() => handlePurchaseClick("TikTok Trending Hashtags", "20", "$10.00", TrendingUp)} />
-        <AddonCard amount="50" label="Discoveries" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("TikTok Trending Hashtags", "50", "$25.00", TrendingUp)} />
-        <AddonCard amount="100" label="Discoveries" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("TikTok Trending Hashtags", "100", "$50.00", TrendingUp)} />
-      </AddonSection>
-
-      <AddonSection
-        icon={Zap}
-        title="Amazon Trend Searches"
-        description="Discover emerging trends on Amazon marketplaces"
-      >
-        <AddonCard amount="10" label="Searches" price="$5.00" onPurchase={() => handlePurchaseClick("Amazon Trend Searches", "10", "$5.00", Zap)} />
-        <AddonCard amount="20" label="Searches" price="$10.00" onPurchase={() => handlePurchaseClick("Amazon Trend Searches", "20", "$10.00", Zap)} />
-        <AddonCard amount="50" label="Searches" price="$25.00" popular saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Amazon Trend Searches", "50", "$25.00", Zap)} />
-        <AddonCard amount="100" label="Searches" price="$50.00" saveBadge="Save 15%" onPurchase={() => handlePurchaseClick("Amazon Trend Searches", "100", "$50.00", Zap)} />
-      </AddonSection>
+              return (
+                <AddonCard
+                  key={addon.id}
+                  amount={addon.num_searches}
+                  typeDisplay={addon.type_display}
+                  price={`$${addon.cost}`}
+                  popular={isPopular}
+                  saveBadge={hasSaveBadge ? "Save 15%" : undefined}
+                  onPurchase={() => handlePurchaseClick(addon)}
+                />
+              );
+            })}
+          </AddonSection>
+        );
+      })}
 
       <PurchaseModal
         isOpen={!!selectedAddon}
         onClose={() => setSelectedAddon(null)}
         addon={selectedAddon}
+      />
+
+      <AddBalanceModal
+        isOpen={isBalanceModalOpen}
+        onClose={() => setIsBalanceModalOpen(false)}
+        currentBalance="$90.00"
       />
     </div>
   );

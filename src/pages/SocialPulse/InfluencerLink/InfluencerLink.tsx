@@ -1,58 +1,99 @@
-import React, { useState } from "react";
-import { Search, Info, Crown } from "lucide-react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { Search, Info, Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Crown } from "lucide-react";
 import InfluencerHeader from "./components/InfluencerHeader";
 import InfluencerCard from "./components/InfluencerCard";
 import InfluencerDetailsDrawer from "./components/InfluencerDetailsDrawer";
 
 import influencerBanner from "../../../assets/images/tiktoktrends.png";
-
-const mockInfluencerData = [
-  {
-    name: "Marcus Johnson",
-    followers: "89.0K",
-    following: "12.3K",
-    posts: "42.0K",
-    bio: "Lifestyle content creator sharing daily inspiration and wellness tips with a global community.",
-    engagementRate: "12.3%",
-    engagementLevel: "Excellent",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
-  },
-  {
-    name: "Sarah Chen",
-    followers: "124.5K",
-    following: "1.1K",
-    posts: "1.2K",
-    bio: "Tech enthusiast and software engineer exploring the intersection of AI and human creativity.",
-    engagementRate: "8.7%",
-    engagementLevel: "High",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400"
-  },
-  {
-    name: "Elena Rodriguez",
-    followers: "45.2K",
-    following: "890",
-    posts: "3.4K",
-    bio: "Travel photographer capturing hidden gems around the Mediterranean and Southeast Asia.",
-    engagementRate: "15.4%",
-    engagementLevel: "Excellent",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400"
-  }
-];
+import { MANUAL_INFLUENCERS } from "../../../utils/infuluencers";
 
 const InfluencerLink: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<any>(null);
 
+  const influencersPerPage = 12;
+  const listTopRef = useRef<HTMLDivElement>(null);
+
+  const getEngagementLevel = (rate: number) => {
+    if (rate >= 5) return "Excellent";
+    if (rate >= 3) return "High";
+    return "Good";
+  };
+
+  // 1. Data Mapping Layer
+  const mappedInfluencers = useMemo(() => {
+    return MANUAL_INFLUENCERS.map(inf => ({
+      name: inf.influencer_name,
+      followers: inf.followers || "0",
+      following: inf.following || "0",
+      posts: inf.post_count || "0",
+      bio: inf.bio || "No bio available",
+      engagementRate: `${inf.engagement_rate}%`,
+      engagementLevel: getEngagementLevel(inf.engagement_rate || 0),
+      image: inf.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(inf.influencer_name)}&background=random&size=400`,
+      verified: inf.verified,
+      profileLink: inf.profile_link
+    }));
+  }, []);
+
+  // 2. Search Logic
+  const filteredInfluencers = useMemo(() => {
+    if (!searchQuery.trim()) return mappedInfluencers;
+    const query = searchQuery.toLowerCase();
+    return mappedInfluencers.filter(
+      inf => inf.name.toLowerCase().includes(query) || inf.bio.toLowerCase().includes(query)
+    );
+  }, [searchQuery, mappedInfluencers]);
+
+  // 3. Pagination Logic
+  const totalPages = Math.ceil(filteredInfluencers.length / influencersPerPage);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 4) {
+        pages.push(1, 2, 3, 4, 5, "...", totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+      }
+    }
+    return pages;
+  };
+
+  const currentPagedInfluencers = useMemo(() => {
+    const start = (currentPage - 1) * influencersPerPage;
+    return filteredInfluencers.slice(start, start + influencersPerPage);
+  }, [filteredInfluencers, currentPage]);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  // Scroll to top of list on page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const topPicks = useMemo(() => mappedInfluencers.slice(0, 3), [mappedInfluencers]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Searching for influencer:", searchQuery);
   };
 
   const openDrawer = (influencer: any) => {
     setSelectedInfluencer(influencer);
     setIsDrawerOpen(true);
   };
+
+  const pageNumbers = getPageNumbers();
 
   return (
     <div className="bg-brand-card-alt rounded-[32px] relative shadow-2xl overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700 pb-4">
@@ -115,52 +156,119 @@ const InfluencerLink: React.FC = () => {
               </div>
             </div>
 
-            {/* Top Picks Section (Moved to Header Area) */}
-            <div className="space-y-8 w-full mt-4">
-              <div className="flex items-center justify-between px-1">
-                <h2 className="text-[20px]  text-white tracking-tight flex items-center gap-2">
-
-                  Top Picks
-                </h2>
+            {/* Top Picks Section - Only show when NOT searching */}
+            {!searchQuery && (
+              <div className="space-y-8 w-full mt-4">
+                <div className="flex items-center justify-between px-1">
+                  <h2 className="text-[20px]  text-white tracking-tight flex items-center gap-2">
+                    Top Picks
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {topPicks.map((influencer) => (
+                    <InfluencerCard
+                      key={`top-${influencer.name}`}
+                      {...influencer}
+                      onViewDetails={() => openDrawer(influencer)}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {mockInfluencerData.map((influencer, i) => (
-                  <InfluencerCard 
-                    key={`top-${i}`} 
-                    {...influencer} 
-                    onViewDetails={() => openDrawer(influencer)}
-                  />
-                ))}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* 2. Content Sections Area */}
-      <div className="px-6 sm:px-10 mt-12 z-20 space-y-16 pb-10 shadow-2xl">
+      <div className="px-6 sm:px-10 mt-12 z-20 space-y-16 pb-10 shadow-2xl" ref={listTopRef}>
 
         {/* All Influencers Section */}
         <div className="space-y-8">
           <div className="flex items-center justify-between px-1 border-b border-[#082656] pb-4">
             <h2 className="text-[20px] font-bold text-white tracking-tight">
-              All Influencers
+              {searchQuery ? `Search Results (${filteredInfluencers.length})` : "All Influencers"}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
-            {/* Repeating mock for visual density */}
-            {[...mockInfluencerData, ...mockInfluencerData].map((influencer, i) => (
-              <InfluencerCard 
-                key={`all-${i}`} 
-                {...influencer} 
-                onViewDetails={() => openDrawer(influencer)}
-              />
-            ))}
-          </div>
+
+          {currentPagedInfluencers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
+              {currentPagedInfluencers.map((influencer) => (
+                <InfluencerCard
+                  key={`all-${influencer.name}`}
+                  {...influencer}
+                  onViewDetails={() => openDrawer(influencer)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20 px-6 bg-[#FFFFFF05] rounded-[24px] border border-[#082656]">
+              <Users size={48} className="mx-auto mb-4 text-[#FFFFFF33]" />
+              <h3 className="text-white text-[18px] font-bold mb-2">No influencers found</h3>
+              <p className="text-[#FFFFFF66] text-[14px]">Try searching for a different name or keyword.</p>
+            </div>
+          )}
         </div>
 
-        {/* Pagination / Upgrade Action */}
-        <div className="flex flex-col items-center justify-center pt-8 gap-10">
+        {/* Pagination Section (Numerical style) */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-8 pb-4">
+            {/* First Page */}
+            <button
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+              className="w-10 h-10 rounded-[10px] bg-[#04132B] border border-[#082656] flex items-center justify-center text-white/70 hover:bg-[#082656] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronsLeft size={16} />
+            </button>
+
+            {/* Previous */}
+            <button
+              onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+              disabled={currentPage === 1}
+              className="w-10 h-10 rounded-[10px] bg-[#04132B] border border-[#082656] flex items-center justify-center text-white/70 hover:bg-[#082656] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            {/* Page Numbers */}
+            {pageNumbers.map((page, idx) => (
+              <button
+                key={idx}
+                onClick={() => typeof page === "number" && handlePageChange(page)}
+                disabled={page === "..."}
+                className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[14px] font-bold transition-all
+                  ${page === currentPage
+                    ? "bg-[#3B82F6] text-white border border-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                    : page === "..."
+                      ? "text-white/40 cursor-default"
+                      : "bg-[#04132B] border border-[#082656] text-white/70 hover:bg-[#082656] hover:text-white"}`}
+              >
+                {page}
+              </button>
+            ))}
+
+            {/* Next */}
+            <button
+              onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="w-10 h-10 rounded-[10px] bg-[#04132B] border border-[#082656] flex items-center justify-center text-white/70 hover:bg-[#082656] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronRight size={16} />
+            </button>
+
+            {/* Last Page */}
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              className="w-10 h-10 rounded-[10px] bg-[#04132B] border border-[#082656] flex items-center justify-center text-white/70 hover:bg-[#082656] hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronsRight size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* Upgrade Action Footer */}
+        <div className="flex flex-col items-center justify-center pt-2 gap-4">
           <div className="w-full max-w-[200px] h-[1px] bg-gradient-to-r from-transparent via-[#082656] to-transparent" />
           <button className="upgrade-gradient-btn !px-10 !h-[50px] !rounded-full shadow-2xl shadow-orange-500/10 hover:shadow-orange-500/20 transition-all">
             <Crown size={18} />
@@ -170,9 +278,9 @@ const InfluencerLink: React.FC = () => {
 
       </div>
 
-      <InfluencerDetailsDrawer 
-        isOpen={isDrawerOpen} 
-        onClose={() => setIsDrawerOpen(false)} 
+      <InfluencerDetailsDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
         influencer={selectedInfluencer}
       />
     </div>

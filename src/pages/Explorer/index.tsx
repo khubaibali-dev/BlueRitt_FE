@@ -12,15 +12,23 @@ const ExplorerPage: React.FC = () => {
   const [showTour, setShowTour] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isResultsView, setIsResultsView] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchCountry, setSearchCountry] = useState("US");
-  const [searchType, setSearchType] = useState("product");
+  const [searchQuery, setSearchQuery] = useState(location.state?.initialQuery || "");
+  const [searchCountry, setSearchCountry] = useState(location.state?.initialCountry || "US");
+  const [searchType, setSearchType] = useState(location.state?.initialSearchType || "product");
+  const [appliedFilters, setAppliedFilters] = useState<any>(location.state?.appliedFilters || {});
   const [isDetailedLoading, setIsDetailedLoading] = useState(false);
 
   useEffect(() => {
-    if (location.state?.autoSourceLink) {
+    if (location.state?.autoSourceLink || location.state?.initialQuery) {
       setIsResultsView(true);
       setShowTour(false);
+      
+      if (location.state?.initialQuery) {
+        setSearchQuery(location.state.initialQuery);
+        setSearchCountry(location.state.initialCountry || "US");
+        setSearchType(location.state.initialSearchType || "product");
+        setAppliedFilters(location.state.appliedFilters || {});
+      }
     }
   }, [location.state]);
 
@@ -41,6 +49,7 @@ const ExplorerPage: React.FC = () => {
           initialQuery={searchQuery}
           initialCountry={searchCountry}
           initialSearchType={searchType}
+          appliedFilters={appliedFilters}
           onLoadingChange={(isLoading, isDetailed) => {
             setIsAnalyzing(isLoading);
             setIsDetailedLoading(!!isDetailed);

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTheme } from "../../../context/ThemeContext";
+import { useAuth } from "../../../context/AuthContext";
 import { Sun, Moon, ChevronDown, Menu } from "lucide-react";
 
 interface DashboardHeaderProps {
@@ -8,6 +9,7 @@ interface DashboardHeaderProps {
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
   const { theme, toggleTheme } = useTheme();
+  const { currentUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -40,27 +42,29 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
             {/* Title/Subtitle Group */}
             <div className="flex flex-col min-w-0">
               <h1 className="header-greeting !ml-0 truncate">
-                Good Morning John!
+                Welcome back {currentUser?.firstName || "User"}!
               </h1>
               <p className="header-subtitle !ml-0 text-[11px] sm:text-[14px] truncate">
-                Start your day with the best tools
+                Find the right product for your business
               </p>
             </div>
 
             {/* Mobile-only Profile & Arrow - Placed next to text */}
-            <div className="relative lg:hidden" ref={dropdownRef}>
+            <div className="relative lg:hidden " ref={dropdownRef}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="flex flex-col items-start px-1 py-1 hover:bg-white/5 rounded-lg transition-all min-w-0 shrink-0"
               >
                 <div className="flex items-center gap-1">
-                  <p className="text-[11px] sm:text-[12px] font-semibold text-white leading-tight whitespace-nowrap">John Doe</p>
+                  <p className="text-[11px] sm:text-[12px] font-semibold text-white leading-tight whitespace-nowrap ">
+                    {currentUser?.firstName} {currentUser?.lastName}
+                  </p>
                   <ChevronDown
                     size={12}
                     className={`text-white transition-transform duration-300 shrink-0 ${isMenuOpen ? 'rotate-180' : ''}`}
                   />
                 </div>
-                <p className="text-[9px] sm:text-[10px] text-white/50 leading-tight whitespace-nowrap">The Matrix</p>
+                <p className="text-[9px] sm:text-[10px] text-white/50 leading-tight whitespace-nowrap">{currentUser?.email}</p>
               </button>
 
               {/* Mobile-only Dropdown */}
@@ -114,10 +118,12 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
           <div className="profile-section border-l border-[#1E293B] pl-6 h-full flex items-center">
             <div className="flex flex-col items-start">
               <div className="flex items-center gap-2">
-                <p className="text-[14px] font-semibold text-[#FFFFFF]">John Doe</p>
+                <p className="text-[14px] font-semibold text-[#FFFFFF]">
+                  {currentUser?.firstName} {currentUser?.lastName}
+                </p>
                 <ChevronDown size={16} className="text-[#FFFFFF]" />
               </div>
-              <p className="text-[12px] text-[#9F9F9F]">The Matrix</p>
+              <p className="text-[12px] text-[#9F9F9F]">{currentUser?.email}</p>
             </div>
           </div>
         </div>

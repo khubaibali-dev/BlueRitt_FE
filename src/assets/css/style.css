@@ -1410,7 +1410,7 @@ background: #53535333;
 
   /* Global Dashboard Header */
   .dashboard-header {
-    @apply h-[70px] bg-[#04132B] border-b border-[#1E293B] flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-8 shrink-0;
+    @apply h-[70px] bg-[#04132B] border-b border-[#1E293B] flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-2 shrink-0;
   }
   
   .header-greeting {
@@ -1774,7 +1774,7 @@ background: #53535333;
 }
 
 .addon-section-title {
-  @apply text-[18px] font-bold text-white;
+  @apply text-[18px] font-bold text-white !px-0;
 }
 
 .addon-section-desc {
@@ -1786,7 +1786,7 @@ background: #53535333;
 }
 
 .addon-card {
-  @apply bg-[#041024] rounded-[24px] border border-transparent ring-1 ring-[#3B82F6]/30 p-8 flex flex-col items-center text-center transition-all relative hover:shadow-2xl hover:-translate-y-1;
+  @apply bg-[#041024] rounded-[24px] border border-transparent ring-1 ring-[#3B82F6]/30 px-2 py-8 flex flex-col items-center text-center transition-all relative hover:shadow-2xl hover:-translate-y-1;
 }
 
 .addon-card-popular {
@@ -2244,3 +2244,159 @@ background: #53535333;
   z-index: 1;
 }
 
+
+/* Subscription Component Styling */
+.subscription-refresh-btn {
+  @apply flex items-center gap-2 text-[13px] font-semibold text-white hover:text-slate-300 transition-colors self-start;
+}
+
+.subscription-balance-display {
+  @apply flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto;
+}
+
+.subscription-balance-text {
+  @apply text-[14px] text-slate-400;
+}
+
+.subscription-balance-value {
+  @apply font-bold text-white text-[16px] sm:text-[18px];
+}
+
+.subscription-details-card {
+  @apply bg-[#030F23]  rounded-[12px] p-4 sm:p-6 pb-8 flex flex-col;
+}
+
+.subscription-info-row {
+  @apply flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-[#1E293B]/40 gap-4;
+}
+
+.subscription-info-row-last {
+  @apply flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-[#1E293B]/40 mb-6 gap-4;
+}
+
+.subscription-info-label-group {
+  @apply flex flex-col gap-1;
+}
+
+.subscription-info-value-group {
+  @apply flex flex-col items-start sm:items-end gap-1;
+}
+
+.subscription-info-label {
+  @apply text-[14px] text-slate-400;
+}
+
+.subscription-info-value {
+  @apply font-bold text-white text-[15px];
+}
+
+.subscription-link-orange {
+  @apply text-[#F05A2B] text-[13px] font-bold hover:underline text-left;
+}
+
+.subscription-auto-renew-row {
+  @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4;
+}
+
+.subscription-auto-renew-info {
+  @apply flex flex-col gap-1;
+}
+
+.subscription-auto-renew-title {
+  @apply text-[14px] font-bold text-white;
+}
+
+.subscription-auto-renew-desc {
+  @apply text-[13px] text-slate-400 leading-tight;
+}
+
+.subscription-status-note {
+  @apply text-[14px] text-slate-300 leading-relaxed pr-2 sm:pr-8 mt-6;
+}
+
+/* Invoices Component Styling */
+.invoice-next-payment-label {
+  @apply text-[13px] text-slate-400 font-medium;
+}
+
+.invoice-next-payment-date {
+  @apply text-[20px] font-bold text-white uppercase tracking-wider;
+}
+
+.invoice-search-container {
+  @apply max-w-[300px] relative mt-2;
+}
+
+.invoice-search-input {
+  @apply w-full bg-[#081421] border border-[#082656] rounded-xl py-3 pl-10 pr-4 text-[14px] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-sans;
+}
+
+.invoice-table-wrapper {
+  @apply mt-4 overflow-x-auto rounded-xl border border-[#082656] bg-[#030F2366];
+}
+
+.invoice-table {
+  @apply w-full text-left border-collapse min-w-[700px];
+}
+
+.invoice-table-th {
+  @apply px-6 py-4 text-[13px] font-semibold text-slate-300 tracking-wide uppercase bg-[#081421] border-b border-[#082656];
+}
+
+.invoice-table-td {
+  @apply px-6 py-4 text-[14px] transition-colors border-b border-[#082656]/50;
+}
+
+.invoice-status-badge-paid {
+  @apply px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-[12px] font-bold uppercase tracking-wider border border-green-500/20;
+}
+
+.invoice-action-link {
+  @apply text-blue-400 hover:text-blue-300 text-[14px] font-semibold transition-colors;
+}
+
+.invoice-pagination-btn {
+  @apply px-4 py-2 bg-[#081421] border border-[#082656] text-slate-300 rounded-lg text-[13px] font-medium hover:bg-white/5 transition-colors flex items-center gap-1;
+}
+
+.invoice-pagination-btn-active {
+  @apply w-10 h-10 bg-[#081421] border border-blue-500/50 text-white rounded-lg text-[13px] font-bold;
+}
+/* Pricing & Plans Component Styling */
+.pricing-grid-3 {
+  display: grid !important;
+  grid-template-columns: minmax(120px, 1.5fr) repeat(2, 1fr) !important;
+}
+
+.pricing-grid-4 {
+  display: grid !important;
+  grid-template-columns: minmax(120px, 1.5fr) repeat(3, 1fr) !important;
+}
+
+.pricing-row-standard {
+  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-[#1E293B]/40 items-center min-w-[600px] bg-[#041024];
+}
+
+.pricing-row-no-bg {
+  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-[#1E293B]/40 items-center min-w-[600px];
+}
+
+.pricing-header-row {
+  @apply pb-6 pt-5 px-3 sm:px-6 border-b border-[#1E293B]/40 bg-[#041024] min-w-[600px];
+}
+
+.pricing-subheader-row {
+  @apply bg-[#04132B] px-3 sm:px-6 py-2.5 border-b border-[#1E293B]/40 min-w-[600px];
+}
+
+.pricing-label-header {
+  @apply text-[11px] sm:text-[13px] pr-2 text-blue-500 font-bold tracking-wider;
+}
+
+.pricing-label-standard {
+  @apply text-[11px] sm:text-[13px] pr-2 text-slate-400;
+}
+
+.pricing-value-cell {
+  @apply flex justify-center text-[11px] sm:text-[13px] text-white font-medium text-center;
+}

@@ -1,7 +1,7 @@
 import api from ".";
 
 const getWalletBalance = async () => {
-  api.get("/common/wallet/fund/");
+  return api.get("/common/wallet/fund/").then((res) => res.data);
 };
 
 const fetchAccountSummary = async () => {
@@ -34,7 +34,7 @@ const getPackages = (paymentType: string = 'subscription') => {
 };
 
 const getBalanceHistory = () => {
-  return api.get("/common/wallet/transactions/");
+  return api.get("/common/wallet/transactions/").then((res) => res.data);
 };
 
 const updatePaymentMethod = () => {

@@ -1,22 +1,45 @@
 import React from "react";
-import { Wallet, X } from "lucide-react";
+import { Wallet, X, Calculator, Search, Users, TrendingUp, Zap, HelpCircle } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postPurchaseAddon, Addon } from "../../api/addons";
+import { toast } from "react-toastify";
 
 interface PurchaseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  addon: {
-    title: string;
-    amount: string;
-    price: string;
-    icon: React.ElementType;
-  } | null;
+  addon: Addon | null;
 }
 
+const ICON_MAP: Record<string, React.ElementType> = {
+  no_of_gross_profit_calculations: Calculator,
+  no_of_net_profit_calculations: Calculator,
+  alibaba_match_per_product: Users,
+  tiktok_searches: TrendingUp,
+  tiktok_hashtag_search: TrendingUp,
+  amazon_search: Search,
+  amazon_trends_search: Zap,
+};
+
 const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon }) => {
+  const queryClient = useQueryClient();
+  
+  const purchaseMutation = useMutation({
+    mutationFn: (id: string) => postPurchaseAddon({ id }),
+    onSuccess: () => {
+      toast.success("Purchase complete!");
+      queryClient.invalidateQueries({ queryKey: ["active-addons"] });
+      onClose();
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Purchase failed. Please try again.");
+    }
+  });
+
   if (!isOpen || !addon) return null;
 
-  const numAmount = parseInt(addon.amount);
-  const numPrice = parseFloat(addon.price.replace("$", ""));
+  const Icon = ICON_MAP[addon.type] || HelpCircle;
+  const numAmount = addon.num_searches;
+  const numPrice = parseFloat(addon.cost);
   const pricePerCredit = (numPrice / numAmount).toFixed(2);
 
   return (
@@ -32,18 +55,18 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
         <div className="purchase-summary-panel">
           <div className="purchase-summary-header">
             <div className="purchase-summary-icon">
-              <addon.icon size={24} />
+              <Icon size={24} />
             </div>
             <div>
-              <div className="purchase-summary-title">{addon.title}</div>
-              <div className="purchase-summary-amount">{addon.amount} Credits</div>
+              <div className="purchase-summary-title">{addon.type_display}</div>
+              <div className="purchase-summary-amount">{numAmount} Credits</div>
             </div>
           </div>
 
           <div className="purchase-data-list">
             <div className="purchase-data-row">
               <span className="purchase-data-label">Credits</span>
-              <span className="purchase-data-value">{addon.amount}</span>
+              <span className="purchase-data-value">{numAmount}</span>
             </div>
             <div className="purchase-data-row">
               <span className="purchase-data-label">Price per credit</span>
@@ -57,7 +80,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
 
           <div className="purchase-total-row">
             <span className="purchase-total-label">Total Amount</span>
-            <span className="purchase-total-value">{addon.price}</span>
+            <span className="purchase-total-value">${addon.cost}</span>
           </div>
         </div>
 
@@ -68,7 +91,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
           <div>
             <div className="purchase-info-title">Payment from Balance</div>
             <div className="purchase-info-desc">
-              {addon.price} will be deducted from your account balance
+              ${addon.cost} will be deducted from your account balance
               <br />
               ($90.00 available)
             </div>
@@ -77,16 +100,23 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
 
         <label className="purchase-checkbox-label">
           <input type="checkbox" className="mt-1 accent-[#3B82F6]" defaultChecked />
-          <span>I agree to the purchase of {addon.amount} credits for {addon.price} and confirm that all sales are final.</span>
+          <span>I agree to the purchase of {numAmount} credits for ${addon.cost} and confirm that all sales are final.</span>
         </label>
 
         <div className="purchase-action-row">
-          <button className="purchase-cancel-btn" onClick={onClose}>Cancel</button>
-          <button className="purchase-submit-btn" onClick={() => {
-            alert("Purchase complete!");
-            onClose();
-          }}>
-            Complete Purchase
+          <button 
+            className="purchase-cancel-btn" 
+            onClick={onClose}
+            disabled={purchaseMutation.isPending}
+          >
+            Cancel
+          </button>
+          <button 
+            className="purchase-submit-btn" 
+            onClick={() => purchaseMutation.mutate(addon.id)}
+            disabled={purchaseMutation.isPending}
+          >
+            {purchaseMutation.isPending ? "Processing..." : "Complete Purchase"}
           </button>
         </div>
       </div>

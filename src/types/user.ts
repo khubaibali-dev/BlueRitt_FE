@@ -1,12 +1,29 @@
 // src/types/user.ts
 
 export type TSearchQuota = {
-    amazon_searches: number;
-    alibaba_searches: number;
-    calculator_searches: number;
-    pintrest_searches: number;
+    alibaba_match_per_product: number;
+    no_of_gross_profit_calculations: number;
+    amazon_search: number;
+    no_of_customer_review: number;
+    no_of_product_offer: number;
+    no_of_net_profit_calculations: number;
+    tiktok_hashtag_search: number;
     tiktok_searches: number;
-    seasonal_product_searches: number;
+    amazon_trends_search: number;
+    supplier_discovery: number;
+};
+
+export type TUserFeatures = {
+    amazon_search: number;
+    supplier_discovery: number;
+    amazon_trends_search: number;
+    tiktok_searches: number;
+    tiktok_hashtag_search: number;
+    alibaba_match_per_product: number;
+    no_of_customer_review: number;
+    no_of_gross_profit_calculations: number;
+    no_of_net_profit_calculations: number;
+    no_of_product_offer: number;
 };
 
 export type TPackage = {
@@ -32,7 +49,9 @@ export type TUser = {
     fullName: string;
     email: string;
     phone: string;
+    country: string;
     searchQuota?: TSearchQuota;
+    features?: TUserFeatures;
     subscriptionStatus?: TSubscriptionStatus;
     dueDate?: string;
 };

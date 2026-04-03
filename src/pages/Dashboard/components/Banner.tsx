@@ -4,6 +4,7 @@ import shadowBg from "../../../assets/images/dashboard1.png";
 import starImg from "../../../assets/images/star.png";
 import PremiumSearchBar from "../../../components/common/search/PremiumSearchBar";
 import FilterDropdown from "../../../components/common/select/FilterDropdown";
+import FilterDrawer, { FilterState } from "../../Explorer/components/FilterDrawer/FilterDrawer";
 import { COUNTRY_OPTIONS } from "../../../utils/Country";
 import { PRODUCT_FILTER_OPTIONS } from "../../../utils/SearchOptions";
 
@@ -11,9 +12,16 @@ const Banner = () => {
   const [filterType, setFilterType] = useState(PRODUCT_FILTER_OPTIONS[0]);
   const pakistanOption = COUNTRY_OPTIONS.find(opt => opt.value === "PK") || COUNTRY_OPTIONS[0];
   const [selectedCountry, setSelectedCountry] = useState(pakistanOption);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({} as FilterState);
 
   const handleSearch = (value: string) => {
-    console.log("Searching for:", value, "in", selectedCountry.label, "by", filterType.label);
+    console.log("Searching for:", value, "with filters:", filters);
+  };
+
+  const handleApplyFilters = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setIsFilterOpen(false);
   };
 
   // Map country options to include code for flags
@@ -58,13 +66,28 @@ const Banner = () => {
             dropdownWidth="w-[200px]"
           />
         </div>
-        <button className="dashboard-filter-btn">
+        <button
+          className="dashboard-filter-btn"
+          onClick={() => setIsFilterOpen(true)}
+        >
           Filters <SlidersHorizontal size={18} className="text-white" />
         </button>
       </div>
 
       {/* Search bar */}
-      <PremiumSearchBar onSearch={handleSearch} className="max-w-[840px]" />
+      <PremiumSearchBar
+        onSearch={handleSearch}
+        className="max-w-[840px]"
+      />
+
+      {/* Filter Drawer */}
+      <FilterDrawer
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        onApply={handleApplyFilters}
+        initialFilters={filters}
+        country={selectedCountry.value}
+      />
     </section>
   );
 };

@@ -10,6 +10,7 @@ interface InfluencerCardProps {
   engagementRate: string;
   engagementLevel: string;
   image: string;
+  profileLink: string;
   onViewDetails?: () => void;
 }
 
@@ -22,6 +23,7 @@ const InfluencerCard: React.FC<InfluencerCardProps> = ({
   engagementRate,
   engagementLevel,
   image,
+  profileLink,
   onViewDetails
 }) => {
   return (
@@ -29,8 +31,8 @@ const InfluencerCard: React.FC<InfluencerCardProps> = ({
 
       {/* 1. Profile Section */}
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <div className="relative">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="relative shrink-0">
             <div
               className="p-[1px] rounded-full relative z-10 group-hover:scale-105 transition-transform duration-500 shadow-xl"
               style={{
@@ -44,18 +46,21 @@ const InfluencerCard: React.FC<InfluencerCardProps> = ({
             {/* Soft Glow behind profile */}
             <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full z-0" />
           </div>
-          <div className="flex flex-col gap-0.5">
-            <h3 className="text-[17px] font-bold text-white tracking-tight">{name}</h3>
+          <div className="flex flex-col gap-0.5 min-w-0">
+            <h3 className="text-[17px] font-bold text-white tracking-tight truncate">{name}</h3>
             <span className="text-[13px] text-white">{followers} followers</span>
           </div>
         </div>
-        <button className="text-blue-500 hover:text-blue-400 transition-colors mt-1 p-2">
+        <button
+          onClick={() => window.open(profileLink, "_blank")}
+          className="text-blue-500 hover:text-blue-400 transition-colors mt-1 p-2"
+        >
           <ExternalLink size={18} />
         </button>
       </div>
 
       {/* 2. Bio */}
-      <p className="text-[13px] text-[#FFFFFFB0] leading-[22px]">
+      <p className="text-[13px] text-[#FFFFFFB0] leading-[22px] truncate">
         {bio}
       </p>
 
@@ -87,7 +92,9 @@ const InfluencerCard: React.FC<InfluencerCardProps> = ({
       {/* 4. Engagement Metric Section */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="quick-action-icon-circle !w-10 !h-10  shadow-lg">
+          <div className="quick-action-icon-circle !w-10 !h-10 shadow-lg  hover:bg-white/10 transition-all"
+
+          >
             <TrendingUp size={18} className="text-white" />
           </div>
           <div className="flex flex-col">

@@ -96,7 +96,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
           </button>
         </div>
 
-        <div className="filter-drawer-body">
+        <div className="filter-drawer-body custom-scrollbar">
           <div className="filter-section">
             <label className="filter-section-label">Price Range ({country === "US" ? "$" : country})</label>
             <div className="filter-input-row">

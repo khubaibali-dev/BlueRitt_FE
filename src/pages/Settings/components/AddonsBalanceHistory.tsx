@@ -1,48 +1,45 @@
 import React, { useState } from "react";
-import { Receipt, Search, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
+import { History, Search, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
-import { getSubscriptionInvoices, fetchAccountSummary } from "../../../api/pricing";
+import { getBalanceHistory, getWalletBalance } from "../../../api/pricing";
 
-const Invoices: React.FC = () => {
+const AddonsBalanceHistory: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: summary, isLoading: isSummaryLoading } = useQuery({
-    queryKey: ['subscription', 'account_summary'],
-    queryFn: async () => {
-      const response = await fetchAccountSummary();
-      return response.data;
-    },
+  const { data: walletBalance, isLoading: isBalanceLoading } = useQuery({
+    queryKey: ['wallet', 'balance'],
+    queryFn: getWalletBalance,
     enabled: isOpen,
   });
 
-  const { data: invoices = [], isLoading: isInvoicesLoading } = useQuery({
-    queryKey: ['subscription', 'invoices'],
-    queryFn: getSubscriptionInvoices,
+  const { data: transactions = [], isLoading: isTransactionsLoading } = useQuery({
+    queryKey: ['wallet', 'transactions'],
+    queryFn: getBalanceHistory,
     enabled: isOpen,
   });
 
-  const filteredInvoices = invoices.filter((invoice: any) => 
-    invoice.card.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.invoiceDate.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTransactions = (transactions || []).filter((tx: any) => 
+    tx.payment_method?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tx.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tx.created_at?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <CollapsibleCard
-      title="Invoices"
-      subtitle="Track your billing history and payments"
+      title="Addons Balance History"
+      subtitle="Track your addon purchases and balance history"
       isOpen={isOpen}
       onToggle={setIsOpen}
-      icon={<Receipt size={24} className="text-white" />}
+      icon={<History size={24} className="text-white" />}
     >
       <div className="flex flex-col gap-6">
-        {/* Next Payment Info */}
+        {/* Remaining Balance Info */}
         <div className="flex flex-col gap-1">
-          <span className="invoice-next-payment-label">Your next payment will be on</span>
+          <span className="invoice-next-payment-label">Remaining balance</span>
           <h4 className="invoice-next-payment-date">
-            {isSummaryLoading ? "..." : (summary?.dueDate || "N/A")}
+            {isBalanceLoading ? "..." : `$${walletBalance?.fund ? Number(walletBalance.fund).toFixed(2) : "0.00"}`}
           </h4>
         </div>
 
@@ -51,23 +48,20 @@ const Invoices: React.FC = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
           <input
             type="text"
-            placeholder="Search here"
+            placeholder="Search balance history"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="invoice-search-input"
           />
         </div>
 
-        {/* Invoices Table */}
+        {/* Balance History Table */}
         <div className="invoice-table-wrapper">
           <table className="invoice-table">
             <thead>
               <tr>
                 <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Card <ArrowUpDown size={14} className="text-slate-500" /></div>
-                </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Invoice Date <ArrowUpDown size={14} className="text-slate-500" /></div>
+                  <div className="flex items-center gap-2">Transaction Type <ArrowUpDown size={14} className="text-slate-500" /></div>
                 </th>
                 <th className="invoice-table-th">
                   <div className="flex items-center gap-2">Amount <ArrowUpDown size={14} className="text-slate-500" /></div>
@@ -78,43 +72,41 @@ const Invoices: React.FC = () => {
                 <th className="invoice-table-th">
                   <div className="flex items-center gap-2">Status <ArrowUpDown size={14} className="text-slate-500" /></div>
                 </th>
-                <th className="invoice-table-th text-right">Actions</th>
+                <th className="invoice-table-th">
+                  <div className="flex items-center gap-2">Transaction Date <ArrowUpDown size={14} className="text-slate-500" /></div>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#082656]">
-              {isInvoicesLoading ? (
+              {isTransactionsLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500 italic">
-                    Loading invoices...
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 italic">
+                    Loading history...
                   </td>
                 </tr>
-              ) : filteredInvoices.length === 0 ? (
+              ) : filteredTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500 italic">
-                    No invoices found
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 italic">
+                    No history found
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map((invoice: any) => (
-                  <tr key={invoice.id} className="hover:bg-white/5 transition-colors">
-                    <td className="invoice-table-td text-white font-medium">{invoice.card}</td>
-                    <td className="invoice-table-td text-slate-300">{invoice.invoiceDate}</td>
-                    <td className="invoice-table-td text-white font-semibold">{invoice.amount}</td>
-                    <td className="invoice-table-td text-slate-300">{invoice.description}</td>
+                filteredTransactions.map((tx: any) => (
+                  <tr key={tx.id} className="hover:bg-white/5 transition-colors">
+                    <td className="invoice-table-td text-white font-medium">
+                      {tx.type || tx.payment_method || "Purchase"}
+                    </td>
+                    <td className="invoice-table-td text-white font-semibold">
+                      ${tx.amount}
+                    </td>
+                    <td className="invoice-table-td text-slate-300">{tx.description}</td>
                     <td className="invoice-table-td">
                       <span className="invoice-status-badge-paid">
-                        {invoice.status}
+                        {tx.status}
                       </span>
                     </td>
-                    <td className="invoice-table-td text-right">
-                      <a 
-                        href={invoice.viewInvoicePdf} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="invoice-action-link"
-                      >
-                        View
-                      </a>
+                    <td className="invoice-table-td text-slate-300">
+                      {new Date(tx.created_at).toLocaleDateString()}
                     </td>
                   </tr>
                 ))
@@ -123,7 +115,7 @@ const Invoices: React.FC = () => {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Pagination placeholder */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
           <span className="text-[13px] text-slate-500">1 of 1 pages</span>
           <div className="flex items-center gap-2">
@@ -143,4 +135,4 @@ const Invoices: React.FC = () => {
   );
 };
 
-export default Invoices;
+export default AddonsBalanceHistory;

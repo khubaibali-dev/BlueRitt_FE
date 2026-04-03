@@ -168,3 +168,11 @@ export const startSubscription = ({
     stripe_customer_id: stripeCustomerId,
   });
 };
+export const updateUserProfile = (profileData: {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  country?: string;
+}) => {
+  return api.patch(`/auth/me/`, profileData);
+};
