@@ -29,6 +29,7 @@ interface NavItemProps {
   isExpanded?: boolean;
   onToggle?: () => void;
   isAnyMenuExpanded?: boolean;
+  onClick?: () => void;
 }
 
 const NavItem: React.FC<NavItemProps> = ({
@@ -40,7 +41,7 @@ const NavItem: React.FC<NavItemProps> = ({
   children,
   isExpanded,
   onToggle,
-  isAnyMenuExpanded
+  isAnyMenuExpanded,
 }) => {
   const location = useLocation();
   const hasChildren = children && children.length > 0;
@@ -118,7 +119,10 @@ interface SidebarProps {
   toggleSidebar: () => void;
 }
 
+import { useAuth } from "../../../context/AuthContext";
+
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar }) => {
+  const { logoutUser } = useAuth();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
@@ -198,7 +202,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
             <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={HelpCircle} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={LogOut} label="Log Out" to="/logout" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem
+              icon={LogOut}
+              label="Log Out"
+              to="/logout"
+              isCollapsed={isCollapsed}
+              isAnyMenuExpanded={isAnyMenuExpanded}
+              onClick={logoutUser}
+            />
           </div>
         </div>
       </aside>

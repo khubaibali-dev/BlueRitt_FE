@@ -44,6 +44,7 @@ const InputField: React.FC<InputFieldProps> = ({
               className="text-[12px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFF]"
             >
               {label}
+              {required && <span className="text-red-500 ml-1">*</span>}
             </label>
           )}
           {labelRight && <div className="flex-shrink-0">{labelRight}</div>}

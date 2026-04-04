@@ -17,7 +17,7 @@ import FilterDrawer, { FilterState } from "../FilterDrawer/FilterDrawer";
 import { searchAmazonExplorerProducts, getAmazonExplorerProductsByCategory, getAmazonExplorerProductDetails } from "../../../../api/amazonExplorer";
 import { getAmazonSearchInsights, getAmazonCategoriesandSubcategories, aliBabaProductMatcher } from "../../../../api/product";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../components/common/Toast/ToastContext";
 
 interface DiscoveryResultsProps {
    onBack: () => void;
@@ -29,6 +29,7 @@ interface DiscoveryResultsProps {
 }
 
 const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
+   const toast = useToast();
    const {
       initialQuery = "",
       initialCountry = "US",
@@ -161,9 +162,9 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
    useEffect(() => {
       if (error) {
-         toast.error("Failed to fetch products. Please try again.");
+         toast.error("An error occurred while fetching products. Please try again.");
       }
-   }, [error]);
+   }, [error, toast]);
 
    const { data: insightsResponse } = useQuery({
       queryKey: ["amazon-product-insights", activeSearchQuery, activeCountryCode, filters, activeSearchType, activeCategoryId],
@@ -258,7 +259,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
       if (searchType === "category") {
          if (!selectedSubcategory) {
-            toast.error("Please select a subcategory");
+            toast.error("Please select a subcategory", { title: "Subcategory Required" });
             return;
          }
          setActiveCategoryId(selectedSubcategory);
@@ -269,7 +270,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       setActiveCategoryId("");
 
       if (!searchQuery.trim()) {
-         toast.error("Please enter a search query");
+         toast.error("Please enter a search query", { title: "Input Required" });
          return;
       }
 
@@ -314,7 +315,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
          // 3. Call Alibaba API using enriched title if available
          const isTikTok = product?.isTikTokSource || location.state?.isTikTokSource;
-         
+
          const response = await aliBabaProductMatcher({
             asin: isTikTok ? "tiktok-product" : (enrichedProduct.asin || product.asin),
             title: enrichedProduct.product_title || enrichedProduct.title || product.title,
@@ -339,7 +340,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          setIsDrawerOpen(false);
       } catch (error) {
          console.error("Discovery error:", error);
-         toast.error("Failed to discover suppliers. Please try again.");
+         toast.error("Failed to discover suppliers. Please try again.", { title: "Discovery Failed" });
       } finally {
          // 5. Deactivate Analyzing Screen
          setIsManualLoading(false);

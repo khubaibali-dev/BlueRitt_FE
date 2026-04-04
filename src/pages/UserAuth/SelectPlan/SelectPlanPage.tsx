@@ -2,17 +2,33 @@ import React from "react";
 import PrimaryButton from "../../../components/common/button/PrimaryButton";
 import PackageSelectPanel from "./components/PackageSelectPanel";
 import PackageDetailsPanel from "./components/PackageDetailsPanel";
-import { packages } from "./data/packages";
+import { usePackages } from "./hooks/usePackages";
+import { PlanPackage } from "./data/packages";
 
 import starImg from "../../../assets/images/star.png";
 
 const SelectPlanPage: React.FC = () => {
   // State
+  const { subscriptionPackages, prepaidPackages, isLoading } = usePackages();
   const [packageType, setPackageType] = React.useState<"Subscription" | "Prepaid">("Subscription");
-  const [billingCycle, setBillingCycle] = React.useState<"Monthly" | "Annually">("Monthly");
-  const [selectedPackageId, setSelectedPackageId] = React.useState<string>("advance");
+  const [billingCycle, setBillingCycle] = React.useState<"Monthly" | "Annually" | "Quarterly">("Monthly");
+  const [selectedPackageId, setSelectedPackageId] = React.useState<string>("");
 
-  const selectedPackage = packages.find(p => p.id === selectedPackageId) || packages[1];
+  const packagesList = packageType === "Subscription" ? subscriptionPackages : prepaidPackages;
+  const selectedPackage = packagesList.find((p: PlanPackage) => p.id === selectedPackageId) || packagesList[0];
+
+  // ✅ Handle Default Selection on Tab Switch
+  React.useEffect(() => {
+    if (!isLoading && packagesList.length > 0) {
+      // Look for a package that contains 'basic' in its ID or name
+      const basicPkg = packagesList.find((p: any) =>
+        p.id.toLowerCase().includes('basic') ||
+        p.name.toLowerCase().includes('basic')
+      ) || packagesList[0];
+
+      setSelectedPackageId(basicPkg.id);
+    }
+  }, [packageType, isLoading]); // Only re-run when switching tabs or when data first loads
 
   const handleCreateAccount = () => {
     // Finalize signup logic here
@@ -45,32 +61,43 @@ const SelectPlanPage: React.FC = () => {
 
       {/* ── MAIN CONTENT (Split View) ── */}
       <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-4 items-start justify-center px-4">
-        {/* LEFT COMPONENT: Selection Config + Create Account Button */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-center gap-4">
-          <PackageSelectPanel
-            packages={packages}
-            selectedPackageId={selectedPackageId}
-            onSelectPackage={setSelectedPackageId}
-            billingCycle={billingCycle}
-            onSelectBillingCycle={setBillingCycle}
-            packageType={packageType}
-            onSelectPackageType={setPackageType}
-          />
-          <div className="w-full max-w-[250px] justify-center">
-            <PrimaryButton onClick={handleCreateAccount}>
-              Create Account &rarr;
-            </PrimaryButton>
+        {isLoading ? (
+          <div className="w-full flex flex-col lg:flex-row gap-4 items-center justify-center py-20">
+            <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-white/60 animate-pulse">Loading available plans...</p>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* LEFT COMPONENT: Selection Config + Create Account Button */}
+            <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-center gap-4">
+              <PackageSelectPanel
+                packages={packagesList}
+                selectedPackageId={selectedPackageId}
+                onSelectPackage={setSelectedPackageId}
+                billingCycle={billingCycle}
+                onSelectBillingCycle={setBillingCycle}
+                packageType={packageType}
+                onSelectPackageType={setPackageType}
+              />
+              <div className="w-full max-w-[250px] justify-center">
+                <PrimaryButton onClick={handleCreateAccount}>
+                  Create Account &rarr;
+                </PrimaryButton>
+              </div>
+            </div>
 
-        {/* RIGHT COMPONENT: Feature Details */}
-        <div className="w-full lg:w-1/2 flex justify-start">
-          <PackageDetailsPanel
-            packageData={selectedPackage}
-            billingCycle={billingCycle}
-            packageType={packageType}
-          />
-        </div>
+            {/* RIGHT COMPONENT: Feature Details */}
+            <div className="w-full lg:w-1/2 flex justify-start">
+              {selectedPackage && (
+                <PackageDetailsPanel
+                  packageData={selectedPackage}
+                  billingCycle={billingCycle}
+                  packageType={packageType}
+                />
+              )}
+            </div>
+          </>
+        )}
       </div>
 
 

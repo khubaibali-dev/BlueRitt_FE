@@ -44,8 +44,8 @@ const Banner = () => {
       </div>
 
       <h2 className="banner-heading-text">
-        Find Your Next Winning Product  <br />
-        <span className="block mt-2 sm:mt-1 opacity-90">with IntelliScan</span>
+        Find Your Next Winning Product
+        <span className="page-header-subtitle mt-2 sm:mt-1">with IntelliScan</span>
       </h2>
 
       {/* Filter Row */}

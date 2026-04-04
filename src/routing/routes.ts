@@ -18,6 +18,7 @@ const TikTokTrendsPage = lazy(() => import("../pages/SocialPulse/TiktokTrends/Ti
 const AmazonTrendsPage = lazy(() => import("../pages/SocialPulse/AmazonTrends/AmazonTrends"));
 const InfluencerLinkPage = lazy(() => import("../pages/SocialPulse/InfluencerLink/InfluencerLink"));
 const ForgotPasswordPage = lazy(() => import("../pages/UserAuth/ForgotPassword"));
+const ProductAnalysisPage = lazy(() => import("../pages/ProductVault/components/ProductAnalysis"));
 
 type RouteType = {
   path: string;
@@ -68,67 +69,73 @@ const routes: RouteType[] = [
     path: "/dashboard",
     element: DashboardPage,
     layout: DashboardLayout,
-    isProtected: false, // Set to true if you have auth guard
+    isProtected: true,
   },
   {
     path: "/explorer",
     element: ExplorerPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/toolfusion",
     element: ToolFusionPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/help",
     element: HelpSupportPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/settings",
     element: SettingsPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/addons",
     element: AddOnsPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/profit-calculator",
     element: ProfitCalculatorPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/products",
     element: ProductVaultPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/tiktok-trends",
     element: TikTokTrendsPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/amazon-trends",
     element: AmazonTrendsPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
   },
   {
     path: "/influencer-link",
     element: InfluencerLinkPage,
     layout: DashboardLayout,
-    isProtected: false,
+    isProtected: true,
+  },
+  {
+    path: "/calculator/product/:id",
+    element: ProductAnalysisPage,
+    layout: DashboardLayout,
+    isProtected: true,
   },
   {
     path: "*",

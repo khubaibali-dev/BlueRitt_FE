@@ -2,30 +2,11 @@ import React from "react";
 import CalculatorAccordion from "../components/CalculatorAccordion";
 import CalculatorField from "../components/CalculatorField";
 import SelectField from "../../../components/common/select/SelectField";
+import { TAX_OPTIONS } from "../../../utils/taxConstants";
 
 interface AdvancedTabProps {
-  formData: {
-    ppcCost: string;
-    attributionLinks: string;
-    promotionCosts: string;
-    ppcTax: string;
-    aPlusContent: string;
-    videography: string;
-    packagingCost: string;
-    otherContentCosts: string;
-    reviewExpenses: string;
-    otherReviewCosts: string;
-    preLaunchSamples: string;
-    competitorSamples: string;
-    employeeCosts: string;
-    miscellaneousCosts: string;
-    taxRegion: string;
-    vatRate: string;
-    gstRate: string;
-    salesTaxRate: string;
-    taxMiscCost: string;
-  };
-  handleFieldChange: (field: any, value: string) => void;
+  formData: any;
+  handleFieldChange: (field: string, value: any) => void;
   // Pre-computed values
   marketingCostUnit: string;
   totalMarketingCost: string;
@@ -37,6 +18,8 @@ interface AdvancedTabProps {
   totalAdditionalCost: string;
   taxesUnit: string;
   totalTaxes: string;
+  errors: any;
+  touched: any;
   disabled?: boolean;
 }
 
@@ -53,8 +36,20 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
   totalAdditionalCost,
   taxesUnit,
   totalTaxes,
+  errors,
+  touched,
   disabled = false,
 }) => {
+  const handleRegionChange = (val: string) => {
+    handleFieldChange("tax_region", val);
+    const selectedTax = TAX_OPTIONS.find((opt) => opt.code === val);
+    if (selectedTax) {
+      handleFieldChange("tax_VAT", selectedTax.vat.toString());
+      handleFieldChange("tax_GST", selectedTax.gst.toString());
+      handleFieldChange("tax_salesTax", selectedTax.salesTax.toString());
+    }
+  };
+
   return (
     <>
       {/* Marketing and Ads Cost */}
@@ -64,27 +59,35 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             label="Pay-per-Click (PPC)"
             required
             prefix="$"
-            value={formData.ppcCost}
-            onChange={(val) => handleFieldChange("ppcCost", val)}
+            value={formData.marc_marketingCost}
+            onChange={(val) => handleFieldChange("marc_marketingCost", val)}
+            error={touched.marc_marketingCost && errors.marc_marketingCost}
           />
           <CalculatorField
             label="Attribution Links"
             prefix="$"
-            value={formData.attributionLinks}
-            onChange={(val) => handleFieldChange("attributionLinks", val)}
+            value={formData.marc_attributionCost}
+            onChange={(val) => handleFieldChange("marc_attributionCost", val)}
           />
           <CalculatorField
-            label="Promotion/Other Costs"
+            label="Influencer/Giveaway"
             prefix="$"
-            value={formData.promotionCosts}
-            onChange={(val) => handleFieldChange("promotionCosts", val)}
+            value={formData.marc_influencerCost}
+            onChange={(val) => handleFieldChange("marc_influencerCost", val)}
           />
           <CalculatorField
-            label="PPC VAT (if Applicable)"
+            label="Marketing VAT"
             prefix="$"
-            value={formData.ppcTax}
-            onChange={(val) => handleFieldChange("ppcTax", val)}
+            value={formData.marc_marketingVATCost}
+            onChange={(val) => handleFieldChange("marc_marketingVATCost", val)}
           />
+          <CalculatorField
+            label="Misc Marketing Cost"
+            prefix="$"
+            value={formData.marc_miscCost}
+            onChange={(val) => handleFieldChange("marc_miscCost", val)}
+          />
+          <div className="hidden sm:block" />
           <CalculatorField label="Marketing Cost/Unit" required prefix="$" value={marketingCostUnit} readOnly />
           <CalculatorField label="Total Marketing Cost" required prefix="$" value={totalMarketingCost} readOnly />
         </div>
@@ -94,84 +97,92 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
       <CalculatorAccordion title="Graphics Design Cost" disabled={disabled}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <CalculatorField
-            label="A+ Content"
+            label="Imaging & Photography"
             required
             prefix="$"
-            value={formData.aPlusContent}
-            onChange={(val) => handleFieldChange("aPlusContent", val)}
+            value={formData.gc_imagingAndPhotographyCost}
+            onChange={(val) => handleFieldChange("gc_imagingAndPhotographyCost", val)}
+            error={touched.gc_imagingAndPhotographyCost && errors.gc_imagingAndPhotographyCost}
           />
           <CalculatorField
             label="Videography"
             prefix="$"
-            value={formData.videography}
-            onChange={(val) => handleFieldChange("videography", val)}
+            value={formData.gc_videographyCost}
+            onChange={(val) => handleFieldChange("gc_videographyCost", val)}
           />
           <CalculatorField
             label="Product Packaging"
             prefix="$"
-            value={formData.packagingCost}
-            onChange={(val) => handleFieldChange("packagingCost", val)}
+            value={formData.gc_productPackingCost}
+            onChange={(val) => handleFieldChange("gc_productPackingCost", val)}
           />
           <CalculatorField
-            label="Other Content Costs"
+            label="3D Animation"
             prefix="$"
-            value={formData.otherContentCosts}
-            onChange={(val) => handleFieldChange("otherContentCosts", val)}
+            value={formData.gc_3dAnimationCost}
+            onChange={(val) => handleFieldChange("gc_3dAnimationCost", val)}
           />
+          <CalculatorField
+            label="Misc Graphics Cost"
+            prefix="$"
+            value={formData.gc_miscCost}
+            onChange={(val) => handleFieldChange("gc_miscCost", val)}
+          />
+          <div className="hidden sm:block" />
           <CalculatorField label="Graphics Cost/Unit" required prefix="$" value={graphicsCostUnit} readOnly />
           <CalculatorField label="Total Graphics Cost" required prefix="$" value={totalGraphicsCost} readOnly />
         </div>
       </CalculatorAccordion>
 
-      {/* Reviewer Program Cost */}
-      <CalculatorAccordion title="Reviewer Program Cost" disabled={disabled}>
+      {/* Product Feedback Cost */}
+      <CalculatorAccordion title="Product Feedback Cost" disabled={disabled}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <CalculatorField
-            label="Review Related Expenses"
+            label="Vine Program"
             prefix="$"
-            value={formData.reviewExpenses}
-            onChange={(val) => handleFieldChange("reviewExpenses", val)}
+            value={formData.pfc_vineProgramCost}
+            onChange={(val) => handleFieldChange("pfc_vineProgramCost", val)}
           />
           <CalculatorField
-            label="Other Associated Costs"
+            label="Misc Feedback Cost"
             prefix="$"
-            value={formData.otherReviewCosts}
-            onChange={(val) => handleFieldChange("otherReviewCosts", val)}
+            value={formData.pfc_miscCost}
+            onChange={(val) => handleFieldChange("pfc_miscCost", val)}
           />
-          <CalculatorField label="Review Cost/Unit" required prefix="$" value={reviewerCostUnit} readOnly />
-          <CalculatorField label="Total Review Prog. Cost" required prefix="$" value={totalReviewerCost} readOnly />
+          <CalculatorField label="Feedback Cost/Unit" required prefix="$" value={reviewerCostUnit} readOnly />
+          <CalculatorField label="Total Feedback Cost" required prefix="$" value={totalReviewerCost} readOnly />
         </div>
       </CalculatorAccordion>
 
-      {/* Additional Costs */}
-      <CalculatorAccordion title="Additional Costs" disabled={disabled}>
+      {/* Other Costs */}
+      <CalculatorAccordion title="Other Costs" disabled={disabled}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <CalculatorField
             label="Pre-launch Samples"
             prefix="$"
-            value={formData.preLaunchSamples}
-            onChange={(val) => handleFieldChange("preLaunchSamples", val)}
+            value={formData.oc_preLaunchSamples}
+            onChange={(val) => handleFieldChange("oc_preLaunchSamples", val)}
           />
           <CalculatorField
             label="Competitor Samples"
             prefix="$"
-            value={formData.competitorSamples}
-            onChange={(val) => handleFieldChange("competitorSamples", val)}
+            value={formData.oc_competitorProductSamples}
+            onChange={(val) => handleFieldChange("oc_competitorProductSamples", val)}
           />
           <CalculatorField
             label="Employees Cost"
             prefix="$"
-            value={formData.employeeCosts}
-            onChange={(val) => handleFieldChange("employeeCosts", val)}
+            value={formData.oc_employeesCost}
+            onChange={(val) => handleFieldChange("oc_employeesCost", val)}
           />
           <CalculatorField
             label="Miscellaneous Cost"
             prefix="$"
-            value={formData.miscellaneousCosts}
-            onChange={(val) => handleFieldChange("miscellaneousCosts", val)}
+            value={formData.oc_anyOtherCost}
+            onChange={(val) => handleFieldChange("oc_anyOtherCost", val)}
           />
-          <CalculatorField label="Additional Cost/Unit" required prefix="$" value={additionalCostUnit} readOnly />
-          <CalculatorField label="Total Additional Cost" required prefix="$" value={totalAdditionalCost} readOnly />
+          <CalculatorField label="Other Cost/Unit" required prefix="$" value={additionalCostUnit} readOnly />
+          <CalculatorField label="Total Other Cost" required prefix="$" value={totalAdditionalCost} readOnly />
         </div>
       </CalculatorAccordion>
 
@@ -189,17 +200,10 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             <SelectField
               id="tax-region"
               label=""
-              value={formData.taxRegion}
-              onChange={(val) => handleFieldChange("taxRegion", val)}
-              options={[
-                { label: "United States", value: "United States" },
-                { label: "United Kingdom", value: "United Kingdom" },
-                { label: "European Union", value: "European Union" },
-                { label: "Canada", value: "Canada" },
-                { label: "Australia", value: "Australia" },
-              ]}
+              value={formData.tax_region}
+              onChange={handleRegionChange}
+              options={TAX_OPTIONS.map((opt: any) => ({ label: `${opt.country} (${opt.code})`, value: opt.code }))}
             />
-            <p className="text-[12px] text-slate-500">Sales Tax is variable by state (e.g., California, New York).</p>
           </div>
 
           {/* Tax Sliders */}
@@ -211,8 +215,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 <div className="bg-[#FFFFFF0D] border border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-white flex items-center gap-1">
                   <input
                     type="number"
-                    value={formData.vatRate}
-                    onChange={(e) => handleFieldChange("vatRate", e.target.value)}
+                    value={formData.tax_VAT}
+                    onChange={(e) => handleFieldChange("tax_VAT", e.target.value)}
                     className="bg-transparent w-8 text-right focus:outline-none"
                   />
                   <span>%</span>
@@ -222,8 +226,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 type="range"
                 min="0"
                 max="100"
-                value={formData.vatRate}
-                onChange={(e) => handleFieldChange("vatRate", e.target.value)}
+                value={formData.tax_VAT}
+                onChange={(e) => handleFieldChange("tax_VAT", e.target.value)}
                 className="w-full h-1.5 bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
@@ -235,8 +239,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 <div className="bg-[#FFFFFF0D] border border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-white flex items-center gap-1">
                   <input
                     type="number"
-                    value={formData.gstRate}
-                    onChange={(e) => handleFieldChange("gstRate", e.target.value)}
+                    value={formData.tax_GST}
+                    onChange={(e) => handleFieldChange("tax_GST", e.target.value)}
                     className="bg-transparent w-8 text-right focus:outline-none"
                   />
                   <span>%</span>
@@ -246,8 +250,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 type="range"
                 min="0"
                 max="100"
-                value={formData.gstRate}
-                onChange={(e) => handleFieldChange("gstRate", e.target.value)}
+                value={formData.tax_GST}
+                onChange={(e) => handleFieldChange("tax_GST", e.target.value)}
                 className="w-full h-1.5 bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
@@ -259,8 +263,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 <div className="bg-[#FFFFFF0D] border border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-white flex items-center gap-1">
                   <input
                     type="number"
-                    value={formData.salesTaxRate}
-                    onChange={(e) => handleFieldChange("salesTaxRate", e.target.value)}
+                    value={formData.tax_salesTax}
+                    onChange={(e) => handleFieldChange("tax_salesTax", e.target.value)}
                     className="bg-transparent w-8 text-right focus:outline-none"
                   />
                   <span>%</span>
@@ -270,8 +274,8 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 type="range"
                 min="0"
                 max="100"
-                value={formData.salesTaxRate}
-                onChange={(e) => handleFieldChange("salesTaxRate", e.target.value)}
+                value={formData.tax_salesTax}
+                onChange={(e) => handleFieldChange("tax_salesTax", e.target.value)}
                 className="w-full h-1.5 bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
@@ -280,10 +284,10 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           {/* Final Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6 pt-4 border-t border-white/5">
             <CalculatorField
-              label="Miscellaneous Cost"
+              label="Miscellaneous Tax Cost"
               prefix="$"
-              value={formData.taxMiscCost}
-              onChange={(val) => handleFieldChange("taxMiscCost", val)}
+              value={formData.tax_miscCost}
+              onChange={(val) => handleFieldChange("tax_miscCost", val)}
             />
             <div className="hidden sm:block" />
             <CalculatorField label="Taxes/Unit" required prefix="$" value={taxesUnit} readOnly />

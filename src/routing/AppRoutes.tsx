@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { routes, type RouteType } from "./routes";
+import ProtectedRoute from "./ProtectedRoute";
 
 const renderRoutes = (
   routes: RouteType[],
@@ -25,7 +26,13 @@ const renderRoutes = (
       );
     }
 
-    const RouteElement = <route.element />;
+    const RouteElement = route.isProtected ? (
+      <ProtectedRoute>
+        <route.element />
+      </ProtectedRoute>
+    ) : (
+      <route.element />
+    );
 
     const LayoutElement = route.layout ? (
       <route.layout>{RouteElement}</route.layout>

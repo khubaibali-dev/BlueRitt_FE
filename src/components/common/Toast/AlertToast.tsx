@@ -50,10 +50,10 @@ const AlertToast: React.FC<AlertToastProps> = ({
 
             {/* Text Content */}
             <div className="flex flex-col min-w-0">
-              <h4 className="text-[13px] font-bold text-white tracking-tight leading-tight mb-0.5">
+              <h4 className="text-[15px] font-bold text-white tracking-tight leading-tight mb-0.5">
                 {title}
               </h4>
-              <p className="text-[11px] text-slate-400 font-medium line-clamp-1 leading-tight">
+              <p className="text-[13px] text-slate-400 font-medium line-clamp-1 leading-tight">
                 {message}
               </p>
             </div>

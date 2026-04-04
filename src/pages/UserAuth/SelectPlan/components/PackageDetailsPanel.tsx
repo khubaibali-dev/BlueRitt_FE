@@ -4,7 +4,7 @@ import { PlanPackage } from "../data/packages";
 
 interface PackageDetailsPanelProps {
   packageData: PlanPackage;
-  billingCycle: "Monthly" | "Annually";
+  billingCycle: "Monthly" | "Annually" | "Quarterly";
   packageType: "Subscription" | "Prepaid";
 }
 
@@ -14,11 +14,25 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
   packageType
 }) => {
   const isPrepaid = packageType === "Prepaid";
-  const price = isPrepaid
-    ? (packageData.prepaidPrice || 0)
-    : (billingCycle === "Monthly" ? packageData.monthlyPrice : packageData.annualPrice);
+  
+  let price = 0;
+  let cycleText = "";
 
-  const cycleText = isPrepaid ? "one time" : (billingCycle === "Monthly" ? "/month" : "/year");
+  if (isPrepaid) {
+    price = packageData.prepaidPrice || 0;
+    cycleText = "one time";
+  } else {
+    if (billingCycle === "Monthly") {
+      price = packageData.monthlyPrice;
+      cycleText = "/month";
+    } else if (billingCycle === "Quarterly") {
+      price = packageData.quarterlyPrice;
+      cycleText = "/quarter";
+    } else {
+      price = packageData.annualPrice;
+      cycleText = "/year";
+    }
+  }
 
   const renderFeatureSection = (title: string, features: any[]) => {
     if (!features || features.length === 0) return null;
@@ -71,7 +85,10 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
           {/* Header / Price section */}
           <div className="pkg-details-header">
             <h3 className="pkg-details-name text-[#2563EB] dark:text-[#60A5FA] font-bold text-[24px]">
-              {isPrepaid ? `Prepaid ${packageData.name} Package` : packageData.name}
+              {isPrepaid && !packageData.name.toLowerCase().includes("prepaid") 
+                ? `${packageData.name} Prepaid` 
+                : packageData.name
+              }
             </h3>
             <div className="pkg-details-price-wrapper mt-4 flex items-baseline">
               <span className="pkg-details-price text-[28px] font-bold text-brand-textPrimary dark:text-white">
@@ -124,7 +141,7 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
           <div className="mt-8 pt-4 px-10 py-2">
             <p className="text-[14px] text-brand-textSecondary dark:text-[#7A9ABF]/60 leading-relaxed italic">
               <div className="border-t border-brand-border/10 py-2 opacity-30" />
-              Get started with the Prepaid {packageData.name} plan today and unlock all these amazing features.
+              Get started with the {packageData.name} Prepaid plan today and unlock all these amazing features.
             </p>
           </div>
         )}

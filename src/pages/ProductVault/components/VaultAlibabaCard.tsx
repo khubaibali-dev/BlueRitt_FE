@@ -1,0 +1,112 @@
+import React from "react";
+import { Box, CheckCircle2, ShieldCheck, Award, Star, Zap, Truck, TrendingUp, Info } from "lucide-react";
+
+interface VaultAlibabaCardProps {
+  supplier: any;
+}
+
+/**
+ * Standardized Supplier Card for the Product Vault.
+ * Features:
+ * - Glassmorphism UI (backdrop-blur, semi-transparent background)
+ * - Premium badges for verification, trade assurance, and gold membership
+ * - Grid-based metrics including MANUFACTURING COST, MOQ, and Store details
+ */
+const VaultAlibabaCard: React.FC<VaultAlibabaCardProps> = ({ supplier }) => {
+  if (!supplier) return null;
+
+  return (
+    <div className="bg-[#04132B] border border-white/10 rounded-[24px] overflow-hidden shadow-2xl relative p-6 h-full transition-all duration-500 hover:border-blue-500/30">
+      {/* Label Section */}
+      <div className="flex items-center gap-2 mb-6">
+        <Box size={14} className="text-orange-500" />
+        <span className="text-[11px] text-orange-500 font-black tracking-[0.15em] uppercase">Selected Supplier</span>
+      </div>
+
+      {/* Main Info Section */}
+      <div className="flex flex-col sm:flex-row gap-6 mb-8">
+        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-white/5 border border-white/5 shadow-2xl shrink-0">
+          <img src={supplier.image} alt="" className="w-full h-full object-cover p-2" />
+        </div>
+        <div className="flex-1 flex flex-col justify-center">
+          <h3 className="text-[16px] text-white font-bold mb-4 leading-tight">
+            {supplier.name || "Alibaba Sourcing Partner"}
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {supplier.isVerified && (
+              <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold tracking-widest text-[9px] uppercase flex items-center gap-1.5">
+                <CheckCircle2 size={10} /> Verified
+              </div>
+            )}
+            {supplier.TradeAssurance && (
+              <div className="px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 font-bold tracking-widest text-[9px] uppercase flex items-center gap-1.5">
+                <ShieldCheck size={10} /> Trade Assurance
+              </div>
+            )}
+            {supplier.isGoldMember && (
+              <div className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold tracking-widest text-[9px] uppercase flex items-center gap-1.5">
+                <Award size={10} /> Gold
+              </div>
+            )}
+            <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white font-bold text-[10px] flex items-center gap-1.5">
+              <Star size={10} fill="#FFC107" className="text-[#FFC107]" /> {supplier.rating}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Metrics Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8 mt-4 pt-8 border-t border-white/5">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <Zap size={14} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">STORE</span>
+          </div>
+          <span className="text-[13px] text-white font-medium">{supplier.storeName}</span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={14} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">CONTACT</span>
+          </div>
+          <span className="text-[13px] text-white font-medium">{supplier.contact}</span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <Truck size={14} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">MANUFACTURING COST</span>
+          </div>
+          <span className="text-[15px] font-bold tracking-tight text-white">${supplier.price}</span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <Box size={14} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">ITEM ID</span>
+          </div>
+          <span className="text-[13px] text-white font-medium truncate max-w-[100px]">{supplier.id}</span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={14} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">MOQ</span>
+          </div>
+          <span className="text-[13px] text-white font-medium">{supplier.minOrder}</span>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <Info size={14} className="text-slate-400 shrink-0" />
+            <span className="text-[10px] font-black text-slate-400 tracking-widest uppercase">COUNTRY</span>
+          </div>
+          <span className="text-[13px] text-white font-medium">{supplier.country}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default VaultAlibabaCard;

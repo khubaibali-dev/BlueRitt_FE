@@ -1,245 +1,302 @@
+import React, { useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import bgAnalysis from "../../../assets/images/marginmax.png";
-import { ArrowLeft, Box, TrendingUp, CheckCircle2, Activity } from "lucide-react";
+import {
+  Box, Activity, ArrowLeft
+} from "lucide-react";
+import { getSavedProductsDetail } from "../../../api/savedProducts";
+import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProductCard";
+import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
+import ProductProfitGauges from "./ProductProfitGauges";
+import VaultAlibabaCard from "./VaultAlibabaCard";
 
-interface ProductAnalysisProps {
-  product: {
-    title: string;
-    image: string;
-    price: string;
-    oldPrice: string;
-    asin: string;
-    growth?: string;
-  };
-  onBack: () => void;
-}
 
-const ProductAnalysis: React.FC<ProductAnalysisProps> = ({ product, onBack }) => {
+const ProductAnalysis: React.FC = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  // Fetch product data - this includes historical_data now per the user's JSON
+  const { data: productResponse, isLoading: isFetchingProduct } = useQuery({
+    queryKey: ["saved-product-detail", id],
+    queryFn: () => getSavedProductsDetail({ id: id! }),
+    enabled: !!id,
+  });
+
+  const product = productResponse?.data;
+  const amazonData = product?.amazon_product?.data || product?.amazon_product;
+  const supplierInfo = product?.supplier_info;
+  const alibabaData = product?.alibaba_product;
+
+  const isTikTok = useMemo(() => {
+    const source = product?.source || amazonData?.source;
+    return source === 'tiktok_trends' || (amazonData && (
+      amazonData.cpa !== undefined ||
+      amazonData.ctr !== undefined ||
+      amazonData.cvr !== undefined ||
+      amazonData.impression !== undefined ||
+      amazonData.data?.cpa !== undefined
+    ));
+  }, [product, amazonData]);
+
+  const normalizedAmazon = useMemo(() => {
+    if (!amazonData || isTikTok) return null;
+    const tags: string[] = [];
+    const data = amazonData.data || amazonData;
+    if (data.is_best_seller) tags.push("Best Seller");
+    if (data.is_amazon_choice) tags.push("Amazon Choice");
+    if (data.is_prime) tags.push("Prime");
+
+    const amazonPrice = data.product_price?.toString().replace("$", "") || "";
+    const finalPrice = product?.selling_price && product?.selling_price !== "0.00"
+      ? product.selling_price
+      : (amazonPrice || "0.00");
+
+    return {
+      title: data.product_title || data.title || product?.name || "Product",
+      image: data.product_photo || data.image || "",
+      price: finalPrice,
+      oldPrice: data.product_original_price?.toString().replace("$", "") || finalPrice,
+      asin: data.asin || "N/A",
+      salesVol: data.sales_volume || "800+ bought in past month",
+      offers: data.product_num_offers?.toString() || "3",
+      seller: data.product_seller_name || "Amazon.com",
+      shipsFrom: data.ships_from || "Amazon",
+      country: data.seller_country || "US",
+      rating: parseFloat(data.product_star_rating || "4.5"),
+      numRatings: data.product_num_ratings || "11,914",
+      dimensions: data.product_information?.["Product Dimensions"] || "N/A",
+      weight: data.product_information?.["Item Weight"] || "0.06 Pounds",
+      tags: tags.length > 0 ? tags : (data.tags || [])
+    };
+  }, [amazonData, product, isTikTok]);
+
+  const normalizedTikTok = useMemo(() => {
+    if (!isTikTok || !amazonData) return null;
+    const data = amazonData.data || amazonData;
+
+    return {
+      title: data.shop_product_title || data.url_title || product?.name || "TikTok Product",
+      image: data.cover_url || data.product_photo || "",
+      category: data.third_ecom_category?.value || data.first_ecom_category?.value || data.category || "Trending",
+      price: (data.shop_price || data.cost || product?.selling_price || "0.00").toLocaleString(),
+      metrics: {
+        ctr: data.ctr ? (String(data.ctr).includes('%') ? data.ctr : data.ctr + "%") : "0%",
+        cvr: data.cvr ? (String(data.cvr).includes('%') ? data.cvr : data.cvr + "%") : "0%",
+        cpa: data.cpa ? (typeof data.cpa === "number" ? `$${data.cpa.toFixed(2)}` : data.cpa) : "$0.00",
+        impressions: (data.impression || data.impressions || 0).toLocaleString(),
+        post_count: data.post || 0,
+        like_count: data.like || 0,
+        share_count: data.share || 0,
+        comment_count: data.comment || 0,
+        total_ad_spent: data.cost ? `$${data.cost.toLocaleString()}` : "$0",
+        subcategory1: data.second_ecom_category?.value || "",
+        subcategory2: data.third_ecom_category?.value || "",
+        post_change: data.post_change ? `${data.post_change}%` : "",
+        play_rate_6s: data.play_six_rate ? `${data.play_six_rate}%` : "",
+        e_com_type: data.ecom_type || "L3",
+        category: data.first_ecom_category?.value || "Trending"
+      }
+    };
+  }, [amazonData, isTikTok, product]);
+
+  const normalizedAlibaba = useMemo(() => {
+    const data = supplierInfo || alibabaData?.supplier || alibabaData?.item || alibabaData;
+    if (!data) return null;
+
+    const storeAgeValue = data.years_in_business || data.seller_store?.storeAge || data.storeAge || "14";
+    const storeNameValue = data.supplier_name || data.company?.companyName || data.storeName || "Fujian Virtue Industry Co., Ltd.";
+    const contactName = data.company?.companyContact?.name || data.contact || "Rita Zou";
+
+    const skuModule = data.sku?.def || data.sku_listing?.def;
+    const priceValue = data.price_per_unit || data.estimated_price ||
+      skuModule?.priceModule?.priceFormatted ||
+      skuModule?.priceModule?.priceList?.[0]?.priceFormatted ||
+      data.price_per_unit || "1.79";
+
+    const moqValue = data.min_order_quantity ||
+      skuModule?.quantityModule?.minOrder?.quantityFormatted ||
+      skuModule?.quantityModule?.minOrder?.quantity ||
+      "500 pieces";
+
+    const ratingValue = data.rating || data.seller_store?.storeEvaluates?.[0]?.score || "5.0";
+    const countryValue = data.location || data.company_details?.companyAddress?.country || "China";
+    const status = data.company_details?.status || data;
+
+    const isVerifiedValue = (status.verified ?? status.isVerified ?? status.verified_supplier) ?? false;
+    const isGoldValue = (status.gold ?? status.isGoldMember) ?? true;
+    const tradeAssuranceValue = (status.tradeAssurance === "1" || status.TradeAssurance === true || status.trade_assurance === "1");
+
+    let imageSrc = data.supplier_product_image || (data.images && data.images[0]) || data.image || "";
+    if (typeof imageSrc === 'string' && imageSrc.startsWith('//')) imageSrc = `https:${imageSrc}`;
+
+    return {
+      id: data.itemId || data.id || "1601358669078",
+      name: data.title || data.name || "Alibaba Sourcing Partner",
+      image: imageSrc,
+      rating: ratingValue,
+      storeAge: storeAgeValue,
+      storeName: storeNameValue,
+      contact: contactName,
+      price: priceValue.toString().replace("$", ""),
+      minOrder: moqValue,
+      country: countryValue,
+      isVerified: isVerifiedValue,
+      TradeAssurance: tradeAssuranceValue,
+      isGoldMember: isGoldValue
+    };
+  }, [supplierInfo, alibabaData]);
+
+  const history = useMemo(() => {
+    return product?.historical_data || [];
+  }, [product]);
+
+  if (isFetchingProduct) {
+    return (
+      <div className="min-h-[500px] flex flex-col items-center justify-center text-blue-400">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-[14px] font-semibold tracking-wide">Fetching Analysis Data...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-[500px] flex flex-col items-center justify-center text-slate-500">
+        <Box size={48} className="mb-4 opacity-20" />
+        <p className="text-[16px] font-medium">Product analysis was not found.</p>
+        <button onClick={() => navigate(-1)} className="mt-6 text-blue-400 font-bold hover:text-blue-300 transition-colors">
+          Return to Vault
+        </button>
+      </div>
+    );
+  }
+
+  // Use values from the product object if specifically provided, or look at history
+  const grossProfitAmount = product.gross_profit || history[0]?.product_gross_profit || "0.00";
+  const netProfitAmount = product.net_profit || history[0]?.product_net_profit || "0.00";
+  const grossProfitMargin = product.percentage_gross_profit || history[0]?.product_gross_profit_percentage || "0.0";
+  const netProfitMargin = product.percentage_net_profit || history[0]?.product_net_profit_percentage || "0.0";
+
   return (
-    <div className="flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-[1400px] mx-auto relative isolate">
-      {/* Background Image Layer with Bottom Fade - Perfectly Blended like Dashboard */}
-      <div className="absolute -inset-x-6 sm:-inset-x-10 -top-6 sm:-top-10 h-[750px] z-[-1] pointer-events-none overflow-hidden rounded-t-[32px]">
+    <div className="analysis-page-container">
+      {/* Background Image Layer - Perfectly Blended */}
+      <div className="absolute top-0 left-0 right-0 h-[750px] z-0 pointer-events-none overflow-hidden">
         <img src={bgAnalysis} alt="" className="w-full h-full object-cover object-top opacity-100 mix-blend-screen" />
         <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-brand-card-alt via-brand-card-alt/30 to-transparent" />
       </div>
-      {/* Detail Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
-        <div className="flex flex-col gap-1 w-full md:w-auto">
-          {/* <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-white hover:text-blue-300 text-[14px] font-bold mb-3 transition-colors w-fit group"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Vault
-          </button> */}
-          <h1 className="banner-heading-text !ml-[-15px] !mb-0">
-            Product Vault with <span className="">{product.title.split(' ').slice(0, 3).join(' ')}...</span>
-          </h1>
-          <p className="auth-subtitle">Manage and analyze your saved products</p>
-        </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button
-            onClick={onBack}
-            className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em]">
-            Move
-          </button>
-          <button className="flex-1 sm:flex-none px-8 py-2.5 rounded-full bg-brand-gradient text-white text-[13px] font-bold hover:brightness-110 transition-all shadow-lg shadow-orange-500/20 active:scale-95 uppercase tracking-[0.1em]">
-            Remove
-          </button>
-        </div>
-      </div>
-
-      {/* Info Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 sm:mb-10">
-        {/* Selected Product Card */}
-        <div className="vault-card-alt group">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400">
-              <Box size={16} />
-            </div>
-            <span className="text-[11px] font-bold text-orange-400 uppercase tracking-widest">Selected Product</span>
+      <div className="relative z-10 p-6 sm:p-10 flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-[1400px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
+          <div className="flex flex-col gap-1 w-full md:w-auto">
+            <h1 className="banner-heading-text !text-[30px] !text-left !ml-[-1px] !mb-0 font-black">
+              Analysis of <span className="text-blue-400 capitalize">{normalizedAmazon?.title.split(' ').slice(0, 3).join(' ') || normalizedTikTok?.title.split(' ').slice(0, 3).join(' ')}...</span>
+            </h1>
+            <p className="auth-subtitle !text-left font-medium opacity-80 ml-2">Full performance breakdown and sourcing insights</p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-6">
-            <div className="w-full sm:w-32 aspect-square sm:h-32 rounded-2xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/5">
-              <img src={product.image} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-            </div>
-            <div className="flex flex-col flex-1 justify-between py-1">
-              <h3 className="text-[14px] sm:text-[15px] text-white font-medium line-clamp-2 mb-4 leading-relaxed group-hover:text-blue-400 transition-colors">
-                {product.title}
-              </h3>
-              <div className="flex items-end justify-between mt-auto">
-                <div className="flex flex-col">
-                  <span className="text-2xl sm:text-3xl font-bold text-white tracking-tight">${product.price}</span>
-                  <span className="text-[12px] text-slate-500 line-through tracking-wide">${product.oldPrice}</span>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="product-metric-label">ASIN</span>
-                  <span className="product-metric-value !text-[12px] bg-white/5 px-2 py-0.5 rounded border border-white/5">{product.asin}</span>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em]">
+              Back
+            </button>
           </div>
         </div>
 
-        {/* Selected Supplier Card */}
-        <div className="vault-card-alt group">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400">
-              <Box size={16} />
-            </div>
-            <span className="text-[11px] font-bold text-orange-400 uppercase tracking-widest">Selected Supplier</span>
+        {/* Product & Supplier Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 sm:mb-10">
+          <div className="h-full">
+            {isTikTok && normalizedTikTok ? (
+              <TrendProductCard
+                title={normalizedTikTok.title}
+                image={normalizedTikTok.image}
+                category={normalizedTikTok.category}
+                price={`$${normalizedTikTok.price}`}
+                metrics={normalizedTikTok.metrics}
+                variant="selected"
+                isCalculator={true}
+              />
+            ) : (
+              <AmazonProductCard
+                product={normalizedAmazon}
+                variant="selected"
+                isCalculator={true}
+              />
+            )}
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-6">
-            <div className="w-full sm:w-32 aspect-square sm:h-32 rounded-2xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/5">
-              <img src={product.image} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-            </div>
-            <div className="flex flex-col flex-1 justify-between py-1">
-              <h3 className="text-[14px] sm:text-[15px] text-white font-medium line-clamp-2 mb-4 leading-relaxed group-hover:text-blue-400 transition-colors">
-                {product.title}
-              </h3>
-              <div className="flex items-end justify-between mt-auto">
-                <div className="flex flex-col">
-                  <span className="text-2xl sm:text-3xl font-bold text-white tracking-tight">${product.price}</span>
-                  <span className="text-[12px] text-slate-500 line-through tracking-wide">${product.oldPrice}</span>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <div className="product-metric-label">
-                    CHINA
-                  </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] sm:text-[11px] font-bold">
-                    <CheckCircle2 size={12} /> Verified
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Profit Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 sm:mb-10">
-        {/* Gross Profit Detail */}
-        <div className="vault-metric-card group">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-5">
-              <div className="standard-icon-circle w-14 h-14 bg-[#081421] text-white shrink-0 shadow-lg shadow-blue-500/10">
-                <Activity size={24} />
-              </div>
-              <div className="flex flex-col">
-                <span className="product-metric-label !text-slate-400 !text-[12px]">Gross Profit</span>
-                <span className="text-3xl sm:text-2xl font-bold text-white tracking-tight">$0.00</span>
-              </div>
-            </div>
-            <span className="text-[24px] sm:text-[32px] font-bold text-blue-500/90 leading-none">0.00%</span>
-          </div>
-
-          <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mx-auto">
-            <svg className="w-full h-full transform -rotate-90">
-              <circle cx="50%" cy="50%" r="45%" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-white/5" />
-              <circle cx="50%" cy="50%" r="45%" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray="283" strokeDashoffset="283" strokeLinecap="round" className="text-blue-500/40" />
-            </svg>
-            <span className="absolute text-2xl sm:text-3xl font-bold text-white/30">0%</span>
+          <div className="h-full">
+            <VaultAlibabaCard supplier={normalizedAlibaba} />
           </div>
         </div>
 
-        {/* Net Profit Detail */}
-        <div className="vault-metric-card group">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-5">
-              <div className="standard-icon-circle w-14 h-14 bg-[#081421] text-white shrink-0 shadow-lg shadow-blue-600/10">
-                <TrendingUp size={24} />
-              </div>
-              <div className="flex flex-col">
-                <span className="product-metric-label !text-slate-400 !text-[12px]">Net Profit</span>
-                <span className="text-3xl sm:text-2xl font-bold text-white tracking-tight">$0.00</span>
-              </div>
-            </div>
-            <span className="text-[24px] sm:text-[32px] font-bold text-blue-600/90 leading-none">0.00%</span>
+        {/* Metric Gauges */}
+        <ProductProfitGauges
+          grossProfitAmount={grossProfitAmount}
+          netProfitAmount={netProfitAmount}
+          grossProfitMargin={grossProfitMargin}
+          netProfitMargin={netProfitMargin}
+        />
+
+        {/* Calculation History Table */}
+        <div className="analysis-card-box mb-6">
+          <div className="p-6 sm:p-6 flex items-center justify-between border-b border-white/5">
+            <h2 className="text-[18px] font-black text-white tracking-tight">Calculation History</h2>
           </div>
 
-          <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center mx-auto">
-            <svg className="w-full h-full transform -rotate-90">
-              <circle cx="50%" cy="50%" r="45%" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-white/5" />
-              <circle cx="50%" cy="50%" r="45%" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray="283" strokeDashoffset="283" strokeLinecap="round" className="text-blue-600/40" />
-            </svg>
-            <span className="absolute text-2xl sm:text-3xl font-bold text-white/30">0%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Calculation History Table */}
-      <div className="vault-table-container group">
-        <div className="p-6 sm:p-5 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Calculation History</h2>
-        </div>
-
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
+          <div className="overflow-x-auto">
             <table className="min-w-full table-auto text-left">
               <thead>
-                <tr className="border-b border-white/5">
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 tracking-[0.16em] uppercase whitespace-nowrap">
-                    SR NO.
-                  </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
-                    PRODUCT SOURCING COST
-                  </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
-                    PRODUCT REVENUE
-                  </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
-                    GROSS PROFIT
-                  </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
-                    NET PROFIT
-                  </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] whitespace-nowrap">
-                    MODIFIED AT
-                  </th>
-                  <th className="px-6 sm:px-8 py-5 text-[11px] font-black text-slate-500 uppercase tracking-[0.16em] text-right whitespace-nowrap">
-                    ACTION
-                  </th>
+                <tr>
+                  <th className="analysis-table-th">SR NO.</th>
+                  <th className="analysis-table-th">PRODUCT SOURCING COST</th>
+                  <th className="analysis-table-th">PRODUCT REVENUE</th>
+                  <th className="analysis-table-th">GROSS PROFIT</th>
+                  <th className="analysis-table-th">NET PROFIT</th>
+                  <th className="analysis-table-th">MODIFIED AT</th>
+                  <th className="analysis-table-th text-center">ACTION</th>
                 </tr>
               </thead>
-
-              <tbody className="divide-y divide-white/5 bg-transparent">
-                <tr className="hover:bg-white/[0.03] transition-colors">
-                  <td className="px-6 sm:px-8 py-6 text-[13px] text-slate-400 font-bold whitespace-nowrap">
-                    1
-                  </td>
-                  <td className="px-6 sm:px-8 py-6 text-[13px] text-white/90 font-bold whitespace-nowrap">
-                    $0.00
-                  </td>
-                  <td className="px-6 sm:px-8 py-6 text-[13px] text-white/90 font-bold whitespace-nowrap">
-                    $0.00
-                  </td>
-                  <td className="px-6 sm:px-8 py-6 text-[13px] text-white/90 font-bold whitespace-nowrap">
-                    $0.00
-                  </td>
-                  <td className="px-6 sm:px-8 py-6 text-[13px] text-white/90 font-bold whitespace-nowrap">
-                    $0.00
-                  </td>
-                  <td className="px-6 sm:px-8 py-6 text-[12px] text-slate-400 font-medium whitespace-nowrap">
-                    Jan 23, 2026
-                  </td>
-                  <td className="px-6 sm:px-8 py-6 text-right whitespace-nowrap">
-                    <button className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D05942] to-[#D4375F] text-white text-[12px] font-semibold hover:brightness-110 transition-all shadow-md shadow-orange-500/10 active:scale-95 whitespace-nowrap">
-                      View Calculations
-                    </button>
-                  </td>
-                </tr>
+              <tbody className="divide-y divide-white/5">
+                {history.length > 0 ? history.map((calc: any, index: number) => (
+                  <tr key={calc.id || index} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="analysis-table-td font-medium">{index + 1}</td>
+                    <td className="analysis-table-td font-bold">${(calc.product_sourcing_cost || 0).toLocaleString()}</td>
+                    <td className="analysis-table-td font-bold">${(calc.product_revenue || 0).toLocaleString()}</td>
+                    <td className="analysis-table-td font-bold">${(calc.product_gross_profit || 0).toLocaleString()}</td>
+                    <td className="analysis-table-td font-bold">${(calc.product_net_profit || 0).toLocaleString()}</td>
+                    <td className="analysis-table-td font-medium">
+                      {new Date(calc.modified_at || calc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                    <td className="analysis-table-td text-right">
+                      <button className="btn-analysis-view">
+                        View Calculations
+                      </button>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={7} className="text-center py-16">
+                      <div className="flex flex-col items-center gap-3 opacity-20">
+                        <Activity size={40} className="text-white" />
+                        <span className="text-[14px] font-bold text-white uppercase tracking-widest">No Historical Data</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
-        </div>
 
-        <div className="p-6 sm:p-8 flex items-center justify-between bg-white/[0.02] border-t border-white/5">
-          <p className="text-[12px] text-slate-500 font-medium tracking-wide">Showing 1 to 1 of 1 results</p>
+          <div className="px-8 py-3 border-t border-white/5 bg-white/[0.01]">
+            <span className="text-[12px] text-slate-500 font-bold  tracking-widest">
+              Showing 1 to {history.length} of {history.length} results
+            </span>
+          </div>
         </div>
       </div>
     </div>
-
   );
 };
 

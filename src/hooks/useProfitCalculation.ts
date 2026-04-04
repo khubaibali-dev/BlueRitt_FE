@@ -1,38 +1,78 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { TAX_OPTIONS } from "../utils/taxConstants";
 
 const defaultInitialState = {
-  sellingPrice: "0.00",
-  productQuantity: "0",
-  manufacturingCost: "0.00",
-  shippingCost: "0.00",
-  otherSourcingCost: "0.00",
-  orderQuantity: "0",
-  fulfillmentModel: "FBA",
-  amazonFees: "0.00",
-  fulfillmentCost: "0.00",
-  storageCost: "0.00",
-  inboundingCost: "0.00",
-  otherFbaCosts: "0.00",
-  refundRate: "0",
-  ppcCost: "0.00",
-  attributionLinks: "0.00",
-  promotionCosts: "0.00",
-  ppcTax: "0.00",
-  aPlusContent: "0.00",
-  videography: "0.00",
-  packagingCost: "0.00",
-  otherContentCosts: "0.00",
-  reviewExpenses: "0.00",
-  otherReviewCosts: "0.00",
-  preLaunchSamples: "0.00",
-  competitorSamples: "0.00",
-  employeeCosts: "0.00",
-  miscellaneousCosts: "0.00",
-  taxRegion: "United States",
-  vatRate: "0",
-  gstRate: "0",
-  salesTaxRate: "0",
-  taxMiscCost: "0.00",
+  // Product Information -> pi
+  pi_sellingPrice: "0",
+  pi_totalRevenue: "0",
+  pi_quantity: "0",
+
+  // Product Sourcing Cost -> psc
+  psc_manufacturingCost: "0",
+  psc_shippingCost: "0",
+  psc_productLogoCost: "0",
+  psc_orderQuantity: "0",
+  psc_miscCost: "0",
+  psc_perUnitCost: "0",
+  psc_totalCost: "0",
+
+  // Fulfillment model -> fm
+  fm_model: "FBA",
+  fm_referrfalFees: "0",
+  fm_fbaFulfillmentFees: "0",
+  fm_monthlyStorageFees: "0",
+  fm_longTermStorageFees: "0",
+  fm_inboundShippingCost: "0",
+  fm_returnsRate: "0",
+  fm_refundLoss: "0",
+
+  fm_shippingFees: "0",
+  fm_handlingCost: "0",
+  fm_storageCost: "0",
+  fm_miscCost: "0",
+  fm_totalCost: "0",
+  fm_perUnitCost: "0",
+
+  // Marketing, Advertisement and Ranking Cost -> marc
+  marc_marketingCost: "0",
+  marc_attributionCost: "0",
+  marc_influencerCost: "0",
+  marc_miscCost: "0",
+  marc_marketingVATCost: "0",
+  marc_totalCost: "0",
+  marc_perUnitCost: "0",
+
+  // Taxes
+  tax_region: "",
+  tax_VAT: "0",
+  tax_GST: "0",
+  tax_salesTax: "0",
+  tax_miscCost: "0",
+  tax_perUnitCost: "0",
+  tax_totalCost: "0",
+
+  // Graphics Cost -> gc
+  gc_imagingAndPhotographyCost: "0",
+  gc_videographyCost: "0",
+  gc_productPackingCost: "0",
+  gc_3dAnimationCost: "0",
+  gc_miscCost: "0",
+  gc_totalCost: "0",
+  gc_perUnitCost: "0",
+
+  // Product Feedback Cost -> pfc
+  pfc_vineProgramCost: "0",
+  pfc_miscCost: "0",
+  pfc_totalCost: "0",
+  pfc_perUnitCost: "0",
+
+  // Other costs -> oc
+  oc_preLaunchSamples: "0",
+  oc_competitorProductSamples: "0",
+  oc_employeesCost: "0",
+  oc_anyOtherCost: "0",
+  oc_totalCost: "0",
+  oc_perUnitCost: "0",
 };
 
 export const useProfitCalculation = (initialState?: Partial<typeof defaultInitialState>) => {
@@ -45,100 +85,144 @@ export const useProfitCalculation = (initialState?: Partial<typeof defaultInitia
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Helper to round numbers like the original project
+  const roundOff = (num: number) => Math.round(num * 100) / 100;
+
   const calculations = useMemo(() => {
-    const sPrice = parseFloat(formData.sellingPrice) || 0;
-    const pQty = parseFloat(formData.productQuantity) || 0;
-    const mfgCost = parseFloat(formData.manufacturingCost) || 0;
-    const shipCost = parseFloat(formData.shippingCost) || 0;
-    const otherSourcing = parseFloat(formData.otherSourcingCost) || 0;
+    const values = formData;
+    
+    // Parse all inputs as floats
+    const pi_sellingPrice = parseFloat(values.pi_sellingPrice) || 0;
+    const pi_quantity = parseFloat(values.pi_quantity) || 0;
+    const psc_manufacturingCost = parseFloat(values.psc_manufacturingCost) || 0;
+    const psc_shippingCost = parseFloat(values.psc_shippingCost) || 0;
+    const psc_orderQuantity = parseFloat(values.psc_orderQuantity) || 0;
+    const psc_miscCost = parseFloat(values.psc_miscCost) || 0;
 
-    const totalRevenue = (sPrice * pQty).toFixed(2);
-    const sourcingCostUnit = (mfgCost + shipCost + otherSourcing).toFixed(2);
-    const totalSourcingCost = (parseFloat(sourcingCostUnit) * pQty).toFixed(2);
+    // 1. Product Revenue
+    const totalRevenue = roundOff(pi_sellingPrice * pi_quantity);
 
-    const amzFees = parseFloat(formData.amazonFees) || 0;
-    const fillCost = parseFloat(formData.fulfillmentCost) || 0;
-    const storageCost = parseFloat(formData.storageCost) || 0;
-    const inboundingCost = parseFloat(formData.inboundingCost) || 0;
-    const otherFba = parseFloat(formData.otherFbaCosts) || 0;
-    const refundCost = (sPrice * (parseFloat(formData.refundRate) || 0)) / 100;
+    // 2. Product Sourcing Totals
+    const sourcingCostUnit = roundOff(psc_manufacturingCost + psc_shippingCost + psc_miscCost);
+    const totalSourcingCost = roundOff(sourcingCostUnit * psc_orderQuantity);
 
-    const fulfillmentCostUnit = (amzFees + fillCost + storageCost + inboundingCost + otherFba + refundCost).toFixed(2);
-    const totalFulfillmentCost = (parseFloat(fulfillmentCostUnit) * pQty).toFixed(2);
+    // 3. Fulfillment Totals
+    const fm_referrfalFees = parseFloat(values.fm_referrfalFees) || 0;
+    const fm_fbaFulfillmentFees = parseFloat(values.fm_fbaFulfillmentFees) || 0;
+    const fm_monthlyStorageFees = parseFloat(values.fm_monthlyStorageFees) || 0;
+    const fm_longTermStorageFees = parseFloat(values.fm_longTermStorageFees) || 0;
+    const fm_inboundShippingCost = parseFloat(values.fm_inboundShippingCost) || 0;
+    const fm_shippingFees = parseFloat(values.fm_shippingFees) || 0;
+    const fm_handlingCost = parseFloat(values.fm_handlingCost) || 0;
+    const fm_storageCost = parseFloat(values.fm_storageCost) || 0;
+    const fm_miscCost = parseFloat(values.fm_miscCost) || 0;
+    const fm_returnsRate = parseFloat(values.fm_returnsRate) || 0;
 
-    const ppc = parseFloat(formData.ppcCost) || 0;
-    const attribution = parseFloat(formData.attributionLinks) || 0;
-    const promotion = parseFloat(formData.promotionCosts) || 0;
-    const ppcTax = parseFloat(formData.ppcTax) || 0;
+    let fulfillmentSum = 0;
+    if (values.fm_model === "FBA") {
+      fulfillmentSum = fm_referrfalFees + fm_fbaFulfillmentFees + fm_monthlyStorageFees + fm_longTermStorageFees + fm_inboundShippingCost + fm_miscCost;
+    } else {
+      fulfillmentSum = fm_referrfalFees + fm_shippingFees + fm_handlingCost + fm_storageCost + fm_miscCost;
+    }
 
-    const totalMarketingCost = (ppc + attribution + promotion + ppcTax).toFixed(2);
-    const marketingCostUnit = pQty > 0 ? (parseFloat(totalMarketingCost) / pQty).toFixed(2) : "0.00";
+    const refundLoss = roundOff(((pi_quantity || 0) * (fm_returnsRate / 100) * (fulfillmentSum - fm_referrfalFees)) / (pi_quantity || 1));
+    const fulfillmentCostUnit = roundOff(fulfillmentSum + refundLoss);
+    const totalFulfillmentCost = roundOff(fulfillmentCostUnit * pi_quantity);
 
-    const aPlus = parseFloat(formData.aPlusContent) || 0;
-    const video = parseFloat(formData.videography) || 0;
-    const packaging = parseFloat(formData.packagingCost) || 0;
-    const otherGraphics = parseFloat(formData.otherContentCosts) || 0;
+    // 4. Marketing Totals
+    const marc_marketingCost = parseFloat(values.marc_marketingCost) || 0;
+    const marc_attributionCost = parseFloat(values.marc_attributionCost) || 0;
+    const marc_influencerCost = parseFloat(values.marc_influencerCost) || 0;
+    const marc_miscCost = parseFloat(values.marc_miscCost) || 0;
+    const marc_marketingVATCost = parseFloat(values.marc_marketingVATCost) || 0;
 
-    const totalGraphicsCost = (aPlus + video + packaging + otherGraphics).toFixed(2);
-    const graphicsCostUnit = pQty > 0 ? (parseFloat(totalGraphicsCost) / pQty).toFixed(2) : "0.00";
+    const totalMarketingCost = roundOff(marc_marketingCost + marc_attributionCost + marc_influencerCost + marc_miscCost + marc_marketingVATCost);
+    const marketingCostUnit = roundOff(totalMarketingCost / (pi_quantity || 1));
 
-    const reviewExp = parseFloat(formData.reviewExpenses) || 0;
-    const otherRev = parseFloat(formData.otherReviewCosts) || 0;
+    // 5. Graphics Cost
+    const gc_imagingAndPhotographyCost = parseFloat(values.gc_imagingAndPhotographyCost) || 0;
+    const gc_videographyCost = parseFloat(values.gc_videographyCost) || 0;
+    const gc_productPackingCost = parseFloat(values.gc_productPackingCost) || 0;
+    const gc_3dAnimationCost = parseFloat(values.gc_3dAnimationCost) || 0;
+    const gc_graphicsMiscCost = parseFloat(values.gc_miscCost) || 0;
 
-    const totalReviewerCost = (reviewExp + otherRev).toFixed(2);
-    const reviewerCostUnit = pQty > 0 ? (parseFloat(totalReviewerCost) / pQty).toFixed(2) : "0.00";
+    const totalGraphicsCost = roundOff(gc_imagingAndPhotographyCost + gc_videographyCost + gc_productPackingCost + gc_3dAnimationCost + gc_graphicsMiscCost);
+    const graphicsCostUnit = roundOff(totalGraphicsCost / (pi_quantity || 1));
 
-    const preLaunch = parseFloat(formData.preLaunchSamples) || 0;
-    const competitor = parseFloat(formData.competitorSamples) || 0;
-    const employees = parseFloat(formData.employeeCosts) || 0;
-    const misc = parseFloat(formData.miscellaneousCosts) || 0;
+    // 6. Product Feedback
+    const pfc_vineProgramCost = parseFloat(values.pfc_vineProgramCost) || 0;
+    const pfc_miscCost = parseFloat(values.pfc_miscCost) || 0;
+    
+    const totalReviewerCost = roundOff(pfc_vineProgramCost + pfc_miscCost);
+    const reviewerCostUnit = roundOff(totalReviewerCost / (pi_quantity || 1));
 
-    const totalAdditionalCost = (preLaunch + competitor + employees + misc).toFixed(2);
-    const additionalCostUnit = pQty > 0 ? (parseFloat(totalAdditionalCost) / pQty).toFixed(2) : "0.00";
+    // 7. Other Costs
+    const oc_preLaunchSamples = parseFloat(values.oc_preLaunchSamples) || 0;
+    const oc_competitorProductSamples = parseFloat(values.oc_competitorProductSamples) || 0;
+    const oc_employeesCost = parseFloat(values.oc_employeesCost) || 0;
+    const oc_anyOtherCost = parseFloat(values.oc_anyOtherCost) || 0;
 
-    const vatRate = parseFloat(formData.vatRate) || 0;
-    const gstRate = parseFloat(formData.gstRate) || 0;
-    const salesTaxRate = parseFloat(formData.salesTaxRate) || 0;
-    const taxMisc = parseFloat(formData.taxMiscCost) || 0;
+    const totalAdditionalCost = roundOff(oc_preLaunchSamples + oc_competitorProductSamples + oc_employeesCost + oc_anyOtherCost);
+    const additionalCostUnit = roundOff(totalAdditionalCost / (pi_quantity || 1));
 
-    const taxesUnit = (((vatRate + gstRate + salesTaxRate) * sPrice) / 100 + taxMisc).toFixed(2);
-    const totalTaxes = (parseFloat(taxesUnit) * pQty).toFixed(2);
+    // 8. Taxes
+    const tax_VAT = parseFloat(values.tax_VAT) || 0;
+    const tax_GST = parseFloat(values.tax_GST) || 0;
+    const tax_salesTax = parseFloat(values.tax_salesTax) || 0;
+    const tax_miscCost = parseFloat(values.tax_miscCost) || 0;
 
-    const grossProfitUnit = (
-      sPrice -
-      parseFloat(sourcingCostUnit) -
-      parseFloat(fulfillmentCostUnit) -
-      parseFloat(marketingCostUnit) -
-      parseFloat(graphicsCostUnit) -
-      parseFloat(reviewerCostUnit)
-    ).toFixed(2);
-    const totalGrossProfit = (parseFloat(grossProfitUnit) * pQty).toFixed(2);
+    const taxesPerUnit = roundOff(((tax_VAT / 100) * pi_sellingPrice) + ((tax_GST / 100) * pi_sellingPrice) + ((tax_salesTax / 100) * pi_sellingPrice));
+    const totalTaxes = roundOff((taxesPerUnit * pi_quantity) + tax_miscCost);
+    const taxesUnit = roundOff(totalTaxes / (pi_quantity || 1));
 
-    const netProfitUnit = (parseFloat(grossProfitUnit) - parseFloat(additionalCostUnit) - parseFloat(taxesUnit)).toFixed(2);
-    const totalNetProfit = (parseFloat(netProfitUnit) * pQty).toFixed(2);
+    // Final Profits
+    const grossProfitForQty = roundOff(totalRevenue - totalSourcingCost - totalFulfillmentCost);
+    const grossProfitUnit = roundOff(grossProfitForQty / (pi_quantity || 1));
+
+    const netProfitBeforeTaxesForQty = roundOff(grossProfitForQty - totalMarketingCost - totalGraphicsCost - totalReviewerCost - totalAdditionalCost);
+    const netProfitAfterTaxesForQty = roundOff(netProfitBeforeTaxesForQty - totalTaxes);
+    
+    const netProfitUnit = roundOff(netProfitAfterTaxesForQty / (pi_quantity || 1));
 
     return {
-      totalRevenue,
-      sourcingCostUnit,
-      totalSourcingCost,
-      fulfillmentCostUnit,
-      totalFulfillmentCost,
-      totalMarketingCost,
-      marketingCostUnit,
-      totalGraphicsCost,
-      graphicsCostUnit,
-      totalReviewerCost,
-      reviewerCostUnit,
-      totalAdditionalCost,
-      additionalCostUnit,
-      taxesUnit,
-      totalTaxes,
-      grossProfitUnit,
-      totalGrossProfit,
-      netProfitUnit,
-      totalNetProfit,
+      totalRevenue: totalRevenue.toFixed(2),
+      sourcingCostUnit: sourcingCostUnit.toFixed(2),
+      totalSourcingCost: totalSourcingCost.toFixed(2),
+      fulfillmentCostUnit: fulfillmentCostUnit.toFixed(2),
+      totalFulfillmentCost: totalFulfillmentCost.toFixed(2),
+      totalMarketingCost: totalMarketingCost.toFixed(2),
+      marketingCostUnit: marketingCostUnit.toFixed(2),
+      totalGraphicsCost: totalGraphicsCost.toFixed(2),
+      graphicsCostUnit: graphicsCostUnit.toFixed(2),
+      totalReviewerCost: totalReviewerCost.toFixed(2),
+      reviewerCostUnit: reviewerCostUnit.toFixed(2),
+      totalAdditionalCost: totalAdditionalCost.toFixed(2),
+      additionalCostUnit: additionalCostUnit.toFixed(2),
+      taxesUnit: taxesUnit.toFixed(2),
+      totalTaxes: totalTaxes.toFixed(2),
+      grossProfitUnit: grossProfitUnit.toFixed(2),
+      totalGrossProfit: grossProfitForQty.toFixed(2),
+      netProfitUnit: netProfitUnit.toFixed(2),
+      totalNetProfit: netProfitAfterTaxesForQty.toFixed(2),
+      fm_refundLoss: refundLoss.toFixed(2),
     };
   }, [formData]);
+
+  // Handle Tax region changes automatically based on constants
+  useEffect(() => {
+    if (formData.tax_region) {
+      const selected = TAX_OPTIONS.find(opt => opt.code === formData.tax_region || opt.country === formData.tax_region);
+      if (selected) {
+        setFormData(prev => ({
+          ...prev,
+          tax_VAT: selected.vat.toString(),
+          tax_GST: selected.gst.toString(),
+          tax_salesTax: selected.salesTax.toString(),
+          tax_miscCost: selected.misc.toString(),
+        }));
+      }
+    }
+  }, [formData.tax_region]);
 
   return {
     formData,

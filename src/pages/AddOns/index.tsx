@@ -3,30 +3,9 @@ import { Wallet, ShoppingCart, ShieldCheck, Search, Users, Calculator, TrendingU
 import PurchaseModal from "./PurchaseModal";
 import { useQuery } from "@tanstack/react-query";
 import { getActiveAddons, Addon } from "../../api/addons";
+import AddOnsSkeleton from "../../components/common/Skeletons/AddOnsSkeleton";
+import AddonCard from "../../components/common/cards/AddonCard";
 
-interface AddonCardProps {
-  amount: number | string;
-  typeDisplay: string;
-  price: string;
-  popular?: boolean;
-  saveBadge?: string;
-  onPurchase: () => void;
-}
-
-const AddonCard: React.FC<AddonCardProps> = ({ amount, typeDisplay, price, popular, saveBadge, onPurchase }) => (
-  <div className={`addon-card ${popular ? "addon-card-popular" : ""}`}>
-    {popular && <span className="addon-card-badge addon-badge-popular">Popular</span>}
-    {saveBadge && <span className="addon-badge-save">{saveBadge}</span>}
-
-    <div className="addon-card-amount">{amount}</div>
-    <div className="addon-card-label">{typeDisplay}</div>
-    <div className="addon-card-price">{price}</div>
-
-    <button className="addon-purchase-btn" onClick={onPurchase}>
-      Purchase
-    </button>
-  </div>
-);
 
 interface AddonSectionProps {
   icon: React.ElementType;
@@ -131,11 +110,7 @@ const AddOns: React.FC = () => {
   const getIcon = (type: string) => ICON_MAP[type] || HelpCircle;
 
   if (isLoading) {
-    return (
-      <div className="addons-page-container flex items-center justify-center min-h-[400px]">
-        <div className="text-white text-lg">Loading add-ons...</div>
-      </div>
-    );
+    return <AddOnsSkeleton />;
   }
 
   if (isError) {
@@ -149,8 +124,8 @@ const AddOns: React.FC = () => {
   return (
     <div className="addons-page-container">
       <div className="addons-header-section">
-        <h1 className="addons-title">Purchase Add-ons</h1>
-        <p className="addons-subtitle">Extend your limits with additional credits</p>
+        <h1 className="page-header-title">Purchase Add-ons</h1>
+        <p className="page-header-subtitle">Extend your limits with additional credits</p>
       </div>
 
       <div className="addons-balance-grid">

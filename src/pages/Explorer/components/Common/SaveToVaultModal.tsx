@@ -1,27 +1,49 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import { useNavigate } from "react-router-dom";
 import { X, FolderOpen, Plus } from "lucide-react";
 import AlertToast from "../../../../components/common/Toast/AlertToast";
 import InputField from "../../../../components/common/input/InputField";
 
+import { getCategory, saveProducts, createCategory } from "../../../../api/savedProducts";
+
 interface SaveToVaultModalProps {
   productTitle: string;
+  calculatorData: any;
   onClose: () => void;
 }
 
-const collections = [
-  { id: 1, name: "Smart Watches", count: 12 },
-  { id: 2, name: "Electronics", count: 12 },
-  { id: 3, name: "High Profit Items", count: 12 },
-  { id: 4, name: "Q1 2025 Launch", count: 12 },
-];
-
-const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClose }) => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calculatorData, onClose }) => {
+  const navigate = useNavigate();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
   const [isAddingCollection, setIsAddingCollection] = useState(false);
   const [collectionName, setCollectionName] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ type: "success" | "error"; title: string; message: string } | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getCategory();
+        if (response.data) {
+          setCategories(response.data);
+          if (response.data.length > 0) {
+            setSelectedId(response.data[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -55,30 +77,41 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
         {!isAddingCollection ? (
           <>
             {/* Collection Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              {collections.map((col) => (
-                <div
-                  key={col.id}
-                  onClick={() => setSelectedId(col.id)}
-                  className={`p-4 rounded-[14px] border transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center group
-                    ${selectedId === col.id
-                      ? "bg-[#04132B] border-brand-inputBorder shadow-xl shadow-blue-500/10"
-                      : "bg-[#04132B] border-brand-inputBorder hover:border-brand-inputBorder hover:bg-white/5"}`}
-                >
-                  <div className={`quick-action-icon-circle !w-8 !h-8 transition-all duration-300
-                    ${selectedId === col.id
-                      ? "shadow-lg shadow-blue-500/20 scale-110"
-                      : "text-slate-400 group-hover:text-blue-400"}`}>
-                    <FolderOpen size={18} className="text-white" />
-                  </div>
-                  <div>
-                    <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight ${selectedId === col.id ? "text-white" : "text-slate-200"}`}>
-                      {col.name}
-                    </h4>
-                    <p className="text-[12px] text-[#FFFFFFB0] font-medium">{col.count} items</p>
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 max-h-[280px] overflow-y-auto pr-1 custom-scrollbar">
+              {isLoading ? (
+                <div className="col-span-2 py-10 flex flex-col items-center justify-center gap-3">
+                  <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-[12px] text-slate-400">Loading collections...</p>
                 </div>
-              ))}
+              ) : categories.length > 0 ? (
+                categories.map((col) => (
+                  <div
+                    key={col.id}
+                    onClick={() => setSelectedId(col.id)}
+                    className={`p-4 rounded-[14px] border transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center group
+                      ${selectedId === col.id
+                        ? "bg-[#04132B] border-brand-inputBorder shadow-xl shadow-blue-500/10"
+                        : "bg-[#04132B] border-brand-inputBorder hover:border-brand-inputBorder hover:bg-white/5"}`}
+                  >
+                    <div className={`quick-action-icon-circle !w-8 !h-8 transition-all duration-300
+                      ${selectedId === col.id
+                        ? "shadow-lg shadow-blue-500/20 scale-110"
+                        : "text-slate-400 group-hover:text-blue-400"}`}>
+                      <FolderOpen size={18} className="text-white" />
+                    </div>
+                    <div>
+                      <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight ${selectedId === col.id ? "text-white" : "text-slate-200"}`}>
+                        {col.name}
+                      </h4>
+                      <p className="text-[12px] text-[#FFFFFFB0] font-medium">{col.product_count || 0} items</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-2 py-10 text-center text-slate-400 text-[12px]">
+                  No collections found. Create one to get started.
+                </div>
+              )}
             </div>
 
             {/* Add New Collection action */}
@@ -128,32 +161,59 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, onClo
             Cancel
           </button>
           <button
-            onClick={() => {
-              if (isAddingCollection) {
-                // Logic for Create & Save
+            disabled={isSaving}
+            onClick={async () => {
+              try {
+                setIsSaving(true);
+                let categoryId = selectedId;
+
+                if (isAddingCollection) {
+                  if (!collectionName.trim()) {
+                    setToast({ type: "error", title: "Error", message: "Please enter a collection name." });
+                    return;
+                  }
+                  const resp = await createCategory({ name: collectionName });
+                  categoryId = resp.data.id;
+                }
+
+                if (!categoryId) {
+                  setToast({ type: "error", title: "Error", message: "Please select a collection." });
+                  return;
+                }
+
+                const finalPayload = {
+                  ...calculatorData,
+                  category: categoryId,
+                };
+
+                await saveProducts(finalPayload);
+
                 setToast({
                   type: "success",
-                  title: "Collection Created!",
-                  message: `New collection "${collectionName}" created successfully.`,
+                  title: "Success!",
+                  message: isAddingCollection 
+                    ? `Collection "${collectionName}" created and product saved.`
+                    : "Product saved to ProductVault successfully.",
                 });
-                setTimeout(() => setIsAddingCollection(false), 2000); // Collapse after toast starts
-              } else {
-                // Logic for Save to Collection
-                const selectedCol = collections.find(c => c.id === selectedId)?.name || "selected";
-                setToast({
-                  type: "success",
-                  title: "Product saved to ProductVault!",
-                  message: `Successfully saved to "${selectedCol}" collection.`,
-                });
-                setTimeout(onClose, 2500); // Close modal after toast
+                
+                setTimeout(() => {
+                  onClose();
+                  navigate("/products");
+                }, 2000);
+              } catch (error) {
+                console.error("Save error:", error);
+                setToast({ type: "error", title: "Save Failed", message: "Something went wrong. Please try again." });
+              } finally {
+                setIsSaving(false);
               }
             }}
-            className={`flex-1 py-2.5 px-6 rounded-full text-[13px] font-bold text-white transition-all shadow-xl active:scale-[0.98] 
+            className={`flex-1 py-2.5 px-6 rounded-full text-[13px] font-bold text-white transition-all shadow-xl active:scale-[0.98] flex items-center justify-center gap-2
               ${isAddingCollection
                 ? "bg-brand-gradient shadow-red-900/20"
-                : "bg-brand-gradient shadow-orange-500/20"}`}
+                : "bg-brand-gradient shadow-orange-500/20"} ${isSaving ? "opacity-70 cursor-not-allowed" : "hover:brightness-110"}`}
           >
-            {isAddingCollection ? "Create & Save" : "Save to Collection"}
+            {isSaving && <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+            {isAddingCollection ? (isSaving ? "Creating..." : "Create & Save") : (isSaving ? "Saving..." : "Save to Collection")}
           </button>
         </div>
       </div>

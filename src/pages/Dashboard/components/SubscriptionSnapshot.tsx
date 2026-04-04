@@ -1,15 +1,12 @@
-import { CircleCheck, Loader2 } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import { useAccountSummary } from "../../../hooks/useAccountSummary";
+import SubscriptionSnapshotSkeleton from "../../../components/common/Skeletons/SubscriptionSnapshotSkeleton";
 
 const SubscriptionSnapshot = () => {
   const { data: summary, isLoading, isError } = useAccountSummary();
 
   if (isLoading) {
-    return (
-      <div className="snapshot-card flex items-center justify-center h-[200px]">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-      </div>
-    );
+    return <SubscriptionSnapshotSkeleton />;
   }
 
   if (isError || !summary) {

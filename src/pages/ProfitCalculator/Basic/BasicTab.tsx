@@ -3,28 +3,16 @@ import CalculatorAccordion from "../components/CalculatorAccordion";
 import CalculatorField from "../components/CalculatorField";
 
 interface BasicTabProps {
-  formData: {
-    sellingPrice: string;
-    productQuantity: string;
-    manufacturingCost: string;
-    shippingCost: string;
-    otherSourcingCost: string;
-    orderQuantity: string;
-    fulfillmentModel: string;
-    amazonFees: string;
-    fulfillmentCost: string;
-    storageCost: string;
-    inboundingCost: string;
-    otherFbaCosts: string;
-    refundRate: string;
-  };
-  handleFieldChange: (field: any, value: string) => void;
+  formData: any;
+  handleFieldChange: (field: string, value: any) => void;
   // Pre-computed values
   totalRevenue: string;
   sourcingCostUnit: string;
   totalSourcingCost: string;
   fulfillmentCostUnit: string;
   totalFulfillmentCost: string;
+  errors: any;
+  touched: any;
 }
 
 const BasicTab: React.FC<BasicTabProps> = ({
@@ -35,6 +23,8 @@ const BasicTab: React.FC<BasicTabProps> = ({
   totalSourcingCost,
   fulfillmentCostUnit,
   totalFulfillmentCost,
+  errors,
+  touched,
 }) => {
   return (
     <>
@@ -45,16 +35,18 @@ const BasicTab: React.FC<BasicTabProps> = ({
             label="Selling Price"
             required
             prefix="$"
-            value={formData.sellingPrice}
-            onChange={(val) => handleFieldChange("sellingPrice", val)}
+            value={formData.pi_sellingPrice}
+            onChange={(val) => handleFieldChange("pi_sellingPrice", val)}
+            error={touched.pi_sellingPrice && errors.pi_sellingPrice}
           />
           <CalculatorField
             label="Product Quantity"
             required
-            value={formData.productQuantity}
-            onChange={(val) => handleFieldChange("productQuantity", val)}
+            value={formData.pi_quantity}
+            onChange={(val) => handleFieldChange("pi_quantity", val)}
+            error={touched.pi_quantity && errors.pi_quantity}
           />
-          <CalculatorField label="Revenue/Unit" prefix="$" value={formData.sellingPrice} readOnly />
+          <CalculatorField label="Revenue/Unit" prefix="$" value={formData.pi_sellingPrice} readOnly />
           <CalculatorField label="Total Revenue" prefix="$" value={totalRevenue} readOnly />
         </div>
       </CalculatorAccordion>
@@ -66,27 +58,31 @@ const BasicTab: React.FC<BasicTabProps> = ({
             label="Product Manufacturing"
             required
             prefix="$"
-            value={formData.manufacturingCost}
-            onChange={(val) => handleFieldChange("manufacturingCost", val)}
+            value={formData.psc_manufacturingCost}
+            onChange={(val) => handleFieldChange("psc_manufacturingCost", val)}
+            error={touched.psc_manufacturingCost && errors.psc_manufacturingCost}
           />
           <CalculatorField
             label="Shipping Cost"
             required
             prefix="$"
-            value={formData.shippingCost}
-            onChange={(val) => handleFieldChange("shippingCost", val)}
+            value={formData.psc_shippingCost}
+            onChange={(val) => handleFieldChange("psc_shippingCost", val)}
+            error={touched.psc_shippingCost && errors.psc_shippingCost}
           />
           <CalculatorField
             label="Other Sourcing Costs"
             prefix="$"
-            value={formData.otherSourcingCost}
-            onChange={(val) => handleFieldChange("otherSourcingCost", val)}
+            value={formData.psc_miscCost}
+            onChange={(val) => handleFieldChange("psc_miscCost", val)}
+            error={touched.psc_miscCost && errors.psc_miscCost}
           />
           <CalculatorField
             label="Order Quantity"
             required
-            value={formData.orderQuantity}
-            onChange={(val) => handleFieldChange("orderQuantity", val)}
+            value={formData.psc_orderQuantity}
+            onChange={(val) => handleFieldChange("psc_orderQuantity", val)}
+            error={touched.psc_orderQuantity && errors.psc_orderQuantity}
           />
           <CalculatorField label="Sourcing Cost/Unit" prefix="$" value={sourcingCostUnit} readOnly />
           <CalculatorField label="Total Sourcing Cost" prefix="$" value={totalSourcingCost} readOnly />
@@ -106,9 +102,9 @@ const BasicTab: React.FC<BasicTabProps> = ({
                 <div className="relative flex items-center justify-center">
                   <input
                     type="radio"
-                    name="fulfillmentModel"
-                    checked={formData.fulfillmentModel === "FBA"}
-                    onChange={() => handleFieldChange("fulfillmentModel", "FBA")}
+                    name="fm_model"
+                    checked={formData.fm_model === "FBA"}
+                    onChange={() => handleFieldChange("fm_model", "FBA")}
                     className="peer appearance-none w-5 h-5 rounded-full border-2 border-slate-600 checked:border-blue-500 transition-all"
                   />
                   <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />
@@ -120,9 +116,9 @@ const BasicTab: React.FC<BasicTabProps> = ({
                 <div className="relative flex items-center justify-center">
                   <input
                     type="radio"
-                    name="fulfillmentModel"
-                    checked={formData.fulfillmentModel === "FBM"}
-                    onChange={() => handleFieldChange("fulfillmentModel", "FBM")}
+                    name="fm_model"
+                    checked={formData.fm_model === "FBM"}
+                    onChange={() => handleFieldChange("fm_model", "FBM")}
                     className="peer appearance-none w-5 h-5 rounded-full border-2 border-slate-600 checked:border-blue-500 transition-all"
                   />
                   <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />
@@ -138,35 +134,69 @@ const BasicTab: React.FC<BasicTabProps> = ({
               label="Amazon Fees"
               required
               prefix="$"
-              value={formData.amazonFees}
-              onChange={(val) => handleFieldChange("amazonFees", val)}
+              value={formData.fm_referrfalFees}
+              onChange={(val) => handleFieldChange("fm_referrfalFees", val)}
+              error={touched.fm_referrfalFees && errors.fm_referrfalFees}
             />
-            <CalculatorField
-              label="Fulfillment Cost"
-              required
-              prefix="$"
-              value={formData.fulfillmentCost}
-              onChange={(val) => handleFieldChange("fulfillmentCost", val)}
-            />
-            <CalculatorField
-              label="Storage Cost"
-              required
-              prefix="$"
-              value={formData.storageCost}
-              onChange={(val) => handleFieldChange("storageCost", val)}
-            />
-            <CalculatorField
-              label="Inbounding Cost"
-              prefix="$"
-              value={formData.inboundingCost}
-              onChange={(val) => handleFieldChange("inboundingCost", val)}
-            />
-            <CalculatorField
-              label="Other FBA Costs"
-              prefix="$"
-              value={formData.otherFbaCosts}
-              onChange={(val) => handleFieldChange("otherFbaCosts", val)}
-            />
+            {formData.fm_model === "FBA" ? (
+              <>
+                <CalculatorField
+                  label="Fulfillment Cost"
+                  required
+                  prefix="$"
+                  value={formData.fm_fbaFulfillmentFees}
+                  onChange={(val) => handleFieldChange("fm_fbaFulfillmentFees", val)}
+                  error={touched.fm_fbaFulfillmentFees && errors.fm_fbaFulfillmentFees}
+                />
+                <CalculatorField
+                  label="Storage Cost"
+                  required
+                  prefix="$"
+                  value={formData.fm_monthlyStorageFees}
+                  onChange={(val) => handleFieldChange("fm_monthlyStorageFees", val)}
+                  error={touched.fm_monthlyStorageFees && errors.fm_monthlyStorageFees}
+                />
+                <CalculatorField
+                  label="Inbounding Cost"
+                  prefix="$"
+                  value={formData.fm_longTermStorageFees}
+                  onChange={(val) => handleFieldChange("fm_longTermStorageFees", val)}
+                />
+                <CalculatorField
+                  label="Other FBA Costs"
+                  prefix="$"
+                  value={formData.fm_inboundShippingCost}
+                  onChange={(val) => handleFieldChange("fm_inboundShippingCost", val)}
+                />
+              </>
+            ) : (
+              <>
+                <CalculatorField
+                  label="Shipping/Delivery"
+                  prefix="$"
+                  value={formData.fm_shippingFees}
+                  onChange={(val) => handleFieldChange("fm_shippingFees", val)}
+                />
+                <CalculatorField
+                  label="Handling Cost"
+                  prefix="$"
+                  value={formData.fm_handlingCost}
+                  onChange={(val) => handleFieldChange("fm_handlingCost", val)}
+                />
+                <CalculatorField
+                  label="Storage Cost"
+                  prefix="$"
+                  value={formData.fm_storageCost}
+                  onChange={(val) => handleFieldChange("fm_storageCost", val)}
+                />
+                <CalculatorField
+                  label="Other FBM Cost"
+                  prefix="$"
+                  value={formData.fm_miscCost}
+                  onChange={(val) => handleFieldChange("fm_miscCost", val)}
+                />
+              </>
+            )}
 
             {/* Refund Rate Slider */}
             <div className="flex flex-col gap-3">
@@ -175,17 +205,20 @@ const BasicTab: React.FC<BasicTabProps> = ({
                   Returns/Refund Rate (Sellable)%
                 </label>
                 <div className="bg-[#FFFFFF0D] border border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-white">
-                  {formData.refundRate}
+                  {formData.fm_returnsRate}
                 </div>
               </div>
               <input
                 type="range"
                 min="0"
                 max="100"
-                value={formData.refundRate}
-                onChange={(e) => handleFieldChange("refundRate", e.target.value)}
+                value={formData.fm_returnsRate}
+                onChange={(e) => handleFieldChange("fm_returnsRate", e.target.value)}
                 className="w-full h-1.5 bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
+              {touched.fm_returnsRate && errors.fm_returnsRate && (
+                <span className="text-red-500 text-[10px]">{errors.fm_returnsRate}</span>
+              )}
             </div>
 
             {/* Calculated Results */}

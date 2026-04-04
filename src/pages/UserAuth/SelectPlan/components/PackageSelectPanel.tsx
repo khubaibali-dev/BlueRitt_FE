@@ -6,8 +6,8 @@ interface PackageSelectPanelProps {
   packages: PlanPackage[];
   selectedPackageId: string;
   onSelectPackage: (id: string) => void;
-  billingCycle: "Monthly" | "Annually";
-  onSelectBillingCycle: (cycle: "Monthly" | "Annually") => void;
+  billingCycle: "Monthly" | "Annually" | "Quarterly";
+  onSelectBillingCycle: (cycle: "Monthly" | "Annually" | "Quarterly") => void;
   packageType: "Subscription" | "Prepaid";
   onSelectPackageType: (type: "Subscription" | "Prepaid") => void;
 }
@@ -21,21 +21,11 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
   packageType,
   onSelectPackageType
 }) => {
-
-  // ✅ Ensure valid package when switching to Prepaid
-  useEffect(() => {
-    if (packageType === "Prepaid") {
-      if (selectedPackageId !== "basic" && selectedPackageId !== "advance") {
-        onSelectPackage("basic");
-      }
-    }
-  }, [packageType, selectedPackageId, onSelectPackage]);
-
   // ✅ Filter packages based on type
   const filteredPackages =
     packageType === "Prepaid"
-      ? packages.filter((pkg) => pkg.id === "basic" || pkg.id === "advance")
-      : packages;
+      ? packages // Show all prepaid packages returned by the API
+      : packages.filter((pkg) => pkg.id !== "trial");
 
   return (
     <div className="w-full flex justify-center lg:justify-end">
@@ -81,16 +71,24 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
               <select
                 value={billingCycle}
                 onChange={(e) =>
-                  onSelectBillingCycle(e.target.value as "Monthly" | "Annually")
+                  onSelectBillingCycle(e.target.value as "Monthly" | "Annually" | "Quarterly")
                 }
                 className="w-full bg-brand-inputBg text-brand-textPrimary dark:text-white text-[14px] rounded-[12px] border border-brand-border pl-12 pr-10 py-3.5 appearance-none focus:outline-none focus:border-brand-accent transition-colors cursor-pointer"
               >
                 <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
                 <option value="Annually">Annually</option>
               </select>
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-brand-textSecondary dark:text-[#7A9ABF]">
                 <ChevronDown size={18} />
               </div>
+            </div>
+
+            {/* Trial Information Message (Subscription Only) */}
+            <div className="mt-4 p-3.5 rounded-xl bg-brand-primary/10 border border-brand-primary/20">
+              <p className="text-[12.5px] font-medium text-brand-primary leading-snug">
+                7-Day Free Trial Included — Card required, no charge today. Billing starts after 7 days.
+              </p>
             </div>
           </div>
         )}
@@ -127,7 +125,10 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-[15px] text-brand-textPrimary dark:text-white tracking-wide">
-                        {packageType === "Prepaid" ? `Prepaid ${pkg.name}` : pkg.name}
+                        {packageType === "Prepaid" && !pkg.name.toLowerCase().includes("prepaid") 
+                          ? `${pkg.name} Prepaid` 
+                          : pkg.name
+                        }
                       </span>
                       {pkg.isPopular && (
                         <span className="pkg-current-plan-badge text-[10px] font-semibold text-white px-2 py-[2px] rounded-full">

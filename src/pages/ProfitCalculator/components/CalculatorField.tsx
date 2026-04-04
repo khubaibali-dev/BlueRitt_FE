@@ -10,6 +10,7 @@ interface CalculatorFieldProps {
   readOnly?: boolean;
   type?: string;
   className?: string;
+  error?: string;
 }
 
 const CalculatorField: React.FC<CalculatorFieldProps> = ({
@@ -20,7 +21,8 @@ const CalculatorField: React.FC<CalculatorFieldProps> = ({
   onChange,
   readOnly,
   type = "text",
-  className = ""
+  className = "",
+  error
 }) => {
   return (
     <div className={className}>
@@ -33,6 +35,7 @@ const CalculatorField: React.FC<CalculatorFieldProps> = ({
         prefix={prefix}
         required={required}
         readOnly={readOnly}
+        error={error}
         // InputField handles the rest of the styling
       />
     </div>

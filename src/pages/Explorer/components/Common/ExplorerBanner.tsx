@@ -10,12 +10,14 @@ import SelectField from "../../../../components/common/select/SelectField";
 import { COUNTRY_OPTIONS } from "../../../../utils/Country";
 import { PRODUCT_FILTER_OPTIONS } from "../../../../utils/SearchOptions";
 import { getAmazonCategoriesandSubcategories } from "../../../../api/product";
+import { useToast } from "../../../../components/common/Toast/ToastContext";
 
 interface ExplorerBannerProps {
   onSearch: (query: string, country: string, searchType: string) => void;
 }
 
 const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
+  const toast = useToast();
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterType, setFilterType] = useState(PRODUCT_FILTER_OPTIONS[0]);
   const defaultCountry = COUNTRY_OPTIONS.find(opt => opt.value === "US") || COUNTRY_OPTIONS[0];
@@ -29,7 +31,7 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
   const { data: categoriesAndSubcategoriesData } = useQuery({
     queryKey: ["amazon-categories-subcategories", selectedCountry.value],
     queryFn: () => getAmazonCategoriesandSubcategories(selectedCountry.value),
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: 1000 * 60 * 60, // 60 minutes
   });
 
   const categoriesList = useMemo(() => {
@@ -62,11 +64,18 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
   }, [selectedCategory, categoriesAndSubcategoriesData]);
 
   const handleSearchWithAI = (query: string) => {
+    if (!query || !query.trim()) {
+      toast.error("Please enter keyword", { title: "Search Failed" });
+      return;
+    }
     onSearch(query, selectedCountry.value, filterType.value);
   };
 
   const handleCategorySearch = () => {
-    if (!selectedSubcategory) return;
+    if (!selectedSubcategory) {
+      toast.error("Please select a subcategory", { title: "Search Failed" });
+      return;
+    }
     onSearch(selectedSubcategory, selectedCountry.value, "category");
   };
 

@@ -4,8 +4,7 @@ import App from './App'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { ToastProvider } from './components/common/Toast/ToastContext'
 import './assets/css/style.css'
 
 const queryClient = new QueryClient({
@@ -24,8 +23,9 @@ ReactDOM.createRoot(rootElement).render(
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <App />
-          <ToastContainer position="top-right" />
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

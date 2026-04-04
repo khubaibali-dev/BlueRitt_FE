@@ -11,7 +11,7 @@ import {
 } from "react";
 
 import api from "../api";
-import { getUserDetails, refreshToken } from "../api/auth";
+import { getUserDetails, refreshToken, logout } from "../api/auth";
 import { TUser, TSearchQuota, TSubscriptionStatus, TUserFeatures } from "../types/user";
 import { ACCESS_TOKEN_KEY, storeAccessToken, getAccessToken, getShouldRefresh } from "../utils/tokenStorage";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,6 +30,7 @@ type UserAuthContextType = {
   loading: boolean;
   needsSubscription: boolean;
   dueDate: string;
+  logoutUser: () => Promise<void>;
 };
 
 type TUserAuthContextProviderProps = {
@@ -57,6 +58,7 @@ const userAuthContext = createContext<UserAuthContextType>({
   loading: true,
   needsSubscription: false,
   dueDate: "",
+  logoutUser: async () => {},
 });
 
 const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
@@ -156,6 +158,22 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
       }
     } finally {
       setIsRequestInProgress(false);
+    }
+  };
+
+  const logoutUser = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Error during API logout:", error);
+    } finally {
+      // Always cleanup local state even if API fails
+      setAccessToken("");
+      setCurrentUser(initialUser);
+      invalidateUserQuotaData(queryClient);
+      
+      // Redirect to login page
+      window.location.href = "/login";
     }
   };
 
@@ -312,6 +330,7 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
         loading,
         needsSubscription,
         dueDate: currentUser.dueDate || "",
+        logoutUser,
       }}
     >
       {children}

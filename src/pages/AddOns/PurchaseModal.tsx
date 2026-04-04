@@ -2,7 +2,7 @@ import React from "react";
 import { Wallet, X, Calculator, Search, Users, TrendingUp, Zap, HelpCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postPurchaseAddon, Addon } from "../../api/addons";
-import { toast } from "react-toastify";
+import { useToast } from "../../components/common/Toast/ToastContext";
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -22,16 +22,21 @@ const ICON_MAP: Record<string, React.ElementType> = {
 
 const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon }) => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   
   const purchaseMutation = useMutation({
     mutationFn: (id: string) => postPurchaseAddon({ id }),
     onSuccess: () => {
       toast.success("Purchase complete!");
       queryClient.invalidateQueries({ queryKey: ["active-addons"] });
-      onClose();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Purchase failed. Please try again.");
+    onError: (err: any) => {
+      toast.error(
+        err?.response?.data?.message || "Purchase failed. Please try again."
+      );
     }
   });
 

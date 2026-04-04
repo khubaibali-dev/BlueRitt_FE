@@ -1,153 +1,191 @@
-import React, { useState } from "react";
-import { Plus, MoreVertical } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, MoreVertical, Trash2, Eye, Calendar, Folder } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CollectionDetails from "./components/CollectionDetails";
-import ProductAnalysis from "./components/ProductAnalysis";
+import { getCategory, deleteCategory } from "../../api/savedProducts";
+import { toast } from "react-toastify";
 
-interface CollectionCardProps {
-  title: string;
-  count: number;
+interface CategoryCardProps {
+  id: string;
+  name: string;
   image?: string;
-  images?: string[]; // For collage
-  isAll?: boolean;
+  createdAt: string;
   onClick: () => void;
+  onDelete: (id: string, name: string) => void;
 }
 
-const CollectionCard: React.FC<CollectionCardProps> = ({ title, count, image, images, isAll, onClick }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt, onClick, onDelete }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
+
+  const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+
   return (
     <div
       onClick={onClick}
-      className="group relative vault-card cursor-pointer"
+      className="group relative vault-card cursor-pointer !h-auto flex flex-col"
     >
       {/* Image Section */}
-      <div className="vault-image-box">
-        {isAll && images ? (
-          <div className="grid grid-cols-2 grid-rows-2 h-full gap-1 p-1">
-            {images.slice(0, 4).map((img, idx) => (
-              idx === 3 ? (
-                <div key={idx} className="relative h-full w-full rounded-lg overflow-hidden flex items-center justify-center bg-brand-gradient">
-                  <span className="text-white font-bold text-xl">+45</span>
-                </div>
-              ) : (
-                <img key={idx} src={img} alt="" className="h-full w-full object-cover rounded-lg" />
-              )
-            ))}
-          </div>
-        ) : (
-          <img src={image} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-        )}
+      <div className="vault-image-box !h-[180px]">
+        <img
+          src={image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80"}
+          alt={name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
 
-        {isAll && (
-          <div className="absolute top-3 left-3 px-3 py-1 rounded-full shadow-lg glass-badge-label-light">
-            <span className="text-[11px] font-bold text-slate-800">All</span>
-          </div>
-        )}
+        <div className="absolute top-3 right-3" ref={menuRef}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            className={`p-1.5 rounded-full text-white transition-all glass-action-circle-dark ${isMenuOpen ? "opacity-100 scale-110" : "opacity-100"}`}
+          >
+            <MoreVertical size={16} />
+          </button>
 
-        <button
-          onClick={(e) => { e.stopPropagation(); }}
-          className="absolute top-3 right-3 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity glass-action-circle-dark"
-        >
-          <MoreVertical size={16} />
-        </button>
+          {isMenuOpen && (
+            <div className="absolute top-full right-0 mt-2 w-[160px] bg-[#04132B] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onClick();
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-slate-200 hover:bg-white/5 transition-colors text-left"
+              >
+                <Eye size={14} className="text-blue-400" />
+                View Details
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onDelete(id, name);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-red-400 hover:bg-red-400/5 transition-colors text-left"
+              >
+                <Trash2 size={14} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Content Section */}
-      <div className="p-5">
-        <h3 className="product-card-title text-[15px] mb-0.5 group-hover:text-blue-400 transition-colors">
-          {title}
-        </h3>
-        <p className="text-[13px] font-medium" style={{ color: '#FFFFFFB0' }}>
-          {count} products
-        </p>
+      <div className="p-5 flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+            <Folder size={18} />
+          </div>
+          <h3 className="product-card-title text-[16px] mb-0 group-hover:text-blue-400 transition-colors uppercase tracking-wider font-bold">
+            {name}
+          </h3>
+        </div>
+
+        <div className="flex items-center gap-2 text-slate-500">
+          <Calendar size={14} />
+          <span className="text-[12px] font-medium">{formattedDate}</span>
+        </div>
       </div>
     </div>
   );
 };
 
 const ProductVault: React.FC = () => {
-  const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
-  const [analysisProduct, setAnalysisProduct] = useState<any | null>(null);
+  const queryClient = useQueryClient();
+  const [selectedCollection, setSelectedCollection] = useState<{ id: string, name: string } | null>(null);
 
-  const collections = [
-    {
-      title: "All Products",
-      count: 48,
-      isAll: true,
-      images: [
-        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80", // Watch
-        "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80", // Mouse
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80", // Headphones
-        "" // Placeholder for +45
-      ]
+  // UseQuery for Categories
+  const { data: categoriesResponse, isLoading } = useQuery({
+    queryKey: ["vault-categories"],
+    queryFn: getCategory
+  });
+
+  const categories = categoriesResponse?.data || [];
+
+  // UseMutation for Deletion
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteCategory({ saveID: id }),
+    onSuccess: () => {
+      toast.success("Collection deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["vault-categories"] });
     },
-    {
-      title: "High Margin Winners",
-      count: 15,
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80"
-    },
-    {
-      title: "Trending Now",
-      count: 23,
-      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80"
-    },
-    {
-      title: "Electronics",
-      count: 15,
-      image: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=400&q=80"
-    },
-    {
-      title: "Summer Collection",
-      count: 23,
-      image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=80"
-    },
-    {
-      title: "Fashion & Accessories",
-      count: 23,
-      image: "https://images.unsplash.com/photo-1534653223834-0ef82d21fbd7?w=400&q=80"
+    onError: (error) => {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete collection");
     }
-  ];
+  });
+
+  const handleDeleteCategory = async (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete the "${name}" collection? All products inside will also be removed.`)) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   return (
     <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen">
-      {/* Background Image */}
-
-
       <div className="relative z-10 p-6 sm:p-10">
-        {analysisProduct ? (
-          <ProductAnalysis
-            product={analysisProduct}
-            onBack={() => setAnalysisProduct(null)}
-          />
-        ) : selectedCollection ? (
+        {selectedCollection ? (
           <div className="animate-in fade-in duration-500">
             <CollectionDetails
-              collectionName={selectedCollection}
+              collectionId={selectedCollection.id}
+              collectionName={selectedCollection.name}
               onBack={() => setSelectedCollection(null)}
-              onProductClick={(product) => setAnalysisProduct(product)}
+              onProductClick={() => {}} // No longer needed as we navigate via URL
             />
           </div>
         ) : (
           <div className="animate-in fade-in duration-500">
-            <div className="mb-10">
-              <h1 className="banner-heading-text !text-left !mb-1">Product Vault</h1>
-              <p className="auth-subtitle !text-left ml-4">Organize your saved products</p>
-            </div>
+              <div className="mb-10">
+                <h1 className="banner-heading-text !text-left !mb-1">Product Vault</h1>
+                <p className="page-header-subtitle !text-left ml-4">Analyze and manage your saved product research</p>
+              </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {collections.map((col, idx) => (
-                <CollectionCard
-                  key={idx}
-                  {...col}
-                  onClick={() => setSelectedCollection(col.title)}
-                />
-              ))}
+              {isLoading ? (
+                // Loading Skeletons
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="vault-card h-[280px] animate-pulse bg-white/5 rounded-2xl" />
+                ))
+              ) : (
+                categories.map((col: any, idx: number) => (
+                  <CategoryCard
+                    key={idx}
+                    id={col.id}
+                    name={col.name}
+                    image={col.image}
+                    createdAt={col.created_at}
+                    onClick={() => setSelectedCollection({ id: col.id, name: col.name })}
+                    onDelete={handleDeleteCategory}
+                  />
+                ))
+              )}
 
               {/* Add New Collection Card */}
-              <div className="group vault-add-card flex-col !bg-[#04132B]">
-                <div className=" group-hover:scale-110">
+              {/* <div className="group vault-add-card flex-col !bg-[#04132B] !min-h-[280px] cursor-pointer">
+                <div className="p-4 rounded-full bg-white/5 text-white group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-all group-hover:scale-110 mb-4">
                   <Plus size={34} />
                 </div>
-                <span className="text-white font-bold text-[15px] tracking-tight">Add New Collection</span>
-              </div>
+                <span className="text-white font-bold text-[15px] tracking-tight group-hover:text-blue-400 transition-colors">Add New Collection</span>
+              </div> */}
             </div>
           </div>
         )}

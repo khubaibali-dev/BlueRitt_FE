@@ -22,7 +22,7 @@ const ExplorerPage: React.FC = () => {
     if (location.state?.autoSourceLink || location.state?.initialQuery) {
       setIsResultsView(true);
       setShowTour(false);
-      
+
       if (location.state?.initialQuery) {
         setSearchQuery(location.state.initialQuery);
         setSearchCountry(location.state.initialCountry || "US");
@@ -67,7 +67,7 @@ const ExplorerPage: React.FC = () => {
       )}
       {isAnalyzing && (
         <AnalyzingScreen
-          onCancel={() => setIsAnalyzing(false)}
+          // onCancel={() => setIsAnalyzing(false)}
           isDetailed={isDetailedLoading}
         />
       )}
