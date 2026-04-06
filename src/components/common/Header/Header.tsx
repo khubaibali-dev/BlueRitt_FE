@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../context/AuthContext";
-import { Sun, Moon, ChevronDown, Menu } from "lucide-react";
+import { Sun, Moon, Menu, User, CircleUser } from "lucide-react";
 
 interface DashboardHeaderProps {
   toggleSidebar: () => void;
@@ -33,7 +33,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             onClick={toggleSidebar}
-            className="text-white hover:text-white transition-colors shrink-0"
+            className="text-brand-textPrimary hover:opacity-80 transition-all shrink-0"
           >
             <Menu size={24} />
           </button>
@@ -53,18 +53,17 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
             <div className="relative lg:hidden " ref={dropdownRef}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex flex-col items-start px-1 py-1 hover:bg-white/5 rounded-lg transition-all min-w-0 shrink-0"
+                className="flex items-center gap-2 px-2 py-1 hover:bg-white/5 rounded-lg transition-all min-w-0 shrink-0"
               >
-                <div className="flex items-center gap-1">
-                  <p className="text-[11px] sm:text-[12px] font-semibold text-white leading-tight whitespace-nowrap ">
+                <div className="w-7 h-7 rounded-full bg-brand-input-bg border border-brand-input-border flex items-center justify-center shrink-0">
+                  <User size={14} className="text-brand-textPrimary" />
+                </div>
+                <div className="flex flex-col items-start min-w-0">
+                  <p className="text-[11px] sm:text-[12px] font-semibold text-brand-textPrimary leading-tight whitespace-nowrap ">
                     {currentUser?.firstName} {currentUser?.lastName}
                   </p>
-                  <ChevronDown
-                    size={12}
-                    className={`text-white transition-transform duration-300 shrink-0 ${isMenuOpen ? 'rotate-180' : ''}`}
-                  />
+                  <p className="text-[9px] sm:text-[10px] text-brand-textSecondary leading-tight whitespace-nowrap">{currentUser?.email}</p>
                 </div>
-                <p className="text-[9px] sm:text-[10px] text-white/50 leading-tight whitespace-nowrap">{currentUser?.email}</p>
               </button>
 
               {/* Mobile-only Dropdown */}
@@ -103,27 +102,27 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
           <div className="theme-toggle-wrapper">
             <button
               onClick={() => theme === 'light' && toggleTheme()}
-              className={`p-1.5 rounded-full transition-all ${theme === 'dark' ? 'bg-[#04132B] text-white shadow-sm' : 'text-white/40'}`}
+              className={`p-1.5 rounded-full transition-all ${theme === 'dark' ? 'bg-brand-bg text-brand-textPrimary shadow-sm' : 'text-brand-textSecondary'}`}
             >
               <Moon size={18} />
             </button>
             <button
               onClick={() => theme === 'dark' && toggleTheme()}
-              className={`p-1.5 rounded-full transition-all ${theme === 'light' ? 'bg-white text-black shadow-sm' : 'text-white/40'}`}
+              className={`p-1.5 rounded-full transition-all ${theme === 'light' ? 'bg-white text-brand-primary shadow-sm' : 'text-brand-textSecondary'}`}
             >
               <Sun size={18} />
             </button>
           </div>
 
-          <div className="profile-section border-l border-[#1E293B] pl-6 h-full flex items-center">
+          <div className="profile-section border-l border-[#1E293B] pl-2 h-full flex items-center gap-3">
+            <div className=" flex items-center justify-center shrink-0 shadow-inner">
+              <CircleUser size={28} className="text-brand-textPrimary" />
+            </div>
             <div className="flex flex-col items-start">
-              <div className="flex items-center gap-2">
-                <p className="text-[14px] font-semibold text-[#FFFFFF]">
-                  {currentUser?.firstName} {currentUser?.lastName}
-                </p>
-                <ChevronDown size={16} className="text-[#FFFFFF]" />
-              </div>
-              <p className="text-[12px] text-[#9F9F9F]">{currentUser?.email}</p>
+              <p className="text-[14px] font-semibold text-brand-textPrimary">
+                {currentUser?.firstName} {currentUser?.lastName}
+              </p>
+
             </div>
           </div>
         </div>

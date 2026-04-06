@@ -17,6 +17,8 @@ import {
   Radio
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getCategory } from "../../../api/savedProducts";
 import BlueRittLogo from "../logo/BlueRittLogo";
 
 interface NavItemProps {
@@ -30,6 +32,7 @@ interface NavItemProps {
   onToggle?: () => void;
   isAnyMenuExpanded?: boolean;
   onClick?: () => void;
+  extraPaths?: string[];
 }
 
 const NavItem: React.FC<NavItemProps> = ({
@@ -42,13 +45,15 @@ const NavItem: React.FC<NavItemProps> = ({
   isExpanded,
   onToggle,
   isAnyMenuExpanded,
+  extraPaths,
+  onClick,
 }) => {
   const location = useLocation();
   const hasChildren = children && children.length > 0;
   // A parent is active if the current path matches child/parent path OR it is expanded
   const isParentActive = hasChildren
     ? children.some(child => location.pathname === child.to) || location.pathname === to || isExpanded
-    : location.pathname === to;
+    : location.pathname === to || (extraPaths && extraPaths.some((p: string) => location.pathname.startsWith(p)));
 
   if (hasChildren && !isCollapsed) {
     return (
@@ -91,10 +96,12 @@ const NavItem: React.FC<NavItemProps> = ({
   return (
     <NavLink
       to={to}
+      onClick={onClick}
       end
       className={({ isActive }) => {
         // If some other menu is expanded, this item should NOT be highlighted
-        const effectiveActive = isActive && !isAnyMenuExpanded;
+        const isExtraPathActive = extraPaths && extraPaths.some((p: string) => location.pathname.startsWith(p));
+        const effectiveActive = (isActive || isExtraPathActive) && !isAnyMenuExpanded;
         const activeClass = label === "SocialPulse" ? "socialpulse-active" : "sidebar-item-active";
         return effectiveActive ? `sidebar-item ${activeClass} group !outline-none focus:!ring-0` : "sidebar-item group !outline-none focus:!ring-0"
       }}
@@ -125,6 +132,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
   const { logoutUser } = useAuth();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+
+  // Fetch categories count for the badge
+  const { data: categoriesResponse } = useQuery({
+    queryKey: ["vault-categories"],
+    queryFn: getCategory,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache is fine for a badge
+  });
+
+  const categoriesCount = React.useMemo(() => {
+    return categoriesResponse?.data?.length || 0;
+  }, [categoriesResponse]);
 
   // Auto-close menu when navigating to a route not within that menu
   useEffect(() => {
@@ -193,7 +211,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
               ]}
             />
 
-            <NavItem icon={FolderOpen} label="Product Vault" to="/products" badge="24" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={FolderOpen} label="Product Vault" to="/products" extraPaths={["/calculator/product"]} badge={categoriesCount > 0 ? categoriesCount.toString() : ""} isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
           </nav>
 
           {/* Bottom Nav */}

@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastProvider } from './components/common/Toast/ToastContext'
+import { SignupProvider } from './context/SignupContext'
 import './assets/css/style.css'
 
 const queryClient = new QueryClient({
@@ -24,7 +25,9 @@ ReactDOM.createRoot(rootElement).render(
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ToastProvider>
-            <App />
+            <SignupProvider>
+              <App />
+            </SignupProvider>
           </ToastProvider>
         </AuthProvider>
       </QueryClientProvider>

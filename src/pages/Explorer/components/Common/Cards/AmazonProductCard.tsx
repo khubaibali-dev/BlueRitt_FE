@@ -80,32 +80,31 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-0.5
-              bg-white/5 px-2 py-1 rounded-full shrink-0 border border-white/5">
+              <div className="flex items-center gap-0.5 bg-brand-inputBg px-2 py-1 rounded-full shrink-0 border border-brand-border">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-slate-500"} />
+                  <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
                 ))}
-                <span className="text-[12px] font-bold text-white">{normalized.rating}</span>
+                <span className="text-[12px] font-bold text-brand-textPrimary">{normalized.rating}</span>
               </div>
             </div>
           </div>
           <div className="product-metrics-row-list">
             <div className="flex items-center gap-2.5">
-              <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><Box size={14} className="text-white" /></div>
+              <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><Box size={14} className="text-brand-primary dark:text-white" /></div>
               <div className="flex flex-col">
                 <span className="metric-label leading-none mb-1">ASIN</span>
                 <span className="metric-value leading-none">{normalized.asin}</span>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><DollarSign size={14} className="text-white" /></div>
+              <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><DollarSign size={14} className="text-brand-primary dark:text-white" /></div>
               <div className="flex flex-col">
                 <span className="metric-label leading-none mb-1">OFFERS</span>
                 <span className="metric-value leading-none">{normalized.offers} sellers</span>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><BarChart3 size={14} className="text-white" /></div>
+              <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><BarChart3 size={14} className="text-brand-primary dark:text-white" /></div>
               <div className="flex flex-col">
                 <span className="metric-label leading-none mb-1">MONTHLY SALES VOL</span>
                 <span className="metric-value leading-none">{normalized.salesVol}</span>
@@ -159,29 +158,29 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
               </div>
               {normalized.growth && <div className="trending-badge-standard"><TrendingUp size={12} /> {normalized.growth}</div>}
             </div>
-            <div className="flex items-center gap-2 bg-white/5 px-2 py-1 rounded-full shrink-0 border border-white/5">
+            <div className="flex items-center gap-2 bg-brand-inputBg px-2 py-1 rounded-full shrink-0 border border-brand-border">
               <div className="flex items-center gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={11} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-slate-400"} />
+                  <Star key={i} size={11} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
                 ))}
               </div>
-              <span className="text-[12px] font-bold text-white leading-none">{normalized.rating}</span>
+              <span className="text-[12px] font-bold text-brand-textPrimary leading-none">{normalized.rating}</span>
             </div>
           </div>
-          <div className="product-metrics-row-grid grid grid-cols-3 py-4 border-t border-white/5 mt-auto">
+          <div className="product-metrics-row-grid grid grid-cols-3 py-4 border-t border-brand-border mt-auto">
             <div className="flex flex-col items-center text-center">
-              <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><Box size={14} className="text-white" /></div>
+              <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><Box size={14} className="text-brand-primary dark:text-white" /></div>
               <span className="metric-label mb-0.5">ASIN</span>
               <span className="metric-value">{normalized.asin}</span>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><DollarSign size={14} className="text-white" /></div>
+              <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><DollarSign size={14} className="text-brand-primary dark:text-white" /></div>
               <span className="metric-label mb-0.5">OFFERS</span>
               <span className="metric-value">{normalized.offers} sellers</span>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><BarChart3 size={14} className="text-white" /></div>
-              <span className="metric-label mb-0.5">VOL</span>
+              <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><BarChart3 size={14} className="text-brand-primary dark:text-white" /></div>
+              <span className="metric-label mb-0.5">Monthly Sales Volume</span>
               <span className="metric-value">{normalized.salesVol}</span>
             </div>
           </div>
@@ -197,13 +196,13 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
   // Variant: SELECTED (Used in SourceLink panels and Profit Calculator)
   return (
     <div className="discovery-card-list flex-col !p-0 isolate">
-      <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2 w-full">
+      <div className="px-5 py-4 border-b border-brand-border flex items-center gap-2 w-full">
         <Box size={14} className="text-[#FF5900]" />
         <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected Product</span>
       </div>
-      <div className="p-4 sm:p-2 w-full">
+      <div className="p-4 sm:p-2 w-full text-brand-textPrimary">
         <div className="flex flex-col lg:flex-row gap-5 items-start">
-          <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-2xl mx-auto lg:mx-0 shrink-0 bg-[#081421]">
+          <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-2xl mx-auto lg:mx-0 shrink-0 bg-brand-bg">
             <img src={normalized.image} alt={normalized.title} className="w-full h-full object-cover" />
           </div>
           <div className={`flex-1 w-full flex flex-col ${isCalculator ? 'gap-3' : 'gap-4'}`}>
@@ -217,19 +216,19 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
             <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-start lg:justify-between">
               <div className="product-metrics-row-list !mt-0 !gap-x-4 !gap-y-3 flex-wrap">
                 <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-white" /></div>
+                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-brand-primary dark:text-white" /></div>
                   <div className="flex flex-col"><span className="metric-label leading-none mb-1">ASIN</span><span className="metric-value leading-none">{normalized.asin}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white"><TrendingUp size={15} /></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">VOL</span><span className="metric-value leading-none">{normalized.salesVol}</span></div>
+                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-brand-primary dark:text-white"><TrendingUp size={15} /></div>
+                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">Monthly Sales Volume</span><span className="metric-value leading-none">{normalized.salesVol}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-white font-bold text-[14px] leading-none">%</span></div>
+                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white font-bold text-[14px] leading-none">%</span></div>
                   <div className="flex flex-col"><span className="metric-label leading-none mb-1">OFFERS</span><span className="metric-value leading-none">{normalized.offers}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Truck size={15} className="text-white" /></div>
+                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Truck size={15} className="text-brand-primary dark:text-white" /></div>
                   <div className="flex flex-col"><span className="metric-label leading-none mb-1">DELIVERY</span><span className="metric-value leading-none">Free</span></div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -246,18 +245,18 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0.5">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-white/10"} />
+                        <Star key={i} size={12} fill={i < Math.floor(normalized.rating) ? "#FFC107" : "transparent"} className={i < Math.floor(normalized.rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
                       ))}
                     </div>
                     <span className="text-[12px] font-bold text-[#FFC107] leading-none">{normalized.rating}</span>
-                    <span className="text-[10px] text-[#FFFFFFB2] font-bold">({normalized.numRatings})</span>
+                    <span className="text-[10px] text-brand-textSecondary font-bold">({normalized.numRatings})</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className={`grid mt-4 gap-y-4 gap-x-8 px-2 pt-6 border-t border-white/5 ${isCalculator ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 md:flex md:flex-row items-stretch gap-2'}`}>
+        <div className={`grid mt-4 gap-y-4 gap-x-8 px-2 pt-6 border-t border-brand-border ${isCalculator ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 md:flex md:flex-row items-stretch gap-2'}`}>
           {[
             { label: "Seller Name", value: normalized.seller, flex: "flex-[1.6]" },
             { label: "Ships From", value: normalized.shipsFrom, flex: "flex-[1.6]" },
@@ -268,19 +267,19 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
           ].map((m, i) => (
             isCalculator ? (
               <div key={i} className="flex flex-col gap-1.5">
-                <span className="metric-label !text-slate-400 uppercase tracking-wider">{m.label}</span>
-                <span className="metric-value text-white/90">{m.value}</span>
+                <span className="metric-label !text-brand-textSecondary uppercase tracking-wider">{m.label}</span>
+                <span className="metric-value text-brand-textPrimary">{m.value}</span>
               </div>
             ) : (
-              <div key={i} className={`${m.flex} bg-[#081421]/60 py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[48px] shadow-inner hover:border-white/10 transition-colors`}>
-                <span className="text-[12px] text-[#FFFFFF] tracking-widest mb-1 opacity-60">{m.label}</span>
-                <span className="text-[11px] text-white font-bold leading-tight truncate">{m.value}</span>
+              <div key={i} className={`${m.flex} bg-brand-inputBg py-2.5 px-4 rounded-xl border border-brand-border flex flex-col justify-center min-h-[48px] shadow-inner hover:border-brand-primary/10 transition-colors`}>
+                <span className="text-[12px] text-brand-textSecondary tracking-widest mb-1 opacity-60">{m.label}</span>
+                <span className="text-[11px] text-brand-textPrimary font-bold leading-tight truncate">{m.value}</span>
               </div>
             )
           ))}
         </div>
         {(onCopyLink || onOpenProduct) && (
-          <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 w-full border-t border-white/5 pt-5">
+          <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 w-full border-t border-brand-border pt-5">
             {onCopyLink && <button onClick={onCopyLink} className="flex-1 sm:flex-none btn-product-details !px-8 !h-[42px] !font-bold">{isCopied ? "Copied" : "Copy Seller Link"}</button>}
             {onOpenProduct && <button onClick={onOpenProduct} className="flex-1 sm:flex-none btn-discover-supplier !px-10 !h-[42px] !font-bold">Open Product</button>}
           </div>

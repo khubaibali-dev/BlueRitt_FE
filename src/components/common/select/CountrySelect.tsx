@@ -1,21 +1,38 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { countries, Country } from "../../../utils/countries";
+import { countries as countryNames } from "../../../utils/Country";
 
-export { countries, type Country };
+export interface CountryDisplay {
+  name: string;
+  dialCode: string;
+  code: string;
+}
+
+// Global export of all displayable countries
+import { COUNTRY_OPTIONS } from "../../../utils/Country";
+
+export const countries: CountryDisplay[] = countryNames.map(c => {
+  // Try to find a matching code from COUNTRY_OPTIONS (Amazon marketplaces)
+  const amazonOption = COUNTRY_OPTIONS.find(opt => opt.label === c.name);
+  return {
+    name: c.name,
+    dialCode: c.dialCode,
+    code: amazonOption ? amazonOption.value : "US" // Default to US if not an Amazon marketplace
+  };
+});
 
 interface CountrySelectProps {
   label?: string;
   value: string;
-  onChange: (country: Country) => void;
+  onChange: (country: CountryDisplay) => void;
   error?: string;
   direction?: "up" | "down";
 }
 
-const CountrySelect: React.FC<CountrySelectProps> = ({ 
-  label, 
-  value, 
-  onChange, 
+const CountrySelect: React.FC<CountrySelectProps> = ({
+  label,
+  value,
+  onChange,
   error,
   direction = "down"
 }) => {
@@ -53,7 +70,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
     const handleClickOutside = (event: MouseEvent) => {
       const isOutsideTrigger = dropdownRef.current && !dropdownRef.current.contains(event.target as Node);
       const isOutsidePortal = portalRef.current && !portalRef.current.contains(event.target as Node);
-      
+
       if (isOpen && isOutsideTrigger && isOutsidePortal) {
         setIsOpen(false);
       }
@@ -65,7 +82,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
   return (
     <div className="flex flex-col gap-[6px]" ref={dropdownRef}>
       {label && (
-        <label className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary">
+        <label className="text-[12px] font-normal leading-[16px] tracking-[0px] text-white">
           {label}
         </label>
       )}
@@ -76,24 +93,19 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full flex items-center justify-between gap-3 px-4 py-[12px] rounded-lg
+            w-full flex items-center justify-between gap-3 px-4 py-[11px] rounded-lg
             bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
             ${error ? "border-red-500" : "border-brand-inputBorder"}
           `}
         >
-          <div className="flex items-center gap-3 overflow-hidden">
-            <img
-              src={`https://flagcdn.com/w40/${selectedCountry.code.toLowerCase()}.png`}
-              alt={selectedCountry.name}
-              className="w-5 h-auto rounded-sm flex-shrink-0"
-            />
+          <div className="flex items-center gap-3 overflow-hidden text-left">
             <span className="text-[14px] text-brand-textPrimary font-normal font-sans tracking-[0px] whitespace-nowrap overflow-hidden text-ellipsis">
               {selectedCountry.name}
             </span>
           </div>
           <svg
-            className={`w-[24px] h-[24px] text-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            className={`w-[20px] h-[20px] text-brand-textPrimary transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"
@@ -103,7 +115,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
         </button>
 
         {isOpen && ReactDOM.createPortal(
-          <div 
+          <div
             ref={portalRef}
             className={`
               absolute z-[9999] bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar
@@ -117,7 +129,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           >
             {countries.map((country) => (
               <button
-                key={country.code}
+                key={country.name}
                 type="button"
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#15273F] transition-colors text-left"
                 onClick={() => {
@@ -125,11 +137,6 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
                   setIsOpen(false);
                 }}
               >
-                <img
-                  src={`https://flagcdn.com/w40/${country.code.toLowerCase()}.png`}
-                  alt={country.name}
-                  className="w-5 h-auto rounded-sm"
-                />
                 <span className="text-[14px] text-brand-textPrimary">{country.name}</span>
               </button>
             ))}

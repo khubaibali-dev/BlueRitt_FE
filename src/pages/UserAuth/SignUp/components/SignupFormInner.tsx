@@ -2,12 +2,12 @@
 import React from "react";
 import useSignupForm from "../../../../hooks/useSignupForm";
 import InputField from "../../../../components/common/input/InputField";
-import CountrySelect, { countries, Country } from "../../../../components/common/select/CountrySelect";
+import CountrySelect, { countries, CountryDisplay } from "../../../../components/common/select/CountrySelect";
 import ReCaptchaWidget from "../../components/ReCaptchaWidget";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 interface SignupFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (data: any, token: string) => void;
 }
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
@@ -23,7 +23,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     handleSubmit,
   } = useSignupForm({ onSuccess });
 
-  const handleCountryChange = (country: { name: string, dialCode: string }) => {
+  const handleCountryChange = (country: CountryDisplay) => {
     handleChange("country")({
       target: { value: country.name, type: "text" }
     } as React.ChangeEvent<HTMLInputElement>);
@@ -109,7 +109,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
           id="whatsapp"
           label="Whatsapp(Optional)"
           placeholder="xxx xxxx xxx"
-          prefix={countries.find((c: Country) => c.name === fields.country)?.dialCode}
+          prefix={countries.find((c: CountryDisplay) => c.name === fields.country)?.dialCode}
           value={fields.whatsapp}
           onChange={handleChange("whatsapp")}
           error={errors.whatsapp}

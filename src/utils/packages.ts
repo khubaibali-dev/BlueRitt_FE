@@ -19,6 +19,7 @@ export type PlanPackage = {
   name: string;
   isPopular?: boolean;
   tagline: string;
+  description: string;
   monthlyPrice: number;
   annualPrice: number;
   quarterlyPrice: number;

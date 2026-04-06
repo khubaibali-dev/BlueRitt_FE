@@ -11,7 +11,7 @@ const stepData = [
     title: "Welcome to BlueRitt Explorer",
     description: (
       <>
-        Start with <span className="font-medium text-white">IntelliScan</span>, BlueRitt&apos;s AI-powered discovery engine. Search products using ASIN, product name, or category to identify winning and high-margin opportunities based on real market insights.
+        Start with <span className="font-semibold text-brand-textPrimary">IntelliScan</span>, BlueRitt&apos;s AI-powered discovery engine. Search products using ASIN, product name, or category to identify winning and high-margin opportunities based on real market insights.
       </>
     ),
   },
@@ -19,7 +19,7 @@ const stepData = [
     title: "Discover Suppliers with SourceLink",
     description: (
       <>
-        Use <span className="font-medium text-white">SourceLink</span> to discover verified suppliers for your selected product. Our AI-powered matching system evaluates supplier data and provides a Match Score to help you identify the most suitable sourcing options.
+        Use <span className="font-semibold text-brand-textPrimary">SourceLink</span> to discover verified suppliers for your selected product. Our AI-powered matching system evaluates supplier data and provides a Match Score to help you identify the most suitable sourcing options.
       </>
     ),
   },
@@ -27,7 +27,7 @@ const stepData = [
     title: "Calculate Profit with MarginMax",
     description: (
       <>
-        Compare supplier costs with your selling price using <span className="font-medium text-white">MarginMax</span>. This tool calculates your estimated profit and provides a clear breakdown of fees and expenses.
+        Compare supplier costs with your selling price using <span className="font-semibold text-brand-textPrimary">MarginMax</span>. This tool calculates your estimated profit and provides a clear breakdown of fees and expenses.
       </>
     ),
   },
@@ -35,7 +35,7 @@ const stepData = [
     title: "Save Opportunities in Product Vault",
     description: (
       <>
-        Store promising products in <span className="font-medium text-white">Product Vault</span> to keep your research organized. Easily access, review, and manage the opportunities you want to explore further.
+        Store promising products in <span className="font-semibold text-brand-textPrimary">Product Vault</span> to keep your research organized. Easily access, review, and manage the opportunities you want to explore further.
       </>
     ),
   },

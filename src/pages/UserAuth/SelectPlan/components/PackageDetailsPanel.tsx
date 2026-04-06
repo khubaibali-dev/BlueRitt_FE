@@ -1,6 +1,6 @@
 import React from "react";
 import { Check } from "lucide-react";
-import { PlanPackage } from "../data/packages";
+import { PlanPackage } from "../../../../utils/packages";
 
 interface PackageDetailsPanelProps {
   packageData: PlanPackage;
@@ -14,7 +14,7 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
   packageType
 }) => {
   const isPrepaid = packageType === "Prepaid";
-  
+
   let price = 0;
   let cycleText = "";
 
@@ -85,8 +85,8 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
           {/* Header / Price section */}
           <div className="pkg-details-header">
             <h3 className="pkg-details-name text-[#2563EB] dark:text-[#60A5FA] font-bold text-[24px]">
-              {isPrepaid && !packageData.name.toLowerCase().includes("prepaid") 
-                ? `${packageData.name} Prepaid` 
+              {isPrepaid && !packageData.name.toLowerCase().includes("prepaid")
+                ? `${packageData.name} Prepaid`
                 : packageData.name
               }
             </h3>
@@ -98,11 +98,8 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
                 {cycleText}
               </span>
             </div>
-            <p className="pkg-details-description mt-4 text-[15px] text-brand-textSecondary dark:text-[#7A9ABF]/80 leading-relaxed">
-              {isPrepaid
-                ? packageData.prepaidTagline
-                : (packageData.details || packageData.tagline)
-              }
+            <p className="pkg-details-description mt-4 text-[13px] text-brand-textSecondary dark:text-[#7A9ABF]/80 leading-relaxed">
+              {packageData.description}
             </p>
           </div>
 
@@ -128,8 +125,8 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
               </div>
             ) : (
               <>
-                {renderFeatureSection("Global Features", packageData.features.globalFeatures)}
-                {renderFeatureSection("BlueRitt Explorer", packageData.features.bluerittExplorer)}
+                {/* {renderFeatureSection("Global Features", packageData.features.globalFeatures)} */}
+                {renderFeatureSection("Feature Highlights", packageData.features.bluerittExplorer)}
                 {renderFeatureSection("MarginMax Calculator", packageData.features.marginMaxCalculator)}
                 {renderFeatureSection("SocialPulse", packageData.features.socialPulse)}
               </>
@@ -137,15 +134,15 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
           </div>
         </div>
 
-        {isPrepaid && (
-          <div className="mt-8 pt-4 px-10 py-2">
-            <p className="text-[14px] text-brand-textSecondary dark:text-[#7A9ABF]/60 leading-relaxed italic">
-              <div className="border-t border-brand-border/10 py-2 opacity-30" />
-              Get started with the {packageData.name} Prepaid plan today and unlock all these amazing features.
-            </p>
-          </div>
-        )}
-
+        <div className="mt-2 pt-1 px-10 py-2">
+          <div className="border-t border-brand-border/10 py-2 opacity-30" />
+          <p className="text-[14px] text-brand-textSecondary dark:text-[#7A9ABF]/60 leading-relaxed italic">
+            {isPrepaid
+              ? `Get started with the ${packageData.name} plan today and unlock all these amazing features.`
+              : `Get started with the ${packageData.name} plan today and unlock all these amazing features`
+            }
+          </p>
+        </div>
       </div>
     </div>
   );

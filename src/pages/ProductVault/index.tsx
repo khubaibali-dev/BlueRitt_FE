@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Plus, MoreVertical, Trash2, Eye, Calendar, Folder } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CollectionDetails from "./components/CollectionDetails";
 import { getCategory, deleteCategory } from "../../api/savedProducts";
-import { toast } from "react-toastify";
+import ConfirmationModal from "../../components/common/Modals/ConfirmationModal";
+import { useToast } from "../../components/common/Toast/ToastContext";
 
 interface CategoryCardProps {
   id: string;
@@ -111,7 +113,9 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt,
 
 const ProductVault: React.FC = () => {
   const queryClient = useQueryClient();
-  const [selectedCollection, setSelectedCollection] = useState<{ id: string, name: string } | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { success, error: toastError } = useToast();
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string, name: string }>({ isOpen: false, id: "", name: "" });
 
   // UseQuery for Categories
   const { data: categoriesResponse, isLoading } = useQuery({
@@ -121,34 +125,62 @@ const ProductVault: React.FC = () => {
 
   const categories = categoriesResponse?.data || [];
 
+  // Derive selected collection from URL (Single Source of Truth)
+  const collectionIdParam = searchParams.get("collectionId");
+  const selectedCollection = useMemo(() => {
+    if (!collectionIdParam || categories.length === 0) return null;
+    const col = categories.find((c: any) => c.id.toString() === collectionIdParam);
+    return col ? { id: col.id.toString(), name: col.name } : null;
+  }, [collectionIdParam, categories]);
+
+  // Update URL when selection changes
+  const handleSetSelectedCollection = (id: string | null) => {
+    if (id) {
+      setSearchParams({ collectionId: id });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   // UseMutation for Deletion
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteCategory({ saveID: id }),
     onSuccess: () => {
-      toast.success("Collection deleted successfully");
+      success("Collection deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["vault-categories"] });
+      setDeleteModal({ isOpen: false, id: "", name: "" });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Delete error:", error);
-      toast.error("Failed to delete collection");
+      toastError("Failed to delete collection");
     }
   });
 
-  const handleDeleteCategory = async (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete the "${name}" collection? All products inside will also be removed.`)) {
-      deleteMutation.mutate(id);
-    }
+  const handleDeleteCategory = (id: string, name: string) => {
+    setDeleteModal({ isOpen: true, id, name });
   };
 
   return (
     <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen">
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={() => deleteMutation.mutate(deleteModal.id)}
+        isLoading={deleteMutation.isPending}
+        title="Delete Collection?"
+        message={`Are you sure you want to delete "${deleteModal.name}"? This action cannot be undone and all product records inside will be permanently removed.`}
+        confirmText="Yes, Delete"
+        type="danger"
+      />
+
       <div className="relative z-10 p-6 sm:p-10">
         {selectedCollection ? (
           <div className="animate-in fade-in duration-500">
             <CollectionDetails
               collectionId={selectedCollection.id}
               collectionName={selectedCollection.name}
-              onBack={() => setSelectedCollection(null)}
+              onBack={() => handleSetSelectedCollection(null)}
               onProductClick={() => {}} // No longer needed as we navigate via URL
             />
           </div>
@@ -173,7 +205,7 @@ const ProductVault: React.FC = () => {
                     name={col.name}
                     image={col.image}
                     createdAt={col.created_at}
-                    onClick={() => setSelectedCollection({ id: col.id, name: col.name })}
+                    onClick={() => handleSetSelectedCollection(col.id.toString())}
                     onDelete={handleDeleteCategory}
                   />
                 ))

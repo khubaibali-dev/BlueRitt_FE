@@ -21,7 +21,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#04132B] text-white">
+    <div className="flex min-h-screen bg-brand-bg text-brand-textPrimary transition-colors duration-300">
       {/* Sidebar - Fixed Width with Collapsed Support */}
       <Sidebar
         isOpen={isSidebarOpen}

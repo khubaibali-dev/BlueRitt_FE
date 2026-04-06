@@ -1,26 +1,41 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signup } from "../../../api/auth";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 import PrimaryButton from "../../../components/common/button/PrimaryButton";
 import PackageSelectPanel from "./components/PackageSelectPanel";
 import PackageDetailsPanel from "./components/PackageDetailsPanel";
-import { usePackages } from "./hooks/usePackages";
-import { PlanPackage } from "./data/packages";
+import { usePackages } from "../../../hooks/usePackages";
+import { PlanPackage } from "../../../utils/packages";
+import { useSignupData } from "../../../context/SignupContext";
 
 import starImg from "../../../assets/images/star.png";
 
 const SelectPlanPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { fields, captchaToken } = useSignupData();
+  const { success, error: showError } = useToast();
+
   // State
-  const { subscriptionPackages, prepaidPackages, isLoading } = usePackages();
   const [packageType, setPackageType] = React.useState<"Subscription" | "Prepaid">("Subscription");
+  const { subscriptionPackages, prepaidPackages, isLoading } = usePackages(packageType);
   const [billingCycle, setBillingCycle] = React.useState<"Monthly" | "Annually" | "Quarterly">("Monthly");
   const [selectedPackageId, setSelectedPackageId] = React.useState<string>("");
 
   const packagesList = packageType === "Subscription" ? subscriptionPackages : prepaidPackages;
   const selectedPackage = packagesList.find((p: PlanPackage) => p.id === selectedPackageId) || packagesList[0];
 
+  // ✅ Security Check: Redirect if no user data in context
+  React.useEffect(() => {
+    if (!fields.email) {
+      navigate("/signup");
+    }
+  }, [fields.email, navigate]);
+
   // ✅ Handle Default Selection on Tab Switch
   React.useEffect(() => {
     if (!isLoading && packagesList.length > 0) {
-      // Look for a package that contains 'basic' in its ID or name
       const basicPkg = packagesList.find((p: any) =>
         p.id.toLowerCase().includes('basic') ||
         p.name.toLowerCase().includes('basic')
@@ -28,17 +43,47 @@ const SelectPlanPage: React.FC = () => {
 
       setSelectedPackageId(basicPkg.id);
     }
-  }, [packageType, isLoading]); // Only re-run when switching tabs or when data first loads
+  }, [packageType, isLoading]);
+
+  // ✅ Mutation Logic (Matching blueritt-fe-main pattern)
+  const mutation = useMutation({
+    mutationFn: (data: any) => signup(data),
+    onSuccess: () => {
+      success("Verification Email Sent. Please check your inbox.");
+      navigate("/login");
+    },
+    onError: (mutationError: any) => {
+      const errorData = mutationError.response?.data;
+      if (errorData?.detail || errorData?.message) {
+        showError(errorData.detail || errorData.message);
+      } else if (errorData?.email?.[0]) {
+        showError(errorData.email[0]);
+      } else {
+        showError("Signup failed. Please check your information and try again.");
+      }
+      console.error("Signup error:", errorData);
+    }
+  });
 
   const handleCreateAccount = () => {
-    // Finalize signup logic here
-    console.log("Creating account with:", {
-      packageType,
-      billingCycle,
-      selectedPackageId
+    if (!selectedPackage) return;
+
+    mutation.mutate({
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+      email: fields.email,
+      country: fields.country,
+      packages: selectedPackageId,
+      phone: fields.whatsapp || "",
+      password: fields.password,
+      confirmPassword: fields.confirmPassword,
+      plan: selectedPackage.id, // Using slug/id
+      billingType: billingCycle.toLowerCase(),
+      recaptchaToken: captchaToken || ""
     });
-    // navigate to dashboard or confirmation
   };
+
+  if (!fields.email) return null;
 
   return (
     <div className="w-full max-w-[900px] mx-auto flex flex-col items-center gap-6 pb-12">
@@ -80,8 +125,11 @@ const SelectPlanPage: React.FC = () => {
                 onSelectPackageType={setPackageType}
               />
               <div className="w-full max-w-[250px] justify-center">
-                <PrimaryButton onClick={handleCreateAccount}>
-                  Create Account &rarr;
+                <PrimaryButton
+                  onClick={handleCreateAccount}
+                  loading={mutation.isPending}
+                >
+                  {mutation.isPending ? "Creating Account..." : "Create Account \u2192"}
                 </PrimaryButton>
               </div>
             </div>
@@ -99,9 +147,6 @@ const SelectPlanPage: React.FC = () => {
           </>
         )}
       </div>
-
-
-
     </div>
   );
 };

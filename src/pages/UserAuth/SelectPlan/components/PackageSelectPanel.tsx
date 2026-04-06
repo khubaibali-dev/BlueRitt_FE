@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
 import { ChevronDown, Calendar, Activity, TrendingUp, Award } from "lucide-react";
-import { PlanPackage } from "../data/packages";
+import { PlanPackage } from "../../../../utils/packages";
 
 interface PackageSelectPanelProps {
   packages: PlanPackage[];
@@ -40,8 +39,8 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
             <button
               onClick={() => onSelectPackageType("Subscription")}
               className={`flex-1 text-[13px] font-medium py-2 rounded-[10px] transition-all duration-300 ${packageType === "Subscription"
-                  ? "pkg-tab-active text-white"
-                  : "text-brand-textSecondary dark:text-[#7A9ABF] hover:text-brand-textPrimary dark:hover:text-white"
+                ? "pkg-tab-active text-white"
+                : "text-brand-textSecondary dark:text-[#7A9ABF] hover:text-brand-textPrimary dark:hover:text-white"
                 }`}
             >
               Subscription Packages
@@ -49,8 +48,8 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
             <button
               onClick={() => onSelectPackageType("Prepaid")}
               className={`flex-1 text-[13px] font-medium py-2 rounded-[10px] transition-all duration-300 ${packageType === "Prepaid"
-                  ? "pkg-tab-active text-white shadow-md"
-                  : "text-brand-textSecondary dark:text-[#7A9ABF] hover:text-brand-textPrimary dark:hover:text-white"
+                ? "pkg-tab-active text-white shadow-md"
+                : "text-brand-textSecondary dark:text-[#7A9ABF] hover:text-brand-textPrimary dark:hover:text-white"
                 }`}
             >
               Prepaid Packages
@@ -112,8 +111,8 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
                   key={pkg.id}
                   onClick={() => onSelectPackage(pkg.id)}
                   className={`pkg-option-border w-full text-left rounded-[12px] p-4 flex items-center gap-4 transition-all duration-200 ${isSelected
-                      ? "pkg-option-selected bg-brand-card shadow-[0_0_15px_rgba(59,130,246,0.2)]"
-                      : "bg-brand-card hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+                    ? "pkg-option-selected bg-brand-card shadow-[0_0_15px_rgba(59,130,246,0.2)]"
+                    : "bg-brand-card hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]"
                     }`}
                 >
                   {/* Icon */}
@@ -125,8 +124,8 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-[15px] text-brand-textPrimary dark:text-white tracking-wide">
-                        {packageType === "Prepaid" && !pkg.name.toLowerCase().includes("prepaid") 
-                          ? `${pkg.name} Prepaid` 
+                        {packageType === "Prepaid" && !pkg.name.toLowerCase().includes("prepaid")
+                          ? `${pkg.name} Prepaid`
                           : pkg.name
                         }
                       </span>
@@ -137,7 +136,7 @@ const PackageSelectPanel: React.FC<PackageSelectPanelProps> = ({
                       )}
                     </div>
                     <p className="text-[12px] text-brand-textSecondary dark:text-[#7A9ABF] leading-tight">
-                      {packageType === "Prepaid" 
+                      {packageType === "Prepaid"
                         ? (pkg.prepaidTagline || pkg.tagline)
                         : pkg.tagline
                       }

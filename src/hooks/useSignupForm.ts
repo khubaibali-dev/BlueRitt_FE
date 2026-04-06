@@ -1,5 +1,6 @@
 // src/hooks/useSignupForm.ts
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useToast } from "../components/common/Toast/ToastContext";
 
 interface SignupFields {
   firstName: string;
@@ -38,25 +39,19 @@ const validate = (fields: SignupFields): SignupErrors => {
 };
 
 interface SignupFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (data: SignupFields, token: string) => void;
 }
 
+import { useSignupData } from "../context/SignupContext";
+
 const useSignupForm = (props?: SignupFormProps) => {
-  const [fields, setFields] = useState<SignupFields>({ 
-    firstName: "",
-    lastName: "",
-    email: "", 
-    country: "Pakistan",
-    whatsapp: "",
-    password: "",
-    confirmPassword: "",
-    termsAccepted: false
-  });
+  const { fields, setFields, captchaToken, setCaptchaToken } = useSignupData();
+  const { error: showToastError } = useToast();
   const [errors, setErrors] = useState<SignupErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+  
   const handleChange = (field: keyof SignupFields) => (
     e: ChangeEvent<HTMLInputElement>
   ) => {
@@ -65,14 +60,8 @@ const useSignupForm = (props?: SignupFormProps) => {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  const handleCaptchaVerify = (tokenOrBool: string | boolean | null) => {
-    if (typeof tokenOrBool === "string" && tokenOrBool) {
-      setCaptchaVerified(true);
-    } else if (typeof tokenOrBool === "boolean") {
-      setCaptchaVerified(tokenOrBool);
-    } else {
-      setCaptchaVerified(false);
-    }
+  const handleCaptchaVerify = (token: string | null) => {
+    setCaptchaToken(token);
   };
 
   const togglePassword = () => setShowPassword((prev) => !prev);
@@ -85,16 +74,16 @@ const useSignupForm = (props?: SignupFormProps) => {
       setErrors(validationErrors);
       return;
     }
-    if (!captchaVerified) {
-      alert("Please verify you are not a robot.");
+    if (!captchaToken) {
+      showToastError("Please verify you are not a robot.");
       return;
     }
     setLoading(true);
-    await new Promise((res) => setTimeout(res, 1500));
+    await new Promise((res) => setTimeout(res, 800));
     setLoading(false);
     
     if (props?.onSuccess) {
-      props.onSuccess();
+      props.onSuccess(fields, captchaToken);
     }
   };
 
@@ -104,7 +93,7 @@ const useSignupForm = (props?: SignupFormProps) => {
     showPassword,
     showConfirmPassword,
     loading,
-    captchaVerified,
+    captchaVerified: !!captchaToken,
     setCaptchaVerified: handleCaptchaVerify,
     handleChange,
     togglePassword,

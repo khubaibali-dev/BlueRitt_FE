@@ -2,12 +2,13 @@ import React, { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, ShoppingBag, Info, ExternalLink, Trash2
+  ArrowLeft, ShoppingBag, ExternalLink, Trash2
 } from "lucide-react";
 import { getSavedCategoriesDetail, deleteSavedProducts } from "../../../api/savedProducts";
+import ConfirmationModal from "../../../components/common/Modals/ConfirmationModal";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProductCard";
 import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
-import { toast } from "react-toastify";
 import ResearchRowSkeleton from "../../../components/common/Skeletons/ResearchRowSkeleton";
 import VaultAlibabaCard from "./VaultAlibabaCard";
 
@@ -219,11 +220,7 @@ const ResearchRow = React.memo<{
           View Details
         </button>
         <button
-          onClick={() => {
-            if (window.confirm("Are you sure you want to delete this record?")) {
-              onDelete(product.id);
-            }
-          }}
+          onClick={() => onDelete(product.id)}
           disabled={isDeleting}
           className="flex items-center gap-2 text-[13px] font-bold text-red-500 hover:text-red-400 underline underline-offset-4 transition-colors disabled:opacity-50 disabled:no-underline"
         >
@@ -235,8 +232,10 @@ const ResearchRow = React.memo<{
   );
 });
 
-const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, collectionName, onBack, onProductClick }) => {
+const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, collectionName, onBack }) => {
   const queryClient = useQueryClient();
+  const { success, error: toastError } = useToast();
+  const [deleteModal, setDeleteModal] = React.useState<{ isOpen: boolean, id: string, name: string }>({ isOpen: false, id: "", name: "" });
 
   // UseQuery for Collection Details (products)
   const { data: collectionResponse, isLoading } = useQuery({
@@ -252,10 +251,11 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
     mutationFn: (id: string) => deleteSavedProducts({ saveID: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["collection-details", collectionId] });
-      toast.success("Record deleted successfully");
+      success("Record deleted successfully");
+      setDeleteModal({ isOpen: false, id: "", name: "" });
     },
     onError: () => {
-      toast.error("Failed to delete record");
+      toastError("Failed to delete record");
     }
   });
 
@@ -311,7 +311,11 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
             <ResearchRow
               key={product.id || idx}
               product={product}
-              onDelete={(id) => deleteMutation.mutate(id)}
+              onDelete={(id) => {
+                const amazonData = product.amazon_product?.data || product.amazon_product;
+                const name = amazonData?.product_title || amazonData?.title || product.name || "this record";
+                setDeleteModal({ isOpen: true, id, name });
+              }}
               isDeleting={deleteMutation.isPending && deleteMutation.variables === product.id}
             />
           ))}
@@ -322,6 +326,17 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
 
   return (
     <div className="flex flex-col animate-in fade-in duration-500">
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={() => deleteMutation.mutate(deleteModal.id)}
+        isLoading={deleteMutation.isPending}
+        title="Delete Record?"
+        message={`Are you sure you want to delete "${deleteModal.name}" from your vault? This action cannot be undone.`}
+        confirmText="Yes, Delete"
+        type="danger"
+      />
       {/* Detail Header */}
       <div className="flex flex-col sm:flex-row items-baseline justify-between gap-4 mb-10">
         <div className="flex flex-col gap-1">

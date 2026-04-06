@@ -1,5 +1,6 @@
 import React from "react";
 import badgeImg from "../../../../assets/images/Badge.png";
+import explorerLoading from "../../../../assets/images/ExplorerLoading.png";
 import aiIcon from "../../../../assets/images/Icon.png";
 import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
 
@@ -15,14 +16,19 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ isDetailed = false })
         <img
           src={badgeImg}
           alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'fill', display: 'block' }}
+          className="w-full h-full object-fill hidden dark:block"
+        />
+        <img
+          src={explorerLoading}
+          alt=""
+          className="w-full h-full object-fill block dark:hidden"
         />
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center space-y-12 w-full max-w-2xl px-6">
         {!isDetailed ? (
           <div className="space-y-4">
-            <h2 className="text-[28px] sm:text-[32px] text-white tracking-tight font-semibold italic leading-snug">
+            <h2 className="text-[28px] sm:text-[32px] text-brand-textPrimary tracking-tight font-semibold italic leading-snug">
               Analyzing your search with AI...
             </h2>
           </div>
@@ -34,15 +40,14 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ isDetailed = false })
         )}
 
         {/* Scanning Trends Pill */}
-        <button
-          // onClick={onCancel}
-          className="w-fit bg-blur text-white px-8 py-3 !rounded-full text-xs font-semibold figma-pill-border transition-all tracking-[0.2em] relative flex items-center gap-3 hover:bg-white/5 active:scale-95"
+        <div
+          className="w-fit bg-brand-inputBg text-brand-textPrimary px-8 py-3 !rounded-full text-xs font-semibold shadow-xl transition-all tracking-[0.2em] relative flex items-center gap-3 active:scale-95 border border-brand-border"
         >
           <img src={aiIcon} alt="" className="w-5 h-5 object-contain animate-spin duration-[4000ms]" />
-          <span className="text-white text-[14px] font-medium tracking-wide">
+          <span className="text-[14px] font-medium tracking-wide">
             Scanning trends....
           </span>
-        </button>
+        </div>
       </div>
     </div>
   );

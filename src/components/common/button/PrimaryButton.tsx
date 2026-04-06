@@ -39,7 +39,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
       {loading ? (
         <span className="flex items-center justify-center gap-2">
           <svg
-            className="w-4 h-4 animate-spin"
+            className="w-4 h-4 animate-spin text-white"
             viewBox="0 0 24 24"
             fill="none"
             aria-hidden="true"
@@ -58,7 +58,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
             />
           </svg>
-          Logging in...
+          {children}
         </span>
       ) : (
         children

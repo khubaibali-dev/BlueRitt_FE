@@ -18,6 +18,9 @@ module.exports = {
           textSecondary: "var(--brand-text-secondary)",
           inputBg: "var(--brand-input-bg)",
           inputBorder: "var(--brand-input-border)",
+          hover: "var(--brand-hover)",
+          scrollbarThumb: "var(--brand-scrollbar-thumb)",
+          scrollbarThumbHover: "var(--brand-scrollbar-thumb-hover)",
         },
       },
       backgroundImage: {

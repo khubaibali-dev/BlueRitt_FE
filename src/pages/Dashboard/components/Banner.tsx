@@ -7,6 +7,7 @@ import FilterDropdown from "../../../components/common/select/FilterDropdown";
 import FilterDrawer, { FilterState } from "../../Explorer/components/FilterDrawer/FilterDrawer";
 import { COUNTRY_OPTIONS } from "../../../utils/Country";
 import { PRODUCT_FILTER_OPTIONS } from "../../../utils/SearchOptions";
+import shadowBgLight from "../../../assets/images/Dashboard-light.png";
 
 const Banner = () => {
   const [filterType, setFilterType] = useState(PRODUCT_FILTER_OPTIONS[0]);
@@ -34,7 +35,8 @@ const Banner = () => {
     <section className="dashboard-banner-container relative isolate rounded-t-[32px]">
       {/* Background Image Layer with Bottom Fade */}
       <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
-        <img src={shadowBg} alt="" className="dashboard-banner-image" />
+        <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
+        <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
         <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
       </div>
 
@@ -45,7 +47,8 @@ const Banner = () => {
 
       <h2 className="banner-heading-text">
         Find Your Next Winning Product
-        <span className="page-header-subtitle mt-2 sm:mt-1">with IntelliScan</span>
+        <br />
+        <span className="banner-heading-text mt-2 sm:mt-1">with IntelliScan</span>
       </h2>
 
       {/* Filter Row */}
@@ -70,7 +73,7 @@ const Banner = () => {
           className="dashboard-filter-btn"
           onClick={() => setIsFilterOpen(true)}
         >
-          Filters <SlidersHorizontal size={18} className="text-white" />
+          Filters <SlidersHorizontal size={18} />
         </button>
       </div>
 

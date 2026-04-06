@@ -6,6 +6,7 @@ import {
   Box, Activity, ArrowLeft
 } from "lucide-react";
 import { getSavedProductsDetail } from "../../../api/savedProducts";
+import AnalysisSkeleton from "../../../components/common/Skeletons/AnalysisSkeleton";
 import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProductCard";
 import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import ProductProfitGauges from "./ProductProfitGauges";
@@ -58,13 +59,13 @@ const ProductAnalysis: React.FC = () => {
       price: finalPrice,
       oldPrice: data.product_original_price?.toString().replace("$", "") || finalPrice,
       asin: data.asin || "N/A",
-      salesVol: data.sales_volume || "800+ bought in past month",
-      offers: data.product_num_offers?.toString() || "3",
-      seller: data.product_seller_name || "Amazon.com",
-      shipsFrom: data.ships_from || "Amazon",
-      country: data.seller_country || "US",
+      salesVol: data.sales_volume || "",
+      offers: data.product_num_offers?.toString() || "",
+      seller: data.product_seller_name || "",
+      shipsFrom: data.ships_from || "",
+      country: data.seller_country || "",
       rating: parseFloat(data.product_star_rating || "4.5"),
-      numRatings: data.product_num_ratings || "11,914",
+      numRatings: data.product_num_ratings || "",
       dimensions: data.product_information?.["Product Dimensions"] || "N/A",
       weight: data.product_information?.["Item Weight"] || "0.06 Pounds",
       tags: tags.length > 0 ? tags : (data.tags || [])
@@ -152,12 +153,7 @@ const ProductAnalysis: React.FC = () => {
   }, [product]);
 
   if (isFetchingProduct) {
-    return (
-      <div className="min-h-[500px] flex flex-col items-center justify-center text-blue-400">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-[14px] font-semibold tracking-wide">Fetching Analysis Data...</p>
-      </div>
-    );
+    return <AnalysisSkeleton />;
   }
 
   if (!product) {
@@ -198,8 +194,18 @@ const ProductAnalysis: React.FC = () => {
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
-              onClick={() => navigate(-1)}
-              className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em]">
+              onClick={() => {
+                const rawCat = product?.category || product?.category_id;
+                const catId = typeof rawCat === 'object' ? rawCat?.id : rawCat;
+                
+                if (catId) {
+                  navigate(`/products?collectionId=${catId}`);
+                } else {
+                  navigate("/products");
+                }
+              }}
+              className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em] flex items-center justify-center gap-2">
+              <ArrowLeft size={16} />
               Back
             </button>
           </div>

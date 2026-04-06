@@ -104,7 +104,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           id={id}
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full flex items-center justify-between gap-3 px-4 py-[12px] ${className || "rounded-lg"}
+            w-full flex items-center justify-between gap-3 px-4 py-[11px] ${className || "rounded-lg"}
             bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
             ${error ? "border-red-500" : "border-brand-inputBorder"}
@@ -117,7 +117,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           <svg
-            className={`w-[24px] h-[24px] text-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            className={`w-[24px] h-[24px] text-brand-textPrimary transition-transform duration-200 ${isOpen ? "rotate-180" : ""
               }`}
             viewBox="0 0 20 20"
             fill="none"

@@ -1,6 +1,7 @@
 import React from "react";
 import AppRoutes from "./routing/AppRoutes";
 import { useAuth } from "./context/AuthContext";
+import GlobalGradients from "./components/common/GlobalGradients";
 
 const App: React.FC = () => {
   const { loading } = useAuth();
@@ -16,7 +17,12 @@ const App: React.FC = () => {
     );
   }
 
-  return <AppRoutes />;
+  return (
+    <>
+      <GlobalGradients />
+      <AppRoutes />
+    </>
+  );
 }
 
 export default App;

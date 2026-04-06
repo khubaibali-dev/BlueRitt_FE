@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { SlidersHorizontal, Search, Crown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import explorerBg from "../../../../assets/images/explorer.png";
+import explorerBgLight from "../../../../assets/images/Explorer-light.png";
 import starImg from "../../../../assets/images/star.png";
 import FilterDrawer from "../FilterDrawer/FilterDrawer";
 import PremiumSearchBar from "../../../../components/common/search/PremiumSearchBar";
@@ -94,13 +95,10 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
     <section className="explorer-banner-wrapper relative overflow-visible !px-6">
       {/* Background Image Layer with Bottom Fade */}
       <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[20px] sm:rounded-t-[32px]">
-        <img
-          src={explorerBg}
-          alt=""
-          className="explorer-banner-image"
-        />
-        {/* Bottom Fade Overlay - adjusted to only affect the very bottom so the orange shows through clearly */}
-        <div className="absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
+        <img src={explorerBg} alt="" className="explorer-banner-image hidden dark:block" />
+        <img src={explorerBgLight} alt="" className="explorer-banner-image block dark:hidden" />
+        {/* Bottom Fade Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
       </div>
 
       {/* Top Badge */}
@@ -116,8 +114,8 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
         <h1 className="banner-heading-text !mb-10">
           <span className="inline-flex items-center justify-center gap-4">
             Explore with IntelliScan
-            <div className="relative flex items-center justify-center shrink-0 rounded-full w-[38px] h-[38px] bg-white/5 backdrop-blur-[20px] cursor-pointer hover:bg-white/10 transition-all z-10 info-icon-border">
-              <span className="font-serif italic text-white text-[22px] font-bold leading-none pr-[2px]">i</span>
+            <div className="relative flex items-center justify-center shrink-0 rounded-full w-[38px] h-[38px] bg-brand-inputBg backdrop-blur-[20px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
+              <span className="font-serif italic text-brand-textPrimary dark:text-white text-[22px] font-bold leading-none pr-[2px]">i</span>
             </div>
           </span>
         </h1>
@@ -190,7 +188,7 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
       </div>
       {/* Usage Insights Bottom Row */}
       <div className="w-full flex items-center justify-between mt-[85px] mb-[-50px] !px-0">
-        <h2 className="banner-heading-text !mb-0">Usage Insights</h2>
+        <h2 className="dashboard-section-title !mb-0 px-4">Usage Insights</h2>
         <button className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6">
           <Crown size={18} className="text-white" />
           Upgrade Your Plan

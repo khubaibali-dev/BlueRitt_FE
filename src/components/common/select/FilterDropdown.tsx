@@ -63,26 +63,28 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   className="w-4 h-auto rounded-[1px] opacity-90 flex-shrink-0"
                 />
               )}
-              <span className="truncate text-white/90">{selectedOption.label}</span>
+              <span className="truncate text-brand-textPrimary dark:text-white/90 uppercase text-[12px] font-semibold tracking-wider">
+                {selectedOption.label}
+              </span>
             </>
           )}
         </div>
         <ChevronDown
           size={18}
-          className={`text-white flex-shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          className={`text-brand-textPrimary dark:text-white flex-shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
       {isOpen && (
         <div
-          className={`absolute left-0 mt-2 ${dropdownWidth} bg-[#0A1629] border border-white/10 rounded-xl shadow-2xl z-[100] overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in duration-200`}
+          className={`absolute left-0 mt-2 ${dropdownWidth} bg-brand-card border border-brand-border rounded-xl shadow-2xl z-[100] overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in duration-200`}
         >
           <div className="max-h-[230px] overflow-y-auto custom-scrollbar py-1">
             {options.map((option) => (
               <button
                 key={option.value}
                 type="button"
-                className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors text-left text-[13px] ${value === option.value ? "text-white font-medium bg-white/5" : "text-white/60"
+                className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-brand-hover transition-colors text-left text-[13px] ${value === option.value ? "text-brand-primary font-medium bg-brand-hover" : "text-brand-textSecondary"
                   }`}
                 onClick={() => {
                   onChange(option);

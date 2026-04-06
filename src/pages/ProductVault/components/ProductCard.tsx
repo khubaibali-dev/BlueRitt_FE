@@ -115,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="standard-icon-circle !w-8 !h-8 mb-1">
               <BarChart3 size={14} className="text-white" />
             </div>
-            <span className="product-metric-label !text-[8px]">SALES VOL</span>
+            <span className="product-metric-label !text-[8px]">Monthly Sales Volume</span>
             <span className="product-metric-value !text-[10px]">{salesVol}</span>
           </div>
         </div>

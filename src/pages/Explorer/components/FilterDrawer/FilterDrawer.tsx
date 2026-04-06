@@ -172,8 +172,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
           <div className="filter-section">
             <label className="filter-section-label">Product Category</label>
             {isCategoriesLoading ? (
-              <div className="flex items-center gap-2 text-white/50 text-[13px] py-3 px-4 bg-white/5 rounded-xl border border-white/5">
-                <Loader2 size={16} className="animate-spin" />
+              <div className="flex items-center gap-2 text-brand-textSecondary text-[13px] py-3 px-4 bg-brand-inputBg rounded-xl border border-brand-border">
+                <Loader2 size={16} className="animate-spin text-brand-primary" />
                 Loading categories...
               </div>
             ) : (
@@ -191,7 +191,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
             )}
           </div>
 
-          <div className="filter-section border-t border-white/5 pt-6 space-y-6">
+          <div className="filter-section border-t border-brand-border pt-6 space-y-6">
             <div className="space-y-4">
               <label className="filter-section-label">Is Amazon Choice?</label>
               <div className="flex items-center gap-6">

@@ -11,68 +11,60 @@ interface InsightCardProps {
 }
 
 const InsightCard: React.FC<InsightCardProps> = ({ icon, title, value, progress }) => (
-  <div className="insight-card">
-    <div className="flex flex-col gap-4">
-      <div className="insight-icon-circle">
-        {icon}
-      </div>
-      <div>
-        <p className="text-white text-[16px] font-semibold tracking-wide mb-1 lowercase">{title}</p>
-        <h4 className="text-white text-[24px] font-bold tracking-tight">{value}</h4>
-      </div>
+  <div className="insight-card group">
+    <div className="quick-action-icon-circle w-[40px] h-[40px] shrink-0 flex items-center justify-center text-brand-primary dark:text-white group-hover:scale-110 transition-transform duration-300">
+      {icon}
+    </div>
+    <div className="flex-1">
+      <p className="text-brand-textSecondary text-[16px] font-semibold tracking-wide mb-1 ">{title}</p>
+      <h4 className="text-brand-textPrimary text-[24px] font-bold tracking-tight">{value}</h4>
     </div>
 
-    <div className="w-full">
-      <div className="flex justify-end mb-2">
-        <span className="text-white/40 text-[11px] font-medium">{Math.min(100, Math.round(progress))}%</span>
-      </div>
-      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+    <div className="w-full flex items-center gap-3">
+      <div className="h-1.5 flex-1 bg-brand-border rounded-full overflow-hidden">
         <div
           className="insight-progress-bar"
           style={{ width: `${Math.min(100, progress)}%` }}
         />
       </div>
+      <span className="text-brand-textSecondary text-[11px] font-medium whitespace-nowrap">{Math.min(100, Math.round(progress))}%</span>
     </div>
   </div>
 );
 
 const UsageInsights: React.FC = () => {
   const { currentUser } = useAuth();
-  
-  // Extract quota and limits
+
   const amazonQuota = currentUser.searchQuota?.amazon_search || 0;
-  const amazonLimit = currentUser.features?.amazon_search || 1; // Prevent division by zero
-  
+  const amazonLimit = currentUser.features?.amazon_search || 1;
+
   const supplierQuota = currentUser.searchQuota?.supplier_discovery || 0;
   const supplierLimit = currentUser.features?.supplier_discovery || 1;
 
-  // Calculate progress (Assuming quota is remaining and features is the base limit)
-  // If quota > limit, it means they have add-ons, so we show 100% or relative to total.
-  // For now, let's just show it as a percentage of the base limit.
   const amazonProgress = (amazonQuota / amazonLimit) * 100;
   const supplierProgress = (supplierQuota / supplierLimit) * 100;
 
   return (
     <section>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <InsightCard
-          icon={<TrendingUp size={18} className="text-white" />}
+          icon={<TrendingUp size={20} strokeWidth={2} />}
           title="Product Searches"
           value={amazonQuota.toLocaleString()}
           progress={amazonProgress}
         />
         <InsightCard
-          icon={<Briefcase size={18} className="text-white" />}
+          icon={<Briefcase size={20} strokeWidth={2} />}
           title="Supplier Discoveries"
           value={supplierQuota.toLocaleString()}
           progress={supplierProgress}
         />
-        <Link to="/addons" className="brand-card-bg rounded-[12px] p-8 flex flex-col items-center justify-center text-center h-[190px] insight-addon-bg cursor-pointer hover:opacity-80 transition-all">
-          <div className="mb-4">
-            <ShoppingCart size={36} className="text-white" />
+        <Link to="/addons" className="insight-card group flex flex-col items-center justify-center text-center !gap-3 cursor-pointer transition-all min-h-[155px] insight-addon-bg">
+          <div className="mb-2">
+            <ShoppingCart size={32} className="text-white" />
           </div>
-          <h4 className="text-white text-[16px] font-bold mb-1">Add-ons</h4>
-          <p className="text-white/40 text-[13px]">Purchase Add Ons</p>
+          <h4 className="text-white text-[18px] font-bold">Add-ons</h4>
+          <p className="text-white/60 text-[13px]">Purchase Add Ons</p>
         </Link>
       </div>
     </section>

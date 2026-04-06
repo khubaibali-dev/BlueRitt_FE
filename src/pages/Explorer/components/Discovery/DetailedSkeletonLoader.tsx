@@ -43,17 +43,17 @@ const DetailedSkeletonLoader = React.memo(({ isLoading }: { isLoading: boolean }
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4 animate-in fade-in duration-700">
       <div className="text-center flex flex-col items-center w-full max-w-[600px] mb-8">
-        <h3 className="text-white text-xl font-bold mb-2 tracking-tight">
+        <h3 className="text-brand-textPrimary text-xl font-bold mb-2 tracking-tight">
           Analyzing Product & Discovering Suppliers
         </h3>
-        <p className="text-white/50 italic text-sm">
+        <p className="text-brand-textSecondary italic text-sm">
           Please wait while we generate the most accurate results for you. 
           This may take up to 30 seconds.
         </p>
       </div>
 
       <div 
-        className="relative w-full max-w-[500px] h-3 bg-white/5 rounded-full overflow-hidden border border-white/10"
+        className="relative w-full max-w-[500px] h-3 bg-brand-inputBg rounded-full overflow-hidden border border-brand-border"
         role="progressbar"
         aria-valuenow={progress}
         aria-valuemin={0}
@@ -65,7 +65,7 @@ const DetailedSkeletonLoader = React.memo(({ isLoading }: { isLoading: boolean }
         />
       </div>
       
-      <div className="text-white/70 font-mono text-sm font-bold tracking-widest">
+      <div className="text-brand-textPrimary font-mono text-sm font-bold tracking-widest">
         {progress}% COMPLETE
       </div>
     </div>

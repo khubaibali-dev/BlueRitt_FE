@@ -4,6 +4,7 @@ import { Search, List, LayoutGrid, ChevronRight, Sparkles, Settings2, ShoppingBa
 import { useAuth } from "../../../../context/AuthContext";
 import DiscoveryProductCard from "./DiscoveryProductCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
+import bgAnalysisLight from "../../../../assets/images/explorer-light.png";
 import ProductDetailsDrawer from "../ProductDetails/ProductDetailsDrawer";
 import SupplierSourceLink from "../SourceLink/SupplierSourceLink";
 import MetricCard from "../Common/MetricCard";
@@ -45,7 +46,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    // Mapping initial country code to name for CountrySelect component
    const initialCountryObj = countries.find(c => c.code === initialCountry) || countries.find(c => c.code === "US") || countries[0];
    const [countryName, setCountryName] = useState(initialCountryObj.name);
-   const [activeCountryCode, setActiveCountryCode] = useState(initialCountry);
+   const [activeCountryCode, setActiveCountryCode] = useState(initialCountryObj.code);
 
    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
    const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -251,7 +252,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
    const handleSearch = () => {
       // Map current country name to its code
-      const currentCountryObj = countries.find(c => c.name === countryName);
+      const currentCountryObj = countries.find((c: any) => c.name === countryName);
       const currentCountryCode = currentCountryObj?.code || "US";
       setActiveCountryCode(currentCountryCode);
       setActiveSearchType(searchType);
@@ -307,7 +308,6 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
             });
             if (detailsRes?.data) {
                enrichedProduct = { ...product, ...detailsRes.data };
-               console.log("🔍 Enriched product with details:", enrichedProduct);
             }
          } catch (detailsError) {
             console.warn("Could not fetch full product details for discovery:", detailsError);
@@ -420,23 +420,16 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    ];
 
    return (
-      <div className="discovery-results px-4 sm:px-4 py-10 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full overflow-hidden relative bg-[#030F23] rounded-[24px] isolate">
+      <div className="discovery-results px-4 sm:px-4 py-10 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full overflow-hidden relative bg-brand-card-alt rounded-[24px] isolate">
 
          <div className="flex items-center justify-between mb-4 px-1">
-            <h2 className="text-[24px] sm:text-[20px] text-white tracking-tight leading-tight">Usage Insights</h2>
-            {hasViewedSourceLink && (
-               <button
-                  onClick={() => setShowSourceLink(true)}
-                  className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10"
-               >
-                  Next <ChevronRight size={14} />
-               </button>
-            )}
+            <h2 className="text-brand-textPrimary text-[24px] ">Insights Usage</h2>
          </div>
          {/* Background Image Layer with Bottom Fade - Perfectly Blended like Product Analysis */}
          <div className="absolute -inset-x-6 sm:-inset-x-10 -top-6 sm:-top-10 h-[750px] z-[-1] pointer-events-none overflow-hidden rounded-t-[32px]">
-            <img src={bgAnalysis} alt="" className="w-full h-full object-cover object-top opacity-100 mix-blend-screen" />
-            <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-[#030F23] via-[#030F23]/30 to-transparent" />
+            <img src={bgAnalysis} alt="" className="w-full h-full object-cover object-top opacity-100 mix-blend-screen hidden dark:block" />
+            <img src={bgAnalysisLight} alt="" className="w-full h-full object-cover object-top block dark:hidden" />
+            <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-brand-card-alt via-brand-card-alt/30 to-transparent" />
          </div>
 
          {/* Top Header Row */}
@@ -452,7 +445,10 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                <div className="w-[160px]">
                   <CountrySelect
                      value={countryName}
-                     onChange={(c) => setCountryName(c.name)}
+                     onChange={(c) => {
+                        setCountryName(c.name);
+                        setActiveCountryCode(c.code);
+                     }}
                   />
                </div>
                <div className="w-[130px]">
@@ -503,15 +499,15 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
             ) : (
                <div className="flex-1 flex flex-col md:flex-row gap-3 w-full animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="flex-1 relative w-full figma-card-border overflow-hidden">
-                     <div className="relative rounded-xl flex items-center h-[52px] px-4 ">
-                        <Search className="text-slate-300 mr-2" size={18} />
+                     <div className="relative rounded-xl flex items-center h-[48px] px-4 ">
+                        <Search className="text-brand-textPrimary mr-2" size={18} />
                         <input
                            type="text"
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
                            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                            placeholder={searchType === "asin" ? "Enter ASIN (e.g. B08N5KWB9H)" : "Search by keyword, product..."}
-                           className="bg-transparent border-none w-full text-white placeholder:text-slate-300 focus:outline-none text-[15px] font-medium"
+                           className="bg-transparent border-none w-full text-brand-textPrimary placeholder:text-brand-textSecondary focus:outline-none text-[15px] font-medium"
                         />
                      </div>
                   </div>
@@ -527,10 +523,10 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
             <div className="flex gap-2 shrink-0 self-start lg:self-center">
                <button
                   onClick={() => setIsFilterDrawerOpen(true)}
-                  className="bg-[#1A1A2E]/60 backdrop-blur-sm border border-brand-inputBorder h-[48px] px-4 rounded-xl flex items-center justify-center gap-2 text-white hover:text-white transition-all hover:bg-white/10"
+                  className="bg-brand-inputBg border border-brand-border h-[48px] px-4 rounded-xl flex items-center justify-center gap-2 text-brand-textPrimary hover:bg-brand-hover transition-all"
                >
                   <span className="text-[14px] font-semibold">Filters</span>
-                  <Settings2 size={16} className="text-white" />
+                  <Settings2 size={16} className="text-brand-textPrimary" />
                </button>
             </div>
          </div>
@@ -543,7 +539,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          </div>
 
          <div className="flex justify-end mb-10 px-2 mt-4">
-            <button className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10 transition-all group">
+            <button className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-brand-textPrimary hover:bg-white/10 transition-all group">
                Search Volume <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
          </div>
@@ -552,10 +548,9 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-0 mb-8 px-2">
             <div className="flex flex-col">
                <div className="flex items-center gap-3">
-                  <h2 className="text-[24px] sm:text-[20px] text-white tracking-tight leading-tight mb-1">Discovery Results</h2>
-
+                  <h2 className="text-[24px] sm:text-[20px] text-brand-textPrimary tracking-tight leading-tight mb-1">Discovery Results</h2>
                </div>
-               <p className="text-[14px] sm:text-[15px] text-[#FFFFFFB0]">{totalResults > 0 ? totalResults : products.length} products match your query</p>
+               <p className="text-[14px] sm:text-[15px] text-brand-textSecondary">{totalResults > 0 ? totalResults : products.length} products match your query</p>
             </div>
             <div className="flex items-center gap-3">
                <div className="w-[200px] h-fit">
@@ -567,16 +562,16 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                      placeholder="Sort by"
                   />
                </div>
-               <div className="bg-[#030F23] border border-white/10 rounded-xl flex p-1 h-[52px] items-center">
+               <div className="bg-brand-bg border border-brand-border rounded-xl flex p-1 h-[52px] items-center">
                   <button
                      onClick={() => setViewMode('grid')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white/10 text-white shadow-lg' : 'text-white hover:text-white'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-brand-inputBg text-brand-textPrimary shadow-lg' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                      <LayoutGrid size={18} />
                   </button>
                   <button
                      onClick={() => setViewMode('list')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white/10 text-white shadow-lg' : 'text-white hover:text-white'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-brand-inputBg text-brand-textPrimary shadow-lg' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                      <List size={18} />
                   </button>
@@ -642,12 +637,12 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          />
 
          <style>{`
-        .discovery-top-card-premium {
-           @apply bg-[#0C0E1E] border border-white/10 rounded-[20px] p-6 shadow-2xl;
-        }
-        .discovery-filter-select-premium {
-           @apply bg-[#0F0F1E] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-4 hover:border-white/30 transition-all shadow-inner;
-        }
+         .discovery-top-card-premium {
+            @apply bg-brand-inputBg border border-brand-border rounded-[20px] p-6 shadow-md;
+         }
+         .discovery-filter-select-premium {
+            @apply bg-brand-inputBg border border-brand-border rounded-xl px-4 py-3 flex items-center gap-4 hover:border-brand-primary/30 transition-all shadow-inner;
+         }
       `}</style>
       </div>
    );

@@ -37,7 +37,7 @@ const SignupCard: React.FC = () => {
       {/* ── CARD ── */}
       <div className="w-full figma-card-border brand-card-bg">
         <div className="px-8 pt-9 pb-8">
-          <SignupForm onSuccess={() => navigate("/select-plan")} />
+          <SignupForm onSuccess={(data, token) => navigate("/select-plan", { state: { userData: data, recaptchaToken: token } })} />
         </div>
       </div>
 
