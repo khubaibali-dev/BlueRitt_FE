@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getPackages } from '../../../../api/pricing';
-import { PlanPackage, PackageFeatures } from '../data/packages';
+import { getPackages } from '../api/pricing';
+import { PlanPackage, PackageFeatures } from '../utils/packages';
 
 /**
  * Transformation utility to map backend flat feature objects to UI nested structures
