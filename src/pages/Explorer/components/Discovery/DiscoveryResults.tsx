@@ -4,7 +4,7 @@ import { Search, List, LayoutGrid, ChevronRight, Sparkles, Settings2, ShoppingBa
 import { useAuth } from "../../../../context/AuthContext";
 import DiscoveryProductCard from "./DiscoveryProductCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
-import bgAnalysisLight from "../../../../assets/images/explorer-light.png";
+import bgAnalysisLight from "../../../../assets/images/Explorer-light.png";
 import ProductDetailsDrawer from "../ProductDetails/ProductDetailsDrawer";
 import SupplierSourceLink from "../SourceLink/SupplierSourceLink";
 import MetricCard from "../Common/MetricCard";
