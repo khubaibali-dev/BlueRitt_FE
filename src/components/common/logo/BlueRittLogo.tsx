@@ -10,8 +10,8 @@ interface BlueRittLogoProps {
 const BlueRittLogo: React.FC<BlueRittLogoProps> = ({ className = "", isCollapsed = false }) => {
   const { theme } = useTheme();
   
-  // Use whitelogo for light mode (white mode) and logo for dark mode
-  const logoSrc = theme === "light" ? whitelogo : logo;
+  // Use whitelogo for dark mode (white logo on dark bg) and logo for light mode (dark logo on white bg)
+  const logoSrc = theme === "dark" ? whitelogo : logo;
 
   return (
     <div className={`flex items-center transition-all duration-300 ${isCollapsed ? "justify-center w-full" : ""} ${className}`}>
