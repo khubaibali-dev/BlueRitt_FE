@@ -91,7 +91,7 @@ const Subscription: React.FC = () => {
         onToggle={setIsOpen}
         icon={
           <div className="relative flex items-center justify-center">
-            <Crown size={24} className="text-white relative z-10" />
+            <Crown size={24} className="text-brand-primary dark:text-white relative z-10" />
           </div>
         }
       >
@@ -116,7 +116,7 @@ const Subscription: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsBalanceModalOpen(true)}
-                className="px-5 py-2.5 rounded-full bg-brand-gradient hover:brightness-110 active:scale-95 text-white text-[13px] font-semibold transition-all shadow-lg shadow-orange-500/20 whitespace-nowrap"
+                className="px-5 py-2.5 rounded-full bg-brand-gradient hover:brightness-110 active:scale-95 text-white text-[13px] font-bold transition-all shadow-lg shadow-orange-500/10 dark:shadow-orange-500/20 whitespace-nowrap"
               >
                 Fill Balance
               </button>
@@ -138,7 +138,7 @@ const Subscription: React.FC = () => {
                   Due on <span className="subscription-info-value">{isLoading ? "..." : (summary?.dueDate || "N/A")}</span>
                 </div>
                 {summary?.billingCycle && (
-                  <span className="text-[12px] text-slate-400 font-medium">{summary.billingCycle}</span>
+                  <span className="text-[12px] text-brand-textSecondary dark:text-slate-400 font-medium">{summary.billingCycle}</span>
                 )}
               </div>
             </div>
@@ -151,7 +151,7 @@ const Subscription: React.FC = () => {
               </div>
               <div className="subscription-info-value-group">
                 <span className="subscription-info-value">${summary?.lastFilledAmount || "0.00"}</span>
-                <span className="text-[13px] text-slate-300">{summary?.lastPaymentDate || "N/A"}</span>
+                <span className="text-[13px] text-brand-textSecondary dark:text-slate-300 font-medium">{summary?.lastPaymentDate || "N/A"}</span>
               </div>
             </div>
 
@@ -162,7 +162,7 @@ const Subscription: React.FC = () => {
                 <button className="subscription-link-orange">Payment History</button>
               </div>
               <div className="subscription-info-value-group">
-                <span className="text-[13px] text-slate-300 font-medium">{summary?.lastPaymentDate || "N/A"}</span>
+                <span className="text-[13px] text-brand-textSecondary dark:text-slate-300 font-semibold">{summary?.lastPaymentDate || "N/A"}</span>
               </div>
             </div>
 
@@ -178,15 +178,15 @@ const Subscription: React.FC = () => {
                     onClick={onToggleAutoRenew}
                     className={`
                       relative w-[52px] h-[28px] rounded-full transition-all duration-300 outline-none
-                      ${summary?.autoRenew ? "bg-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.5)]" : "bg-slate-700"}
+                      ${summary?.autoRenew ? "bg-brand-accent shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "bg-brand-bg dark:bg-slate-700 border border-brand-border dark:border-transparent"}
                     `}
                   >
-                    <div
-                      className={`
-                        absolute top-[3px] left-[3px] w-[22px] h-[22px] bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out
-                        ${summary?.autoRenew ? "translate-x-[24px]" : "translate-x-0"}
-                      `}
-                    />
+                      <div
+                        className={`
+                          absolute top-[3px] left-[3px] w-[22px] h-[22px] bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out
+                          ${summary?.autoRenew ? "translate-x-[24px]" : "translate-x-0"}
+                        `}
+                      />
                   </button>
                 </div>
               </div>
@@ -198,7 +198,7 @@ const Subscription: React.FC = () => {
                 {summary?.activeSubscription && (
                   <button
                     onClick={handleCancelSubscription}
-                    className="text-slate-400 hover:text-white/80 text-white underline text-[13px] w-fit font-bold transition-colors"
+                    className="text-brand-textSecondary dark:text-slate-400 hover:text-brand-primary dark:hover:text-white/80 underline text-[13px] w-fit font-bold transition-colors"
                   >
                     Cancel Subscription
                   </button>

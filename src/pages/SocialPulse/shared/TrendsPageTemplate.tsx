@@ -22,6 +22,7 @@ interface MetricData {
 
 interface TrendsPageTemplateProps {
   bannerImage: string;
+  lightBannerImage?: string;
   title: string;
   subtitle: string;
   tabs: TabOption[];
@@ -59,6 +60,7 @@ interface TrendsPageTemplateProps {
 
 const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   bannerImage,
+  lightBannerImage,
   title,
   subtitle,
   tabs,
@@ -123,12 +125,15 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   };
 
   return (
-    <div className={`bg-brand-card-alt rounded-[32px] relative shadow-2xl overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700 ${analyzingScreen ? 'h-[600px]' : 'min-h-[600px] pb-12'}`}>
+    <div className={`bg-brand-card-alt rounded-[32px] relative  overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700 ${analyzingScreen ? 'h-[600px]' : 'min-h-[600px] pb-12'}`}>
 
       {/* Banner Section */}
       <section className="tiktok-banner-wrapper relative isolate">
         <div className="absolute inset-0 z-[-1]">
-          <img src={bannerImage} alt="" className="tiktok-banner-image" />
+          <img src={bannerImage} alt="" className={`tiktok-banner-image ${lightBannerImage ? 'hidden dark:block' : ''}`} />
+          {lightBannerImage && (
+            <img src={lightBannerImage} alt="" className="tiktok-banner-image block dark:hidden" />
+          )}
           <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/5 to-transparent pointer-events-none" />
         </div>
 
@@ -156,7 +161,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
 
           {/* Metrics Row */}
           <div className="flex items-center justify-between w-full mb-4 px-1">
-            <h2 className="text-[24px] sm:text-[20px] text-white tracking-tight leading-tight hidden md:block">Usage Insights</h2>
+            <h2 className="text-[24px] sm:text-[20px] text-brand-textPrimary dark:text-white tracking-tight leading-tight hidden md:block">Usage Insights</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {metrics.map((metric, idx) => (
@@ -172,8 +177,8 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
         <div className="space-y-6">
           {showSearchForm && (
             <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-center gap-3">
-              <div className="flex-1 w-full figma-rect-border group overflow-hidden bg-[#04132B]/50 relative transition-all">
-                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-white transition-colors">
+              <div className="flex-1 w-full figma-rect-border group overflow-hidden bg-[#E5E3E333] dark:bg-[#04132B]/50 relative transition-all">
+                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-brand-textPrimary dark:group-focus-within:text-white transition-colors">
                   <Search size={20} />
                 </div>
                 <input
@@ -181,7 +186,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   placeholder={searchPlaceholder[activeTab] || "Search..."}
-                  className="w-full bg-transparent py-4 pl-14 pr-6 text-white text-[15px] placeholder-slate-500 outline-none transition-all"
+                  className="w-full bg-transparent py-4 pl-14 pr-6 text-brand-textPrimary dark:text-white text-[15px] placeholder-[#08265675] dark:placeholder-slate-500 outline-none transition-all"
                 />
               </div>
 
@@ -204,7 +209,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
                       />
                     </div>
                   )}
-                  
+
                   {showFilterButton && (
                     <button
                       type="button"

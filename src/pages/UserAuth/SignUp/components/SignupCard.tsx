@@ -53,7 +53,7 @@ const SignupCard: React.FC = () => {
       </p>
 
       {/* ── SIGNUP BUTTON ── */}
-      <PrimaryButton type="submit" form="signup-form">
+      <PrimaryButton type="submit" form="signup-form" fullWidth={false} className="w-full sm:w-[300px]">
         Continue to Package Selection →
       </PrimaryButton>
     </div>

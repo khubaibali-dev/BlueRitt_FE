@@ -23,14 +23,14 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
           </button>
         </div>
 
-        <div className="purchase-summary-panel !bg-[#020B1A4D] figma-card-border !p-6 !mb-8">
+        <div className="purchase-summary-panel !p-6 !mb-8">
           <div className="flex items-center gap-4">
             <div className="quick-action-icon-circle">
-              <CreditCard size={22} className="text-white" />
+              <CreditCard size={22} className="text-brand-primary dark:text-white" />
             </div>
             <div>
-              <div className="text-[14px] text-[#FFFFFFB0] font-medium tracking-tight">Available Balance</div>
-              <div className="text-[18px] text-white font-semibold leading-tight">{currentBalance}</div>
+              <div className="text-[14px] text-brand-textSecondary dark:text-[#FFFFFFB0] font-medium tracking-tight">Available Balance</div>
+              <div className="text-[18px] text-brand-textPrimary dark:text-white font-semibold leading-tight">{currentBalance}</div>
             </div>
           </div>
         </div>
@@ -45,12 +45,12 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
             onChange={(e) => setAmount(e.target.value)}
             prefix="$"
           />
-          <p className="text-[12px] text-[#FFFFFFB0] mt-[-8px]">Specify the amount you wish to credit to your account</p>
+          <p className="text-[12px] text-brand-textSecondary dark:text-[#FFFFFFB0] mt-[-8px]">Specify the amount you wish to credit to your account</p>
         </div>
 
-        <div className="purchase-action-row pt-6 border-t border-white/5">
+        <div className="purchase-action-row pt-6 border-t border-brand-border dark:border-white/5">
           <button
-            className="purchase-cancel-btn !py-2 !text-[#FFFFFFB0] hover:text-white font-semibold transition-colors"
+            className="purchase-cancel-btn !py-2 !text-brand-textSecondary dark:text-[#FFFFFFB0] hover:text-brand-textPrimary dark:hover:text-white font-semibold transition-colors"
             onClick={onClose}
           >
             Cancel

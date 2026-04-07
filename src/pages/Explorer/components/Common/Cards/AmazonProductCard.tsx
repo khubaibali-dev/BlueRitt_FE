@@ -202,7 +202,7 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
       </div>
       <div className="p-4 sm:p-2 w-full text-brand-textPrimary">
         <div className="flex flex-col lg:flex-row gap-5 items-start">
-          <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-2xl mx-auto lg:mx-0 shrink-0 bg-brand-bg">
+          <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-md mx-auto lg:mx-0 shrink-0 bg-brand-bg">
             <img src={normalized.image} alt={normalized.title} className="w-full h-full object-cover" />
           </div>
           <div className={`flex-1 w-full flex flex-col ${isCalculator ? 'gap-3' : 'gap-4'}`}>
@@ -271,9 +271,9 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
                 <span className="metric-value text-brand-textPrimary">{m.value}</span>
               </div>
             ) : (
-              <div key={i} className={`${m.flex} bg-brand-inputBg py-2.5 px-4 rounded-xl border border-brand-border flex flex-col justify-center min-h-[48px] shadow-inner hover:border-brand-primary/10 transition-colors`}>
-                <span className="text-[12px] text-brand-textSecondary tracking-widest mb-1 opacity-60">{m.label}</span>
-                <span className="text-[11px] text-brand-textPrimary font-bold leading-tight truncate">{m.value}</span>
+              <div key={i} className={`${m.flex} bg-slate-50 dark:bg-[#04132B] py-2.5 px-4 rounded-md border border-brand-inputBorder flex flex-col justify-center min-h-[48px]  hover:border-brand-primary transition-colors`}>
+                <span className="metric-label leading-none mb-1">{m.label}</span>
+                <span className="metric-value leading-none truncate">{m.value}</span>
               </div>
             )
           ))}

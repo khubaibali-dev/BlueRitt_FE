@@ -4,6 +4,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import bgAnalysis from "../../../../assets/images/explorer.png";
+import bgAnalysisLight from "../../../../assets/images/SourceLink-lightbg.png";
 import AmazonProductCard from "../Common/Cards/AmazonProductCard";
 import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import SelectField from "../../../../components/common/select/SelectField";
@@ -95,10 +96,10 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
       dimensions: product.product_information?.["Product Dimensions"] || product.dimensions || "N/A",
       weight: product.product_information?.["Item Weight"] || product.weight || "N/A",
       tags: tags.length > 0 ? tags : (product.tags || []),
-      metrics: product.metrics || { 
-        ctr: "0.0%", 
-        cvr: "0.0%", 
-        cpa: "$0.00", 
+      metrics: product.metrics || {
+        ctr: "0.0%",
+        cvr: "0.0%",
+        cpa: "$0.00",
         impressions: "0",
         category: product.category_name || product.category || "",
         subcategory1: "",
@@ -139,9 +140,9 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
         currency: item?.sku?.def?.priceModule?.currencyCode || item?.sku_listing?.def?.priceModule?.currencyCode || "$",
         storeName: item?.company?.companyName || item?.company_details?.companyName || "Direct Factory",
         contact: item?.company?.companyContact?.name || item?.company_details?.companyContact?.name || "Factory Direct",
-        minOrder: item?.sku?.def?.quantityModule?.minOrder?.quantityFormatted || 
-                  item?.sku?.def?.quantityModule?.minOrder?.quantity || 
-                  "100+ units",
+        minOrder: item?.sku?.def?.quantityModule?.minOrder?.quantityFormatted ||
+          item?.sku?.def?.quantityModule?.minOrder?.quantity ||
+          "100+ units",
         country: item?.company_details?.companyAddress?.country || item?.company?.companyAddress?.country || "CN",
         rating: item.seller_store?.storeEvaluates?.[4]?.score,
         storeAge: item.seller_store.storeAge || "5 YRS",
@@ -184,11 +185,12 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
   if (!normalizedProduct) return null;
 
   return (
-    <div className="discovery-results px-6 sm:px-4 py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-[#051125] rounded-[24px] isolate min-h-screen overflow-hidden">
+    <div className="discovery-results px-6 sm:px-4 py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-brand-card rounded-[24px] isolate min-h-screen overflow-hidden">
       {/* Background Image Layer with Bottom Fade - Perfectly Blended like Product Analysis */}
       <div className="absolute -inset-x-6 sm:-inset-x-10 -top-6 sm:-top-10 h-[750px] z-[-1] pointer-events-none overflow-hidden rounded-t-[32px]">
-        <img src={bgAnalysis} alt="" className="w-full h-full object-cover object-top opacity-100 mix-blend-screen" />
-        <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-[#030F23] via-[#030F23]/30 to-transparent" />
+        <img src={bgAnalysis} alt="" className="dashboard-banner-image object-top !opacity-100 mix-blend-screen hidden dark:block" style={{ transform: 'scale(1.2)', objectPosition: 'left top' }} />
+        <img src={bgAnalysisLight} alt="" className="dashboard-banner-image dark:hidden" />
+        <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-brand-card via-brand-card/30 to-transparent" />
       </div>
 
 
@@ -196,14 +198,14 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
         <div className="flex justify-between items-center">
           <button
             onClick={onBack}
-            className="bg-white/5 figma-pill-border px-4 py-2 rounded-full text-white text-[13px] font-bold flex items-center gap-2 hover:bg-white/10 transition-all"
+            className="bg-black/5 dark:bg-white/5 figma-pill-border px-4 py-2 rounded-full text-brand-textPrimary text-[13px] font-bold flex items-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all"
           >
             <ChevronLeft size={16} /> Back
           </button>
 
           <button
             onClick={() => suppliers.length > 0 && onCalculateProfit(suppliers[0])}
-            className="bg-white/5 figma-pill-border px-4 py-2 rounded-full text-white text-[13px] font-bold flex items-center gap-2 hover:bg-white/10 transition-all font-inter"
+            className="bg-black/5 dark:bg-white/5 figma-pill-border px-4 py-2 rounded-full text-brand-textPrimary text-[13px] font-bold flex items-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all font-inter"
           >
             Next <ChevronRight size={16} />
           </button>
@@ -220,16 +222,16 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
 
             {/* Info Icon */}
             <div className="relative group shrink-0 md:mt-12">
-              <div className="figma-pill-border w-[32px] h-[32px] md:w-[36px] md:h-[36px] cursor-help transition-all duration-300 group-hover:scale-110 flex items-center justify-center">
-                <span className="text-white text-[18px] md:text-[22px] font-black italic font-serif select-none">
+              <div className="figma-pill-border w-[32px] h-[32px] md:w-[36px] md:h-[36px] cursor-help transition-all duration-300 group-hover:scale-110 flex items-center justify-center bg-black/5 dark:bg-transparent">
+                <span className="text-brand-textPrimary text-[18px] md:text-[22px] font-black italic font-serif select-none">
                   i
                 </span>
               </div>
 
               {/* Tooltip */}
-              <div className="absolute bottom-full mb-3 md:mb-5 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] md:w-[320px] p-3 md:p-4 rounded-xl backdrop-blur-[20px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 text-left shadow-2xl scale-95 group-hover:scale-100 origin-bottom">
+              <div className="absolute bottom-full mb-3 md:mb-5 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] md:w-[320px] p-3 md:p-4 rounded-xl backdrop-blur-[20px] bg-white/90 dark:bg-black/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 text-left shadow-2xl scale-95 group-hover:scale-100 origin-bottom">
                 <div className="tooltip-pro-border" />
-                <p className="text-white text-[11px] md:text-[12px] font-medium leading-relaxed relative z-10">
+                <p className="text-brand-textPrimary text-[11px] md:text-[12px] font-medium leading-relaxed relative z-10">
                   BlueRitt’s AI matches your product with verified, high-rated suppliers and assigns a fit score.
                 </p>
               </div>
@@ -274,7 +276,7 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 mt-8 px-2">
           <div className="flex items-start sm:items-center gap-2 sm:gap-3">
             <span className="text-[#FF5900] text-[20px] sm:text-[24px] font-black mt-0.5 sm:mt-0 shrink-0">{suppliers.length}</span>
-            <h2 className="text-[16px] sm:text-[20px] text-white tracking-tight leading-snug">
+            <h2 className="text-[16px] sm:text-[20px] text-brand-textPrimary tracking-tight leading-snug">
               Recommended Alibaba Suppliers for Your Product & AI Match Scores
             </h2>
           </div>

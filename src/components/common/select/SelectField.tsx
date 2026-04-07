@@ -91,7 +91,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
       {label && (
         <label
           htmlFor={id}
-          className="text-[14px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFFB2] cursor-pointer"
+          className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textSecondary cursor-pointer"
         >
           {label}
         </label>

@@ -125,7 +125,7 @@ const TrendsFilterDrawer: React.FC<TrendsFilterDrawerProps> = ({
         <div className="filter-drawer-footer !border-t-0 mt-auto pb-10">
           <button
             onClick={onClear}
-            className="filter-clear-btn flex-1 figma-pill-border !text-white !font-bold"
+            className="filter-clear-btn flex-1 figma-pill-border"
           >
             Clear Filters
           </button>

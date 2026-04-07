@@ -59,12 +59,6 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="login-card-content">
-      <div className="text-center mb-6">
-        <h1 className="auth-title">Welcome back!</h1>
-        <p className="auth-subtitle">
-          Please enter your details to sign in
-        </p>
-      </div>
 
       <form id="login-form" onSubmit={formik.handleSubmit} className="space-y-4">
         <InputField
@@ -97,7 +91,7 @@ const LoginForm: React.FC = () => {
           rightElement={
             <button
               type="button"
-              className="text-[#99A1AF] hover:text-white transition-colors flex items-center justify-center h-full pr-1"
+              className="text-brand-textSecondary hover:text-brand-textPrimary transition-colors flex items-center justify-center h-full pr-1"
               onClick={togglePassword}
             >
               {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
@@ -110,12 +104,7 @@ const LoginForm: React.FC = () => {
         />
       </form>
 
-      <div className="mt-6 text-center text-sm text-gray-400">
-        Don't have an account?{" "}
-        <Link to="/signup" className="text-[#6291DE] hover:underline font-medium">
-          Sign up
-        </Link>
-      </div>
+
     </div>
   );
 };

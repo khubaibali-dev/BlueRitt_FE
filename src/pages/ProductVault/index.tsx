@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Plus, MoreVertical, Trash2, Eye, Calendar, Folder } from "lucide-react";
+import { MoreVertical, Trash2, Eye, Calendar, Folder } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CollectionDetails from "./components/CollectionDetails";
 import { getCategory, deleteCategory } from "../../api/savedProducts";
@@ -46,7 +46,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt,
       {/* Image Section */}
       <div className="vault-image-box !h-[180px]">
         <img
-          src={image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80"}
+          src={image || ""}
           alt={name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
@@ -57,22 +57,22 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt,
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
-            className={`p-1.5 rounded-full text-white transition-all glass-action-circle-dark ${isMenuOpen ? "opacity-100 scale-110" : "opacity-100"}`}
+            className={`p-1.5 rounded-full text-white dark:text-white transition-all glass-action-circle-dark ${isMenuOpen ? "opacity-100 scale-110" : "opacity-100"}`}
           >
             <MoreVertical size={16} />
           </button>
 
           {isMenuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-[160px] bg-[#04132B] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute top-full right-0 mt-2 w-[160px] bg-white dark:bg-[#04132B] border border-brand-border dark:border-white/10 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMenuOpen(false);
                   onClick();
                 }}
-                className="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-slate-200 hover:bg-white/5 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-brand-textPrimary dark:text-slate-200 hover:bg-brand-hover dark:hover:bg-white/5 transition-colors text-left"
               >
-                <Eye size={14} className="text-blue-400" />
+                <Eye size={14} className="text-[#6291DE]" />
                 View Details
               </button>
               <button
@@ -97,12 +97,12 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt,
           <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
             <Folder size={18} />
           </div>
-          <h3 className="product-card-title text-[16px] mb-0 group-hover:text-blue-400 transition-colors uppercase tracking-wider font-bold">
+          <h3 className="product-card-title text-[16px] mb-0 text-brand-textPrimary dark:text-white group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors uppercase tracking-wider font-bold">
             {name}
           </h3>
         </div>
 
-        <div className="flex items-center gap-2 text-slate-500">
+        <div className="flex items-center gap-2 text-brand-textSecondary dark:text-slate-500">
           <Calendar size={14} />
           <span className="text-[12px] font-medium">{formattedDate}</span>
         </div>
@@ -161,7 +161,7 @@ const ProductVault: React.FC = () => {
   };
 
   return (
-    <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen">
+    <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative  min-h-screen">
       {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={deleteModal.isOpen}
@@ -181,21 +181,21 @@ const ProductVault: React.FC = () => {
               collectionId={selectedCollection.id}
               collectionName={selectedCollection.name}
               onBack={() => handleSetSelectedCollection(null)}
-              onProductClick={() => {}} // No longer needed as we navigate via URL
+              onProductClick={() => { }} // No longer needed as we navigate via URL
             />
           </div>
         ) : (
           <div className="animate-in fade-in duration-500">
-              <div className="mb-10">
-                <h1 className="banner-heading-text !text-left !mb-1">Product Vault</h1>
-                <p className="page-header-subtitle !text-left ml-4">Analyze and manage your saved product research</p>
-              </div>
+            <div className="mb-10">
+              <h1 className="banner-heading-text !text-left !mb-1 text-brand-textPrimary dark:text-white">Product Vault</h1>
+              <p className="page-header-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary">Analyze and manage your saved product research</p>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {isLoading ? (
                 // Loading Skeletons
                 Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="vault-card h-[280px] animate-pulse bg-white/5 rounded-2xl" />
+                  <div key={i} className="vault-card h-[280px] animate-pulse bg-brand-hover dark:bg-white/5 rounded-2xl" />
                 ))
               ) : (
                 categories.map((col: any, idx: number) => (

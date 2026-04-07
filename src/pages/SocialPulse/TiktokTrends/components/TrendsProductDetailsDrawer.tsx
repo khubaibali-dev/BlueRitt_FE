@@ -120,24 +120,24 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
         {/* Header */}
         <div className="p-6 pb-1">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white tracking-tight">Product Details</h2>
+            <h2 className="text-xl font-bold text-brand-textPrimary tracking-tight">Product Details</h2>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-white/5 hover:text-white transition-all text-white/70"
+              className="p-1.5 rounded-lg hover:bg-brand-hover text-brand-textSecondary hover:text-brand-textPrimary transition-all"
             >
               <X size={20} />
             </button>
           </div>
 
           {/* Tabs - Synced with Explorer */}
-          <div className="flex gap-2 p-1 bg-white/5 rounded-xl w-fit">
+          <div className="flex gap-2 p-1 bg-brand-card-alt rounded-xl w-fit">
             {(["Details", "Analysis"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex items-center gap-2 px-6 py-2 rounded-[10px] text-[13px] transition-all font-bold ${activeTab === tab
                   ? "text-white shadow-lg"
-                  : "text-white hover:text-white hover:bg-white/5"
+                  : "text-brand-textSecondary hover:bg-brand-hover"
                   }`}
                 style={
                   activeTab === tab
@@ -153,7 +153,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
         </div>
 
         {/* Tab Separator */}
-        <div className="mt-4 border-b border-[#1C263C] mx-6" />
+        <div className="mt-4 border-b border-brand-border mx-6" />
 
         {/* Scrollable Body - Synced Scrollbar */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 pb-10 space-y-8">
@@ -163,7 +163,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
             <>
               {/* Top Info Section - Only visible in Details */}
               <div className="flex gap-4 mb-8">
-                <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-white/10">
+                <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-border">
                   <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -171,20 +171,20 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     <h4 className="product-card-title pr-4 !text-[17px]">
                       {product.title}
                     </h4>
-                    <div className="product-img-badge !static shrink-0 !rounded-full !bg-white/5 !border-none">
+                    <div className="product-img-badge !static shrink-0 !rounded-full">
                       {product.category}
                     </div>
                   </div>
                   <div className="flex items-baseline justify-between pt-1">
-                    <span className="text-[22px] font-black text-white">{product.price}</span>
-                    <span className="product-img-badge !rounded-full !bg-white/5 !border-none">{formatNumber(product.view_count)} Views</span>
+                    <span className="text-[22px] font-black text-brand-textPrimary">{product.price}</span>
+                    <span className="product-img-badge !rounded-full">{formatNumber(product.view_count)} Views</span>
                   </div>
                 </div>
               </div>
-              <div className="border border-white/10" />
+              <div className="border border-brand-border" />
               {/* Engagement Stats */}
               <div className="space-y-4">
-                <h5 className="text-[14px]  text-white tracking-tight">TikTok Engagement</h5>
+                <h5 className="text-[14px]  text-brand-textPrimary tracking-tight">TikTok Engagement</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
                     { icon: Award, label: "Posts", value: formatNumber(product.post_count) },
@@ -207,7 +207,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
 
               {/* Metrics Grid */}
               <div className="space-y-4">
-                <h5 className="text-[14px]  text-white tracking-tight">Additional Metrics</h5>
+                <h5 className="text-[14px]  text-brand-textPrimary tracking-tight">Additional Metrics</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
                     { label: "CTR", value: enrichedMetrics?.ctr || "0.00" },
@@ -217,7 +217,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     { label: "Category", value: enrichedMetrics?.category || product.category || "N/A" },
                     { label: "Subcategory", value: enrichedMetrics?.subcategory1 || "N/A" }
                   ].map((metric, i) => (
-                    <div key={i} className={`bg-[#04132B] border border-[#082656] rounded-[10px] p-3.5 flex flex-col justify-center ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
+                    <div key={i} className={`bg-brand-card border border-brand-border rounded-[10px] p-3.5 flex flex-col justify-center ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
                       <span className="product-metric-label block mb-2">{metric.label}</span>
                       <span className="product-metric-value block !text-[13px]">{isEnrichedLoading ? "..." : metric.value}</span>
                     </div>
@@ -226,28 +226,28 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
               </div>
 
               {/* Hashtags Section */}
-              <div className="bg-[#0E192B] border border-[#082656] rounded-[12px] p-4 transition-all duration-300">
+              <div className="bg-brand-card border border-brand-border rounded-[12px] p-4 transition-all duration-300">
                 <button
                   onClick={() => setIsHashtagsExpanded(!isHashtagsExpanded)}
                   className="flex items-center justify-between w-full mb-1 group"
                 >
-                  <h5 className="text-[14px] text-white tracking-tight">Trending Hashtags</h5>
-                  <div className="p-1 rounded-full hover:bg-white/5 transition-all">
-                    {isHashtagsExpanded ? <ChevronUp size={20} className="text-white" /> : <ChevronDown size={20} className="text-white" />}
+                  <h5 className="text-[14px] text-brand-textPrimary tracking-tight">Trending Hashtags</h5>
+                  <div className="p-1 rounded-full hover:bg-brand-hover transition-all">
+                    {isHashtagsExpanded ? <ChevronUp size={20} className="text-brand-textPrimary" /> : <ChevronDown size={20} className="text-brand-textPrimary" />}
                   </div>
                 </button>
                 {isHashtagsExpanded && (
                   <div className="flex flex-wrap gap-2.5 pt-3 animate-in fade-in slide-in-from-top-2 duration-300">
                     {isCreativeLoading ? (
                       [1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-8 w-20 bg-white/5 rounded-full skeleton-pulse" />
+                        <div key={i} className="h-8 w-20 bg-brand-card-alt rounded-full skeleton-pulse" />
                       ))
                     ) : creativeData?.data?.info?.hashtags?.length ? (
                       creativeData.data.info.hashtags.map((tag, i) => (
                         <span key={i} className="hashtag-pill !px-4 !py-2 !rounded-full text-[12px]">#{tag}</span>
                       ))
                     ) : (
-                      <span className="text-[12px] text-slate-500 italic">No hashtags found</span>
+                      <span className="text-[12px] text-brand-textMuted italic">No hashtags found</span>
                     )}
                   </div>
                 )}
@@ -255,24 +255,24 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
 
               {/* Demographics */}
               <div className="space-y-4 pb-4">
-                <h5 className="text-[15px] font-bold text-white tracking-tight">Audience Insights</h5>
-                <div className="bg-[#0E192B] border border-[#082656] rounded-[12px] p-5">
-                  <h6 className="text-[13px] font-medium text-slate-300 mb-6">Age Demographics</h6>
+                <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">Audience Insights</h5>
+                <div className="bg-brand-card border border-brand-border rounded-[12px] p-5">
+                  <h6 className="text-[13px] font-medium text-brand-textSecondary mb-6">Age Demographics</h6>
 
                   <div className="space-y-4">
                     {isCreativeLoading ? (
                       [1, 2, 3, 4, 5].map((i) => (
                         <div key={i} className="flex items-center gap-4 skeleton-pulse">
-                          <div className="h-3 bg-white/10 rounded w-8" />
-                          <div className="h-4 bg-white/5 rounded-full flex-1" />
-                          <div className="h-3 bg-white/10 rounded w-10" />
+                          <div className="h-3 bg-brand-card-alt rounded w-8" />
+                          <div className="h-4 bg-brand-card-alt rounded-full flex-1" />
+                          <div className="h-3 bg-brand-card-alt rounded w-10" />
                         </div>
                       ))
                     ) : creativeData?.data?.info?.audience_ages?.length ? (
                       creativeData.data.info.audience_ages.map((item, i) => (
                         <div key={i} className="flex items-center gap-4 animate-in fade-in slide-in-from-left-2 duration-700" style={{ animationDelay: `${i * 100}ms` }}>
-                          <span className="text-[12px] font-bold text-slate-400 w-8">{getAgeLabel(item.age_level)}</span>
-                          <div className="h-4 bg-[#051125] rounded-full overflow-hidden flex-1 relative">
+                          <span className="text-[12px] font-bold text-brand-textSecondary w-8">{getAgeLabel(item.age_level)}</span>
+                          <div className="h-4 bg-brand-bg rounded-full overflow-hidden flex-1 relative">
                             <div
                               className="h-full rounded-full absolute left-0 top-0 transition-all duration-1000"
                               style={{
@@ -286,7 +286,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                       ))
                     ) : (
                       <div className="text-center py-4">
-                        <p className="text-slate-500 text-[12px]">Audience data is not available for this product.</p>
+                        <p className="text-brand-textSecondary text-[12px]">Audience data is not available for this product.</p>
                       </div>
                     )}
                   </div>
@@ -298,8 +298,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
               {/* Analysis Header */}
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="product-card-title !mb-1">{product.title}</h4>
-                  <span className="product-price-primary !text-[20px]">{product.price}</span>
+                  <h4 className="product-card-title !text-brand-textPrimary !mb-1">{product.title}</h4>
+                  <span className="product-price-primary !text-brand-textPrimary !text-[20px]">{product.price}</span>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-2">
@@ -313,13 +313,13 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="border border-white/10" />
+              <div className="border border-brand-border" />
 
               {/* Comparison Section */}
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-[15px] font-semibold text-white tracking-tight mt-4">TikTok Shop Analysis - {product.category}</h5>
-                  <p className="text-[12px] text-[#9F9F9F]">
+                  <h5 className="text-[15px] font-semibold text-brand-textPrimary tracking-tight mt-4">TikTok Shop Analysis - {product.category}</h5>
+                  <p className="text-[12px] text-brand-textSecondary">
                     {isAnalysisLoading ? (
                       "Analyzing marketplace data..."
                     ) : (
@@ -334,15 +334,15 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     [1, 2, 3].map((i) => (
                       <div key={i} className="space-y-4 skeleton-pulse">
                         <div className="flex gap-4">
-                          <div className="w-16 h-16 rounded-xl bg-white/5 shrink-0" />
+                          <div className="w-16 h-16 rounded-xl bg-brand-card-alt shrink-0" />
                           <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-white/10 rounded w-3/4" />
-                            <div className="h-4 bg-white/5 rounded w-1/4" />
+                            <div className="h-4 bg-brand-card-alt rounded w-3/4" />
+                            <div className="h-4 bg-brand-card-alt rounded w-1/4" />
                           </div>
                         </div>
                         <div className="grid grid-cols-4 gap-3">
                           {[1, 2, 3, 4].map((j) => (
-                            <div key={j} className="h-12 bg-white/5 rounded-lg" />
+                            <div key={j} className="h-12 bg-brand-card-alt rounded-lg" />
                           ))}
                         </div>
                       </div>
@@ -351,7 +351,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     analysisData.products.map((item: any, idx: number) => (
                       <div key={idx} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <div className="flex gap-4">
-                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-brand-border shrink-0">
                             <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -366,7 +366,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                             </span>
                           </div>
                         </div>
-                        <div className="border border-white/10" />
+                        <div className="border border-brand-border" />
                         <div className="grid grid-cols-4 gap-3">
                           {[
                             { label: "Sales", value: item.sales_count >= 1000 ? `${(item.sales_count / 1000).toFixed(1)}K` : item.sales_count },
@@ -374,7 +374,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                             { label: "Reviews", value: item.review_count },
                             { label: "Ships From", value: item.shipping_info?.ship_from || "US" }
                           ].map((m, mIdx) => (
-                            <div key={mIdx} className="bg-[#04132B] border border-[#082656] rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
+                            <div key={mIdx} className="bg-brand-card border border-brand-border rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
                               <span className="product-metric-label block mb-1.5">{m.label}</span>
                               <span className="product-metric-value block !text-[12px]">{m.value}</span>
                             </div>
@@ -384,7 +384,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     ))
                   ) : (
                     <div className="text-center py-10">
-                      <p className="text-slate-500">No additional shop analysis found for this keyword.</p>
+                      <p className="text-brand-textSecondary">No additional shop analysis found for this keyword.</p>
                     </div>
                   )}
                 </div>

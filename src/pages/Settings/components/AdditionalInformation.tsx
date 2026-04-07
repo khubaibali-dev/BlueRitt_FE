@@ -45,7 +45,7 @@ const AdditionalInformation: React.FC = () => {
       title="Additional Information"
       subtitle="We'll customize your dashboard accordingly"
       defaultOpen={false}
-      icon={<User size={24} className="text-white" />}
+      icon={<User size={24} className="text-brand-primary dark:text-white" />}
     >
       <div className="flex flex-col gap-8">
         {/* Dropdowns Row */}
@@ -78,7 +78,7 @@ const AdditionalInformation: React.FC = () => {
 
         {/* Goals Selection */}
         <div className="flex flex-col gap-[12px]">
-          <label className="text-[14px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFFB2]">
+          <label className="text-[14px] font-bold leading-[16px] tracking-[0px] text-brand-textPrimary dark:text-[#FFFFFFB2]">
             What are your main goals?
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -91,10 +91,10 @@ const AdditionalInformation: React.FC = () => {
                   type="button"
                   onClick={() => handleGoalToggle(goal.id)}
                   className={`
-                    relative flex items-center gap-3 px-5 py-4 rounded-[12px] transition-all duration-200 overflow-hidden outline-none hover:bg-white/5
+                    relative flex items-center gap-3 px-5 py-4 rounded-[12px] transition-all duration-200 overflow-hidden outline-none hover:bg-brand-hover dark:hover:bg-white/5
                   ${isSelected
-                      ? "text-white bg-[#FF59001A] backdrop-blur-xl !rounded-[12px] figma-pill-border"
-                      : "text-[#99A1AF] bg-brand-inputBg border border-[#082656]"
+                      ? "text-brand-textPrimary dark:text-white bg-[#FF59001A] dark:bg-[#FF59001A] backdrop-blur-xl !rounded-[12px] figma-pill-border"
+                      : "text-brand-textSecondary dark:text-[#99A1AF] bg-brand-inputBg border border-brand-inputBorder dark:border-[#082656]"
                     }
                   `}
                 >

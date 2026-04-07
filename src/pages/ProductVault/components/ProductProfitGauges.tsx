@@ -18,9 +18,9 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 sm:mb-10">
       {/* Gross Profit Card */}
       <div className="analysis-card-box p-4 flex flex-col relative h-[320px] transition-all hover:border-blue-500/20 group">
-        <div className="flex items-start justify-between mb-2 ">
+        <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-4">
-            <div className="quick-action-icon-circle !h-10 !w-10 text-white">
+            <div className="quick-action-icon-circle !h-10 !w-10 text-white dark:text-white">
               <Activity size={22} className="group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex flex-col !gap-0">
@@ -34,7 +34,7 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
         <div className="flex-1 flex items-center justify-center">
           <div className="relative w-44 h-44 flex items-center justify-center">
             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-              <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.05)" strokeWidth="8" fill="none" />
+              <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-brand-border dark:text-white/5" strokeWidth="8" fill="none" />
               <circle
                 cx="50"
                 cy="50"
@@ -49,7 +49,7 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
               />
             </svg>
             <div className="absolute flex flex-col items-center">
-              <span className="text-[28px]  text-white">{Math.round(Math.max(0, parseFloat(grossProfitMargin) || 0))}%</span>
+              <span className="text-[28px] font-black">{Math.round(Math.max(0, parseFloat(grossProfitMargin) || 0))}%</span>
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
       <div className="analysis-card-box p-4 flex flex-col relative h-[320px] transition-all hover:border-purple-500/20 group">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-4">
-            <div className="quick-action-icon-circle !h-10 !w-10 text-white">
+            <div className="quick-action-icon-circle !h-10 !w-10 text-white dark:text-white">
               <TrendingUp size={22} className="group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex flex-col !gap-0">
@@ -73,7 +73,7 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
         <div className="flex-1 flex items-center justify-center">
           <div className="relative w-44 h-44 flex items-center justify-center">
             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-              <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.05)" strokeWidth="8" fill="none" />
+              <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-brand-border dark:text-white/5" strokeWidth="8" fill="none" />
               <circle
                 cx="50"
                 cy="50"
@@ -88,7 +88,7 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
               />
             </svg>
             <div className="absolute flex flex-col items-center">
-              <span className="text-[28px]  text-white">{Math.round(Math.max(0, parseFloat(netProfitMargin) || 0))}%</span>
+              <span className="text-[28px] font-black">{Math.round(Math.max(0, parseFloat(netProfitMargin) || 0))}%</span>
             </div>
           </div>
         </div>

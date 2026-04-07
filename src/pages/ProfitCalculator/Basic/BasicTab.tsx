@@ -94,7 +94,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
         <div className="flex flex-col gap-6">
           {/* Fulfillment Model Toggle */}
           <div className="flex flex-col gap-3">
-            <label className="text-[12px] font-medium text-slate-300">
+            <label className="text-[12px] font-medium text-brand-textSecondary">
               Fulfillment Model <span className="text-red-500">*</span>
             </label>
             <div className="flex items-center gap-8">
@@ -109,7 +109,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
                   />
                   <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />
                 </div>
-                <span className="text-[14px] font-bold text-white group-hover:text-blue-400 transition-colors">FBA</span>
+                <span className="text-[14px] font-bold text-brand-textPrimary group-hover:text-blue-400 transition-colors">FBA</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer group">
@@ -123,7 +123,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
                   />
                   <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />
                 </div>
-                <span className="text-[14px] font-bold text-white group-hover:text-blue-400 transition-colors">FBM</span>
+                <span className="text-[14px] font-bold text-brand-textPrimary group-hover:text-blue-400 transition-colors">FBM</span>
               </label>
             </div>
           </div>
@@ -201,10 +201,10 @@ const BasicTab: React.FC<BasicTabProps> = ({
             {/* Refund Rate Slider */}
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
-                <label className="text-[12px] font-medium text-slate-300">
+                <label className="text-[12px] font-medium text-brand-textSecondary">
                   Returns/Refund Rate (Sellable)%
                 </label>
-                <div className="bg-[#FFFFFF0D] border border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-white">
+                <div className="bg-brand-bg/60 dark:bg-[#FFFFFF0D] border border-brand-border dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary">
                   {formData.fm_returnsRate}
                 </div>
               </div>
@@ -214,7 +214,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
                 max="100"
                 value={formData.fm_returnsRate}
                 onChange={(e) => handleFieldChange("fm_returnsRate", e.target.value)}
-                className="w-full h-1.5 bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-1.5 bg-brand-bg/60 dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
               {touched.fm_returnsRate && errors.fm_returnsRate && (
                 <span className="text-red-500 text-[10px]">{errors.fm_returnsRate}</span>

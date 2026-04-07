@@ -14,7 +14,8 @@ import {
   Hash,
   ShoppingBag,
   Star,
-  Radio
+  Radio,
+  Home
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -108,10 +109,10 @@ const NavItem: React.FC<NavItemProps> = ({
     >
       <div className="flex items-center gap-3">
         <Icon size={18} />
-        {!isCollapsed && <span className="text-[14px] font-semibold">{label}</span>}
+        <span className="text-[14px] font-semibold">{label}</span>
       </div>
 
-      {badge && !isCollapsed && (
+      {badge && (
         <span className="sidebar-badge">
           {badge}
         </span>
@@ -178,23 +179,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         className={`sidebar-wrapper ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} ${isCollapsed ? "sidebar-collapsed" : ""}`}
       >
         {/* Fixed Logo and Close Button Header */}
-        <div className={`shrink-0 flex px-4 ${isCollapsed ? "justify-center" : "justify-between"} items-center mb-10`}>
-          <BlueRittLogo isCollapsed={isCollapsed} />
-          {!isCollapsed && (
-            <button onClick={toggleSidebar} className="lg:hidden text-white pl-2">
-              <X size={24} />
-            </button>
-          )}
+        <div className={`shrink-0 flex px-4 ${isCollapsed ? "lg:justify-center" : "justify-between"} items-center mb-6`}>
+          <BlueRittLogo isCollapsed={isCollapsed} className="hidden lg:flex" />
+          <BlueRittLogo isCollapsed={false} className="lg:hidden" />
+          <button onClick={toggleSidebar} className="lg:hidden text-brand-textPrimary pl-2">
+            <X size={28} />
+          </button>
         </div>
 
         {/* Scrollable Navigation Area */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col min-h-0">
           {/* Main Nav */}
           <nav className="flex-1 space-y-1 px-3">
-            <NavItem icon={LayoutDashboard} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Home} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={BarChart3} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+
 
             <NavItem
               icon={Radio}
@@ -215,7 +216,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
           </nav>
 
           {/* Bottom Nav */}
-          <div className="pt-6 space-y-1 px-3 mb-6">
+          <div className="pt-3 space-y-1 px-3 mb-2">
             <div className="mt-auto border-t border-[#1E293B] mb-4" />
             <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />

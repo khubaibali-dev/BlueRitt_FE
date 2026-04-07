@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import bgAnalysis from "../../../assets/images/marginmax.png";
+import bgAnalysisLight from "../../../assets/images/SourceLink-lightbg.png";
 import {
   Box, Activity, ArrowLeft
 } from "lucide-react";
@@ -178,7 +179,8 @@ const ProductAnalysis: React.FC = () => {
     <div className="analysis-page-container">
       {/* Background Image Layer - Perfectly Blended */}
       <div className="absolute top-0 left-0 right-0 h-[750px] z-0 pointer-events-none overflow-hidden">
-        <img src={bgAnalysis} alt="" className="w-full h-full object-cover object-top opacity-100 mix-blend-screen" />
+        <img src={bgAnalysis} alt="" className="hidden dark:block  w-full h-full object-cover object-top opacity-100 mix-blend-screen" />
+        <img src={bgAnalysisLight} alt="" className="block dark:hidden dashboard-banner-image w-full h-full object-cover object-top opacity-100" />
         <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-brand-card-alt via-brand-card-alt/30 to-transparent" />
       </div>
 
@@ -186,10 +188,10 @@ const ProductAnalysis: React.FC = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
           <div className="flex flex-col gap-1 w-full md:w-auto">
-            <h1 className="banner-heading-text !text-[30px] !text-left !ml-[-1px] !mb-0 font-black">
+            <h1 className="banner-heading-text !text-[30px] !text-left !ml-[-1px] !mb-0 font-black text-brand-textPrimary dark:text-white">
               Analysis of <span className="text-blue-400 capitalize">{normalizedAmazon?.title.split(' ').slice(0, 3).join(' ') || normalizedTikTok?.title.split(' ').slice(0, 3).join(' ')}...</span>
             </h1>
-            <p className="auth-subtitle !text-left font-medium opacity-80 ml-2">Full performance breakdown and sourcing insights</p>
+            <p className="auth-subtitle !text-left font-medium opacity-80 ml-2 text-brand-textSecondary dark:text-brand-textSecondary">Full performance breakdown and sourcing insights</p>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -197,14 +199,14 @@ const ProductAnalysis: React.FC = () => {
               onClick={() => {
                 const rawCat = product?.category || product?.category_id;
                 const catId = typeof rawCat === 'object' ? rawCat?.id : rawCat;
-                
+
                 if (catId) {
                   navigate(`/products?collectionId=${catId}`);
                 } else {
                   navigate("/products");
                 }
               }}
-              className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-white text-[13px] font-bold hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em] flex items-center justify-center gap-2">
+              className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-brand-textPrimary dark:text-white text-[13px] font-bold hover:bg-brand-hover dark:hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em] flex items-center justify-center gap-2">
               <ArrowLeft size={16} />
               Back
             </button>
@@ -247,8 +249,8 @@ const ProductAnalysis: React.FC = () => {
 
         {/* Calculation History Table */}
         <div className="analysis-card-box mb-6">
-          <div className="p-6 sm:p-6 flex items-center justify-between border-b border-white/5">
-            <h2 className="text-[18px] font-black text-white tracking-tight">Calculation History</h2>
+          <div className="p-6 sm:p-6 flex items-center justify-between border-b border-brand-border dark:border-white/5">
+            <h2 className="text-[18px] font-black text-brand-textPrimary dark:text-white tracking-tight">Calculation History</h2>
           </div>
 
           <div className="overflow-x-auto">
@@ -264,15 +266,15 @@ const ProductAnalysis: React.FC = () => {
                   <th className="analysis-table-th text-center">ACTION</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-brand-border dark:divide-white/5">
                 {history.length > 0 ? history.map((calc: any, index: number) => (
-                  <tr key={calc.id || index} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="analysis-table-td font-medium">{index + 1}</td>
+                  <tr key={calc.id || index} className="hover:bg-brand-hover dark:hover:bg-white/[0.02] transition-colors">
+                     <td className="analysis-table-td font-medium !text-brand-textSecondary">{index + 1}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_sourcing_cost || 0).toLocaleString()}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_revenue || 0).toLocaleString()}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_gross_profit || 0).toLocaleString()}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_net_profit || 0).toLocaleString()}</td>
-                    <td className="analysis-table-td font-medium">
+                    <td className="analysis-table-td font-medium !text-brand-textSecondary">
                       {new Date(calc.modified_at || calc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                     <td className="analysis-table-td text-right">
@@ -285,8 +287,8 @@ const ProductAnalysis: React.FC = () => {
                   <tr>
                     <td colSpan={7} className="text-center py-16">
                       <div className="flex flex-col items-center gap-3 opacity-20">
-                        <Activity size={40} className="text-white" />
-                        <span className="text-[14px] font-bold text-white uppercase tracking-widest">No Historical Data</span>
+                        <Activity size={40} className="text-brand-textPrimary dark:text-white" />
+                        <span className="text-[14px] font-bold text-brand-textPrimary dark:text-white uppercase tracking-widest">No Historical Data</span>
                       </div>
                     </td>
                   </tr>
@@ -295,8 +297,8 @@ const ProductAnalysis: React.FC = () => {
             </table>
           </div>
 
-          <div className="px-8 py-3 border-t border-white/5 bg-white/[0.01]">
-            <span className="text-[12px] text-slate-500 font-bold  tracking-widest">
+          <div className="px-8 py-3 border-t border-brand-border dark:border-white/5 bg-brand-card dark:bg-white/[0.01]">
+            <span className="text-[12px] text-brand-textSecondary dark:text-slate-500 font-bold  tracking-widest">
               Showing 1 to {history.length} of {history.length} results
             </span>
           </div>

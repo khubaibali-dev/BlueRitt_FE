@@ -41,8 +41,8 @@ const HelpSupportPage: React.FC = () => {
     <div className="help-page-container">
       {/* Header Section */}
       <div className="help-header-section">
-        <h1 className="text-[20px] md:text-[32px]  text-white tracking-tight">Need Assistance? Reach Out Here</h1>
-        <p className="text-[14px] md:text-[16px] text-[#FFFFFF99] mt-1">
+        <h1 className="help-title">Need Assistance? Reach Out Here</h1>
+        <p className="help-subtitle mt-1">
           Fill out the form below, and our support team will get back to you within 24 hours. For faster resolution,
           include details like error messages, account ID, or steps to reproduce the issue.
         </p>
@@ -53,7 +53,7 @@ const HelpSupportPage: React.FC = () => {
         {/* Form Header */}
         <div className="help-form-header">
           <div className="tool-icon-container ">
-            <Headphones size={24} className="text-white" />
+            <Headphones size={24} className="text-brand-primary dark:text-white" />
           </div>
           <div>
             <h2 className="help-card-title">Contact Support</h2>
@@ -173,7 +173,7 @@ const HelpSupportPage: React.FC = () => {
         </div>
         <button className="chatbot-btn">
           <Bot size={28} className="text-white" />
-          <span className="chatbot-status-dot" />
+          <span className="chatbot-status-dot border-[#0F172A] dark:border-[#0F172A]" />
         </button>
       </div>
     </div>

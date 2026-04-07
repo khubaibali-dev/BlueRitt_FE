@@ -104,7 +104,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
         </div>
 
         <label className="purchase-checkbox-label">
-          <input type="checkbox" className="mt-1 accent-[#3B82F6]" defaultChecked />
+          <input type="checkbox" className="mt-1 accent-brand-primary" defaultChecked />
           <span>I agree to the purchase of {numAmount} credits for ${addon.cost} and confirm that all sales are final.</span>
         </label>
 

@@ -41,7 +41,7 @@ const InputField: React.FC<InputFieldProps> = ({
           {label && (
             <label
               htmlFor={id}
-              className="text-[12px] font-normal leading-[16px] tracking-[0px] text-[#FFFFFF]"
+              className="text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white"
             >
               {label}
               {required && <span className="text-red-500 ml-1">*</span>}

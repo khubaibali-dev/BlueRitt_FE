@@ -3,6 +3,9 @@ import { createPortal } from "react-dom";
 import { X, Star, Box, BarChart3, Truck, DollarSign, ChevronDown, ChevronUp, AlertTriangle, Zap, Check, Loader2, Store } from "lucide-react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { getAmazonExplorerProductDetails, getAmazonExplorerProductReviews, ProductReview } from "../../../../api/amazonExplorer";
+import DetailsSkeleton from "./skeletons/DetailsSkeleton";
+import ReviewsSkeleton from "./skeletons/ReviewsSkeleton";
+import OffersSkeleton from "./skeletons/OffersSkeleton";
 
 interface ProductDetailsDrawerProps {
   isOpen: boolean;
@@ -34,42 +37,7 @@ interface ProductDetailsDrawerProps {
   onDiscoverSuppliers?: () => void;
 }
 
-const DetailsSkeleton = () => (
-  <div className="animate-pulse space-y-8">
-    <div className="flex gap-4">
-      <div className="w-28 h-28 bg-white/5 rounded-[22px]" />
-      <div className="flex-1 space-y-4">
-        <div className="h-6 bg-white/5 rounded w-3/4" />
-        <div className="h-4 bg-white/5 rounded w-1/4" />
-        <div className="h-8 bg-white/5 rounded w-1/2" />
-      </div>
-    </div>
-    <div className="grid grid-cols-4 gap-4">
-      {[1, 2, 3, 4].map(i => <div key={i} className="h-20 bg-white/5 rounded-xl" />)}
-    </div>
-    <div className="space-y-4">
-      {[1, 2, 3].map(i => <div key={i} className="h-12 bg-white/5 rounded-xl" />)}
-    </div>
-  </div>
-);
 
-const ReviewsSkeleton = () => (
-  <div className="animate-pulse space-y-6">
-    <div className="h-40 bg-white/5 rounded-[12px]" />
-    {[1, 2].map(i => (
-      <div key={i} className="h-48 bg-white/5 rounded-[12px]" />
-    ))}
-  </div>
-);
-
-const OffersSkeleton = () => (
-  <div className="animate-pulse space-y-6">
-    <div className="h-40 bg-white/5 rounded-[20px]" />
-    {[1, 2].map(i => (
-      <div key={i} className="h-56 bg-white/5 rounded-[12px]" />
-    ))}
-  </div>
-);
 
 const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -79,10 +47,10 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
     : rev.review_comment;
 
   return (
-    <div className="bg-white/[0.02] border border-white/5 rounded-xl p-6">
+    <div className="bg-brand-card-alt border border-brand-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+        <div className="w-10 h-10 rounded-full bg-brand-card flex items-center justify-center overflow-hidden border border-brand-border">
             {rev.review_author_avatar ? (
               <img src={rev.review_author_avatar} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -91,7 +59,7 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-white font-bold text-[14px]">{rev.review_author}</span>
+              <span className="text-brand-textPrimary font-bold text-[14px]">{rev.review_author}</span>
               {rev.is_verified_purchase && (
                 <span className="text-[10px] bg-[#6291DE22] text-[#6291DE] px-1.5 py-0.5 rounded flex items-center gap-1 border border-[#6291DE33]">
                   <Check size={8} /> Verified
@@ -101,16 +69,16 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
             <div className="flex items-center gap-2 mt-0.5">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={10} fill={i < Math.floor(parseFloat(rev.review_star_rating || "0")) ? "#FFC107" : "transparent"} className={i < Math.floor(parseFloat(rev.review_star_rating || "0")) ? "text-[#FFC107]" : "text-white/10"} />
+                  <Star key={i} size={10} fill={i < Math.floor(parseFloat(rev.review_star_rating || "0")) ? "#FFC107" : "transparent"} className={i < Math.floor(parseFloat(rev.review_star_rating || "0")) ? "text-[#FFC107]" : "text-brand-textMuted"} />
                 ))}
               </div>
-              <span className="text-[#FFFFFFB2] text-[11px]">{rev.review_date}</span>
+              <span className="text-brand-textSecondary text-[11px]">{rev.review_date}</span>
             </div>
           </div>
         </div>
       </div>
-      <h4 className="text-white font-bold text-[15px] mb-2">{rev.review_title}</h4>
-      <p className="text-[#FFFFFFCC] text-[14px] leading-relaxed">
+      <h4 className="text-brand-textPrimary font-bold text-[15px] mb-2">{rev.review_title}</h4>
+      <p className="text-brand-textSecondary text-[14px] leading-relaxed">
         {displayedComment}
       </p>
       {isLongComment && (
@@ -196,18 +164,18 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
       <div className={`product-details-drawer-panel ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="p-6 pb-2">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white tracking-tight">Product Details</h2>
-            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/5 text-white transition-all">
+            <h2 className="text-xl font-bold text-brand-textPrimary tracking-tight">Product Details</h2>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-brand-hover text-brand-textSecondary hover:text-brand-textPrimary transition-all">
               <X size={20} />
             </button>
           </div>
 
-          <div className="flex gap-2 p-1 bg-white/5 rounded-xl w-fit">
+          <div className="flex gap-2 p-1 bg-brand-card-alt rounded-xl w-fit">
             {(['Details', 'Reviews', 'Offers'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as "Details" | "Reviews" | "Offers")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[14px] text-[16px] transition-all ${activeTab === tab ? 'text-[#FFFFFF] shadow-lg font-bold' : 'text-[#FFFFFF] hover:bg-white/5'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-[14px] text-[16px] transition-all ${activeTab === tab ? 'text-white shadow-lg font-bold' : 'text-brand-textSecondary hover:bg-brand-hover'}`}
                 style={activeTab === tab ? { background: 'linear-gradient(96.06deg, #155DFC -33.01%, #CD5150 124.28%)' } : {}}
               >
                 {tab === 'Details' && <Box size={14} />}
@@ -219,12 +187,12 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           </div>
         </div>
 
-        <div className="mt-4 border-b border-[#1C263C] mx-6" />
+        <div className="mt-4 border-b border-brand-border mx-6" />
 
         <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
           {isSoldByAmazon && (
             <div className="mb-6 py-3 px-4 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
-              <p className="text-red-400 text-[14px] font-medium flex items-center justify-center gap-2">
+              <p className="text-red-600 dark:text-red-400 text-[14px] font-medium flex items-center justify-center gap-2">
                 <AlertTriangle size={16} />
                 This product is sold by Amazon and we do not recommend purchasing it
               </p>
@@ -235,7 +203,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
             isDetailsLoading ? <DetailsSkeleton /> : (
               <>
                 <div className="flex gap-4 mb-6">
-                  <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-white/10">
+                  <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-border">
                     <img src={details?.product_photos?.[0] || displayProduct.image} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
@@ -261,8 +229,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                         )}
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <div className="bg-white/5 rounded-full px-3 py-1 flex items-center gap-1 border border-white/5">
-                          <span className="text-white text-[13px] font-bold">{details?.product_star_rating || displayProduct.rating}</span>
+                        <div className="bg-brand-card-alt rounded-full px-3 py-1 flex items-center gap-1 border border-brand-border">
+                          <span className="text-brand-textPrimary text-[13px] font-bold">{details?.product_star_rating || displayProduct.rating}</span>
                           <Star size={12} fill="#FFC107" className="text-[#FFC107]" />
                         </div>
                         <div className="flex flex-col items-end gap-1.5 justify-start">
@@ -285,11 +253,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 </div>
 
                 {/* Growth Row */}
-                <div className="flex items-center gap-4 mb-9">
-                  <span className="rating-text-standard text-[13px]">{details?.product_num_ratings || displayProduct.ratings} ratings</span>
+                <div className="flex items-center gap-4 mb-9 px-1">
+                  <span className="text-brand-textSecondary text-[13px] font-medium">{details?.product_num_ratings || displayProduct.ratings} ratings</span>
                 </div>
 
-                <div className="border-b border-[#1C263C] mb-10" />
+                <div className="border-b border-brand-border mb-10" />
 
                 <div className="grid grid-cols-4 gap-2 mb-8">
                   {[
@@ -306,7 +274,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                     }
                   ].map((m, i) => (
                     <div key={i} className="flex flex-col items-center text-center">
-                      <div className="!w-10 !h-10 rounded-full quick-action-icon-circle flex items-center justify-center mb-1 text-white shadow-xl">
+                      <div className="!w-10 !h-10 rounded-full quick-action-icon-circle flex items-center justify-center mb-1 text-white shadow-md">
                         <m.icon size={22} className="text-white" />
                       </div>
                       <span className="metric-label mb-1">{m.label}</span>
@@ -316,11 +284,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 </div>
                 {/* Seller / Shipping Grid */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-[#04132B] border border-brand-inputBorder shadow-xl">
+                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
                     <span className="metric-label">Seller Name</span>
                     <span className="metric-value truncate">{details?.seller || details?.product_offers?.[0]?.seller || "Amazon"}</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-[#04132B] border border-brand-inputBorder shadow-xl">
+                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
                     <span className="metric-label">Ships From</span>
                     <span className="metric-value truncate">{details?.ships_from || details?.product_offers?.[0]?.ships_from || "Amazon"}</span>
                   </div>
@@ -328,11 +296,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
 
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-[#04132B] border border-brand-inputBorder shadow-xl">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
                       <span className="metric-label">Seller Country</span>
-                      <span className="text-[12px] text-[#FFFFFF] font-medium uppercase">{details?.seller_country || "US"}</span>
+                      <span className="text-[12px] text-brand-textPrimary font-medium uppercase">{details?.seller_country || "US"}</span>
                     </div>
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-[#04132B] border border-brand-inputBorder shadow-xl">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
                       <span className="metric-label">Seller Rating</span>
                       <div className="flex items-center gap-2">
                         <div className="!w-6 !h-6 rounded-full flex items-center justify-center quick-action-icon-circle">
@@ -343,7 +311,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-[#04132B] border border-brand-inputBorder shadow-xl">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
                       <span className="metric-label">Item Dimensions</span>
                       <span className="metric-value truncate text-[11px]">
                         {details?.product_information?.["Product Dimensions"] ||
@@ -351,7 +319,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                           details?.product_information?.["Package Dimensions"] || "N/A"}
                       </span>
                     </div>
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-[#04132B] border border-brand-inputBorder shadow-xl">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
                       <span className="metric-label">Item Weight</span>
                       <span className="metric-value truncate">
                         {details?.product_information?.["Item Weight"] ||
@@ -362,10 +330,10 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 </div>
                 <div className="space-y-3 mb-10">
                   {['About Product', 'Product Information', 'Product Details'].map((section) => (
-                    <div key={section} className="border border-white/5 rounded-xl overflow-hidden bg-white/[0.02]">
+                    <div key={section} className="border border-brand-border rounded-xl overflow-hidden bg-brand-card-alt">
                       <button
                         onClick={() => toggleSection(section)}
-                        className="w-full flex items-center justify-between p-4 text-[14px] font-bold text-white hover:bg-white/5 transition-colors"
+                        className="w-full flex items-center justify-between p-4 text-[14px] font-bold text-brand-textPrimary hover:bg-brand-hover transition-colors"
                       >
                         <span className="flex items-center gap-2">
                           {section === 'About Product' && <Box size={16} className="text-[#6291DE]" />}
@@ -376,12 +344,12 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                         {expandedSection === section ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </button>
                       {expandedSection === section && (
-                        <div className="p-4 pt-0 border-t border-white/5">
-                          <div className="text-[13px] text-[#FFFFFFCC] leading-relaxed mt-4">
+                        <div className="p-4 pt-0 border-t border-brand-border">
+                          <div className="text-[13px] text-brand-textSecondary leading-relaxed mt-4">
                             {section === 'About Product' && (
                               <ul className="space-y-3">
                                 {(isAboutExpanded ? details?.about_product : details?.about_product?.slice(0, 4))?.map((item, i) => (
-                                  <li key={i} className="flex gap-2 text-[#FFFFFFCC]">
+                                  <li key={i} className="flex gap-2 text-slate-600 dark:text-[#FFFFFFCC]">
                                     <div className="w-1.5 h-1.5 rounded-full bg-[#6291DE] mt-1.5 shrink-0" />
                                     <p>{item}</p>
                                   </li>
@@ -403,9 +371,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             {section === 'Product Information' && details?.product_information && (
                               <div className="grid grid-cols-1 gap-2">
                                 {Object.entries(details.product_information).map(([key, val]: [string, any]) => (
-                                  <div key={key} className="border-b border-white/5 py-2">
-                                    <span className="text-[#FFFFFFB2]">{key}: </span>
-                                    <span className="text-white font-medium">{String(val)}</span>
+                                  <div key={key} className="border-b border-brand-border py-2">
+                                    <span className="text-brand-textSecondary">{key}: </span>
+                                    <span className="text-brand-textPrimary font-medium">{String(val)}</span>
                                   </div>
                                 ))}
                               </div>
@@ -413,9 +381,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             {section === 'Product Details' && details?.product_details && (
                               <div className="grid grid-cols-1 gap-2">
                                 {Object.entries(details.product_details).map(([key, val]: [string, any]) => (
-                                  <div key={key} className="border-b border-white/5 py-2">
-                                    <span className="text-[#FFFFFFB2]">{key}: </span>
-                                    <span className="text-white font-medium">{String(val)}</span>
+                                  <div key={key} className="border-b border-brand-border py-2">
+                                    <span className="text-brand-textSecondary">{key}: </span>
+                                    <span className="text-brand-textPrimary font-medium">{String(val)}</span>
                                   </div>
                                 ))}
                               </div>
@@ -436,21 +404,21 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           {activeTab === 'Reviews' && (
             isReviewsLoading ? <ReviewsSkeleton /> : (
               <div className="space-y-6">
-                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6">
+                <div className="bg-brand-card-alt border border-brand-border rounded-2xl p-6">
                   <div className="flex justify-between items-end mb-6">
                     <div>
-                      <h3 className="text-white font-bold text-[18px] mb-1">Customer Reviews</h3>
-                      <p className="text-[#FFFFFFB2] text-[13px]">Based on {reviews.length} recent reviews</p>
+                      <h3 className="text-brand-textPrimary font-bold text-[18px] mb-1">Customer Reviews</h3>
+                      <p className="text-brand-textSecondary text-[13px]">Based on {reviews.length} recent reviews</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-[32px] font-bold text-white">{details?.product_star_rating || displayProduct.rating}</div>
+                      <div className="text-[32px] font-bold text-brand-textPrimary">{details?.product_star_rating || displayProduct.rating}</div>
                       <div className="flex justify-end gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
                             size={14}
                             fill={i < Math.floor(parseFloat(String(details?.product_star_rating || displayProduct.rating))) ? "#FFC107" : "transparent"}
-                            className={i < Math.floor(parseFloat(String(details?.product_star_rating || displayProduct.rating))) ? "text-[#FFC107]" : "text-white/10"}
+                            className={i < Math.floor(parseFloat(String(details?.product_star_rating || displayProduct.rating))) ? "text-[#FFC107]" : "text-slate-300 dark:text-white/10"}
                           />
                         ))}
                       </div>
@@ -463,11 +431,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                       const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                       return (
                         <div key={star} className="flex items-center gap-3">
-                          <span className="text-[#FFFFFFB2] text-[12px] w-10">{star} star</span>
-                          <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                          <span className="text-brand-textSecondary text-[12px] w-10">{star} star</span>
+                          <div className="flex-1 h-1.5 bg-brand-bg rounded-full overflow-hidden">
                             <div className="h-full bg-[#6291DE] rounded-full transition-all duration-1000" style={{ width: `${percentage}%` }} />
                           </div>
-                          <span className="text-[#FFFFFFB2] text-[12px] w-8 text-right">{Math.round(percentage)}%</span>
+                          <span className="text-brand-textSecondary text-[12px] w-8 text-right">{Math.round(percentage)}%</span>
                         </div>
                       );
                     })}
@@ -486,7 +454,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                           <button
                             onClick={() => fetchNextPage()}
                             disabled={isFetchingNextPage}
-                            className="w-[200px] h-[44px] flex items-center justify-center rounded-full figma-pill-border text-white text-[14px] font-bold hover:bg-white/5 transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-[200px] h-[44px] flex items-center justify-center rounded-full figma-pill-border text-brand-textPrimary text-[14px] font-bold hover:bg-brand-hover transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isFetchingNextPage ? (
                               <>
@@ -498,7 +466,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             )}
                           </button>
                           <div className="mt-2.5">
-                            <span className="text-[#FFFFFFB2] text-[13px] font-medium">
+                            <span className="text-slate-500 dark:text-[#FFFFFFB2] text-[13px] font-medium">
                               Page {currentPage}
                             </span>
                           </div>
@@ -506,9 +474,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                       )}
                     </>
                   ) : (
-                    <div className="text-center py-20 border border-dashed border-white/10 rounded-xl">
-                      <Star size={32} className="mx-auto mb-3 text-white/10" />
-                      <p className="text-[#FFFFFFB2]">No recent reviews found</p>
+                    <div className="text-center py-20 border border-dashed border-brand-border rounded-xl">
+                      <Star size={32} className="mx-auto mb-3 text-brand-textMuted" />
+                      <p className="text-brand-textSecondary">No recent reviews found</p>
                     </div>
                   )}
                 </div>
@@ -519,14 +487,14 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           {activeTab === 'Offers' && (
             isDetailsLoading ? <OffersSkeleton /> : (
               <div className="space-y-6">
-                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6">
+                <div className="bg-brand-card-alt border border-brand-border rounded-2xl p-6">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h3 className="text-white font-bold text-[18px] mb-1">Available Offers</h3>
-                      <p className="text-[#FFFFFFB2] text-[13px]">Compare prices from different sellers</p>
+                      <h3 className="text-brand-textPrimary font-bold text-[18px] mb-1">Available Offers</h3>
+                      <p className="text-brand-textSecondary text-[13px]">Compare prices from different sellers</p>
                     </div>
                     <div className="text-right">
-                      <span className="text-[#FFFFFFB2] text-[11px] uppercase font-bold tracking-widest block mb-1">Price</span>
+                      <span className="text-brand-textSecondary text-[11px] uppercase font-bold tracking-widest block mb-1">Price</span>
                       <span className="text-[#6291DE] text-[24px] font-bold">
                         {offers.length > 0 ? offers[0].product_price : "N/A"}
                       </span>
@@ -537,7 +505,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 <div className="space-y-4">
                   {offers.length > 0 ? (
                     offers.map((offer, idx) => (
-                      <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-xl p-6">
+                      <div key={idx} className="bg-brand-card-alt border border-brand-border rounded-xl p-6">
                         <div className="grid grid-cols-2 gap-y-6 gap-x-12">
                           {/* Column 1 */}
                           <div className="flex flex-col gap-6">
@@ -567,31 +535,31 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             </div>
                             <div className="flex flex-col gap-1">
                               <span className="metric-label">Rating</span>
-                              <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/5 rounded-full w-fit">
+                              <div className="flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-full w-fit">
                                 <div className="flex">
                                   {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={11} fill={i < Math.floor(parseFloat(offer.seller_star_rating || "5")) ? "#FFC107" : "transparent"} className={i < Math.floor(parseFloat(offer.seller_star_rating || "5")) ? "text-[#FFC107]" : "text-white/20"} />
+                                    <Star key={i} size={11} fill={i < Math.floor(parseFloat(offer.seller_star_rating || "5")) ? "#FFC107" : "transparent"} className={i < Math.floor(parseFloat(offer.seller_star_rating || "5")) ? "text-[#FFC107]" : "text-slate-300 dark:text-white/20"} />
                                   ))}
                                 </div>
-                                <span className="text-white text-[12px] font-bold leading-none">{Math.floor(parseFloat(offer.seller_star_rating || "5"))}</span>
+                                <span className="text-brand-textPrimary text-[12px] font-bold leading-none">{Math.floor(parseFloat(offer.seller_star_rating || "5"))}</span>
                               </div>
                             </div>
                             <div className="flex flex-col gap-1">
                               <span className="metric-label">Product Condition</span>
                               <div className=" w-fit">
-                                <span className="text-white text-[12px] font-bold">{offer.product_condition || "New"}</span>
+                                <span className="text-brand-textPrimary text-[12px] font-bold">{offer.product_condition || "New"}</span>
                               </div>
                             </div>
                             <div className="flex flex-col gap-1">
                               <span className="metric-label">Delivery Price</span>
-                              <div className="px-3 py-0.5 bg-white/5 border border-white/5 rounded-full w-fit">
+                              <div className="px-3 py-0.5 bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-full w-fit">
                                 <span className="text-[#6291DE] text-[12px] font-bold">{offer.delivery_price || "FREE"}</span>
                               </div>
                             </div>
                           </div>
                         </div>
-                        <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-[#FFFFFFB2]">
+                        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-brand-textSecondary">
                             <Store size={16} />
                             <span className="text-[13px] font-medium">Sold by {offer.seller || "Amazon.com"}</span>
                           </div>
@@ -599,7 +567,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             href={offer.seller_link || "#"}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-6 py-2.5 rounded-full figma-pill-border text-white text-[14px] font-bold hover:bg-white/5 transition-all text-center flex items-center justify-center min-w-[140px]"
+                            className="px-6 py-2.5 rounded-full figma-pill-border text-brand-textPrimary text-[14px] font-bold hover:bg-brand-hover transition-all text-center flex items-center justify-center min-w-[140px]"
                           >
                             View Offer
                           </a>
@@ -607,9 +575,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-20 border border-dashed border-white/10 rounded-xl">
-                      <DollarSign size={32} className="mx-auto mb-3 text-white/10" />
-                      <p className="text-[#FFFFFFB2]">No additional offers available</p>
+                    <div className="text-center py-20 border border-dashed border-brand-border rounded-xl">
+                      <DollarSign size={32} className="mx-auto mb-3 text-brand-textMuted" />
+                      <p className="text-brand-textSecondary">No additional offers available</p>
                     </div>
                   )}
                 </div>

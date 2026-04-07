@@ -6,6 +6,7 @@ import AmazonProductCard from "../Common/Cards/AmazonProductCard";
 import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
+import bgAnalysisLight from "../../../../assets/images/SourceLink-lightbg.png";
 import BasicTab from "../../../ProfitCalculator/Basic/BasicTab";
 import AdvancedTab from "../../../ProfitCalculator/Advance/AdvancedTab";
 import ResultPanels from "../../../ProfitCalculator/components/ResultPanels";
@@ -385,17 +386,18 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
         }, [formik.values, setFormData]);
 
         return (
-          <div className="discovery-results px-4 sm:px-4 py-6 sm:py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-[#051125] rounded-[24px] isolate min-h-screen overflow-hidden">
+          <div className="discovery-results px-4 sm:px-4 py-6 sm:py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-brand-card border border-brand-border rounded-[24px] isolate min-h-screen overflow-hidden">
             <div className="absolute -inset-x-6 sm:-inset-x-10 -top-6 sm:-top-10 h-[750px] z-[-1] pointer-events-none overflow-hidden rounded-t-[32px]">
-              <img src={bgAnalysis} alt="" className="w-full h-full object-cover object-top opacity-100 mix-blend-screen" />
-              <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-[#030F23] via-[#030F23]/30 to-transparent" />
+              <img src={bgAnalysis} alt="" className="dashboard-banner-image !opacity-100 mix-blend-screen hidden dark:block" style={{ transform: 'scale(1.2)', objectPosition: 'left top' }} />
+              <img src={bgAnalysisLight} alt="" className="dashboard-banner-image dark:hidden" />
+              <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-brand-card via-brand-card/30 to-transparent" />
             </div>
 
             <div className="flex-1 max-w-[1400px] mx-auto w-full px-0 sm:px-2 pt-0 pb-10">
               <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-8">
                 <button
                   onClick={onBack}
-                  className="bg-white/5 figma-pill-border px-4 py-2 rounded-full text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-all font-inter mb-1"
+                  className="bg-black/5 dark:bg-white/5 figma-pill-border px-4 py-2 rounded-full text-brand-textPrimary text-[13px] font-bold flex items-center justify-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all font-inter mb-1"
                 >
                   <ChevronLeft size={16} /> Back
                 </button>
@@ -446,16 +448,16 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
 
               {/* Basic / Advanced Toggle */}
               <div className="flex justify-center w-full mt-4 mb-10">
-                <div className="bg-[#030B1C]/5 px-2 py-2 backdrop-blur-xl flex items-center figma-pill-border overflow-hidden">
+                <div className="bg-[#030B1C]/5 dark:bg-[#030B1C]/5 px-2 py-2 backdrop-blur-xl flex items-center figma-pill-border overflow-hidden rounded-full">
                   <button
                     onClick={() => setActiveTab("Basic")}
-                    className={`px-8 py-2 rounded-full text-[13px] font-bold transition-all ${activeTab === 'Basic' ? 'bg-brand-gradient text-white shadow-lg shadow-orange-500/20' : 'text-white hover:text-white'}`}
+                    className={`px-8 py-2 rounded-full text-[13px] font-bold transition-all ${activeTab === 'Basic' ? 'bg-brand-gradient text-white shadow-lg shadow-orange-500/20' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                     Basic
                   </button>
                   <button
                     onClick={() => setActiveTab("Advanced")}
-                    className={`px-8 py-2 rounded-full text-[13px] font-bold transition-all ${activeTab === 'Advanced' ? 'bg-brand-gradient text-white shadow-lg shadow-orange-500/20' : 'text-white hover:text-white'}`}
+                    className={`px-8 py-2 rounded-full text-[13px] font-bold transition-all ${activeTab === 'Advanced' ? 'bg-brand-gradient text-white shadow-lg shadow-orange-500/20' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                     Advanced
                   </button>

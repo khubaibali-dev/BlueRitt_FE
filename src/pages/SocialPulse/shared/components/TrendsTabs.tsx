@@ -28,7 +28,7 @@ const TrendsTabs: React.FC<TrendsTabsProps> = ({ options, activeTab, onTabChange
             className={`flex items-center gap-2.5 px-5 py-2.5 rounded-[12px] text-[14px] transition-all whitespace-nowrap flex-shrink-0 relative group/tab
               ${activeTab === option.value
                 ? "trend-tab-active"
-                : "text-white hover:text-white hover:bg-white/10"}`}
+                : "text-brand-textPrimary dark:text-white hover:bg-black/5 dark:hover:bg-white/10"}`}
           >
             {Icon && <Icon size={16} />}
             {option.label}

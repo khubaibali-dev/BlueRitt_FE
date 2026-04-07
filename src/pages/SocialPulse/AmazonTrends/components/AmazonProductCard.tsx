@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Star,
   ExternalLink
@@ -36,46 +35,43 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
   return (
     <div className="trend-product-card group relative">
       {/* Image Area */}
-      <div className="relative aspect-[1/1.1] overflow-hidden">
+      <div className="relative aspect-[1/1.1] overflow-hidden bg-white p-6">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-700"
+          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
         />
       </div>
 
       {/* Content Area */}
-      <div className="p-4 flex flex-col gap-4">
+      <div className="p-7 flex flex-col gap-5">
         {/* Title and Category */}
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="product-card-title flex-1">
+        <div className="flex items-start justify-between gap-3 mb-1">
+          <h3 className="product-card-title flex-1 !text-[18px]">
             {title}
           </h3>
-          {/* <div className="trending-badge-standard shrink-0 !static">
-            {category}
-          </div> */}
         </div>
 
         {/* Price and Rating */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
-            <span className="product-price-primary">
+            <span className="product-price-primary text-[20px]">
               {price}
             </span>
             {oldPrice && (
-              <span className="text-[12px] text-[#9F9F9F] line-through mt-0.5 font-medium">
+              <span className="text-[12px] text-brand-textSecondary line-through mt-0.5 font-medium">
                 {oldPrice}
               </span>
             )}
           </div>
 
           <div className="flex flex-col items-end gap-1">
-            <div className="px-2.5 py-1 bg-[#081421] border border-[#082656] rounded-full flex items-center gap-1.5">
+            <div className="px-2.5 py-1 bg-brand-card border border-brand-border rounded-full flex items-center gap-1.5 shadow-sm">
               <Star size={12} fill="#FFD700" className="text-[#FFD700]" />
-              <span className="text-[11px] font-bold text-white">{rating || "0.0"}</span>
+              <span className="text-[11px] font-bold text-brand-textPrimary">{rating || "0.0"}</span>
             </div>
             {views && (
-              <span className="text-[10px] text-[#9F9F9F] font-medium">
+              <span className="text-[10px] text-brand-textSecondary font-medium">
                 {views}
               </span>
             )}

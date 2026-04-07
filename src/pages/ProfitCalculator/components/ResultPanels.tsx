@@ -38,7 +38,7 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Primary Result Panel (Vibrant Gradient) */}
       <div
-        className="w-full rounded-[24px] p-7 text-white shadow-2xl relative overflow-hidden transition-all hover:scale-[1.01] min-h-[220px] flex flex-col"
+        className="w-full rounded-[24px] p-7 text-white relative overflow-hidden transition-all hover:scale-[1.01] min-h-[220px] flex flex-col"
         style={gradientStyle}
       >
         <button className="absolute top-6 right-6 text-white hover:text-white/80 transition-opacity">
@@ -77,10 +77,10 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Formula Description (Primary) */}
       <div className="flex items-start gap-3 px-2 mb-2">
-        <div className="mt-0.5 shrink-0 text-slate-300">
+        <div className="mt-0.5 shrink-0 text-brand-textSecondary">
           <Info size={16} />
         </div>
-        <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
+        <p className="text-[11px] text-brand-textSecondary leading-relaxed font-medium">
           {isAdvanced
             ? "Net Profit = GP – Marketing, Graphics, Reviews, Additional costs, and Taxes."
             : "GP = Product Revenue – Product Sourcing Cost – Fulfillment Cost."
@@ -90,14 +90,14 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Secondary Result Panel (Dimmable/Locked) */}
       <div
-        className="w-full rounded-[24px] p-7 text-white shadow-2xl relative overflow-hidden transition-all flex flex-col min-h-[220px]"
+        className="w-full rounded-[24px] p-7 text-white relative overflow-hidden transition-all flex flex-col min-h-[220px]"
         style={gradientStyle}
       >
         {/* Locked Overlay */}
         {!isAdvanced && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center">
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center rounded-[24px] overflow-hidden">
             <div
-              className="absolute inset-0 transition-all opacity-100"
+              className="absolute inset-0 transition-all opacity-100 rounded-[24px]"
               style={{ background: "#6462620D", backdropFilter: "blur(4.8px)" }}
             ></div>
 
@@ -154,10 +154,10 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Formula Description (Secondary) */}
       <div className="flex items-start gap-3 px-2">
-        <div className="mt-0.5 shrink-0 text-slate-400">
+        <div className="mt-0.5 shrink-0 text-brand-textSecondary">
           <Info size={16} />
         </div>
-        <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+        <p className="text-[11px] text-brand-textSecondary leading-relaxed font-medium">
           {!isAdvanced
             ? "Net Profit = GP – Marketing, Graphics, Reviews, Additional costs, and Taxes."
             : "Gross Profit = Product Revenue – Product Sourcing Cost – Fulfillment Cost."

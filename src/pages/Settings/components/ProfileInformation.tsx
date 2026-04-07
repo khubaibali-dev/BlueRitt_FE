@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { User } from "lucide-react";
+import { User, Mail, Phone } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import InputField from "../../../components/common/input/InputField";
-import CountrySelect, { countries, Country } from "../../../components/common/select/CountrySelect";
+import SelectField from "../../../components/common/select/SelectField";
+import { countries, CountryDisplay } from "../../../components/common/select/CountrySelect";
 import { useAuth } from "../../../context/AuthContext";
 import { updateUserProfile } from "../../../api/auth";
 import { toast } from "react-toastify";
@@ -69,7 +70,7 @@ const ProfileInformation: React.FC = () => {
       title="Profile Information"
       subtitle="Update your personal details"
       defaultOpen={true}
-      icon={<User size={24} className="text-white" />}
+      icon={<User size={24} className="text-brand-primary dark:text-white" />}
     >
       <div className="flex flex-col gap-6">
         {/* Top Row: First Name, Last Name, Email */}
@@ -79,6 +80,7 @@ const ProfileInformation: React.FC = () => {
             label="First Name"
             placeholder="Enter first name"
             value={profileData.firstName}
+            icon={User}
             onChange={(e) => handleChange("firstName", e.target.value)}
           />
           <InputField
@@ -86,6 +88,7 @@ const ProfileInformation: React.FC = () => {
             label="Last Name"
             placeholder="Enter last name"
             value={profileData.lastName}
+            icon={User}
             onChange={(e) => handleChange("lastName", e.target.value)}
           />
           <InputField
@@ -95,16 +98,19 @@ const ProfileInformation: React.FC = () => {
             placeholder="Enter email"
             value={profileData.email}
             readOnly={true}
+            icon={Mail}
             onChange={() => { }} // Read-only but required by InputFieldProps
           />
         </div>
 
         {/* Bottom Row: Country & Contact Number */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <CountrySelect
+          <SelectField
+            id="country"
             label="Country"
             value={profileData.country}
-            onChange={(country) => handleChange("country", country.name)}
+            options={countries.map(c => ({ label: c.name, value: c.name }))}
+            onChange={(val) => handleChange("country", val)}
             direction="down"
           />
 
@@ -112,7 +118,8 @@ const ProfileInformation: React.FC = () => {
             id="contactNumber"
             label="Contact Number"
             placeholder="xxx xxxx xxx"
-            prefix={countries.find((c: Country) => c.name === profileData.country)?.dialCode}
+            icon={Phone}
+            prefix={countries.find((c: CountryDisplay) => c.name === profileData.country)?.dialCode}
             value={profileData.contactNumber}
             onChange={(e) => handleChange("contactNumber", e.target.value)}
           />

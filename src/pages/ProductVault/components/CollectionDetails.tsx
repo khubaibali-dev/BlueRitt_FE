@@ -167,7 +167,7 @@ const ResearchRow = React.memo<{
 
   return (
     <div
-      className="vault-research-entry !cursor-default !hover:translate-y-0 !hover:shadow-none !hover:bg-[#FFFFFF03] animate-in fade-in slide-in-from-bottom-4 duration-500"
+      className="vault-research-entry !cursor-default !hover:translate-y-0 !hover:shadow-none animate-in fade-in slide-in-from-bottom-4 duration-500"
     >
       {/* Row Header with Stats */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6 px-2">
@@ -175,7 +175,7 @@ const ResearchRow = React.memo<{
         <div className="flex items-center gap-6">
 
           {product.source && (
-            <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+            <div className="px-3 py-1.5 rounded-full bg-brand-hover dark:bg-white/5 border border-brand-border dark:border-white/10 text-[10px] font-black text-brand-textSecondary dark:text-slate-400 uppercase tracking-widest leading-none">
               {product.source}
             </div>
           )}
@@ -214,7 +214,7 @@ const ResearchRow = React.memo<{
       <div className="flex items-center justify-end gap-6 mt-8 pt-6 border-t border-white/5">
         <button
           onClick={handleAnalyzeClick}
-          className="flex items-center gap-2 text-[13px] font-bold text-blue-400 hover:text-blue-300 underline underline-offset-4 transition-colors group/link"
+          className="flex items-center gap-2 text-[13px] font-bold text-[#6291DE] hover:opacity-80 underline underline-offset-4 transition-colors group/link"
         >
           <ExternalLink size={14} className="no-underline group-hover/link:translate-x-0.5 transition-transform" />
           View Details
@@ -222,7 +222,7 @@ const ResearchRow = React.memo<{
         <button
           onClick={() => onDelete(product.id)}
           disabled={isDeleting}
-          className="flex items-center gap-2 text-[13px] font-bold text-red-500 hover:text-red-400 underline underline-offset-4 transition-colors disabled:opacity-50 disabled:no-underline"
+          className="flex items-center gap-2 text-[13px] font-bold text-brand-primary dark:text-red-500 hover:opacity-80 underline underline-offset-4 transition-colors disabled:opacity-50 disabled:no-underline"
         >
           <Trash2 size={14} className="no-underline" />
           {isDeleting ? "Deleting..." : "Delete Record"}
@@ -301,8 +301,8 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
     return (
       <div className="mb-12">
         <div className="mb-6 pl-1">
-          <h2 className="text-[20px] font-bold text-white tracking-tight">{title}</h2>
-          <p className="text-[14px] text-slate-400 mt-1 max-w-[800px] leading-relaxed">
+          <h2 className="text-[20px] font-bold text-brand-textPrimary dark:text-white tracking-tight">{title}</h2>
+          <p className="text-[14px] text-brand-textSecondary dark:text-slate-400 mt-1 max-w-[800px] leading-relaxed">
             {description}
           </p>
         </div>
@@ -342,12 +342,12 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
         <div className="flex flex-col gap-1">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-white hover:text-blue-300 text-[14px] font-bold mb-2 transition-colors w-fit group"
+            className="flex items-center gap-2 text-brand-textPrimary dark:text-white hover:text-brand-primary dark:hover:text-blue-300 text-[14px] font-bold mb-2 transition-colors w-fit group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Vault
           </button>
-          <h1 className="banner-heading-text !mb-1 !text-left">{collectionName}</h1>
-          <p className="auth-subtitle !text-left ml-4">Analyze {products.length} research entries in this collection</p>
+          <h1 className="banner-heading-text !mb-1 !text-left text-brand-textPrimary dark:text-white">{collectionName}</h1>
+          <p className="auth-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary">Analyze {products.length} research entries in this collection</p>
         </div>
       </div>
 
@@ -379,13 +379,13 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
             )}
           </div>
         ) : (
-          <div className="col-span-full py-20 flex flex-col items-center gap-4 bg-white/5 border border-dashed border-white/10 rounded-3xl">
-            <div className="standard-icon-circle w-16 h-16 bg-white/5 text-slate-500">
+          <div className="col-span-full py-20 flex flex-col items-center gap-4 bg-brand-hover dark:bg-white/5 border border-dashed border-brand-border dark:border-white/10 rounded-3xl">
+            <div className="standard-icon-circle w-16 h-16 bg-brand-card dark:bg-white/5 text-brand-textSecondary dark:text-slate-500 shadow-sm dark:shadow-none">
               <ShoppingBag size={24} />
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-1">Collection is empty</h3>
-              <p className="text-slate-500">No products found in this category.</p>
+              <h3 className="text-xl font-bold text-brand-textPrimary dark:text-white mb-1">Collection is empty</h3>
+              <p className="text-brand-textSecondary dark:text-slate-500">No products found in this category.</p>
             </div>
           </div>
         )}

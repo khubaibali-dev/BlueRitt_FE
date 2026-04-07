@@ -27,7 +27,7 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
   const numericRating = parseFloat(rating) || 0;
 
   return (
-    <div className="bg-[#051125] border border-[#082656] rounded-[24px] overflow-hidden flex flex-col group transition-all duration-300">
+    <div className="bg-brand-card border border-brand-border rounded-[24px] overflow-hidden flex flex-col group transition-all duration-300">
       {/* Image Area */}
       <div className="relative aspect-[1/1.1] overflow-hidden">
         <img
@@ -38,14 +38,14 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
 
         {/* Rank Badge - Top Left */}
         <div className="absolute top-4 left-4 z-10">
-          <div className="quick-action-icon-circle !w-10 !h-10 border border-white/10 shadow-xl">
-            <span className="text-[14px] font-black text-white tracking-tight leading-none">#{rank}</span>
+          <div className="quick-action-icon-circle !w-10 !h-10 border border-brand-border shadow-xl bg-brand-card-alt">
+            <span className="text-[14px] font-black text-brand-textPrimary tracking-tight leading-none">#{rank}</span>
           </div>
         </div>
 
         {/* Star Rating Badge - Top Right */}
         <div className="absolute top-4 right-4 z-10">
-          <div className="bg-black/60 !px-3 !py-1.5 flex items-center gap-1.5 !rounded-full shadow-lg backdrop-blur-md border border-white/10 text-white font-bold text-[11px]">
+          <div className="bg-brand-card/80 !px-3 !py-1.5 flex items-center gap-1.5 !rounded-full shadow-lg backdrop-blur-md border border-brand-border text-brand-textPrimary font-bold text-[11px]">
             <div className="flex items-center">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
@@ -63,7 +63,7 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
 
       {/* Content Area */}
       <div className="p-7 flex flex-col flex-1">
-        <h3 className="text-[#FFFFFF] font-semibold text-[15px] leading-tight line-clamp-2 min-h-[40px] mb-3">
+        <h3 className="text-brand-textPrimary font-semibold text-[15px] leading-tight line-clamp-2 min-h-[40px] mb-3">
           {title}
         </h3>
 
@@ -71,7 +71,7 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
           <span className="product-price-primary text-[18px]">
             {price}
           </span>
-          <span className="text-white/40 text-[12px] font-medium">
+          <span className="text-brand-textSecondary text-[12px] font-medium">
             ({ratingCount.replace(' ratings', '')})
           </span>
         </div>

@@ -51,7 +51,7 @@ const LoginCard: React.FC = () => {
       </p>
 
       {/* ── LOGIN BUTTON ── */}
-      <PrimaryButton type="submit" form="login-form">
+      <PrimaryButton type="submit" form="login-form" fullWidth={false} className="w-full sm:w-[280px]">
         Login →
       </PrimaryButton>
     </div>

@@ -1,8 +1,7 @@
 import React from "react";
 import BlueRittLogo from "../components/common/logo/BlueRittLogo";
-import { useTheme } from "../context/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Sun, Moon, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import bgGlows from "../assets/images/bg-glows.png";
 
 interface AuthLayoutProps {
@@ -10,7 +9,6 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -48,14 +46,6 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             )}
             <BlueRittLogo />
           </div>
-
-          <button
-            onClick={toggleTheme}
-            className="p-2.5 rounded-full bg-brand-card border border-brand-border text-brand-textPrimary hover:bg-brand-inputBg transition-all duration-300 shadow-lg"
-            aria-label="Toggle Theme"
-          >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
         </header>
 
         {/* Main content — pushed down further */}
@@ -65,7 +55,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
 
         {/* Footer */}
         <footer className="relative z-10 pb-8 text-center space-y-0.5 px-4">
-          <p className="text-[14px] sm:text-[16px] text-[#FFFFFFB2]">
+          <p className="text-[14px] sm:text-[16px] text-brand-textSecondary dark:text-[#FFFFFFB2]">
             BlueRitt® is a proprietary product of ReverCe Technologies Ltd. UK
           </p>
           <p className="text-[14px] sm:text-[16px] text-brand-accent font-semibold">

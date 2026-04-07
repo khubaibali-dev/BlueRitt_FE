@@ -124,8 +124,8 @@ const AddOns: React.FC = () => {
   return (
     <div className="addons-page-container">
       <div className="addons-header-section">
-        <h1 className="page-header-title">Purchase Add-ons</h1>
-        <p className="page-header-subtitle">Extend your limits with additional credits</p>
+        <h1 className="addons-title">Purchase Add-ons</h1>
+        <p className="addons-subtitle">Extend your limits with additional credits</p>
       </div>
 
       <div className="addons-balance-grid">
@@ -138,14 +138,14 @@ const AddOns: React.FC = () => {
         </div>
 
         <div 
-          className="addon-balance-card addon-balance-card-alt cursor-pointer hover:bg-white/10 transition-colors"
+          className="addon-balance-card addon-balance-card-alt cursor-pointer hover:bg-brand-hover dark:hover:bg-white/10 transition-colors"
           onClick={() => setIsBalanceModalOpen(true)}
         >
           <div className="addon-add-balance-icon">
             <ShoppingCart size={28} />
           </div>
           <div className="addon-add-balance-content">
-            <span className="addon-balance-value text-[16px]">Add Balance</span>
+            <span className="addon-balance-value !text-[16px]">Add Balance</span>
             <p className="addon-add-balance-text">Purchase Balance for Add Ons</p>
           </div>
         </div>

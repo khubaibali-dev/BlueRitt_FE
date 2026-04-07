@@ -3,6 +3,7 @@ import { Search, Info, Globe } from "lucide-react";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import shadowBg from "../../assets/images/marganmax.png";
+import shadowBgLight from "../../assets/images/Explorer-light.png";
 import ResultPanels from "./components/ResultPanels";
 import MarginMaxTourModal from "./components/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
@@ -118,14 +119,15 @@ const ProfitCalculator: React.FC = () => {
         }, [formik.values, setFormData]);
 
         return (
-          <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative shadow-2xl min-h-screen">
+          <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative  min-h-screen">
             {/* Hero Banner Section */}
             <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible !min-h-0">
               <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
-                <img src={shadowBg} alt="" className="dashboard-banner-image" />
-                <div className="calculator-hero-glow" />
+                <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
+                <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
+                <div className="calculator-hero-glow dark:block hidden" />
                 <div className="calculator-hero-fade" />
-                <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent dark:flex hidden pointer-events-none" />
               </div>
 
               <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
@@ -141,19 +143,19 @@ const ProfitCalculator: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Search products e.g. Apple watch"
-                    className="w-full bg-[#FFFFFF0D] border-none rounded-xl px-5 py-3.5 text-white text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#3B82F6] mb-5 transition-all"
+                    className="w-full bg-brand-inputBg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-none rounded-xl px-5 py-3.5 text-brand-textPrimary dark:text-white text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#3B82F6] mb-5 transition-all"
                   />
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                      <span className="text-[12px] text-white flex items-center gap-1.5 font-medium">
+                      <span className="text-[12px] text-brand-textPrimary dark:text-white flex items-center gap-1.5 font-medium">
                         <Globe size={14} /> Marketplace:
                       </span>
                       <FilterDropdown
                         value={selectedMarketplace}
                         options={countryOptions}
                         onChange={(opt) => setSelectedMarketplace(opt.value)}
-                        buttonClassName="flex items-center gap-2 bg-[#FFFFFF0D] hover:bg-[#FFFFFF1A] border border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-white transition-all shadow-sm w-[190px] justify-between whitespace-nowrap"
+                        buttonClassName="flex items-center gap-2 bg-brand-inputBg dark:bg-[#FFFFFF0D] hover:bg-brand-hover/10 dark:hover:bg-[#FFFFFF1A] border border-brand-inputBorder dark:border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-brand-textPrimary dark:text-white transition-all shadow-sm w-[190px] justify-between whitespace-nowrap"
                         dropdownWidth="w-[200px]"
                       />
                     </div>
@@ -165,13 +167,13 @@ const ProfitCalculator: React.FC = () => {
                   </div>
 
                   <div className="mt-2 text-[11px] text-slate-400 text-left">
-                    <span className="font-semibold text-white">Pro tip:</span> Enter any Amazon ASIN to automatically fetch product details, pricing, and fees
+                    <span className="font-semibold text-brand-textPrimary dark:text-white">Pro tip:</span> Enter any Amazon ASIN to automatically fetch product details, pricing, and fees
                   </div>
                 </div>
 
                 {/* Plan Info Pill */}
-                <div className="w-full max-w-3xl flex items-center gap-2 text-[12px] text-slate-300 font-medium text-left mt-1">
-                  <Info size={22} className="text-white shrink-0" />
+                <div className="w-full max-w-3xl flex items-center gap-2 text-[12px] text-brand-textSecondary dark:text-slate-300 font-medium text-left mt-1">
+                  <Info size={22} className="text-brand-textSecondary dark:text-white shrink-0" />
                   <span>
                     Advance plan - You have <span className="text-[#3B82F6] font-bold">260</span> Searches.
                     Purchase Search <a href="/addons" className="text-[#F05A2B] hover:underline ml-1">Add-ons</a> OR

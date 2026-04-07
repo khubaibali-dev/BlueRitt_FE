@@ -423,7 +423,15 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       <div className="discovery-results px-4 sm:px-4 py-10 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full overflow-hidden relative bg-brand-card-alt rounded-[24px] isolate">
 
          <div className="flex items-center justify-between mb-4 px-1">
-            <h2 className="text-brand-textPrimary text-[24px] ">Insights Usage</h2>
+            <h2 className="text-brand-textPrimary text-[24px]">Insights Usage</h2>
+            {hasViewedSourceLink && (
+               <button
+                  onClick={() => setShowSourceLink(true)}
+                  className="figma-pill-border text-brand-textPrimary px-5 h-[40px] rounded-full font-bold text-[13px] flex items-center gap-2 hover:opacity-90 transition-all shadow-md"
+               >
+                  Next <ChevronRight size={16} />
+               </button>
+            )}
          </div>
          {/* Background Image Layer with Bottom Fade - Perfectly Blended like Product Analysis */}
          <div className="absolute -inset-x-6 sm:-inset-x-10 -top-6 sm:-top-10 h-[750px] z-[-1] pointer-events-none overflow-hidden rounded-t-[32px]">
@@ -562,16 +570,16 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                      placeholder="Sort by"
                   />
                </div>
-               <div className="bg-brand-bg border border-brand-border rounded-xl flex p-1 h-[52px] items-center">
+               <div className="bg-brand border border-brand-border rounded-xl flex p-1 h-[52px] items-center">
                   <button
                      onClick={() => setViewMode('grid')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-brand-inputBg text-brand-textPrimary shadow-lg' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-brand-inputBg text-brand-textPrimary shadow-md' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                      <LayoutGrid size={18} />
                   </button>
                   <button
                      onClick={() => setViewMode('list')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-brand-inputBg text-brand-textPrimary shadow-lg' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-brand-inputBg text-brand-textPrimary shadow-md' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                      <List size={18} />
                   </button>

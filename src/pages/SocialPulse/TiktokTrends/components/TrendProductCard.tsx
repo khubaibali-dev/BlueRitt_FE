@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, ExternalLink, Package, Heart, Share2, MessageCircle } from "lucide-react";
+import { ExternalLink, Package, Heart, Share2, MessageCircle } from "lucide-react";
 
 interface TrendProductCardProps {
   title: string;
@@ -51,21 +51,21 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
 
   if (variant === "selected") {
     return (
-      <div className="discovery-card-list flex-col !p-0 isolate">
-        <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2 w-full">
+      <div className="discovery-card-list flex-col !p-0 isolate bg-brand-card border border-brand-border rounded-[24px]">
+        <div className="px-5 py-4 border-b border-brand-border flex items-center gap-2 w-full">
           <Package size={14} className="text-[#FF5900]" />
           <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected TikTok Trend</span>
         </div>
         <div className="p-4 sm:p-2 w-full">
           <div className="flex flex-col lg:flex-row gap-5 items-start">
-            <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-2xl mx-auto lg:mx-0 shrink-0 bg-[#081421]">
+            <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-md mx-auto lg:mx-0 shrink-0 bg-brand-card-alt">
               <img src={image} alt={title} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 w-full flex flex-col gap-4">
               <div className="flex flex-col lg:flex-row justify-between items-start gap-2 mt-1">
-                <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[600px] text-center lg:text-left">{title}</h3>
+                <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[600px] text-center lg:text-left text-brand-textPrimary">{title}</h3>
                 <div className="flex items-baseline gap-2 shrink-0 self-center lg:self-auto">
-                  <span className="product-price-primary text-[22px]">{price}</span>
+                  <span className="product-price-primary text-[22px] text-brand-textPrimary font-bold">{price}</span>
                 </div>
               </div>
               <div className="flex flex-col lg:flex-row lg:flex-nowrap lg:items-center lg:justify-between w-full">
@@ -73,34 +73,34 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                 {!isCalculator && (
                   <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
                     <div className="flex items-center gap-2">
-                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white"><Package size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Posts</span><span className="metric-value">{metrics.post_count || 0}</span></div>
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Package size={14} /></div>
+                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Posts</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.post_count || 0}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white"><Heart size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Likes</span><span className="metric-value">{metrics.like_count || 0}</span></div>
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Heart size={14} /></div>
+                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Likes</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.like_count || 0}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white"><Share2 size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Shares</span><span className="metric-value">{metrics.share_count || 0}</span></div>
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Share2 size={14} /></div>
+                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Shares</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.share_count || 0}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white"><MessageCircle size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Comments</span><span className="metric-value">{metrics.comment_count || 0}</span></div>
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><MessageCircle size={14} /></div>
+                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Comments</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.comment_count || 0}</span></div>
                     </div>
                   </div>
                 )}
 
                 <div className={`flex items-center gap-2 ${isCalculator ? 'mt-1' : 'mt-4 lg:mt-0'}`}>
-                  <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[12px] text-white/80">{category}</div>
-                  <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[12px] text-white/80">{metrics.impressions} Views</div>
+                  <div className="bg-brand-card-alt border border-brand-border px-3 py-1.5 rounded-full text-[12px] text-brand-textPrimary">{category}</div>
+                  <div className="bg-brand-card-alt border border-brand-border px-3 py-1.5 rounded-full text-[12px] text-brand-textSecondary">{metrics.impressions} Views</div>
                 </div>
               </div>
             </div>
           </div>
 
           {isCalculator ? (
-            <div className="grid mt-4 pt-2 border-t border-white/5 grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 px-1">
+            <div className="grid mt-4 pt-2 border-t border-brand-border grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 px-1">
               {[
                 { label: "Sub-Category", value: metrics.subcategory1 || "Makeup & Perfume" },
                 { label: "Sub-Category", value: metrics.subcategory2 || "Perfume" },
@@ -118,8 +118,8 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                 { label: "CPA", value: metrics.cpa },
               ].map((m, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <span className="text-[12px] text-white/50 mb-0 opacity-80">{m.label}</span>
-                  <span className={`text-[14px] font-medium leading-tight truncate ${m.isRed ? 'text-[#ff4e4e] font-bold' : 'text-white'}`}>{m.value}</span>
+                  <span className="text-[12px] text-brand-textSecondary mb-0 opacity-80">{m.label}</span>
+                  <span className={`text-[14px] font-medium leading-tight truncate ${m.isRed ? 'text-[#ff4e4e] font-bold' : 'text-brand-textPrimary'}`}>{m.value}</span>
                 </div>
               ))}
             </div>
@@ -137,9 +137,9 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                   { label: "Subcategory", value: metrics.subcategory1 || "N/A" }
                 ] : [])
               ].map((m, i) => (
-                <div key={i} className="flex-[1] bg-transparent py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[58px]">
-                  <span className="text-[12px] text-[#FFFFFF] mb-1 opacity-80">{m.label}</span>
-                  <span className="text-[14px] text-white font-bold leading-tight truncate">{m.value}</span>
+                <div key={i} className="flex-[1] bg-transparent py-2.5 px-4 rounded-xl border border-brand-border flex flex-col justify-center min-h-[58px]">
+                  <span className="text-[12px] text-brand-textSecondary mb-1 opacity-80">{m.label}</span>
+                  <span className="text-[14px] text-brand-textPrimary font-bold leading-tight truncate">{m.value}</span>
                 </div>
               ))}
             </div>
@@ -147,9 +147,9 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
 
           {!isCalculator && (onOpenProduct || onCopyLink) && (
             <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 w-full px-1">
-              <button 
+              <button
                 onClick={onCopyLink}
-                className="flex-1 sm:flex-none border border-brand-inputBorder hover:bg-white/5 transition-all text-white !rounded-full !px-8 !py-2.5 text-[14px] font-semibold flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none figma-pill-border text-brand-textPrimary !rounded-full !px-8 !py-2.5 text-[14px] font-semibold flex items-center justify-center gap-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
               >
                 {isCopied ? "Copied!" : "Copy Product Link"}
               </button>
@@ -194,20 +194,12 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
           alt={title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-
-        {/* Carousel Overlays */}
-        <button className="carousel-arrow left-4">
-          <ChevronLeft size={20} />
-        </button>
-        <button className="carousel-arrow right-4">
-          <ChevronRight size={20} />
-        </button>
       </div>
 
       {/* Content Section */}
       <div className="p-7">
         <div className="flex items-start justify-between gap-3 mb-5">
-          <h3 className="product-card-title flex-1 !text-[18px] group-hover:text-blue-400">
+          <h3 className="product-card-title flex-1 !text-[18px]">
             {title}
           </h3>
           <div className="product-img-badge !static shrink-0">
