@@ -1,7 +1,7 @@
-import FullDark from "../../../assets/images/logo/Dark ModeLogo.png";
+import FullDark from "../../../assets/images/logo/DarkModeLogo.png";
 import FullLight from "../../../assets/images/logo/LightModeLogo.png";
-import MarkDark from "../../../assets/images/logo/Dark ModeMark.png";
-import MarkLight from "../../../assets/images/logo/Light ModeMark.png";
+import MarkDark from "../../../assets/images/logo/DarkModeMark.png";
+import MarkLight from "../../../assets/images/logo/LightModeMark.png";
 import { useTheme } from "../../../context/ThemeContext";
 
 interface BlueRittLogoProps {
