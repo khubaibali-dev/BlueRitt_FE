@@ -14,7 +14,7 @@ const COUNTRY_OPTIONS = [
   { label: "India", value: "IN" },
 ];
 
-const countryListWithDialCodes = [
+const countries = [
   { name: "Afghanistan", dialCode: "+93", code: "af" },
   { name: "Albania", dialCode: "+355", code: "al" },
   { name: "Algeria", dialCode: "+213", code: "dz" },
@@ -212,4 +212,4 @@ const countryListWithDialCodes = [
   { name: "Zimbabwe", dialCode: "+263", code: "zw" },
 ];
 
-export { countryListWithDialCodes as countries, COUNTRY_OPTIONS };
+export { countries, COUNTRY_OPTIONS };

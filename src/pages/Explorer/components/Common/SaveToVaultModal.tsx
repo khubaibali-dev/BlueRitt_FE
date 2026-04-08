@@ -54,7 +54,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
 
   const modalContent = (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-[440px] bg-[#04132B] rounded-[16px] border border-brand-border shadow-2xl relative overflow-hidden flex flex-col p-6 animate-in zoom-in-95 duration-300">
+      <div className="w-full max-w-[440px] bg-white dark:bg-brand-bg rounded-[16px] border border-brand-border shadow-2xl relative overflow-hidden flex flex-col p-6 animate-in zoom-in-95 duration-300">
 
         {/* Glow effect */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[60px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -62,16 +62,16 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
 
         {/* Header */}
         <div className="flex items-center justify-between mb-1">
-          <h2 className="text-[18px] font-bold text-white tracking-tight">Save to ProductVault</h2>
+          <h2 className="text-[18px] font-bold text-[#04132B] dark:text-brand-textPrimary tracking-tight">Save to ProductVault</h2>
           <button
             onClick={onClose}
-            className="p-2 -mr-2 rounded-full hover:bg-white/5 text-white hover:text-slate-400 transition-all cursor-pointer"
+            className="p-2 -mr-2 rounded-full hover:bg-brand-hover text-brand-textPrimary hover:text-brand-textSecondary transition-all cursor-pointer"
           >
             <X size={20} />
           </button>
         </div>
         <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">{productTitle}</p>
-        <div className="h-px bg-white/5 mb-4" />
+        <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 
         {/* Content Section */}
         {!isAddingCollection ? (
@@ -90,20 +90,20 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
                     onClick={() => setSelectedId(col.id)}
                     className={`p-4 rounded-[14px] border transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center group
                       ${selectedId === col.id
-                        ? "bg-[#04132B] border-brand-inputBorder shadow-xl shadow-blue-500/10"
-                        : "bg-[#04132B] border-brand-inputBorder hover:border-brand-inputBorder hover:bg-white/5"}`}
+                        ? "bg-[#F8FAFC] dark:bg-brand-bg border-brand-inputBorder shadow-xl shadow-blue-500/10"
+                        : "bg-white dark:bg-brand-bg border-brand-inputBorder hover:border-brand-inputBorder hover:bg-brand-hover"}`}
                   >
                     <div className={`quick-action-icon-circle !w-8 !h-8 transition-all duration-300
                       ${selectedId === col.id
-                        ? "shadow-lg shadow-blue-500/20 scale-110"
-                        : "text-slate-400 group-hover:text-blue-400"}`}>
+                        ? "shadow-lg shadow-blue-500/20 scale-110 !bg-brand-primary"
+                        : "text-brand-textSecondary group-hover:text-brand-primary"}`}>
                       <FolderOpen size={18} className="text-white" />
                     </div>
                     <div>
-                      <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight ${selectedId === col.id ? "text-white" : "text-slate-200"}`}>
+                      <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight ${selectedId === col.id ? "text-[#04132B] dark:text-brand-textPrimary" : "text-brand-textSecondary"}`}>
                         {col.name}
                       </h4>
-                      <p className="text-[12px] text-[#FFFFFFB0] font-medium">{col.product_count || 0} items</p>
+                      <p className="text-[12px] text-brand-textSecondary font-medium">{col.product_count || 0} items</p>
                     </div>
                   </div>
                 ))
@@ -117,10 +117,10 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
             {/* Add New Collection action */}
             <button
               onClick={() => setIsAddingCollection(true)}
-              className="flex items-center justify-start gap-2 text-[13px] font-bold text-slate-200 mb-6 hover:text-white transition-all py-1.5 rounded-xl hover:bg-white/5 w-fit ml-0 px-2 group"
+              className="flex items-center justify-start gap-2 text-[13px] font-bold text-brand-textSecondary mb-6 hover:text-brand-textPrimary transition-all py-1.5 rounded-xl hover:bg-brand-hover w-fit ml-0 px-2 group"
             >
-              <div className="quick-action-icon-circle !w-8 !h-8 bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-all">
-                <Plus size={14} />
+              <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center group-hover:bg-brand-hover transition-all">
+                <Plus size={14} className="text-brand-textPrimary" />
               </div>
               Add New Collection
             </button>
@@ -128,12 +128,12 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
         ) : (
           /* Expanded Add New Collection Form */
           <div className="relative p-[1px] rounded-[16px] bg-gradient-to-r from-[#155DFC] to-[#FF5900] mb-6 animate-in slide-in-from-top-2 duration-300">
-            <div className="bg-[#04132B] rounded-[15px] p-4 flex flex-col gap-5">
+            <div className="bg-white dark:bg-brand-bg rounded-[15px] p-4 flex flex-col gap-5">
               <div className="flex items-center gap-3">
-                <div className="quick-action-icon-circle !w-8 !h-8 bg-white/5 flex items-center justify-center text-white">
+                <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center text-[#04132B] dark:text-brand-textPrimary">
                   <Plus size={16} />
                 </div>
-                <span className="text-[14px] font-bold text-white">Add New Collection</span>
+                <span className="text-[14px] font-bold text-[#04132B] dark:text-brand-textPrimary">Add New Collection</span>
               </div>
 
               <div className="mt-2">
@@ -150,13 +150,13 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
           </div>
         )}
 
-        <div className="h-px bg-white/5 mb-4" />
+        <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 
         {/* Footer Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={isAddingCollection ? () => setIsAddingCollection(false) : onClose}
-            className="flex-1 py-2.5 px-6 rounded-full figma-pill-border text-[13px] font-bold text-white hover:bg-white/5 transition-all shadow-lg text-center flex items-center justify-center"
+            className="flex-1 py-2.5 px-6 rounded-full figma-pill-border text-[13px] font-bold text-[#04132B] dark:text-brand-textPrimary hover:bg-brand-hover transition-all shadow-lg text-center flex items-center justify-center"
           >
             Cancel
           </button>

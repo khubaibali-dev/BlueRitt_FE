@@ -351,13 +351,13 @@ const getAmazonSearchInsights = async ({
     maxNumOfRating,
     minNumOfRating,
     isPrime,
-    country,
+    country: country?.toUpperCase(),
     category,
     isAmazonChoice,
     categoryId,
   });
   
-  return api.get("/products/amazon-product-insights/", {
+  return api.get("/products/amazon-product-insights", {
     params: params,
   });
 };

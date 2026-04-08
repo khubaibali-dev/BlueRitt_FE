@@ -50,7 +50,7 @@ const RecentSearches = () => {
         {categories.slice(0, 6).map((category: any) => (
           <div key={category.id} className="search-result-item group">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-              <div className="product-img-wrapper shrink-0 flex items-center justify-center bg-brand-hover dark:bg-white overflow-hidden">
+              <div className="product-img-wrapper shrink-0 flex items-center justify-center bg-brand-hover !bg-white overflow-hidden">
                 {category.image ? (
                   <img src={category.image} alt={category.name} className="w-full h-full object-contain" />
                 ) : (

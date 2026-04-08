@@ -165,10 +165,11 @@ interface SourceLinkProfitCalculatorProps {
   product: any;
   supplier: any;
   sourceType?: 'amazon' | 'tiktok';
+  countryCode?: string;
   onBack: () => void;
 }
 
-const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product, supplier, sourceType = 'amazon', onBack }) => {
+const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product, supplier, sourceType = 'amazon', countryCode, onBack }) => {
   const [activeTab, setActiveTab] = useState<"Basic" | "Advanced">("Basic");
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
@@ -229,7 +230,7 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
     marc_influencerCost: "0",
     marc_miscCost: "0",
     marc_marketingVATCost: "0",
-    tax_region: TAX_OPTIONS.find(opt => opt.code === normalizedProduct?.country)?.code || "US",
+    tax_region: TAX_OPTIONS.find(opt => opt.code.toUpperCase() === (countryCode || normalizedProduct?.country)?.toUpperCase())?.code || "US",
     tax_VAT: "0",
     tax_GST: "0",
     tax_salesTax: "0",

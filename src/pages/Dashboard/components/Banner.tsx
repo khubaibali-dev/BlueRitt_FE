@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SlidersHorizontal } from "lucide-react";
 import shadowBg from "../../../assets/images/dashboard1.png";
 import starImg from "../../../assets/images/star.png";
@@ -16,8 +17,16 @@ const Banner = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({} as FilterState);
 
+  const navigate = useNavigate();
   const handleSearch = (value: string) => {
-    console.log("Searching for:", value, "with filters:", filters);
+    if (!value.trim()) return;
+    navigate("/explorer", { 
+      state: { 
+        initialQuery: value, 
+        initialCountry: selectedCountry.value,
+        initialSearchType: filterType.value
+      } 
+    });
   };
 
   const handleApplyFilters = (newFilters: FilterState) => {

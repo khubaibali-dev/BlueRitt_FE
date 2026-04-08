@@ -44,7 +44,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
    // Mapping initial country code to name for CountrySelect component
-   const initialCountryObj = countries.find(c => c.code === initialCountry) || countries.find(c => c.code === "US") || countries[0];
+   const initialCountryObj = countries.find(c => c.code.toUpperCase() === initialCountry?.toUpperCase()) || countries.find(c => c.code.toUpperCase() === "US") || countries[0];
    const [countryName, setCountryName] = useState(initialCountryObj.name);
    const [activeCountryCode, setActiveCountryCode] = useState(initialCountryObj.code);
 
@@ -383,6 +383,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          <SourceLinkProfitCalculator
             product={sourceProduct}
             supplier={selectedSupplier}
+            countryCode={activeCountryCode}
             onBack={() => setShowProfitCalc(false)}
          />
       );

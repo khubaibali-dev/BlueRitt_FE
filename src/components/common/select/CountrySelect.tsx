@@ -12,15 +12,16 @@ export interface CountryDisplay {
 // Global export of all displayable countries
 import { COUNTRY_OPTIONS } from "../../../utils/Country";
 
-export const countries: CountryDisplay[] = countryNames.map(c => {
-  // Try to find a matching code from COUNTRY_OPTIONS (Amazon marketplaces)
-  const amazonOption = COUNTRY_OPTIONS.find(opt => opt.label === c.name);
-  return {
-    name: c.name,
-    dialCode: c.dialCode,
-    code: (c as any).code || (amazonOption ? amazonOption.value.toLowerCase() : "us"),
-  };
-});
+export const countries: CountryDisplay[] = countryNames
+  .filter(c => COUNTRY_OPTIONS.some(opt => opt.label === c.name))
+  .map(c => {
+    const amazonOption = COUNTRY_OPTIONS.find(opt => opt.label === c.name);
+    return {
+      name: c.name,
+      dialCode: c.dialCode,
+      code: amazonOption ? amazonOption.value.toUpperCase() : "US",
+    };
+  });
 
 interface CountrySelectProps {
   label?: string;

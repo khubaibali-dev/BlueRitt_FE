@@ -79,7 +79,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         <div
           className={`absolute left-0 mt-2 ${dropdownWidth} bg-brand-card border border-brand-border rounded-xl shadow-2xl z-[100] overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in duration-200`}
         >
-          <div className="max-h-[230px] overflow-y-auto custom-scrollbar py-1">
+          <div className="max-h-[220px] overflow-y-auto custom-scrollbar py-1">
             {options.map((option) => (
               <button
                 key={option.value}
