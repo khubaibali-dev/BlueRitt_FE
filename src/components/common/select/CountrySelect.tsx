@@ -102,7 +102,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           `}
         >
           <div className="flex items-center gap-3 overflow-hidden text-left">
-            <img 
+            <img
               src={`https://flagcdn.com/w40/${selectedCountry.code.toLowerCase()}.png`}
               alt=""
               className="w-5 h-3.5 object-cover rounded-[2px] flex-shrink-0"
@@ -144,7 +144,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
                   setIsOpen(false);
                 }}
               >
-                <img 
+                <img
                   src={`https://flagcdn.com/w40/${country.code.toLowerCase()}.png`}
                   alt=""
                   className="w-5 h-3.5 object-cover rounded-[2px] flex-shrink-0"

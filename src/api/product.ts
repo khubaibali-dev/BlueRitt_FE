@@ -51,7 +51,7 @@ const _mapQueryParams = ({
     min_reviews: 0,
 
     max_star_rating: 5,
-    max_reviews: 10000000,
+    max_reviews: 99999990,
   };
   if (categoryId) {
     params.category_id = categoryId;
@@ -89,18 +89,18 @@ const _mapQueryParams = ({
   if (category) {
     params.category = category;
   }
-
+  
   if (categoryId) {
      params = {
       category_id: categoryId,
       sort_by: "RELEVANCE",
       country: country,
-      product_condition: "NEW",
+      product_condition: "ALL",
       deals_and_discounts: "NONE",
       min_star_rating: minStarRating,
       min_reviews: minNumOfRating,
       max_star_rating: maxStarRating,
-      max_reviews: maxNumOfRating,
+      max_reviews: 99999990,
       is_amazon_choice: isAmazonChoice,
     };
   
@@ -175,7 +175,7 @@ const amazonProductSearch = ({
     min_reviews: 0,
 
     max_star_rating: 5,
-    max_reviews: 10000000,
+    max_reviews: 99999990,
   };
   if (maxPrice && maxPrice !== Infinity) {
     params.max = maxPrice;
@@ -357,7 +357,7 @@ const getAmazonSearchInsights = async ({
     categoryId,
   });
   
-  return api.get("/products/amazon-product-insights", {
+  return api.get("/products/amazon-product-insights/", {
     params: params,
   });
 };
