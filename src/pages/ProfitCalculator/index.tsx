@@ -11,6 +11,10 @@ import AdvancedTab from "./Advance/AdvancedTab";
 import FilterDropdown from "../../components/common/select/FilterDropdown";
 import { COUNTRY_OPTIONS } from "../../utils/Country";
 import { useProfitCalculation } from "../../hooks/useProfitCalculation";
+import { getAmazonExplorerProductDetails } from "../../api/amazonExplorer";
+import AmazonProductCard from "../Explorer/components/Common/Cards/AmazonProductCard";
+import { useToast } from "../../components/common/Toast/ToastContext";
+import { Loader2 } from "lucide-react";
 
 const validationSchema = Yup.object({
   pi_sellingPrice: Yup.number().required("Selling Price is required.").typeError("Must be a number."),
@@ -71,6 +75,45 @@ const ProfitCalculator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Basic" | "Advanced">("Basic");
   const [showTour, setShowTour] = useState(true);
   const [selectedMarketplace, setSelectedMarketplace] = useState("US");
+  const [searchAsin, setSearchAsin] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const { error: toastError } = useToast();
+
+  const handleAsinSearch = async (formik: any) => {
+    if (!searchAsin.trim()) {
+      toastError("Please enter an ASIN to search");
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const response = await getAmazonExplorerProductDetails({
+        asin: searchAsin.trim(),
+        country: selectedMarketplace,
+        source: "no_of_gross_profit_calculations"
+      });
+
+      if (response && response.data) {
+        const product = response.data;
+        setSelectedProduct(product);
+
+        // Auto-fill Formik values
+        const price = product.product_price?.replace(/[$,]/g, "") || "0";
+        formik.setFieldValue("pi_sellingPrice", price);
+
+        // Auto-fill Amazon Fees if possible
+        if (product.product_offers?.[0]) {
+           // We can add more logic here if backend provides more distinct fee data
+        }
+      }
+    } catch (err: any) {
+      console.error("ASIN Search error:", err);
+      toastError(err.message || "Failed to fetch product details. Please check the ASIN.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
 
   const {
@@ -142,7 +185,10 @@ const ProfitCalculator: React.FC = () => {
                 <div className="calculator-search-box !z-[60]">
                   <input
                     type="text"
-                    placeholder="Search products e.g. Apple watch"
+                    value={searchAsin}
+                    onChange={(e) => setSearchAsin(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleAsinSearch(formik)}
+                    placeholder="Enter ASIN (e.g. B07HL6FV5F)"
                     className="w-full bg-brand-inputBg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-none rounded-xl px-5 py-3.5 text-brand-textPrimary dark:text-white text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#3B82F6] mb-5 transition-all"
                   />
 
@@ -160,9 +206,13 @@ const ProfitCalculator: React.FC = () => {
                       />
                     </div>
 
-                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold transition-all">
-                      <Search size={16} />
-                      Search ASIN
+                    <button 
+                      onClick={() => handleAsinSearch(formik)}
+                      disabled={isSearching}
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSearching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+                      {isSearching ? "Searching..." : "Search ASIN"}
                     </button>
                   </div>
 
@@ -200,6 +250,16 @@ const ProfitCalculator: React.FC = () => {
                     </button>
                   </div>
                 </div>
+
+                {selectedProduct && (
+                  <div className="w-full max-w-[1200px] mt-8 animate-in fade-in zoom-in-95 duration-500">
+                    <AmazonProductCard 
+                      product={selectedProduct} 
+                      variant="selected"
+                      isCalculator={true}
+                    />
+                  </div>
+                )}
               </div>
             </section>
 

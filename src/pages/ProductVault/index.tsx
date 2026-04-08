@@ -44,11 +44,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt,
       className="group relative vault-card cursor-pointer !h-auto flex flex-col"
     >
       {/* Image Section */}
-      <div className="vault-image-box !h-[180px]">
+      <div className="vault-image-box !h-[180px] bg-brand-hover dark:bg-white">
         <img
           src={image || ""}
           alt={name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
         />
 
         <div className="absolute top-3 right-3" ref={menuRef}>

@@ -72,7 +72,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
                   <div className="p-1 space-y-0.5">
                     <button
                       onClick={() => { theme !== 'light' && toggleTheme(); setIsMenuOpen(false); }}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-colors ${theme === 'light' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-[#9F9F9F] hover:bg-white/5'}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-colors ${theme === 'light' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-dim hover:bg-white/5'}`}
                     >
                       <div className="flex items-center gap-2">
                         <Sun size={14} />
@@ -82,7 +82,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
                     </button>
                     <button
                       onClick={() => { theme !== 'dark' && toggleTheme(); setIsMenuOpen(false); }}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-colors ${theme === 'dark' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-[#9F9F9F] hover:bg-white/5'}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-colors ${theme === 'dark' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-dim hover:bg-white/5'}`}
                     >
                       <div className="flex items-center gap-2">
                         <Moon size={14} />

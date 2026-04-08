@@ -362,7 +362,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                               </div>
                             </div>
                             <span className="product-price-primary !text-[16px]">
-                              ${item.price.toFixed(2)} <span className="text-[10px] text-[#9F9F9F] font-normal ml-1 uppercase tracking-widest">{item.currency || "USD"}</span>
+                              ${item.price.toFixed(2)} <span className="text-[10px] text-dim font-normal ml-1 uppercase tracking-widest">{item.currency || "USD"}</span>
                             </span>
                           </div>
                         </div>

@@ -16,7 +16,11 @@ interface ProfileFormData {
   contactNumber: string;
 }
 
-const ProfileInformation: React.FC = () => {
+interface ProfileInformationProps {
+  defaultOpen?: boolean;
+}
+
+const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = true }) => {
   const { currentUser, fetchUserDetails } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [profileData, setProfileData] = useState<ProfileFormData>({
@@ -69,7 +73,7 @@ const ProfileInformation: React.FC = () => {
     <CollapsibleCard
       title="Profile Information"
       subtitle="Update your personal details"
-      defaultOpen={true}
+      defaultOpen={defaultOpen}
       icon={<User size={24} className="text-brand-primary dark:text-white" />}
     >
       <div className="flex flex-col gap-6">

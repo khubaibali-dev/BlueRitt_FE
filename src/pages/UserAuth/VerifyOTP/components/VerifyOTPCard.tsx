@@ -36,6 +36,7 @@ const VerifyOTPCard: React.FC = () => {
         phone: userProfile.profile.phone,
         fullName: userProfile.profile.full_name,
         email: userProfile.email,
+        country: userProfile.profile.country || "",
       });
 
       // Clear pending credentials

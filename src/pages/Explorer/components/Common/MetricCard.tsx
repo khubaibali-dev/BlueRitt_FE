@@ -12,8 +12,8 @@ const MetricCard: React.FC<MetricCardProps> = ({ label, value, icon }) => {
   const LucideIcon = (Icons as any)[icon] || Icons.HelpCircle;
 
   return (
-    <div className="bg-brand-inputBg border border-brand-border rounded-[12px] p-3 flex flex-col gap-2 shadow-lg hover:border-brand-primary transition-all group min-w-0">
-      <div className="text-[12px] text-brand-textSecondary tracking-[0.05em] truncate">
+    <div className="bg-brand-inputBg border border-brand-inputBorder rounded-[12px] p-3 flex flex-col gap-2 shadow-md transition-all group min-w-0">
+      <div className="text-[12px] text-brand-textSecondary tracking-[0.05em] truncate font-semibold">
         {label}
       </div>
       <div className="flex items-center gap-3">

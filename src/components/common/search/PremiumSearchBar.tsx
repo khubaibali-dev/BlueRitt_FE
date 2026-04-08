@@ -38,7 +38,7 @@ const PremiumSearchBar: React.FC<PremiumSearchBarProps> = ({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="inner-input flex-1 w-full bg-transparent border-none outline-none text-brand-textPrimary text-[14px] sm:text-[16px] px-4 sm:px-2 placeholder-brand-textSecondary"
+          className="inner-input flex-1 w-full bg-transparent border-none outline-none text-brand-textPrimary text-[14px] sm:text-[16px] px-4 sm:px-2 placeholder-brand-textSecondary dark:placeholder-white"
         />
       </div>
       <PrimaryButton

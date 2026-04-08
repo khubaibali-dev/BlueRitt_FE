@@ -51,14 +51,14 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
 
   if (variant === "selected") {
     return (
-      <div className="discovery-card-list flex-col !p-0 isolate bg-brand-card border border-brand-border rounded-[24px]">
-        <div className="px-5 py-4 border-b border-brand-border flex items-center gap-2 w-full">
+      <div className="discovery-card-list flex-col !p-0 isolate bg-brand-card border border-brand-inputBorder rounded-[24px]">
+        <div className="px-5 py-4 border-b border-brand-inputBorder flex items-center gap-2 w-full">
           <Package size={14} className="text-[#FF5900]" />
           <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected TikTok Trend</span>
         </div>
         <div className="p-4 sm:p-2 w-full">
           <div className="flex flex-col lg:flex-row gap-5 items-start">
-            <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-md mx-auto lg:mx-0 shrink-0 bg-brand-card-alt">
+            <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-md mx-auto lg:mx-0 shrink-0 bg-brand-card-alt border border-brand-inputBorder">
               <img src={image} alt={title} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 w-full flex flex-col gap-4">

@@ -144,7 +144,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
               [...Array(5)].map((_, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-border dark:border-[#082656] rounded-[16px] animate-pulse"
+                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[16px] animate-pulse"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-[56px] h-[56px] rounded-[12px] bg-white/5" />
@@ -160,7 +160,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
               posts.map((post, idx) => (
                 <div
                   key={post.post_id || idx}
-                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-border dark:border-[#082656] rounded-[16px] hover:border-brand-primary dark:hover:border-blue-500/20 transition-all group/item "
+                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[16px] hover:border-brand-primary dark:hover:border-blue-500/20 transition-all group/item "
                 >
                   <div className="flex items-center gap-4 flex-1 overflow-hidden">
                     <div className="w-[56px] h-[56px] rounded-[12px] overflow-hidden border border-white/5 shrink-0">

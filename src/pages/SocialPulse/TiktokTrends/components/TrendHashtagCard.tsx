@@ -7,7 +7,7 @@ interface TrendHashtagCardProps {
 
 const TrendHashtagCard: React.FC<TrendHashtagCardProps> = ({ hashtag, rank }) => {
   return (
-    <div className="bg-[#04132B] border border-[#082656] rounded-xl p-3 hover:border-blue-500/30 transition-all group">
+    <div className="bg-[#04132B] border border-brand-border rounded-xl p-3 hover:border-blue-500/30 transition-all group">
       <h4 className="text-[17px] font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
         #{hashtag.replace(/^#/, "")}
       </h4>

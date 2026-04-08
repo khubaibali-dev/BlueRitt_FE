@@ -35,7 +35,7 @@ export const ProductSkeleton: React.FC = () => {
 
 export const HashtagSkeleton: React.FC = () => {
   return (
-    <div className="bg-[#04132B] border border-[#082656] rounded-xl p-3 skeleton-pulse">
+    <div className="bg-[#04132B] border border-brand-border rounded-xl p-3 skeleton-pulse">
       <div className="h-6 bg-white/10 rounded-md w-1/2 mb-3" />
       <div className="flex items-center gap-2">
         <div className="h-3 bg-white/5 rounded w-10" />

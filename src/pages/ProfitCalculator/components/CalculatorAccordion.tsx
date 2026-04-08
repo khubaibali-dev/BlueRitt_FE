@@ -19,8 +19,8 @@ const CalculatorAccordion: React.FC<CalculatorAccordionProps> = ({
   return (
     <div
       className={`border rounded-2xl overflow-hidden transition-all duration-300 ${disabled
-        ? "bg-brand-card-alt dark:bg-[#04132B]/30 border-dashed border-brand-border/60 dark:border-[#082656]/60 opacity-50 cursor-not-allowed select-none"
-        : "bg-brand-card dark:bg-[#04132B]/60 border-brand-border dark:border-[#082656]"
+        ? "bg-brand-card-alt dark:bg-[#04132B]/30 border-dashed border-brand-border dark:border-brand-border opacity-50 cursor-not-allowed select-none"
+        : "bg-brand-card dark:bg-[#04132B]/60 border-brand-border dark:border-brand-border"
         }`}
     >
       <button

@@ -7,9 +7,13 @@ import { toast } from "react-toastify";
 import AddBalanceModal from "../../AddOns/AddBalanceModal";
 import CancelSubscriptionModal from "./CancelSubscriptionModal";
 
-const Subscription: React.FC = () => {
+interface SubscriptionProps {
+  defaultOpen?: boolean;
+}
+
+const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
   const queryClient = useQueryClient();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);

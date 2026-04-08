@@ -6,6 +6,7 @@ export interface CountryDisplay {
   name: string;
   dialCode: string;
   code: string;
+  flag?: string;
 }
 
 // Global export of all displayable countries
@@ -17,7 +18,7 @@ export const countries: CountryDisplay[] = countryNames.map(c => {
   return {
     name: c.name,
     dialCode: c.dialCode,
-    code: amazonOption ? amazonOption.value : "US" // Default to US if not an Amazon marketplace
+    code: (c as any).code || (amazonOption ? amazonOption.value.toLowerCase() : "us"),
   };
 });
 
@@ -82,7 +83,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
   return (
     <div className="flex flex-col gap-[6px]" ref={dropdownRef}>
       {label && (
-        <label className="text-[12px] font-normal leading-[16px] tracking-[0px] text-white">
+        <label className="text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white">
           {label}
         </label>
       )}
@@ -93,14 +94,19 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full flex items-center justify-between gap-3 px-4 py-[11px] rounded-lg
+            w-full flex items-center justify-between gap-3 px-4 py-[12px] rounded-lg
             bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
             ${error ? "border-red-500" : "border-brand-inputBorder"}
           `}
         >
           <div className="flex items-center gap-3 overflow-hidden text-left">
-            <span className="text-[14px] text-brand-textPrimary font-normal font-sans tracking-[0px] whitespace-nowrap overflow-hidden text-ellipsis">
+            <img 
+              src={`https://flagcdn.com/w40/${selectedCountry.code.toLowerCase()}.png`}
+              alt=""
+              className="w-5 h-3.5 object-cover rounded-[2px] flex-shrink-0"
+            />
+            <span className="text-[14px] text-brand-textPrimary font-normal font-sans leading-[16px] tracking-[0px] whitespace-nowrap overflow-hidden text-ellipsis">
               {selectedCountry.name}
             </span>
           </div>
@@ -131,12 +137,17 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
               <button
                 key={country.name}
                 type="button"
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#15273F] transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-hover transition-colors text-left"
                 onClick={() => {
                   onChange(country);
                   setIsOpen(false);
                 }}
               >
+                <img 
+                  src={`https://flagcdn.com/w40/${country.code.toLowerCase()}.png`}
+                  alt=""
+                  className="w-5 h-3.5 object-cover rounded-[2px] flex-shrink-0"
+                />
                 <span className="text-[14px] text-brand-textPrimary">{country.name}</span>
               </button>
             ))}

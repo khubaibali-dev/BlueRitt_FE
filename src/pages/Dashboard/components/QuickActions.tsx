@@ -5,7 +5,7 @@ const QuickActions = () => {
   const navigate = useNavigate();
 
   const actions = [
-    { icon: Zap, label: "Intell-Ai Scan", desc: "Explore popular products", color: "text-[#3B82F6]", path: "/explorer" },
+    { icon: Zap, label: "IntelliScan", desc: "Explore popular products", color: "text-[#3B82F6]", path: "/explorer" },
     { icon: Calculator, label: "Margin Calculator", desc: "Calculate profits", color: "text-[#F05A2B]", path: "/profit-calculator" },
     { icon: Hash, label: "Social Pulse", desc: "Track hashtags", color: "text-[#EF4444]", path: "/tiktok-trends" },
     { icon: Package, label: "Product Vault", desc: "Saved products", color: "text-[#9333EA]", path: "/products" },

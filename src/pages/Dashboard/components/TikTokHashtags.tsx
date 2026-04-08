@@ -2,7 +2,7 @@
 const TikTokHashtags = () => (
   <div className="dashboard-card">
     <div className="space-y-1">
-      {[...Array(9)].map((_, i) => (
+      {[...Array(12)].map((_, i) => (
         <div key={i} className="hashtag-item group">
           <span className="hashtag-text">#amazonfinds</span>
           <span className="hashtag-count">2.4M</span>

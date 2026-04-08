@@ -4,9 +4,13 @@ import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
 import { getBalanceHistory, getWalletBalance } from "../../../api/pricing";
 
-const AddonsBalanceHistory: React.FC = () => {
+interface AddonsBalanceHistoryProps {
+  defaultOpen?: boolean;
+}
+
+const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen = false }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const { data: walletBalance, isLoading: isBalanceLoading } = useQuery({
     queryKey: ['wallet', 'balance'],
@@ -77,7 +81,7 @@ const AddonsBalanceHistory: React.FC = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#082656]">
+            <tbody className="divide-y divide-brand-border">
               {isTransactionsLoading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500 italic">

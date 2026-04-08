@@ -45,7 +45,7 @@ const AccountSettings = () => {
     {
       icon: Package,
       label: "Update Plan",
-      onClick: () => navigate("/settings?tab=subscription")
+      onClick: () => navigate("/settings?tab=plan")
     },
     {
       icon: FileText,

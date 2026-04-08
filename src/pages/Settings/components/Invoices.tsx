@@ -4,9 +4,13 @@ import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
 import { getSubscriptionInvoices, fetchAccountSummary } from "../../../api/pricing";
 
-const Invoices: React.FC = () => {
+interface InvoicesProps {
+  defaultOpen?: boolean;
+}
+
+const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['subscription', 'account_summary'],
@@ -81,7 +85,7 @@ const Invoices: React.FC = () => {
                 <th className="invoice-table-th text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#082656]">
+            <tbody className="divide-y divide-brand-border">
               {isInvoicesLoading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500 italic">

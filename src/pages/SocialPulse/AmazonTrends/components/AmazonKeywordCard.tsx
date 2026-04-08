@@ -8,7 +8,7 @@ interface AmazonKeywordCardProps {
 
 const AmazonKeywordCard: React.FC<AmazonKeywordCardProps> = ({ keyword, rank }) => {
   return (
-    <div className="flex items-center justify-between p-5 rounded-[20px] bg-[#04132B] border border-[#082656] group hover:border-orange-500/30 transition-all duration-300 shadow-xl hover:shadow-orange-500/5">
+    <div className="flex items-center justify-between p-5 rounded-[20px] bg-[#04132B] border border-brand-border group hover:border-orange-500/30 transition-all duration-300 shadow-xl hover:shadow-orange-500/5">
       <div className="flex items-center gap-5">
         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-[#081421] border border-white/5 shadow-inner group-hover:scale-110 transition-transform">
           {rank === 1 ? (

@@ -13,6 +13,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
 
   const isSelectPlanPage = location.pathname.includes("/select-plan");
+  const isVerifyOtpPage = location.pathname.includes("/verify-otp");
 
   return (
     /*
@@ -35,9 +36,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         {/* Header / Logo + Theme Toggle */}
         <header className="absolute top-0 left-0 w-full z-20 px-6 pt-6 lg:px-10 lg:pt-10 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            {isSelectPlanPage && (
+            {(isSelectPlanPage || isVerifyOtpPage) && (
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/login")}
                 className="flex items-center justify-center p-2 rounded-full hover:bg-brand-hover transition-colors text-brand-textPrimary"
                 aria-label="Go back"
               >

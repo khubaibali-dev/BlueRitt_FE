@@ -23,7 +23,7 @@ const ToolFusionPage: React.FC = () => {
               <img
                 src={tool.image}
                 alt={tool.name}
-                className="tool-image"
+                className={`tool-image ${tool.id === 'trustpilot' ? 'trustpilot-logo' : ''}`}
               />
             </div>
           ) : tool.icon ? (

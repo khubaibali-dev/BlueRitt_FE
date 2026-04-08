@@ -164,8 +164,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
               )}
             </div>
           </div>
-          <span className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textSecondary">
-            By creating an account you agree to our Terms & Conditions & Privacy Policy
+          <span className="text-[13px] font-normal leading-[16px] tracking-[0px] text-brand-textSecondary">
+            By creating an account you agree to our <a href="https://www.blueritt.com/blueritt-terms-conditions/" className="text-[#568AFC] underline font-bold">Terms & Conditions</a> and <a href="https://www.blueritt.com/privacy-policy/" className="text-[#568AFC] underline font-bold">Privacy Policy</a>
           </span>
         </label>
       </div>

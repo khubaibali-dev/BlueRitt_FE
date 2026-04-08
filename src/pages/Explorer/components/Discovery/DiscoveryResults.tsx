@@ -531,7 +531,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
             <div className="flex gap-2 shrink-0 self-start lg:self-center">
                <button
                   onClick={() => setIsFilterDrawerOpen(true)}
-                  className="bg-brand-inputBg border border-brand-border h-[48px] px-4 rounded-xl flex items-center justify-center gap-2 text-brand-textPrimary hover:bg-brand-hover transition-all"
+                  className="bg-brand-inputBg border border-brand-inputBorder h-[48px] px-4 rounded-xl flex items-center justify-center gap-2 text-brand-textPrimary hover:bg-brand-hover transition-all"
                >
                   <span className="text-[14px] font-semibold">Filters</span>
                   <Settings2 size={16} className="text-brand-textPrimary" />
@@ -570,16 +570,16 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                      placeholder="Sort by"
                   />
                </div>
-               <div className="bg-brand border border-brand-border rounded-xl flex p-1 h-[52px] items-center">
+               <div className="bg-brand border border-brand-inputBorder rounded-xl flex p-1 h-[48px] items-center">
                   <button
                      onClick={() => setViewMode('grid')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-brand-inputBg text-brand-textPrimary shadow-md' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-brand-inputBg border border-brand-inputBorder text-brand-textPrimary shadow-md' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                      <LayoutGrid size={18} />
                   </button>
                   <button
                      onClick={() => setViewMode('list')}
-                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-brand-inputBg text-brand-textPrimary shadow-md' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
+                     className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-brand-inputBg border border-brand-inputBorder text-brand-textPrimary shadow-md' : 'text-brand-textSecondary hover:text-brand-textPrimary'}`}
                   >
                      <List size={18} />
                   </button>

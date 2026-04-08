@@ -7,7 +7,11 @@ import InputField from "../../../components/common/input/InputField";
 import { updatePassword } from "../../../api/auth";
 import { toast } from "react-toastify";
 
-const ChangePassword: React.FC = () => {
+interface ChangePasswordProps {
+  defaultOpen?: boolean;
+}
+
+const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [passwords, setPasswords] = useState({
     currentPassword: "",
@@ -63,7 +67,7 @@ const ChangePassword: React.FC = () => {
     <CollapsibleCard
       title="Change Password"
       subtitle="Update your security credentials"
-      defaultOpen={false}
+      defaultOpen={defaultOpen}
       icon={<Lock size={24} className="text-white" />}
     >
       <div className="flex flex-col gap-6">

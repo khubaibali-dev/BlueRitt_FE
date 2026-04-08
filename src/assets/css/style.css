@@ -8,7 +8,8 @@
   :root {
     --brand-bg: #EBEDF7;
     --brand-card: #FFFFFF;
-    --brand-border: #E7E2E2;
+    --brand-border: #FFFFFF;
+    --brand-border-ui: #dbdbde;
     --brand-primary: #F05A2B;
     --brand-accent: #3B82F6;
     --brand-text-primary: #04132B;
@@ -17,9 +18,12 @@
     --brand-input-border: #D5D2D2;
     --brand-hover: #F1F5F9;
     --brand-card-alt: #F9F9F9;
-    --auth-border: #CBD5E1;
+    --auth-border: #D5D2D2;
     --brand-scrollbar-thumb: #E2E8F0;
     --brand-scrollbar-thumb-hover: #CBD5E1;
+    --brand-sidebar-text: #082656;
+    --brand-bg-alt: #FFFFFF;
+    --brand-text-dim: #64748B;
   }
 
   .brand-star-standard {
@@ -33,16 +37,20 @@
     --brand-card-alt: #030F23;
     --brand-card: #0B1828;
     --brand-border: #082656;
+    --brand-border-ui: #082656;
     --brand-primary: #F05A2B;
     --brand-accent: #3B82F6;
     --brand-text-primary: #FFFFFF;
     --brand-text-secondary: #7A9ABF;
     --brand-input-bg: #081421;
-    --brand-input-border: #082656;
+    --brand-input-border: var(--brand-border);
     --brand-hover: #15273F;
-    --auth-border: #082656;
+    --auth-border: var(--brand-border);
     --brand-scrollbar-thumb: #1E293B;
     --brand-scrollbar-thumb-hover: #334155;
+    --brand-sidebar-text: #FFFFFFB0;
+    --brand-bg-alt: #04132B;
+    --brand-text-dim: #9F9F9F;
   }
 
   *, *::before, *::after {
@@ -84,19 +92,19 @@
   /* Explorer Discovery Product Cards */
   /* Explorer Discovery Product Cards */
   .discovery-card-list {
-    @apply bg-brand-card rounded-[24px] overflow-hidden border border-brand-border flex flex-col sm:flex-row  transition-all shadow-md shadow-black/5 p-4 sm:p-4 gap-4 sm:items-center;
+    @apply bg-brand-card rounded-[24px] overflow-hidden border border-brand-border flex flex-col sm:flex-row  transition-all shadow-md p-4 sm:p-4 gap-4 sm:items-center border-brand-inputBorder
   }
 
   .discovery-card-grid {
-    @apply bg-brand-card rounded-[24px] overflow-hidden border border-brand-border flex flex-col  transition-all shadow-md shadow-black/5 h-full;
+    @apply bg-brand-card rounded-[24px] overflow-hidden border border-brand-border flex flex-col  transition-all shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_25px_rgba(0,0,0,0.2)] h-full;
   }
 
   .product-img-wrapper-list {
-    @apply relative w-full sm:w-[140px] h-[180px] sm:h-[120px] shrink-0 overflow-hidden rounded-xl bg-white p-3;
+    @apply relative w-full sm:w-[140px] h-[180px] sm:h-[120px] shrink-0 overflow-hidden rounded-xl bg-white p-3 border border-brand-inputBorder;
   }
 
   .product-img-wrapper-grid {
-    @apply relative w-full h-[300px] overflow-hidden bg-white p-8;
+    @apply relative w-full h-[300px] border border-brand-inputBorder overflow-hidden bg-white p-8;
   }
 
   .product-metrics-row-list {
@@ -133,7 +141,7 @@
 
   /* Standardized Data Classes (Discovery + Product Details) */
   .metric-label {
-    @apply text-[10px] text-brand-textSecondary tracking-widest;
+    @apply text-[10px] text-brand-textSecondary tracking-widest font-semibold dark:text-[#FFFFFFB0];
   }
 
   .metric-value {
@@ -641,20 +649,20 @@
     @apply text-[#3B82F6] font-semibold;
   }
   .otp-card {
-    @apply w-full figma-card-border bg-[#020B1A4D];
+    @apply w-full figma-card-border brand-card-bg;
   }
   .otp-card-content {
     @apply px-1 pt-9 pb-8 text-center;
   }
   .otp-input-label {
-    @apply text-[16px] font-medium text-[#FFFFFF] mb-4 block;
+    @apply text-[16px] font-medium text-brand-textPrimary dark:text-[#FFFFFF] mb-4 block;
   }
   .otp-inputs {
     @apply flex justify-center gap-2 sm:gap-4 mb-8;
   }
   .otp-input {
-    @apply w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#1B3A5C] bg-[#04132B] text-white text-center text-lg sm:text-xl font-semibold focus:border-[#3B82F6] focus:outline-none transition-all;
-    border: 1.35px solid #082656;
+    @apply w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-brand-inputBorder bg-brand-inputBg text-brand-textPrimary text-center text-lg sm:text-xl font-semibold focus:border-[#3B82F6] dark:bg-[#04132B] dark:text-white dark:border-[#1B3A5C] focus:outline-none transition-all;
+    border: 1.35px solid var(--brand-input-border);
   }
   /* =========================================
    Profit Calculator Specific Styles
@@ -703,8 +711,8 @@
 }
 
 .otp-footer {
-    @apply text-[16px] text-[#FFFFFFB2] text-center;
-  }
+    @apply text-[16px] text-brand-textSecondary dark:text-[#FFFFFFB2] text-center;
+}
   .otp-resend {
     @apply text-[#155DFC] font-semibold cursor-pointer hover:underline ml-1;
   }
@@ -852,7 +860,7 @@
   }
 
   .filter-pill {
-    @apply flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] text-brand-textPrimary font-medium border border-brand-border bg-brand-inputBg backdrop-blur-xl hover:border-brand-primary transition-all;
+    @apply flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] text-brand-textPrimary font-medium border border-brand-inputBorder bg-brand-inputBg backdrop-blur-xl hover:border-brand-primary transition-all;
   }
   
   .dark .filter-pill {
@@ -860,7 +868,8 @@
   }
 
   .quick-action-card {
-    @apply flex items-center gap-3 rounded-[12px] p-5 transition-all cursor-pointer bg-brand-card border border-brand-border;
+    @apply flex items-center gap-3 rounded-[12px] p-5 transition-all cursor-pointer border border-brand-border;
+    background: var(--brand-bg-alt);
     backdrop-filter: blur(38.5px);
   }
 
@@ -1193,7 +1202,7 @@
   }
   
   .explorer-badge-wrapper {
-    @apply flex items-center justify-center mb-8 relative z-10;
+    @apply flex items-center justify-center mb-1 relative z-10;
   }
   
   .explorer-badge-pill {
@@ -1212,10 +1221,8 @@
     @apply w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all bg-white/5 backdrop-blur-md;
   }
 
- 
-  
   .explorer-filter-override {
-    @apply filter-pill whitespace-nowrap text-[12px] sm:text-[14px] px-3 sm:px-5 py-1.5 sm:py-2.5 !bg-white/5 !border-white/20;
+    @apply filter-pill whitespace-nowrap text-[12px] sm:text-[14px] px-3 sm:px-5 py-1.5 sm:py-2.5 !bg-white/5 !border-brand-inputBorder;
   }
 
   .info-icon-border {
@@ -1241,7 +1248,7 @@
   }
   
   .dashboard-filter-group {
-    @apply flex items-center gap-2 sm:gap-4 justify-center sm:justify-start;
+    @apply flex items-center gap-2 sm:gap-4 justify-center sm:justify-start ;
   }
   
   .dashboard-filter-btn {
@@ -1259,7 +1266,7 @@
     @apply absolute inset-0 bg-black/40 backdrop-blur-[6px];
   }
   .tour-modal-card {
-    @apply w-full max-w-[480px] h-auto min-h-[300px] bg-brand-card rounded-[16px] p-8 border border-brand-border relative shadow-2xl tour-modal-card-shadow flex flex-col;
+    @apply w-full max-w-[480px] h-auto min-h-[300px] bg-brand-card-alt rounded-[16px] p-8  relative shadow-2xl tour-modal-card-shadow flex flex-col;
   }
   .tour-modal-close-btn {
     @apply absolute top-8 right-8 text-brand-textSecondary hover:text-brand-textPrimary transition-colors;
@@ -1274,7 +1281,7 @@
     @apply flex items-center gap-2 mb-4 w-full mt-auto;
   }
   .tour-progress-track {
-    @apply h-1.5 flex-1 rounded-full relative overflow-hidden bg-brand-border;
+    @apply h-1.5 flex-1 rounded-full relative overflow-hidden bg-brand-border dark:bg-[#FFFFFF0D];
   }
   .tour-step-text {
     @apply text-[13px] text-brand-textSecondary mb-6 font-semibold uppercase tracking-wider;
@@ -1356,9 +1363,10 @@
     width: min(700px, 100vw);
   }
 
+  /* border-r border-brand-border-ui */
   /* Sidebar Styles */
   .sidebar-wrapper {
-    @apply h-screen bg-brand-bg border-r border-brand-border flex-col py-6 shrink-0 fixed lg:relative lg:flex z-40 transform transition-all duration-300 overflow-hidden;
+    @apply h-screen bg-brand-bg  flex-col py-6 shrink-0 fixed lg:relative lg:flex z-40 transform transition-all duration-300 overflow-hidden;
     width: 240px;
   }
   
@@ -1388,11 +1396,18 @@
   }
   
   .sidebar-item {
-    @apply flex items-center justify-between px-3 py-2.5 mx-2 rounded-xl transition-all duration-200 text-brand-textSecondary hover:text-brand-textPrimary hover:bg-white/5;
+    @apply flex items-center justify-between px-3 py-2.5 mx-2 rounded-xl transition-all duration-200 hover:text-brand-textPrimary hover:bg-white/5;
+    color: var(--brand-sidebar-text);
   }
   
   .sidebar-item-active {
-    @apply text-white shadow-lg font-semibold mx-2;
+    @apply text-white shadow-sm font-bold mx-2;
+    background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
+    border: none !important;
+  }
+
+  .socialpulse-active {
+    @apply text-white shadow-sm font-bold mx-2;
     background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
     border: none !important;
   }
@@ -1408,11 +1423,12 @@
   }
 
   .sidebar-submenu-item {
-    @apply flex items-center gap-2.5 px-4 py-2 rounded-xl transition-all duration-200 text-gray-500 hover:text-white hover:bg-white/5 mx-2;
+    @apply flex items-center gap-2.5 px-4 py-2 rounded-xl transition-all duration-200 hover:text-white hover:bg-white/5 mx-2;
+    color: var(--brand-sidebar-text);
   }
 
   .sidebar-submenu-active {
-  @apply text-white shadow-lg font-semibold;
+  @apply text-white shadow-lg font-bold;
   background: linear-gradient(90.17deg, #101B2B 0%, #101B2B 5%, #4871c7 100%);
   border: none !important;
 }
@@ -1462,7 +1478,7 @@
   }
 
   .product-metric-label {
-    @apply text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1 leading-none;
+    @apply text-[10px] text-dim font-semibold uppercase tracking-widest mb-1 leading-none;
   }
 
   .product-metric-value {
@@ -1538,7 +1554,7 @@
 
   /* Standard Dashboard Card */
   .dashboard-card {
-    @apply bg-brand-card border border-brand-border rounded-[12px] p-6 sm:p-4 h-full;
+    @apply bg-brand-card border dark:border-brand-border rounded-[12px] p-6 sm:p-4 h-full;
   }
 
   /* Account Settings */
@@ -1599,7 +1615,18 @@
   }
   
   .dashboard-section-subtitle {
-    @apply text-[14px] text-brand-textSecondary;
+    @apply text-[14px];
+    color: var(--brand-text-dim);
+  }
+
+  .text-dim {
+    color: var(--brand-text-dim) !important;
+  }
+
+  /* Search Input Fixes */
+  .dark .inner-input::placeholder {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
   }
 
   /* Recent Searches */
@@ -1608,11 +1635,11 @@
   }
   
   .search-result-item {
-    @apply flex items-center justify-between cursor-pointer py-2 border-b border-brand-border last:border-0;
+    @apply flex items-center justify-between cursor-pointer py-2  last:border-0;
   }
   
   .product-img-wrapper {
-    @apply w-10 h-10 sm:w-12 sm:h-12 bg-brand-bg rounded-xl flex items-center justify-center p-1.5 sm:p-2 overflow-hidden shadow-inner border border-brand-border;
+    @apply w-14 h-14 sm:w-16 sm:h-16 bg-brand-bg rounded-xl flex items-center justify-center p-1 sm:p-1.5 overflow-hidden shadow-inner border border-brand-border;
   }
   
   .product-title-text {
@@ -1633,7 +1660,7 @@
 
   /* Global Dashboard Header */
   .dashboard-header {
-    @apply h-[70px] bg-brand-bg border-b border-brand-border flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-2 shrink-0;
+    @apply h-[70px] bg-brand-bg border-b border-brand-border-ui flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-2 shrink-0;
   }
   
   .header-greeting {
@@ -1641,7 +1668,8 @@
   }
   
   .header-subtitle {
-    @apply text-[14px] text-brand-textSecondary ml-4 dark:text-[#9F9F9F];
+    @apply text-[14px] ml-4;
+    color: var(--brand-text-dim);
   }
   
   .theme-toggle-wrapper {
@@ -1649,7 +1677,7 @@
   }
   
   .profile-section {
-    @apply flex items-center gap-3 pl-2 sm:pl-6 border-l border-brand-border;
+    @apply flex items-center gap-3 pl-2 sm:pl-6 border-l border-brand-border-ui;
   }
   
   .user-avatar {
@@ -1670,15 +1698,15 @@
   }
   
   .hashtag-item {
-    @apply flex items-center justify-between py-2 border-b border-brand-border last:border-0;
+    @apply flex items-center justify-between py-2  last:border-0;
   }
   
   .hashtag-text {
-    @apply text-[13px] sm:text-[14px] text-brand-textSecondary font-medium;
+    @apply text-[13px] sm:text-[14px] text-brand-textSecondary dark:text-[#D6D6D6] font-medium;
   }
   
   .hashtag-count {
-    @apply text-[13px] sm:text-[14px] text-brand-textPrimary font-semibold;
+    @apply text-[13px] sm:text-[14px] text-brand-textPrimary dark:text-[#D6D6D6] font-semibold;
   }
 }
 
@@ -1696,7 +1724,7 @@
 }
 
 .btn-secondary-standard {
-  @apply flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 h-[48px] bg-[#04132B] border border-[#082656] rounded-[14px] text-white text-[13px] font-bold hover:bg-white/5 transition-all whitespace-nowrap active:scale-95;
+  @apply flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 h-[48px] bg-[#04132B] border border-brand-border rounded-[14px] text-white text-[13px] font-bold hover:bg-white/5 transition-all whitespace-nowrap active:scale-95;
 }
 
 :root:not(.dark) .btn-secondary-standard {
@@ -1730,7 +1758,8 @@
 }
 
 .tool-fusion-subtitle {
-  @apply auth-subtitle !text-[14px] !text-[#9F9F9F]
+  @apply auth-subtitle !text-[14px];
+  color: var(--brand-text-dim) !important;
 }
 
 .tool-section {
@@ -1746,11 +1775,12 @@
 }
 
 .tool-section-count {
-  @apply text-[14px] text-[#9F9F9F];
+  color: var(--brand-text-dim);
+  @apply text-[14px];
 }
 
 .tool-list {
-  @apply bg-brand-card rounded-[20px] border border-[#082656] overflow-hidden;
+  @apply bg-brand-card rounded-[20px] border border-brand-border overflow-hidden;
 }
 
 .tool-card {
@@ -1823,6 +1853,9 @@
   filter: none;
   opacity: 1;
 }
+:root:not(.dark) .trustpilot-logo {
+  filter: brightness(0);
+}
 :root:not(.dark) .tool-action-btn {
   color: var(--brand-text-primary);
   border-color: var(--brand-border);
@@ -1856,7 +1889,7 @@
 }
 
 .help-form-card {
-  @apply bg-brand-card dark:bg-[#04132B] rounded-[20px] p-6 sm:p-8 lg:p-10 border border-brand-border dark:border-[#082656] shadow-sm dark:shadow-2xl relative z-10 w-full max-w-[800px];
+  @apply bg-brand-card dark:bg-[#04132B] rounded-[20px] p-6 sm:p-8 lg:p-10 border border-brand-border dark:border-brand-border shadow-sm dark:shadow-2xl relative z-10 w-full max-w-[800px];
 }
 
 .help-form-header {
@@ -1890,7 +1923,7 @@
 .help-input,
 .help-select,
 .help-textarea {
-  @apply w-full bg-brand-inputBg dark:bg-[#030F23]/50 border border-brand-inputBorder dark:border-[#082656] text-brand-textPrimary dark:text-white text-[14px] rounded-[12px] px-5 py-3.5 focus:border-brand-primary dark:focus:border-[#3B82F6] focus:ring-1 focus:ring-brand-primary dark:focus:ring-[#3B82F6]/30 outline-none transition-all placeholder-brand-textSecondary dark:placeholder-slate-500;
+  @apply w-full bg-brand-inputBg dark:bg-[#030F23]/50 border border-brand-inputBorder dark:border-brand-border text-brand-textPrimary dark:text-white text-[14px] rounded-[12px] px-5 py-3.5 focus:border-brand-primary dark:focus:border-[#3B82F6] focus:ring-1 focus:ring-brand-primary dark:focus:ring-[#3B82F6]/30 outline-none transition-all placeholder-brand-textSecondary dark:placeholder-slate-500;
 }
 
 .help-textarea {
@@ -1920,7 +1953,7 @@
 }
 
 .help-file-wrapper {
-  @apply w-full bg-brand-inputBg dark:bg-[#030F23]/50 border border-brand-inputBorder dark:border-[#082656] rounded-[12px] overflow-hidden cursor-pointer transition-all hover:bg-brand-hover dark:hover:bg-[#081421];
+  @apply w-full bg-brand-inputBg dark:bg-[#030F23]/50 border border-brand-inputBorder dark:border-brand-border rounded-[12px] overflow-hidden cursor-pointer transition-all hover:bg-brand-hover dark:hover:bg-[#081421];
 }
 
 .help-file-inner {
@@ -1973,7 +2006,7 @@
 }
 
 .addon-balance-card {
-  @apply bg-brand-card dark:bg-[#04132B] rounded-[14px] p-4 border border-brand-border dark:border-[#082656] flex flex-col items-center justify-center text-center gap-4 transition-all shadow-md dark:shadow-2xl hover:shadow-md;
+  @apply bg-brand-card dark:bg-[#04132B] rounded-[14px] p-4 border border-brand-inputBorder dark:border-brand-border flex flex-col items-center justify-center text-center gap-4 transition-all shadow-md dark:shadow-2xl hover:shadow-md;
 }
 
 .addon-balance-card-alt {
@@ -2011,7 +2044,7 @@
 }
 
 .addon-info-banner {
-  @apply bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] rounded-[20px] p-6 mb-12 flex items-center gap-6 shadow-md dark:shadow-xl relative overflow-hidden;
+  @apply bg-brand-card dark:bg-[#04132B] border border-brand-inputBorder dark:border-brand-border rounded-[20px] p-6 mb-12 flex items-center gap-6 shadow-md dark:shadow-xl relative overflow-hidden;
 }
 
 .addon-info-banner-icon {
@@ -2031,7 +2064,7 @@
 }
 
 .addon-section {
-  @apply bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] rounded-[24px] p-6 mb-10 shadow-md dark:shadow-lg;
+  @apply bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[24px] p-6 mb-10 shadow-md dark:shadow-lg;
 }
 
 .addon-section-header {
@@ -2039,7 +2072,7 @@
 }
 
 .addon-section-divider {
-  @apply border-brand-border dark:border-[#1E293B] mb-8 opacity-50;
+  @apply border-brand-inputBorder dark:border-[#1E293B] mb-8 opacity-50;
 }
 
 .addon-section-icon-container {
@@ -2064,7 +2097,7 @@
 }
 
 .addon-card {
-  @apply bg-brand-card dark:bg-[#041024] rounded-[14px] border border-brand-border dark:border-transparent ring-1 ring-brand-border dark:ring-[#3B82F6]/30 px-2 py-8 flex flex-col items-center text-center transition-all relative hover:shadow-lg hover:-translate-y-1;
+  @apply bg-brand-card dark:bg-[#041024] rounded-[14px] border border-brand-border dark:border-transparent ring-1 ring-brand-inputBorder dark:ring-[#3B82F6]/30 px-2 py-8 flex flex-col items-center text-center transition-all relative hover:shadow-lg hover:-translate-y-1;
 }
 
 .addon-card-popular {
@@ -2115,7 +2148,7 @@
 }
 
 .purchase-modal-card {
-  @apply w-full max-w-[500px] bg-brand-card dark:bg-[#04132B] rounded-[24px] border border-brand-border dark:border-[#082656] shadow-2xl relative overflow-hidden flex flex-col p-5;
+  @apply w-full max-w-[500px] bg-brand-card dark:bg-[#04132B] rounded-[24px] border border-brand-border dark:border-brand-border shadow-2xl relative overflow-hidden flex flex-col p-5;
 }
 
 .purchase-modal-header {
@@ -2261,7 +2294,7 @@
 
 /* Main Vault Card (Collection Card & Analysis Info Cards) */
 .vault-card {
-  @apply bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] rounded-[24px] overflow-hidden transition-all duration-300 shadow-md dark:shadow-none;
+  @apply bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[24px] overflow-hidden transition-all duration-300 shadow-md dark:shadow-none;
 }
 .vault-card:hover {
   @apply border-brand-primary dark:border-[#3B82F6]/30 shadow-md transform -translate-y-1;
@@ -2269,7 +2302,7 @@
 
 /* Alternative Vault Card (Product Analysis Main Cards) */
 .vault-card-alt {
-  @apply bg-brand-card dark:bg-[#040D1B] border border-brand-border dark:border-[#082656] rounded-[24px] p-6 sm:p-8 flex flex-col relative overflow-hidden transition-all duration-300 shadow-md dark:shadow-xl dark:shadow-black/10;
+  @apply bg-brand-card dark:bg-[#040D1B] border border-brand-border dark:border-brand-border rounded-[24px] p-6 sm:p-8 flex flex-col relative overflow-hidden transition-all duration-300 shadow-md dark:shadow-xl dark:shadow-black/10;
 }
 .vault-card-alt:hover {
   @apply border-brand-primary dark:border-blue-500/30 shadow-md;
@@ -2285,7 +2318,7 @@
 
 /* Vault Metric Card (Profit Details) */
 .vault-metric-card {
-  @apply bg-brand-card dark:bg-[#040D1B] border border-brand-border dark:border-[#082656] rounded-[24px] p-6 sm:p-5 flex flex-col items-center gap-10 overflow-hidden relative transition-all duration-300 shadow-md dark:shadow-xl dark:shadow-black/10;
+  @apply bg-brand-card dark:bg-[#040D1B] border border-brand-border dark:border-brand-border rounded-[24px] p-6 sm:p-5 flex flex-col items-center gap-10 overflow-hidden relative transition-all duration-300 shadow-md dark:shadow-xl dark:shadow-black/10;
 }
 .vault-metric-card:hover {
   @apply  dark:border-blue-500/30 shadow-md;
@@ -2293,7 +2326,7 @@
 
 /* Vault History Table Container */
 .vault-table-container {
-  @apply bg-brand-card dark:bg-[#040D1B] border border-brand-border dark:border-[#082656] rounded-[24px] overflow-hidden shadow-md dark:shadow-xl dark:shadow-black/10 transition-all duration-300;
+  @apply bg-brand-card dark:bg-[#040D1B] border border-brand-border dark:border-brand-border rounded-[24px] overflow-hidden shadow-md dark:shadow-xl dark:shadow-black/10 transition-all duration-300;
 }
 .vault-table-container:hover {
   @apply border-brand-primary dark:border-[#3B82F6]/30;
@@ -2301,7 +2334,7 @@
 
 /* Vault Placeholder/Add Card */
 .vault-add-card {
-  @apply relative aspect-[4/3] sm:aspect-auto sm:h-full min-h-[240px] border border-brand-border dark:border-[#082656] rounded-[24px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer;
+  @apply relative aspect-[4/3] sm:aspect-auto sm:h-full min-h-[240px] border border-brand-border dark:border-brand-border rounded-[24px] flex flex-col items-center justify-center gap-3 transition-all duration-300 cursor-pointer;
 }
 .vault-add-card:hover {
   @apply bg-brand-hover dark:bg-white/5 border-brand-primary dark:border-[#3B82F6]/50;
@@ -2610,11 +2643,11 @@
 }
 
 .invoice-search-input {
-  @apply w-full bg-brand-inputBg dark:bg-[#081421] border border-brand-inputBorder dark:border-[#082656] rounded-xl py-3 pl-10 pr-4 text-[14px] text-brand-textPrimary dark:text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-sans;
+  @apply w-full bg-brand-inputBg dark:bg-[#081421] border border-brand-inputBorder dark:border-brand-border rounded-xl py-3 pl-10 pr-4 text-[14px] text-brand-textPrimary dark:text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-sans;
 }
 
 .invoice-table-wrapper {
-  @apply mt-4 overflow-x-auto rounded-xl border border-brand-border dark:border-[#082656] bg-brand-bg dark:bg-[#030F2366];
+  @apply mt-4 overflow-x-auto rounded-xl border border-brand-border dark:border-brand-border bg-brand-bg dark:bg-[#030F2366];
 }
 
 .invoice-table {
@@ -2622,11 +2655,11 @@
 }
 
 .invoice-table-th {
-  @apply px-6 py-4 text-[13px] font-bold text-brand-textSecondary dark:text-slate-300 tracking-wide uppercase bg-brand-hover dark:bg-[#081421] border-b border-brand-border dark:border-[#082656];
+  @apply px-6 py-4 text-[13px] font-bold text-brand-textSecondary dark:text-slate-300 tracking-wide uppercase bg-brand-hover dark:bg-[#081421] border-b border-brand-border dark:border-brand-border;
 }
 
 .invoice-table-td {
-  @apply px-6 py-4 text-[14px] text-brand-textPrimary dark:text-white transition-colors border-b border-brand-border dark:border-[#082656]/50;
+  @apply px-6 py-4 text-[14px] text-brand-textPrimary dark:text-white transition-colors border-b border-brand-border dark:border-brand-border;
 }
 
 .invoice-status-badge-paid {
@@ -2638,7 +2671,7 @@
 }
 
 .invoice-pagination-btn {
-  @apply px-4 py-2 bg-brand-card dark:bg-[#081421] border border-brand-border dark:border-[#082656] text-brand-textSecondary dark:text-slate-300 rounded-lg text-[13px] font-medium hover:bg-brand-hover dark:hover:bg-white/5 transition-colors flex items-center gap-1;
+  @apply px-4 py-2 bg-brand-card dark:bg-[#081421] border border-brand-border dark:border-brand-border text-brand-textSecondary dark:text-slate-300 rounded-lg text-[13px] font-medium hover:bg-brand-hover dark:hover:bg-white/5 transition-colors flex items-center gap-1;
 }
 
 .invoice-pagination-btn-active {
@@ -2748,18 +2781,17 @@
 }
 
 .discovery-section-title {
-  @apply text-[24px] sm:text-[20px] text-white tracking-tight leading-tight;
+  @apply text-[24px] sm:text-[20px] text-brand-textPrimary dark:text-white tracking-tight leading-tight;
 }
 
 .discovery-view-toggle {
-  @apply bg-[#030F23] border border-white/10 rounded-xl flex p-1 h-[52px] items-center;
+  @apply bg-brand-card-alt dark:bg-[#030F23] border border-brand-border-ui dark:border-white/10 rounded-xl flex p-1 h-[52px] items-center;
 }
 
 .discovery-top-card-premium {
-  @apply backdrop-blur-xl border border-white/10 rounded-[12px] p-6 shadow-md;
-  background: rgba(255, 255, 255, 0.035);
+  @apply backdrop-blur-xl border border-brand-border-ui dark:border-white/10 rounded-[12px] p-6 shadow-md bg-brand-card dark:bg-white/5;
 }
 
 .discovery-filter-select-premium {
-  @apply bg-[#0F0F1E] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-4 hover:border-white/30 transition-all shadow-inner;
+  @apply bg-brand-card-alt dark:bg-[#0F0F1E] border border-brand-border-ui dark:border-white/10 rounded-xl px-4 py-3 flex items-center gap-4 hover:border-brand-primary dark:hover:border-white/30 transition-all shadow-inner;
 }

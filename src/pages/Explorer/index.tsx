@@ -42,7 +42,7 @@ const ExplorerPage: React.FC = () => {
   };
 
   return (
-    <div className={`bg-brand-card rounded-[32px] relative shadow-md transition-all duration-500 ${isAnalyzing ? 'h-[600px] overflow-hidden' : 'min-h-[600px] overflow-visible'} ${isResultsView ? 'bg-brand-card' : ''}`}>
+    <div className={`bg-brand-card-alt rounded-[32px] relative shadow-md transition-all duration-500 ${isAnalyzing ? 'h-[600px] overflow-hidden' : 'min-h-[600px] overflow-visible'} ${isResultsView ? 'bg-brand-card' : ''}`}>
       {isResultsView ? (
         <DiscoveryResults
           onBack={() => setIsResultsView(false)}

@@ -19,7 +19,11 @@ const GOALS = [
   { id: "simulate_pricing_scenarios", label: "Simulate Pricing Scenarios", icon: Zap },
 ];
 
-const AdditionalInformation: React.FC = () => {
+interface AdditionalInformationProps {
+  defaultOpen?: boolean;
+}
+
+const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOpen = false }) => {
   const [formData, setFormData] = useState<AdditionalFormData>({
     businessType: "marketplace_amazon_seller",
     experienceLevel: "established_3_years",
@@ -44,7 +48,7 @@ const AdditionalInformation: React.FC = () => {
     <CollapsibleCard
       title="Additional Information"
       subtitle="We'll customize your dashboard accordingly"
-      defaultOpen={false}
+      defaultOpen={defaultOpen}
       icon={<User size={24} className="text-brand-primary dark:text-white" />}
     >
       <div className="flex flex-col gap-8">
@@ -54,7 +58,7 @@ const AdditionalInformation: React.FC = () => {
             id="businessType"
             label="What type of business do you run?"
             options={[
-              { label: "Marketplace/Amazon seller", value: "marketplace_amazon_seller" },
+              { label: "Marketplace/Amazon Seller", value: "marketplace_amazon_seller" },
               { label: "E-Commerce Store", value: "ecommerce_store" },
               { label: "Agency", value: "agency" },
               { label: "Other", value: "other" },
@@ -94,7 +98,7 @@ const AdditionalInformation: React.FC = () => {
                     relative flex items-center gap-3 px-5 py-4 rounded-[12px] transition-all duration-200 overflow-hidden outline-none hover:bg-brand-hover dark:hover:bg-white/5
                   ${isSelected
                       ? "text-brand-textPrimary dark:text-white bg-[#FF59001A] dark:bg-[#FF59001A] backdrop-blur-xl !rounded-[12px] figma-pill-border"
-                      : "text-brand-textSecondary dark:text-[#99A1AF] bg-brand-inputBg border border-brand-inputBorder dark:border-[#082656]"
+                      : "text-brand-textSecondary dark:text-[#99A1AF] bg-brand-inputBg border border-brand-inputBorder dark:border-brand-border"
                     }
                   `}
                 >

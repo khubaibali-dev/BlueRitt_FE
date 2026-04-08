@@ -37,12 +37,16 @@ const PlansSkeleton: React.FC<{ isOneTime: boolean }> = ({ isOneTime }) => {
   );
 };
 
-const Plans: React.FC = () => {
+interface PlansProps {
+  defaultOpen?: boolean;
+}
+
+const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
   const { currentUser } = useAuth();
   const [subscriptionType, setSubscriptionType] = useState<"subscription" | "one_time">("subscription");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "quarterly" | "annually">("monthly");
   const [updatingPlanId, setUpdatingPlanId] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const { data: rawPackages, isLoading } = useQuery({
     queryKey: ['subscription', 'packages', subscriptionType],
@@ -154,7 +158,7 @@ const Plans: React.FC = () => {
           <select
             value={subscriptionType}
             onChange={(e) => setSubscriptionType(e.target.value as "subscription" | "one_time")}
-            className="appearance-none bg-brand-inputBg dark:bg-[#041024] border border-brand-inputBorder dark:border-[#082656] text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none focus:border-brand-primary dark:focus:border-[#3B82F6]/50 transition-colors w-full"
+            className="appearance-none bg-brand-inputBg dark:bg-[#041024] border border-brand-inputBorder dark:border-brand-border text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none focus:border-brand-primary dark:focus:border-[#3B82F6]/50 transition-colors w-full"
           >
             <option value="subscription">Recurring Subscription</option>
             <option value="one_time">One Time Prepaid</option>
@@ -183,7 +187,7 @@ const Plans: React.FC = () => {
         )}
 
         {/* Comparison Table */}
-        <div className="border border-brand-border dark:border-[#082656] rounded-2xl overflow-hidden">
+        <div className="border border-brand-border dark:border-brand-border rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             {isLoading ? (
               <PlansSkeleton isOneTime={isOneTime} />

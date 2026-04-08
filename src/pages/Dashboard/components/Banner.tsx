@@ -37,7 +37,8 @@ const Banner = () => {
       <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
         <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
         <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
-        <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/10 to-transparent pointer-events-none" />
+        {/* Bottom Fade Overlay - Merges image into #030F23 background */}
+        <div className="absolute bottom-0 left-0 right-0 h-[280px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/40 to-transparent pointer-events-none hidden dark:block" />
       </div>
 
       {/* Top Star */}

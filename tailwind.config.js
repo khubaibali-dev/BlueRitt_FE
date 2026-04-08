@@ -10,6 +10,7 @@ module.exports = {
           card: "var(--brand-card)",
           "card-alt": "var(--brand-card-alt)",
           border: "var(--brand-border)",
+          "border-ui": "var(--brand-border-ui)",
           borderGlow: "#2563EB",
           primary: "var(--brand-primary)",
           primaryEnd: "#EF4444",

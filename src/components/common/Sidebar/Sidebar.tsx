@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  LayoutDashboard,
   Search,
   Zap,
   BarChart3,
@@ -65,7 +64,7 @@ const NavItem: React.FC<NavItemProps> = ({
         >
           <div className="flex items-center gap-3">
             <Icon size={20} />
-            <span className="text-[14px] font-semibold">{label}</span>
+            <span className="text-[14px] font-normal">{label}</span>
           </div>
           <ChevronDown
             size={16}
@@ -85,7 +84,7 @@ const NavItem: React.FC<NavItemProps> = ({
                 }
               >
                 <child.icon size={18} />
-                <span className="text-[14px] font-semibold">{child.label}</span>
+                <span className="text-[14px] font-normal">{child.label}</span>
               </NavLink>
             ))}
           </div>
@@ -109,7 +108,7 @@ const NavItem: React.FC<NavItemProps> = ({
     >
       <div className="flex items-center gap-3">
         <Icon size={18} />
-        <span className="text-[14px] font-semibold">{label}</span>
+        <span className="text-[14px] font-normal">{label}</span>
       </div>
 
       {badge && (
@@ -217,7 +216,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
 
           {/* Bottom Nav */}
           <div className="pt-3 space-y-1 px-3 mb-2">
-            <div className="mt-auto border-t border-[#1E293B] mb-4" />
+            <div className="mt-auto border-t border-brand-border-ui mb-4" />
             <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={HelpCircle} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />

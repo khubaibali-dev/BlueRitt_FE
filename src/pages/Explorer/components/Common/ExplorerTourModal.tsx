@@ -69,13 +69,13 @@ const ExplorerTourModal: React.FC<ExplorerTourModalProps> = ({ onClose }) => {
 
       {/* Modal Content */}
       <div className="tour-modal-card">
-        <button onClick={onClose} className="tour-modal-close-btn ">
+        <button onClick={onClose} className="tour-modal-close-btn dark:text-white">
           <X size={20} />
         </button>
 
         <h2 className="tour-modal-title">{currentStepData.title}</h2>
 
-        <p className="tour-modal-desc">{currentStepData.description}</p>
+        <p className="tour-modal-desc dark:text-[#D6D6D6]">{currentStepData.description}</p>
 
         {/* Progress Indicators */}
         <div className="tour-progress-container">
@@ -100,14 +100,14 @@ const ExplorerTourModal: React.FC<ExplorerTourModalProps> = ({ onClose }) => {
           })}
         </div>
 
-        <div className="tour-step-text">
+        <div className="tour-step-text dark:text-[#D6D6D6] ">
           Step {currentStep} of {totalSteps}
         </div>
 
         {/* Actions */}
         <div className={`tour-action-row ${currentStep === totalSteps ? '!justify-end' : 'justify-between'}`}>
           {currentStep < totalSteps && (
-            <button onClick={onClose} className="tour-skip-btn">
+            <button onClick={onClose} className="tour-skip-btn dark:text-dim">
               Skip Tour
             </button>
           )}

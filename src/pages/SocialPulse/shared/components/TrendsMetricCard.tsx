@@ -37,7 +37,7 @@ shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
         </div>
         <div className="flex flex-col">
           <h4 className="text-[17px] font-bold text-white tracking-tight">{label}</h4>
-          <p className="text-[12px] text-[#9F9F9F] font-medium">{subtitle}</p>
+          <p className="text-[12px] text-dim font-medium">{subtitle}</p>
         </div>
       </div>
     );
@@ -72,7 +72,7 @@ shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
             <div className="trend-progress-fill" style={{ width: `${progress}%` }} />
           </div>
           <div className="flex items-center justify-end">
-            <span className="text-[11px] font-black text-[#9F9F9F] uppercase tracking-widest">
+            <span className="text-[11px] font-black text-dim uppercase tracking-widest">
               {progress}%
             </span>
           </div>

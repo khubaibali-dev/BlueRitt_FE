@@ -121,7 +121,7 @@ const InfluencerLink: React.FC = () => {
             <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-center gap-3 w-full">
               {/* Search Input Container */}
               <div
-                className="flex-1 w-full figma-rect-border group overflow-hidden relative transition-all border-brand-border dark:border-[#082656] focus-within:border-orange-500/50 shadow-[0px_10px_15px_-3px_#0000000D] bg-white dark:bg-[#FFFFFF0D] backdrop-blur-[19.4px]"
+                className="flex-1 w-full figma-rect-border group overflow-hidden relative transition-all border-brand-border dark:border-brand-border focus-within:border-orange-500/50 shadow-[0px_10px_15px_-3px_#0000000D] bg-white dark:bg-[#FFFFFF0D] backdrop-blur-[19.4px]"
               >
                 <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-brand-primary transition-colors">
                   <Search size={20} />
@@ -186,7 +186,7 @@ const InfluencerLink: React.FC = () => {
 
         {/* All Influencers Section */}
         <div className="space-y-8">
-          <div className="flex items-center justify-between px-1 border-b border-brand-border dark:border-[#082656] pb-4">
+          <div className="flex items-center justify-between px-1 border-b border-brand-border dark:border-brand-border pb-4">
             <h2 className="text-[20px] font-bold text-brand-textPrimary dark:text-white tracking-tight">
               {searchQuery ? `Search Results (${filteredInfluencers.length})` : "All Influencers"}
             </h2>
@@ -203,7 +203,7 @@ const InfluencerLink: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 px-6 bg-brand-card-alt dark:bg-[#FFFFFF05] rounded-[24px] border border-brand-border dark:border-[#082656]">
+            <div className="text-center py-20 px-6 bg-brand-card-alt dark:bg-[#FFFFFF05] rounded-[24px] border border-brand-border dark:border-brand-border">
               <Users size={48} className="mx-auto mb-4 text-brand-textSecondary/30 dark:text-[#FFFFFF33]" />
               <h3 className="text-brand-textPrimary dark:text-white text-[18px] font-bold mb-2">No influencers found</h3>
               <p className="text-brand-textSecondary dark:text-[#FFFFFF66] text-[14px]">Try searching for a different name or keyword.</p>
@@ -218,7 +218,7 @@ const InfluencerLink: React.FC = () => {
             <button
               onClick={() => handlePageChange(1)}
               disabled={currentPage === 1}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
             >
               <ChevronsLeft size={16} />
             </button>
@@ -227,7 +227,7 @@ const InfluencerLink: React.FC = () => {
             <button
               onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
             >
               <ChevronLeft size={16} />
             </button>
@@ -243,7 +243,7 @@ const InfluencerLink: React.FC = () => {
                     ? "bg-brand-primary text-white border border-brand-primary shadow-[0_0_15px_rgba(240,90,43,0.3)]"
                     : page === "..."
                       ? "text-brand-textSecondary/40 dark:text-white/40 cursor-default"
-                      : "bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white"}`}
+                      : "bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white"}`}
               >
                 {page}
               </button>
@@ -253,7 +253,7 @@ const InfluencerLink: React.FC = () => {
             <button
               onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
             >
               <ChevronRight size={16} />
             </button>
@@ -262,7 +262,7 @@ const InfluencerLink: React.FC = () => {
             <button
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-[#082656] flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
             >
               <ChevronsRight size={16} />
             </button>

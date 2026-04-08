@@ -135,7 +135,7 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
         </div>
 
         <div className="mt-2 pt-1 px-10 py-2">
-          <div className="border-t border-brand-border/10 py-2 opacity-30" />
+          <div className="border-t border-brand-border py-2 opacity-30" />
           <p className="text-[14px] text-brand-textSecondary dark:text-[#7A9ABF]/60 leading-relaxed italic">
             {isPrepaid
               ? `Get started with the ${packageData.name} plan today and unlock all these amazing features.`
