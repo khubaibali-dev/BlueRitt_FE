@@ -1660,7 +1660,7 @@
 
   /* Global Dashboard Header */
   .dashboard-header {
-    @apply h-[70px] bg-brand-bg border-b border-brand-border-ui flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-2 shrink-0;
+    @apply h-[70px] bg-brand-bg  flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-2 shrink-0;
   }
   
   .header-greeting {
