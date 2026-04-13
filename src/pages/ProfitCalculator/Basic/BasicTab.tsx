@@ -201,10 +201,10 @@ const BasicTab: React.FC<BasicTabProps> = ({
             {/* Refund Rate Slider */}
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
-                <label className="text-[12px] font-medium text-brand-textSecondary">
+                <label className="text-[12px] dark:text-white font-medium text-brand-textSecondary !font-bold">
                   Returns/Refund Rate (Sellable)%
                 </label>
-                <div className="bg-brand-bg/60 dark:bg-[#FFFFFF0D] border border-brand-border dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary">
+                <div className="bg-brand-bg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary">
                   {formData.fm_returnsRate}
                 </div>
               </div>
@@ -214,7 +214,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
                 max="100"
                 value={formData.fm_returnsRate}
                 onChange={(e) => handleFieldChange("fm_returnsRate", e.target.value)}
-                className="w-full h-1.5 bg-brand-bg/60 dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-1.5 bg-brand-bg dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
               {touched.fm_returnsRate && errors.fm_returnsRate && (
                 <span className="text-red-500 text-[10px]">{errors.fm_returnsRate}</span>

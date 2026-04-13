@@ -5,7 +5,7 @@ import { X, FolderOpen, Plus } from "lucide-react";
 import AlertToast from "../../../../components/common/Toast/AlertToast";
 import InputField from "../../../../components/common/input/InputField";
 
-import { getCategory, saveProducts, createCategory } from "../../../../api/savedProducts";
+import { getCategory, saveProducts, createCategory, getSavedCategoriesDetail } from "../../../../api/savedProducts";
 
 interface SaveToVaultModalProps {
   productTitle: string;
@@ -13,7 +13,7 @@ interface SaveToVaultModalProps {
   onClose: () => void;
 }
 
-const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calculatorData, onClose }) => {
+const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ calculatorData, onClose }) => {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
@@ -24,19 +24,37 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ type: "success" | "error"; title: string; message: string } | null>(null);
 
+  const FIXED_CATEGORIES = [
+    { id: "fixed-1", name: "Electronics", product_count: 12 },
+    { id: "fixed-2", name: "Clothing", product_count: 8 },
+    { id: "fixed-3", name: "Home", product_count: 5 },
+    { id: "fixed-4", name: "Beauty", product_count: 10 },
+    { id: "fixed-5", name: "Sports", product_count: 6 },
+  ];
+  const allCategories = [...FIXED_CATEGORIES, ...(categories || [])];
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setIsLoading(true);
-        const response = await getCategory();
-        if (response.data) {
-          setCategories(response.data);
-          if (response.data.length > 0) {
-            setSelectedId(response.data[0].id);
-          }
-        }
+
+        const categoryRes = await getCategory();
+
+        const categoriesWithCount = await Promise.all(
+          categoryRes.data.map(async (cat: any) => {
+            const res = await getSavedCategoriesDetail({ id: cat.id });
+
+            return {
+              ...cat,
+              productCount: res?.data?.products?.length || 0,
+            };
+          })
+        );
+
+        setCategories(categoriesWithCount);
+
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -70,7 +88,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
             <X size={20} />
           </button>
         </div>
-        <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">{productTitle}</p>
+        <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">Electric Portable Blender 500ml BPA Free</p>
         <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 
         {/* Content Section */}
@@ -78,32 +96,56 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
           <>
             {/* Collection Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 max-h-[280px] overflow-y-auto pr-1 custom-scrollbar">
+
               {isLoading ? (
-                <div className="col-span-2 py-10 flex flex-col items-center justify-center gap-3">
-                  <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-[12px] text-slate-400">Loading collections...</p>
-                </div>
+                // 🔥 SKELETON UI
+                <>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div
+                      key={i}
+                      className="p-4 rounded-[14px] border bg-white dark:bg-brand-bg animate-pulse flex flex-col items-center justify-center gap-3 text-center"
+                    >
+                      {/* icon skeleton */}
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+
+                      {/* title skeleton */}
+                      <div className="w-20 h-3 bg-gray-200 dark:bg-gray-700 rounded" />
+
+                      {/* subtitle skeleton */}
+                      <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
+                    </div>
+                  ))}
+                </>
               ) : categories.length > 0 ? (
-                categories.map((col) => (
+                allCategories.map((col) => (
                   <div
                     key={col.id}
                     onClick={() => setSelectedId(col.id)}
                     className={`p-4 rounded-[14px] border transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center group
-                      ${selectedId === col.id
+            ${selectedId === col.id
                         ? "bg-[#F8FAFC] dark:bg-brand-bg border-brand-inputBorder shadow-xl shadow-blue-500/10"
                         : "bg-white dark:bg-brand-bg border-brand-inputBorder hover:border-brand-inputBorder hover:bg-brand-hover"}`}
                   >
                     <div className={`quick-action-icon-circle !w-8 !h-8 transition-all duration-300
-                      ${selectedId === col.id
-                        ? "shadow-lg shadow-blue-500/20 scale-110 !bg-brand-primary"
-                        : "text-brand-textSecondary group-hover:text-brand-primary"}`}>
+            ${selectedId === col.id
+                        ? "shadow-lg shadow-blue-500/20 scale-110"
+                        : "text-brand-textSecondary group-hover:text-brand-primary"}`}
+                    >
                       <FolderOpen size={18} className="text-white" />
                     </div>
+
                     <div>
-                      <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight ${selectedId === col.id ? "text-[#04132B] dark:text-brand-textPrimary" : "text-brand-textSecondary"}`}>
+                      <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight 
+              ${selectedId === col.id
+                          ? "text-[#04132B] dark:text-white text-brand-textSecondary"
+                          : "dark:text-white text-brand-textSecondary"}`}
+                      >
                         {col.name}
                       </h4>
-                      <p className="text-[12px] text-brand-textSecondary font-medium">{col.product_count || 0} items</p>
+
+                      <p className="text-[12px] dark:text-[#9F9F9F] text-brand-textSecondary font-medium">
+                        {col.productCount || 0} items
+                      </p>
                     </div>
                   </div>
                 ))
@@ -112,14 +154,15 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
                   No collections found. Create one to get started.
                 </div>
               )}
+
             </div>
 
-            {/* Add New Collection action */}
+            {/* Add New Collection */}
             <button
               onClick={() => setIsAddingCollection(true)}
-              className="flex items-center justify-start gap-2 text-[13px] font-bold text-brand-textSecondary mb-6 hover:text-brand-textPrimary transition-all py-1.5 rounded-xl hover:bg-brand-hover w-fit ml-0 px-2 group"
+              className="flex items-center justify-start gap-2 text-[13px] font-bold dark:text-white text-brand-textPrimary mb-6 hover:text-brand-textPrimary transition-all py-1.5 rounded-xl hover:bg-brand-hover w-fit ml-0 px-2 group"
             >
-              <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center group-hover:bg-brand-hover transition-all">
+              <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center group-hover:bg-brand-hover transition-all ">
                 <Plus size={14} className="text-brand-textPrimary" />
               </div>
               Add New Collection
@@ -191,11 +234,11 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
                 setToast({
                   type: "success",
                   title: "Success!",
-                  message: isAddingCollection 
+                  message: isAddingCollection
                     ? `Collection "${collectionName}" created and product saved.`
                     : "Product saved to ProductVault successfully.",
                 });
-                
+
                 setTimeout(() => {
                   onClose();
                   navigate("/products");

@@ -559,7 +559,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                <div className="flex items-center gap-3">
                   <h2 className="text-[24px] sm:text-[20px] text-brand-textPrimary tracking-tight leading-tight mb-1">Discovery Results</h2>
                </div>
-               <p className="text-[14px] sm:text-[15px] text-brand-textSecondary">{totalResults > 0 ? totalResults : products.length} products match your query</p>
+               <p className="text-[14px] sm:text-[15px] text-brand-textSecondary dark:text-white">{totalResults > 0 ? totalResults : products.length} products match your query</p>
             </div>
             <div className="flex items-center gap-3">
                <div className="w-[200px] h-fit">

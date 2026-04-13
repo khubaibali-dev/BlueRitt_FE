@@ -49,7 +49,7 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   }, [isOpen]);
 
   return (
-    <div className="bg-brand-card dark:bg-[#04132B] rounded-[24px] transition-all duration-300 border border-brand-border dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none">
+    <div className="bg-brand-card dark:bg-[#04132B] rounded-[14px] transition-all duration-300 border border-brand-inputBorder dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none">
       {/* Header (Trigger) */}
       <div
         className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 cursor-pointer gap-y-4"

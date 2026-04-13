@@ -234,7 +234,7 @@ const TikTokTrends: React.FC = () => {
             selectedProductForDiscovery && discoverySuppliers.length > 0 ? (
               <button
                 onClick={() => setView('discovery')}
-                className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10"
+                className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-white hover:bg-white/10 !text-brand-textPrimary"
               >
                 Next <ChevronRight size={14} />
               </button>

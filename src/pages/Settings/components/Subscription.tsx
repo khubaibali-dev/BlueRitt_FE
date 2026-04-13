@@ -3,7 +3,7 @@ import { Crown, RefreshCw } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchAccountSummary, toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
-import { toast } from "react-toastify";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 import AddBalanceModal from "../../AddOns/AddBalanceModal";
 import CancelSubscriptionModal from "./CancelSubscriptionModal";
 
@@ -17,6 +17,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const toast = useToast();
 
   const { data: summary, isLoading, isFetching } = useQuery({
     queryKey: ['subscription', 'account_summary'],
@@ -27,9 +28,9 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
     enabled: isOpen,
   });
 
-  const today = new Date();
-  const dueDate = summary?.dueDate ? new Date(summary.dueDate) : today;
-  const isExpired = dueDate < today;
+  // const today = new Date();
+  // const dueDate = summary?.dueDate ? new Date(summary.dueDate) : today;
+  // const isExpired = dueDate < today;
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
@@ -63,28 +64,28 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
     }
   };
 
-  const getStatusMessage = () => {
-    if (summary?.activeSubscription) {
-      if (summary.autoRenew) {
-        return `Your subscription is active and will automatically renew on ${summary.dueDate}.`;
-      }
-      return `Your subscription remains active and is scheduled for completion at the end of the current billing period. You will retain full access until ${summary.dueDate}.`;
-    }
+  // const getStatusMessage = () => {
+  //   if (summary?.activeSubscription) {
+  //     if (summary.autoRenew) {
+  //       return `Your subscription is active and will automatically renew on ${summary.dueDate}.`;
+  //     }
+  //     return `Your subscription remains active and is scheduled for completion at the end of the current billing period. You will retain full access until ${summary.dueDate}.`;
+  //   }
 
-    if (!isExpired) {
-      return (
-        <>
-          Your subscription remains active and is scheduled for cancellation at the end of the current billing period.
-          <br />
-          <span className="flex justify-start">
-            {`You will retain full access until ${summary?.dueDate}.`}
-          </span>
-        </>
-      );
-    }
+  //   if (!isExpired) {
+  //     return (
+  //       <>
+  //         Your subscription remains active and is scheduled for cancellation at the end of the current billing period.
+  //         <br />
+  //         <span className="flex justify-start">
+  //           {`You will retain full access until ${summary?.dueDate}.`}
+  //         </span>
+  //       </>
+  //     );
+  //   }
 
-    return "Your subscription is currently inactive and cancelled.";
-  };
+  //   return "Your subscription is currently inactive and cancelled.";
+  // };
 
   return (
     <>
@@ -185,12 +186,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
                       ${summary?.autoRenew ? "bg-brand-accent shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "bg-brand-bg dark:bg-slate-700 border border-brand-border dark:border-transparent"}
                     `}
                   >
-                      <div
-                        className={`
+                    <div
+                      className={`
                           absolute top-[3px] left-[3px] w-[22px] h-[22px] bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out
                           ${summary?.autoRenew ? "translate-x-[24px]" : "translate-x-0"}
                         `}
-                      />
+                    />
                   </button>
                 </div>
               </div>

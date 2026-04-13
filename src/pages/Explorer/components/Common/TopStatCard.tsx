@@ -13,7 +13,7 @@ interface TopStatCardProps {
 
 const TopStatCard: React.FC<TopStatCardProps> = ({ icon: Icon, label, value, action }) => {
   return (
-    <div className="discovery-top-card-premium !bg-brand-inputBg !border-brand-border h-full">
+    <div className="discovery-top-card-premium !bg-brand-card !border-brand-border h-full">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="quick-action-icon-circle">

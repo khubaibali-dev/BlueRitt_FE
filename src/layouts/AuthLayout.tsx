@@ -1,5 +1,5 @@
-import React from "react";
 import BlueRittLogo from "../components/common/logo/BlueRittLogo";
+import Footer from "../components/common/Footer/Footer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import bgGlows from "../assets/images/bg-glows.png";
@@ -55,14 +55,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         </main>
 
         {/* Footer */}
-        <footer className="relative z-10 pb-8 text-center space-y-0.5 px-4">
-          <p className="text-[14px] sm:text-[16px] text-brand-textSecondary dark:text-[#FFFFFFB2]">
-            BlueRitt® is a proprietary product of ReverCe Technologies Ltd. UK
-          </p>
-          <p className="text-[14px] sm:text-[16px] text-brand-accent font-semibold">
-            © Copyright. All Rights Reserved
-          </p>
-        </footer>
+        <Footer className="relative z-10 pb-8 px-4 max-w-[95%] mx-auto justify-center" />
       </div>
     </div>
   );

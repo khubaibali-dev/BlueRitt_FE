@@ -4,7 +4,7 @@ import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
 import { getPackages, createCheckout } from "../../../api/pricing";
 import { useAuth } from "../../../context/AuthContext";
-import { toast } from "react-toastify";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 
 const PlansSkeleton: React.FC<{ isOneTime: boolean }> = ({ isOneTime }) => {
   const cols = isOneTime ? 3 : 4;
@@ -43,6 +43,7 @@ interface PlansProps {
 
 const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
   const { currentUser } = useAuth();
+  const toast = useToast();
   const [subscriptionType, setSubscriptionType] = useState<"subscription" | "one_time">("subscription");
   const [billingCycle, setBillingCycle] = useState<"monthly" | "quarterly" | "annually">("monthly");
   const [updatingPlanId, setUpdatingPlanId] = useState<string | null>(null);

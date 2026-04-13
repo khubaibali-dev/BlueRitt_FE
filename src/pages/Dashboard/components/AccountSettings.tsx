@@ -2,11 +2,12 @@ import { useState } from "react";
 import { User, ShieldCheck, CreditCard, Package, FileText, History } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { updatePaymentMethod } from "../../../api/pricing";
-import { toast } from "react-toastify";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 
 const AccountSettings = () => {
   const navigate = useNavigate();
   const [isUpdatingPayment, setIsUpdatingPayment] = useState(false);
+  const toast = useToast();
 
   const handleUpdatePaymentMethod = async () => {
     try {
@@ -15,7 +16,7 @@ const AccountSettings = () => {
       if (response?.data?.url) {
         window.location.href = response.data.url;
       } else {
-        toast.info("Payment method update initiated");
+        toast.success("Payment method update initiated");
       }
     } catch (error: any) {
       console.error("Error updating payment method:", error);

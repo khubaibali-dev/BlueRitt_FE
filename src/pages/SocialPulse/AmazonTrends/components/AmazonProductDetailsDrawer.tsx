@@ -115,7 +115,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
 
           {/* Top Product Snippet Card */}
           <div className="flex gap-5 p-1">
-            <div className="w-24 h-24 rounded-[12px] bg-white overflow-hidden shrink-0 border border-brand-border shadow-md p-1">
+            <div className="w-24 h-24 rounded-[12px] bg-white overflow-hidden shrink-0 border border-brand-inputBorder p-1">
               <img src={product.image} alt={product.title} className="w-full h-full object-contain" />
             </div>
             <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">

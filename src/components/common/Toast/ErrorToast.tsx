@@ -45,7 +45,7 @@ const ErrorToast: React.FC<ErrorToastProps> = ({
       
       {/* Red Border Glow Container */}
       <div className="relative p-[1px] rounded-[16px] bg-red-500/80 shadow-[0_0_30px_rgba(239,68,68,0.15)]">
-        <div className="bg-[#051124] rounded-[15px] p-4 flex items-center justify-between gap-4">
+        <div className="bg-white dark:bg-[#051124] rounded-[15px] p-4 flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-4 flex-1">
             {/* High-Fidelity Alert Icon */}
@@ -55,10 +55,10 @@ const ErrorToast: React.FC<ErrorToastProps> = ({
 
             {/* Content Wrapper */}
             <div className="flex flex-col min-w-0">
-              <h4 className="text-[15px] font-bold text-white tracking-tight leading-tight mb-0.5">
+              <h4 className="text-[15px] font-bold text-slate-800 dark:text-white tracking-tight leading-tight mb-0.5">
                 {title}
               </h4>
-              <p className="text-[13px] text-slate-400 font-medium leading-snug">
+              <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium leading-snug">
                 {message}
               </p>
             </div>
@@ -67,7 +67,7 @@ const ErrorToast: React.FC<ErrorToastProps> = ({
           {/* Close Button */}
           <button 
             onClick={handleClose}
-            className="p-1 -mr-1 rounded-full hover:bg-white/5 text-slate-600 hover:text-white transition-all active:scale-90"
+            className="p-1 -mr-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 dark:text-slate-600 hover:text-slate-700 dark:hover:text-white transition-all active:scale-90"
           >
             <X size={16} />
           </button>

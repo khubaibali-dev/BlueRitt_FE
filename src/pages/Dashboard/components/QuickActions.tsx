@@ -1,4 +1,4 @@
-import { Zap, Calculator, Hash, Package } from "lucide-react";
+import { Zap, Calculator, Package, Radio } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const QuickActions = () => {
@@ -7,7 +7,7 @@ const QuickActions = () => {
   const actions = [
     { icon: Zap, label: "IntelliScan", desc: "Explore popular products", color: "text-[#3B82F6]", path: "/explorer" },
     { icon: Calculator, label: "Margin Calculator", desc: "Calculate profits", color: "text-[#F05A2B]", path: "/profit-calculator" },
-    { icon: Hash, label: "Social Pulse", desc: "Track hashtags", color: "text-[#EF4444]", path: "/tiktok-trends" },
+    { icon: Radio, label: "Social Pulse", desc: "Track hashtags", color: "text-[#EF4444]", path: "/tiktok-trends" },
     { icon: Package, label: "Product Vault", desc: "Saved products", color: "text-[#9333EA]", path: "/products" },
   ];
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star, Zap, CheckCircle, ShieldCheck, Award, Calendar, Truck, Box, TrendingUp, Info } from "lucide-react";
-import AIMatchScore from '../../SourceLink/AIMatchScore';
+import AIMatchScore from '../../../pages/Explorer/components/SourceLink/AIMatchScore';
 
 export interface SpkbgSupplierCardData {
   name: string;
@@ -54,7 +54,7 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
       <div className="discovery-card-list !flex-col !gap-0 !p-6 !items-stretch group">
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="flex flex-col sm:flex-row gap-5 flex-1">
-            <div className="product-img-wrapper-list !w-28 !h-28 shadow-sm mx-auto sm:mx-0 shrink-0">
+            <div className="product-img-wrapper-list !w-28 !h-28  mx-auto sm:mx-0 shrink-0">
               <img src={image} alt={name} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 flex flex-col justify-center">
@@ -92,27 +92,27 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-10 items-end mt-8 pt-6 border-t border-brand-border">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2"><Zap size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">STORE</span></div>
+              <div className="flex items-center gap-2"><Zap size={14} className=" shrink-0" /><span className="metric-label ">STORE</span></div>
               <span className="metric-value">{storeName}</span>
             </div>
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2"><CheckCircle size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">CONTACT</span></div>
+              <div className="flex items-center gap-2"><CheckCircle size={14} className=" shrink-0" /><span className="metric-label ">CONTACT</span></div>
               <span className="metric-value">{contact}</span>
             </div>
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2"><Truck size={14} className="text-[#FF5900] shrink-0" /><span className="metric-label ">MANUFACTURING COST</span></div>
-              <span className="metric-value text-[#FF5900] text-[15px] font-bold tracking-tight">{price}</span>
+              <span className="metric-value text-[#FF5900] ">{price}</span>
             </div>
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2"><Box size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">ITEM ID</span></div>
+              <div className="flex items-center gap-2"><Box size={14} className=" shrink-0" /><span className="metric-label ">ITEM ID</span></div>
               <span className="metric-value">{id}</span>
             </div>
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2"><TrendingUp size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">MIN. ORDER QTY</span></div>
+              <div className="flex items-center gap-2"><TrendingUp size={14} className=" shrink-0" /><span className="metric-label ">MIN. ORDER QTY</span></div>
               <span className="metric-value">{minOrder}</span>
             </div>
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2"><Info size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">COUNTRY</span></div>
+              <div className="flex items-center gap-2"><Info size={14} className=" shrink-0" /><span className="metric-label ">COUNTRY</span></div>
               <span className="metric-value">{country}</span>
             </div>
           </div>
@@ -127,13 +127,13 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
 
   // Variant: SELECTED
   return (
-    <div className="bg-brand-card dark:bg-[#04132B]/60 backdrop-blur-md border border-brand-border rounded-[24px] overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_25px_rgba(0,0,0,0.2)] relative p-4">
-      <div className="flex items-center gap-2 mb-6">
+    <div className="discovery-card-list flex-col !items-start !p-4 isolate overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[0_0_25px_rgba(0,0,0,0.2)] relative">
+      <div className="flex items-center gap-2 mb-6 text-brand-textPrimary w-full">
         <Box size={14} className="text-[#FF5900]" />
         <span className="text-[11px] text-[#FF5900] font-black tracking-[0.15em] uppercase">Selected Supplier</span>
       </div>
       <div className="flex flex-col sm:flex-row gap-5 mb-6">
-        <div className="product-img-wrapper-list !w-24 !h-24 shadow-md mx-auto sm:mx-0 shrink-0 bg-white">
+        <div className="product-img-wrapper-list !w-24 !h-24 mx-auto sm:mx-0 shrink-0 bg-white">
           <img src={image} alt={name} className="w-full h-full object-cover p-2" />
         </div>
         <div className="flex-1 flex flex-col justify-center">
@@ -167,27 +167,27 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8 mt-4 pt-6 border-t border-brand-border">
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2"><Zap size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">STORE</span></div>
+          <div className="flex items-center gap-2"><Zap size={14} className=" shrink-0" /><span className="metric-label ">STORE</span></div>
           <span className="metric-value">{storeName}</span>
         </div>
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2"><CheckCircle size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">CONTACT</span></div>
+          <div className="flex items-center gap-2"><CheckCircle size={14} className=" shrink-0" /><span className="metric-label ">CONTACT</span></div>
           <span className="metric-value">{contact}</span>
         </div>
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2"><Truck size={14} className="text-[#FF5900] shrink-0" /><span className="metric-label ">MANUFACTURING COST</span></div>
-          <span className="metric-value text-[#FF5900] text-[15px] font-bold tracking-tight">{price}</span>
+          <span className="metric-value">{price}</span>
         </div>
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2"><Box size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">ITEM ID</span></div>
+          <div className="flex items-center gap-2"><Box size={14} className=" shrink-0" /><span className="metric-label ">ITEM ID</span></div>
           <span className="metric-value">{id}</span>
         </div>
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2"><TrendingUp size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">MIN. ORDER QTY</span></div>
+          <div className="flex items-center gap-2"><TrendingUp size={14} className=" shrink-0" /><span className="metric-label ">MIN. ORDER QTY</span></div>
           <span className="metric-value">{minOrder}</span>
         </div>
         <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2"><Info size={14} className="text-slate-400 shrink-0" /><span className="metric-label !text-slate-400">COUNTRY</span></div>
+          <div className="flex items-center gap-2"><Info size={14} className=" shrink-0" /><span className="metric-label ">COUNTRY</span></div>
           <span className="metric-value">{country}</span>
         </div>
       </div>

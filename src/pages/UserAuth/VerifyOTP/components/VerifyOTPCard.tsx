@@ -3,7 +3,7 @@ import PrimaryButton from "../../../../components/common/button/PrimaryButton";
 import starImg from "../../../../assets/images/star.png";
 import { useMutation } from "@tanstack/react-query";
 import { verifyOTP, login } from "../../../../api/auth";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../components/common/Toast/ToastContext";
 import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +12,7 @@ const VerifyOTPCard: React.FC = () => {
   const [otpValues, setOtpValues] = useState<string[]>(Array(6).fill(""));
   const { setAccessToken, setCurrentUser } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
   
   const pendingEmail = localStorage.getItem("pending_otp_email") || "";
   const pendingPassword = sessionStorage.getItem("pending_otp_password") || "";
@@ -103,7 +104,7 @@ const VerifyOTPCard: React.FC = () => {
     if (code.length === 6) {
       verifyMutation.mutate({ email: pendingEmail, otp: code });
     } else {
-      toast.warn("Please enter all 6 digits");
+      toast.error("Please enter all 6 digits");
     }
   };
 

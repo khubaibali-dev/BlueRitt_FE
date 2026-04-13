@@ -50,7 +50,7 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
     <div className="bg-brand-card-alt border border-brand-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-brand-card flex items-center justify-center overflow-hidden border border-brand-border">
+          <div className="w-10 h-10 rounded-full bg-brand-card flex items-center justify-center overflow-hidden border border-brand-border">
             {rev.review_author_avatar ? (
               <img src={rev.review_author_avatar} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -78,7 +78,7 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
         </div>
       </div>
       <h4 className="text-brand-textPrimary font-bold text-[15px] mb-2">{rev.review_title}</h4>
-      <p className="text-brand-textSecondary text-[14px] leading-relaxed">
+      <p className="text-brand-textSecondary dark:text-white text-[14px] leading-relaxed">
         {displayedComment}
       </p>
       {isLongComment && (
@@ -175,7 +175,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as "Details" | "Reviews" | "Offers")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[14px] text-[16px] transition-all ${activeTab === tab ? 'text-white shadow-lg font-bold' : 'text-brand-textSecondary hover:bg-brand-hover'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-[14px] text-[16px] transition-all ${activeTab === tab ? 'text-white shadow-lg font-bold' : 'text-brand-textSecondary dark:text-white hover:bg-brand-hover'}`}
                 style={activeTab === tab ? { background: 'linear-gradient(96.06deg, #155DFC -33.01%, #CD5150 124.28%)' } : {}}
               >
                 {tab === 'Details' && <Box size={14} />}
@@ -190,18 +190,17 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
         <div className="mt-4 border-b border-brand-border mx-6" />
 
         <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
-          {isSoldByAmazon && (
-            <div className="mb-6 py-3 px-4 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
-              <p className="text-red-600 dark:text-red-400 text-[14px] font-medium flex items-center justify-center gap-2">
-                <AlertTriangle size={16} />
-                This product is sold by Amazon and we do not recommend purchasing it
-              </p>
-            </div>
-          )}
-
           {activeTab === 'Details' && (
             isDetailsLoading ? <DetailsSkeleton /> : (
               <>
+                {isSoldByAmazon && (
+                  <div className="mb-6 py-3 px-4 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
+                    <p className="text-red-600 dark:text-red-400 text-[14px] font-medium flex items-center justify-center gap-2">
+                      <AlertTriangle size={16} />
+                      This product is sold by Amazon and we do not recommend purchasing it
+                    </p>
+                  </div>
+                )}
                 <div className="flex gap-4 mb-6">
                   <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-border">
                     <img src={details?.product_photos?.[0] || displayProduct.image} alt="" className="w-full h-full object-cover" />
@@ -225,7 +224,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                           {details?.product_price || `$${displayProduct.price}`}
                         </div>
                         {details?.product_original_price && (
-                          <div className="product-old-price-primary text-[14px] mt-1 line-through">{details.product_original_price}</div>
+                          <div className="product-old-price-primary text-[14px] dark:text-white mt-1 line-through">{details.product_original_price}</div>
                         )}
                       </div>
                       <div className="flex flex-col items-end gap-2">
@@ -254,7 +253,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
 
                 {/* Growth Row */}
                 <div className="flex items-center gap-4 mb-9 px-1">
-                  <span className="text-brand-textSecondary text-[13px] font-medium">{details?.product_num_ratings || displayProduct.ratings} ratings</span>
+                  <span className="text-brand-textSecondary text-[13px] dark:text-white font-medium">{details?.product_num_ratings || displayProduct.ratings} ratings</span>
                 </div>
 
                 <div className="border-b border-brand-border mb-10" />
@@ -284,11 +283,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 </div>
                 {/* Seller / Shipping Grid */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
+                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                     <span className="metric-label">Seller Name</span>
                     <span className="metric-value truncate">{details?.seller || details?.product_offers?.[0]?.seller || "Amazon"}</span>
                   </div>
-                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
+                  <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                     <span className="metric-label">Ships From</span>
                     <span className="metric-value truncate">{details?.ships_from || details?.product_offers?.[0]?.ships_from || "Amazon"}</span>
                   </div>
@@ -296,11 +295,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
 
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                       <span className="metric-label">Seller Country</span>
                       <span className="text-[12px] text-brand-textPrimary font-medium uppercase">{details?.seller_country || "US"}</span>
                     </div>
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                       <span className="metric-label">Seller Rating</span>
                       <div className="flex items-center gap-2">
                         <div className="!w-6 !h-6 rounded-full flex items-center justify-center quick-action-icon-circle">
@@ -311,7 +310,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                       <span className="metric-label">Item Dimensions</span>
                       <span className="metric-value truncate text-[11px]">
                         {details?.product_information?.["Product Dimensions"] ||
@@ -319,7 +318,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                           details?.product_information?.["Package Dimensions"] || "N/A"}
                       </span>
                     </div>
-                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card border border-brand-border shadow-md">
+                    <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                       <span className="metric-label">Item Weight</span>
                       <span className="metric-value truncate">
                         {details?.product_information?.["Item Weight"] ||
@@ -431,11 +430,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                       const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                       return (
                         <div key={star} className="flex items-center gap-3">
-                          <span className="text-brand-textSecondary text-[12px] w-10">{star} star</span>
-                          <div className="flex-1 h-1.5 bg-brand-bg rounded-full overflow-hidden">
-                            <div className="h-full bg-[#6291DE] rounded-full transition-all duration-1000" style={{ width: `${percentage}%` }} />
+                          <span className="text-brand-textSecondary dark:text-white text-[12px] w-10">{star} star</span>
+                          <div className="flex-1 h-3 bg-brand-bg rounded-full overflow-hidden">
+                            <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${percentage}%`, background: 'linear-gradient(90.15deg, #2B7FFF -25.84%, #FFFFFF 49.25%, #FF5900 124.33%)' }} />
                           </div>
-                          <span className="text-brand-textSecondary text-[12px] w-8 text-right">{Math.round(percentage)}%</span>
+                          <span className="text-[#6291DE] text-[12px] w-8 text-right">{Math.round(percentage)}%</span>
                         </div>
                       );
                     })}

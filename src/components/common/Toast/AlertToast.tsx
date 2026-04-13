@@ -39,7 +39,7 @@ const AlertToast: React.FC<AlertToastProps> = ({
       ${isExiting ? "animate-out slide-out-to-right duration-500 fill-mode-forwards" : "animate-in slide-in-from-right duration-500"}`}>
       
       <div className="relative p-[1px] rounded-[14px] bg-gradient-to-r from-[#155DFC] to-[#FF5900] shadow-2xl shadow-blue-500/10">
-        <div className="bg-[#04132B] rounded-[13px] p-3 flex items-center justify-between gap-3">
+        <div className="bg-white dark:bg-[#04132B] rounded-[13px] p-3 flex items-center justify-between gap-3">
           
           <div className="flex items-center gap-3 flex-1">
             {/* Icon Circle */}
@@ -50,10 +50,10 @@ const AlertToast: React.FC<AlertToastProps> = ({
 
             {/* Text Content */}
             <div className="flex flex-col min-w-0">
-              <h4 className="text-[15px] font-bold text-white tracking-tight leading-tight mb-0.5">
+              <h4 className="text-[15px] font-bold text-slate-800 dark:text-white tracking-tight leading-tight mb-0.5">
                 {title}
               </h4>
-              <p className="text-[13px] text-slate-400 font-medium line-clamp-1 leading-tight">
+              <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium line-clamp-1 leading-tight">
                 {message}
               </p>
             </div>
@@ -62,7 +62,7 @@ const AlertToast: React.FC<AlertToastProps> = ({
           {/* Manual Close */}
           <button 
             onClick={handleClose}
-            className="p-1 -mr-1 rounded-full hover:bg-white/5 text-slate-600 hover:text-white transition-all transition-transform active:scale-90"
+            className="p-1 -mr-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 dark:text-slate-600 hover:text-slate-700 dark:hover:text-white transition-all active:scale-90"
           >
             <X size={14} />
           </button>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Zap, BarChart3, Hash, Box } from "lucide-react";
+import { Zap, Calculator, Package, Radio } from "lucide-react";
 import googleIcon from "../assets/images/toolfusion_icons/google.png";
 import amzLogo from "../assets/images/toolfusion_icons/amz.png";
 import nbLogo from "../assets/images/toolfusion_icons/nb.png";
@@ -32,7 +32,7 @@ export const BLUERITT_TOOLS: ToolItem[] = [
     id: "marginmax",
     name: "MarginMax",
     description: "Calculate profits with precision",
-    icon: BarChart3,
+    icon: Calculator,
     actionText: "Calculate Profits",
     link: "/profit-calculator",
     isExternal: false,
@@ -41,7 +41,7 @@ export const BLUERITT_TOOLS: ToolItem[] = [
     id: "productvault",
     name: "ProductVault",
     description: "Save and organize winning products",
-    icon: Hash,
+    icon: Package,
     actionText: "Save Products",
     link: "/products",
     isExternal: false,
@@ -50,7 +50,7 @@ export const BLUERITT_TOOLS: ToolItem[] = [
     id: "socialpulse",
     name: "SocialPulse",
     description: "Real-time social signal intelligence to spot rising product opportunities early.",
-    icon: Box,
+    icon: Radio,
     actionText: "Start Trend Analysis",
     link: "/tiktok-trends",
     isExternal: false,

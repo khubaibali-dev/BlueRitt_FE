@@ -16,7 +16,7 @@ const VaultAlibabaCard: React.FC<VaultAlibabaCardProps> = ({ supplier }) => {
   if (!supplier) return null;
 
   return (
-    <div className="bg-white dark:bg-[#04132B] border border-brand-border dark:border-white/10 rounded-[24px] overflow-hidden shadow-md dark:shadow-2xl relative p-6 h-full transition-all duration-500 dark:hover:border-blue-500/30">
+    <div className="bg-white dark:bg-[#04132B] border border-brand-inputBorder dark:border-white/10 rounded-[24px] overflow-hidden shadow-md dark:shadow-2xl relative p-6 h-full transition-all duration-500 dark:hover:border-blue-500/30">
       {/* Label Section */}
       <div className="flex items-center gap-2 mb-6">
         <Box size={14} className="text-orange-500" />
@@ -60,49 +60,49 @@ const VaultAlibabaCard: React.FC<VaultAlibabaCardProps> = ({ supplier }) => {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Zap size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="text-[10px] font-black text-brand-textSecondary dark:text-slate-400 tracking-widest uppercase">STORE</span>
+            <span className="metric-label">STORE</span>
           </div>
-          <span className="text-[13px] text-brand-textPrimary dark:text-white font-medium">{supplier.storeName}</span>
+          <span className="metric-value">{supplier.storeName}</span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="text-[10px] font-black text-brand-textSecondary dark:text-slate-400 tracking-widest uppercase">CONTACT</span>
+            <span className="metric-label">CONTACT</span>
           </div>
-          <span className="text-[13px] text-brand-textPrimary dark:text-white font-medium">{supplier.contact}</span>
+          <span className="metric-value">{supplier.contact}</span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Truck size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="text-[10px] font-black text-brand-textSecondary dark:text-slate-400 tracking-widest uppercase">MANUFACTURING COST</span>
+            <span className="metric-label">MANUFACTURING COST</span>
           </div>
-          <span className="text-[15px] font-bold tracking-tight text-brand-textPrimary dark:text-white">${supplier.price}</span>
+          <span className="metric-value">${supplier.price}</span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Box size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="text-[10px] font-black text-brand-textSecondary dark:text-slate-400 tracking-widest uppercase">ITEM ID</span>
+            <span className="metric-label">ITEM ID</span>
           </div>
-          <span className="text-[13px] text-brand-textPrimary dark:text-white font-medium truncate max-w-[100px]">{supplier.id}</span>
+          <span className="metric-value">{supplier.id}</span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <TrendingUp size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="text-[10px] font-black text-brand-textSecondary dark:text-slate-400 tracking-widest uppercase">MOQ</span>
+            <span className="metric-label">MOQ</span>
           </div>
-          <span className="text-[13px] text-brand-textPrimary dark:text-white font-medium">{supplier.minOrder}</span>
+          <span className="metric-value">{supplier.minOrder}</span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Info size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="text-[10px] font-black text-brand-textSecondary dark:text-slate-400 tracking-widest uppercase">COUNTRY</span>
+            <span className="metric-label">COUNTRY</span>
           </div>
-          <span className="text-[13px] text-brand-textPrimary dark:text-white font-medium">{supplier.country}</span>
+          <span className="metric-value">{supplier.country}</span>
         </div>
       </div>
     </div>

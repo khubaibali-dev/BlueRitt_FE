@@ -1,5 +1,5 @@
 import React from 'react';
-import SpkbgSupplierCard, { SpkbgSupplierCardData } from './SpkbgSupplierCard';
+import SpkbgSupplierCard, { SpkbgSupplierCardData } from '../../../../../components/common/SpkCards/SpkbgSupplierCard';
 
 interface AlibabaSupplierCardProps {
   supplier: any;

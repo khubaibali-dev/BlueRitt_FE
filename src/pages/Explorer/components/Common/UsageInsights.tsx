@@ -16,7 +16,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon, title, value, progress 
       {icon}
     </div>
     <div className="flex-1">
-      <p className="text-brand-textSecondary text-[16px] font-semibold tracking-wide mb-1 ">{title}</p>
+      <p className="text-brand-textSecondary dark:text-white text-[16px] font-semibold tracking-wide mb-1 ">{title}</p>
       <h4 className="text-brand-textPrimary text-[24px] font-bold tracking-tight">{value}</h4>
     </div>
 
@@ -59,12 +59,12 @@ const UsageInsights: React.FC = () => {
           value={supplierQuota.toLocaleString()}
           progress={supplierProgress}
         />
-        <Link to="/addons" className="insight-card group flex flex-col items-center justify-center text-center !gap-3 cursor-pointer transition-all min-h-[155px] insight-addon-bg">
+        <Link to="/addons" className="insight-card group flex flex-col items-center justify-center text-center !gap-3 cursor-pointer transition-all min-h-[155px] dark:insight-addon-bg bg-white ">
           <div className="mb-2">
-            <ShoppingCart size={32} className="text-white" />
+            <ShoppingCart size={32} className="text-brand-primary dark:text-white" />
           </div>
-          <h4 className="text-white text-[18px] font-bold">Add-ons</h4>
-          <p className="text-white/60 text-[13px]">Purchase Add Ons</p>
+          <h4 className="text-brand-textPrimary dark:text-brand-textPrimary text-[18px] font-bold">Add-ons</h4>
+          <p className="text-brand-textSecondary dark:text-brand-textSecondary text-[13px]">Purchase Add Ons</p>
         </Link>
       </div>
     </section>

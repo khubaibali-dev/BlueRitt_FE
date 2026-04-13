@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import {
   Search,
-  Zap,
-  BarChart3,
-  PlusCircle,
+  Puzzle,
+  Calculator,
+  TrendingUp,
   Settings,
-  HelpCircle,
+  CircleHelp,
   LogOut,
-  FolderOpen,
+  Package,
   X,
   ChevronDown,
   Hash,
   ShoppingBag,
-  Star,
+  User,
   Radio,
-  Home
+  LayoutGrid
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -190,10 +190,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col min-h-0">
           {/* Main Nav */}
           <nav className="flex-1 space-y-1 px-3">
-            <NavItem icon={Home} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={LayoutGrid} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={BarChart3} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={Zap} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Calculator} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Puzzle} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
 
 
             <NavItem
@@ -207,19 +207,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
               children={[
                 { label: "TikTok Trends", to: "/tiktok-trends", icon: Hash },
                 { label: "Amazon Trends", to: "/amazon-trends", icon: ShoppingBag },
-                { label: "Influencer Link", to: "/influencer-link", icon: Star },
+                { label: "Influencer Link", to: "/influencer-link", icon: User },
               ]}
             />
 
-            <NavItem icon={FolderOpen} label="Product Vault" to="/products" extraPaths={["/calculator/product"]} badge={categoriesCount > 0 ? categoriesCount.toString() : ""} isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={Package} label="Product Vault" to="/products" extraPaths={["/calculator/product"]} badge={categoriesCount > 0 ? categoriesCount.toString() : ""} isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
           </nav>
 
           {/* Bottom Nav */}
           <div className="pt-3 space-y-1 px-3 mb-2">
-            <div className="mt-auto border-t border-brand-border-ui mb-4" />
-            <NavItem icon={PlusCircle} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <div className="mt-auto mb-4" />
+            <NavItem icon={TrendingUp} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={HelpCircle} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={CircleHelp} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
             <NavItem
               icon={LogOut}
               label="Log Out"

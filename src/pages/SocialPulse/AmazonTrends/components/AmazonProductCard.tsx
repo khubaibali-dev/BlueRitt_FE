@@ -59,19 +59,19 @@ const AmazonProductCard: React.FC<AmazonProductCardProps> = ({
               {price}
             </span>
             {oldPrice && (
-              <span className="text-[12px] text-brand-textSecondary line-through mt-0.5 font-medium">
+              <span className="text-[12px] text-brand-textSecondary dark:text-dim line-through mt-0.5 font-medium">
                 {oldPrice}
               </span>
             )}
           </div>
 
           <div className="flex flex-col items-end gap-1">
-            <div className="px-2.5 py-1 bg-brand-card border border-brand-border rounded-full flex items-center gap-1.5 shadow-sm">
+            <div className="px-2.5 py-1 bg-brand-card-alt border border-brand-border rounded-full flex items-center gap-1.5 shadow-sm">
               <Star size={12} fill="#FFD700" className="text-[#FFD700]" />
-              <span className="text-[11px] font-bold text-brand-textPrimary">{rating || "0.0"}</span>
+              <span className="text-[11px] font-bold text-brand-textPrimary dark:text-white">{rating || "0.0"}</span>
             </div>
             {views && (
-              <span className="text-[10px] text-brand-textSecondary font-medium">
+              <span className="text-[10px] text-brand-textSecondary dark:text-dim font-medium">
                 {views}
               </span>
             )}

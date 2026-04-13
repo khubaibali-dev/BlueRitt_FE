@@ -19,8 +19,8 @@ const CalculatorAccordion: React.FC<CalculatorAccordionProps> = ({
   return (
     <div
       className={`border rounded-2xl overflow-hidden transition-all duration-300 ${disabled
-        ? "bg-brand-card-alt dark:bg-[#04132B]/30 border-dashed border-brand-border dark:border-brand-border opacity-50 cursor-not-allowed select-none"
-        : "bg-brand-card dark:bg-[#04132B]/60 border-brand-border dark:border-brand-border"
+        ? "bg-brand-card-alt dark:bg-[#04132B] border-dashed border-brand-inputBorder dark:border-brand-inputBorder opacity-50 cursor-not-allowed select-none"
+        : "bg-brand-card dark:bg-[#04132B] border-brand-inputBorder dark:border-brand-inputBorder"
         }`}
     >
       <button
@@ -49,12 +49,14 @@ const CalculatorAccordion: React.FC<CalculatorAccordionProps> = ({
         </div>
       </button>
 
-      {isOpen && !disabled && (
+      <div 
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${isOpen && !disabled ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"}`}
+      >
         <div className="p-5 pt-0">
           <hr className="border-brand-border dark:border-[#1E293B]/80 mb-5" />
           {children}
         </div>
-      )}
+      </div>
     </div>
   );
 };

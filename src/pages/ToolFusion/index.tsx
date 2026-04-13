@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
 import { ToolItem, BLUERITT_TOOLS, ACTIVE_TOOLS } from "../../utils/ToolFusionOptions";
 
 const ToolFusionPage: React.FC = () => {
@@ -16,8 +15,8 @@ const ToolFusionPage: React.FC = () => {
     };
 
     return (
-      <div className="tool-card group">
-        <div className="tool-card-content">
+      <div className="tool-card group ">
+        <div className="tool-card-content ">
           {tool.image ? (
             <div className="tool-image-container">
               <img
@@ -40,7 +39,7 @@ const ToolFusionPage: React.FC = () => {
         </div>
         <button className="tool-action-btn" onClick={handleAction}>
           {tool.actionText}
-          {tool.isExternal && <ArrowUpRight size={14} className="ml-1 opacity-50" />}
+          {tool.isExternal}
         </button>
       </div>
     );
@@ -51,7 +50,7 @@ const ToolFusionPage: React.FC = () => {
       <div className="tool-fusion-wrapper">
         {/* Header Section */}
         <div className="tool-fusion-header">
-          <h1 className="tool-fusion-title">
+          <h1 className="tool-fusion-title ">
             ToolFusion
           </h1>
           <p className="tool-fusion-subtitle">

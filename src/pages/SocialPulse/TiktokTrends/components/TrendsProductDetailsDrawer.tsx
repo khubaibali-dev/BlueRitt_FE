@@ -163,7 +163,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
             <>
               {/* Top Info Section - Only visible in Details */}
               <div className="flex gap-4 mb-8">
-                <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-border">
+                <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-inputBorder">
                   <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -197,8 +197,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                         <item.icon size={14} className="text-white" />
                       </div>
                       <div className="text-center">
-                        <span className="product-metric-label block mb-0.5">{item.label}</span>
-                        <span className="product-metric-value block !text-[12px]">{item.value}</span>
+                        <span className="metric-label block mb-0.5">{item.label}</span>
+                        <span className="metric-value block !text-[12px]">{item.value}</span>
                       </div>
                     </div>
                   ))}
@@ -217,16 +217,16 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     { label: "Category", value: enrichedMetrics?.category || product.category || "N/A" },
                     { label: "Subcategory", value: enrichedMetrics?.subcategory1 || "N/A" }
                   ].map((metric, i) => (
-                    <div key={i} className={`bg-brand-card border border-brand-border rounded-[10px] p-3.5 flex flex-col justify-center ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
-                      <span className="product-metric-label block mb-2">{metric.label}</span>
-                      <span className="product-metric-value block !text-[13px]">{isEnrichedLoading ? "..." : metric.value}</span>
+                    <div key={i} className={`product-metric-item ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
+                      <span className="metric-label block mb-2">{metric.label}</span>
+                      <span className="metric-value block !text-[13px]">{isEnrichedLoading ? "..." : metric.value}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Hashtags Section */}
-              <div className="bg-brand-card border border-brand-border rounded-[12px] p-4 transition-all duration-300">
+              <div className="bg-[#FAFAFA] dark:bg-brand-card border border-brand-inputBorder rounded-[12px] p-4 transition-all duration-300">
                 <button
                   onClick={() => setIsHashtagsExpanded(!isHashtagsExpanded)}
                   className="flex items-center justify-between w-full mb-1 group"
@@ -351,7 +351,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     analysisData.products.map((item: any, idx: number) => (
                       <div key={idx} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <div className="flex gap-4">
-                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-brand-border shrink-0">
+                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-brand-inputBorder shrink-0">
                             <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -374,7 +374,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                             { label: "Reviews", value: item.review_count },
                             { label: "Ships From", value: item.shipping_info?.ship_from || "US" }
                           ].map((m, mIdx) => (
-                            <div key={mIdx} className="bg-brand-card border border-brand-border rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
+                            <div key={mIdx} className="bg-[#FAFAFA] dark:bg-brand-card border border-brand-inputBorder rounded-lg p-3 flex flex-col justify-center min-h-[54px]">
                               <span className="product-metric-label block mb-1.5">{m.label}</span>
                               <span className="product-metric-value block !text-[12px]">{m.value}</span>
                             </div>

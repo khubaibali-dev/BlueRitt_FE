@@ -1,5 +1,5 @@
 import React from 'react';
-import SpkbgCard, { SpkbgCardData } from './SpkbgCard';
+import SpkbgCard, { SpkbgCardData } from '../../../../../components/common/SpkCards/SpkbgCard';
 
 interface AmazonProductCardProps {
   product: any;

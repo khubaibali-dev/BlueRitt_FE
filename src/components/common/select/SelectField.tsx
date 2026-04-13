@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 export interface SelectOption {
-  label: string;
+  label: React.ReactNode;
   value: string;
 }
 
@@ -28,6 +28,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   onChange,
   placeholder = "Select an option",
   error = "",
+  required = false,
   className = "",
   direction = "down",
 }) => {
@@ -87,14 +88,17 @@ const SelectField: React.FC<SelectFieldProps> = ({
   }, [isOpen]);
 
   return (
-    <div className="flex flex-col gap-[10px]" ref={dropdownRef}>
+    <div className="flex flex-col gap-[6px]" ref={dropdownRef}>
       {label && (
-        <label
-          htmlFor={id}
-          className="text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textSecondary cursor-pointer"
-        >
-          {label}
-        </label>
+        <div className="flex justify-between items-center pr-1">
+          <label
+            htmlFor={id}
+            className="text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white cursor-pointer"
+          >
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </label>
+        </div>
       )}
 
       <div className="relative">
@@ -104,7 +108,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           id={id}
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-full flex items-center justify-between gap-3 px-4 py-[11px] ${className || "rounded-lg"}
+            w-full flex items-center justify-between gap-3 px-4 py-[12px] ${className || "rounded-lg"}
             bg-brand-inputBg border transition-all duration-200
             focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
             ${error ? "border-red-500" : "border-brand-inputBorder"}

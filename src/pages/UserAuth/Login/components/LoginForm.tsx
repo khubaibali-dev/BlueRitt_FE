@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../components/common/Toast/ToastContext";
 import InputField from "../../../../components/common/input/InputField";
 import { login } from "../../../../api/auth";
 import { encryptPassword } from "../../../../utils/encryption";
@@ -14,6 +14,7 @@ import { Eye, EyeOff } from "lucide-react";
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const togglePassword = () => setShowPassword(!showPassword);
 

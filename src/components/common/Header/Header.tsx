@@ -62,7 +62,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
                   <p className="text-[11px] sm:text-[12px] font-semibold text-brand-textPrimary leading-tight whitespace-nowrap ">
                     {currentUser?.firstName} {currentUser?.lastName}
                   </p>
-                  <p className="text-[9px] sm:text-[10px] text-brand-textSecondary leading-tight whitespace-nowrap">{currentUser?.email}</p>
+                  {/* <p className="text-[9px] sm:text-[10px] text-brand-textSecondary leading-tight whitespace-nowrap">{currentUser?.email}</p> */}
                 </div>
               </button>
 
@@ -114,7 +114,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
             </button>
           </div>
 
-          <div className="profile-section border-l border-[#1E293B] pl-2 h-full flex items-center gap-3">
+          <div className="profile-section pl-2 h-full flex items-center gap-3">
             <div className=" flex items-center justify-center shrink-0 shadow-inner">
               <CircleUser size={28} className="text-brand-textPrimary" />
             </div>

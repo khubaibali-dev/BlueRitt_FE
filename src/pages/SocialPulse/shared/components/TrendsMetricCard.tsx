@@ -25,18 +25,17 @@ const TrendsMetricCard: React.FC<TrendsMetricCardProps> = ({
 
   if (isAddon) {
     return (
-      <div 
+      <div
         onClick={onClick}
-        className={`flex-1 w-full sm:min-w-[280px] rounded-[12px] p-4 flex flex-col items-center justify-center text-center gap-3 transition-all hover:border-blue-500/20 group 
+        className={`flex-1 w-full sm:min-w-[280px] rounded-[12px] p-4 flex flex-col items-center justify-center text-center gap-3 transition-all bg-white dark:bg-brand-card border border-brand-inputBorder group dark:border-none
 ${onClick ? 'cursor-pointer' : ''}
-bg-[linear-gradient(135deg,#082553_0%,#04132B_100%)] 
 shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
       >
         <div className="flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
-          <ShoppingCart size={26} className="text-white" />
+          <ShoppingCart size={26} className="text-brand-textPrimary dark:text-brand-textPrimary" />
         </div>
         <div className="flex flex-col">
-          <h4 className="text-[17px] font-bold text-white tracking-tight">{label}</h4>
+          <h4 className="text-[17px] font-bold text-brand-textPrimary dark:text-brand-textPrimary tracking-tight">{label}</h4>
           <p className="text-[12px] text-dim font-medium">{subtitle}</p>
         </div>
       </div>

@@ -2,7 +2,8 @@
 import React from "react";
 import useSignupForm from "../../../../hooks/useSignupForm";
 import InputField from "../../../../components/common/input/InputField";
-import CountrySelect, { countries, CountryDisplay } from "../../../../components/common/select/CountrySelect";
+import SelectField from "../../../../components/common/select/SelectField";
+import { countries } from "../../../../utils/Country";
 import ReCaptchaWidget from "../../components/ReCaptchaWidget";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
@@ -23,11 +24,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     handleSubmit,
   } = useSignupForm({ onSuccess });
 
-  const handleCountryChange = (country: CountryDisplay) => {
-    handleChange("country")({
-      target: { value: country.name, type: "text" }
-    } as React.ChangeEvent<HTMLInputElement>);
-  };
 
   const PasswordToggle = (
     <button
@@ -99,17 +95,32 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
 
       {/* ── COUNTRY & WHATSAPP (Grid) ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <CountrySelect
+        <SelectField
+          id="country"
           label="Country"
           value={fields.country}
-          onChange={handleCountryChange}
+          options={countries.map(c => ({ 
+            label: (
+              <div className="flex items-center gap-2">
+                <img src={`https://flagcdn.com/w20/${c.code}.png`} alt={c.name} className="w-5 h-[14px] object-cover rounded-[2px]" />
+                <span>{c.name}</span>
+              </div>
+            ), 
+            value: c.name 
+          }))}
+          onChange={(val) => {
+            handleChange("country")({
+              target: { value: val, type: "text" }
+            } as React.ChangeEvent<HTMLInputElement>);
+          }}
           error={errors.country}
+          direction="down"
         />
         <InputField
           id="whatsapp"
           label="Whatsapp(Optional)"
           placeholder="xxx xxxx xxx"
-          prefix={countries.find((c: CountryDisplay) => c.name === fields.country)?.dialCode}
+          prefix={countries.find(c => c.name === fields.country)?.dialCode}
           value={fields.whatsapp}
           onChange={handleChange("whatsapp")}
           error={errors.whatsapp}

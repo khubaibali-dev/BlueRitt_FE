@@ -2,8 +2,8 @@ import React from "react";
 
 const StatItem: React.FC<{ value: string; label: string }> = ({ value, label }) => (
   <div className="explorer-stats-item">
-    <h3 className="explorer-stats-value">{value}</h3>
-    <p className="explorer-stats-label">{label}</p>
+    <h3 className="explorer-stats-value !text-[#6291DE]">{value}</h3>
+    <p className="explorer-stats-label dark:text-white">{label}</p>
   </div>
 );
 

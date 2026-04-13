@@ -19,6 +19,7 @@ const AmazonTrendsPage = lazy(() => import("../pages/SocialPulse/AmazonTrends/Am
 const InfluencerLinkPage = lazy(() => import("../pages/SocialPulse/InfluencerLink/InfluencerLink"));
 const ForgotPasswordPage = lazy(() => import("../pages/UserAuth/ForgotPassword"));
 const ProductAnalysisPage = lazy(() => import("../pages/ProductVault/components/ProductAnalysis"));
+const LoadingPage = lazy(() => import("../pages/Testing/LoadingPage"));
 
 type RouteType = {
   path: string;
@@ -136,6 +137,11 @@ const routes: RouteType[] = [
     element: ProductAnalysisPage,
     layout: DashboardLayout,
     isProtected: true,
+  },
+  {
+    path: "/loading",
+    element: LoadingPage,
+    isProtected: false,
   },
   {
     path: "*",

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { User, Mail, Phone } from "lucide-react";
+import { User } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import InputField from "../../../components/common/input/InputField";
 import SelectField from "../../../components/common/select/SelectField";
-import { countries, CountryDisplay } from "../../../components/common/select/CountrySelect";
+import { countries } from "../../../utils/Country";
 import { useAuth } from "../../../context/AuthContext";
 import { updateUserProfile } from "../../../api/auth";
-import { toast } from "react-toastify";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 
 interface ProfileFormData {
   firstName: string;
@@ -22,6 +22,7 @@ interface ProfileInformationProps {
 
 const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = true }) => {
   const { currentUser, fetchUserDetails } = useAuth();
+  const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [profileData, setProfileData] = useState<ProfileFormData>({
     firstName: "",
@@ -84,7 +85,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             label="First Name"
             placeholder="Enter first name"
             value={profileData.firstName}
-            icon={User}
             onChange={(e) => handleChange("firstName", e.target.value)}
           />
           <InputField
@@ -92,7 +92,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             label="Last Name"
             placeholder="Enter last name"
             value={profileData.lastName}
-            icon={User}
             onChange={(e) => handleChange("lastName", e.target.value)}
           />
           <InputField
@@ -102,7 +101,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             placeholder="Enter email"
             value={profileData.email}
             readOnly={true}
-            icon={Mail}
             onChange={() => { }} // Read-only but required by InputFieldProps
           />
         </div>
@@ -113,7 +111,15 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             id="country"
             label="Country"
             value={profileData.country}
-            options={countries.map(c => ({ label: c.name, value: c.name }))}
+            options={countries.map(c => ({
+              label: (
+                <div className="flex items-center gap-2">
+                  <img src={`https://flagcdn.com/w20/${c.code}.png`} alt={c.name} className="w-5 h-[14px] object-cover rounded-[2px]" />
+                  <span>{c.name}</span>
+                </div>
+              ),
+              value: c.name
+            }))}
             onChange={(val) => handleChange("country", val)}
             direction="down"
           />
@@ -122,8 +128,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             id="contactNumber"
             label="Contact Number"
             placeholder="xxx xxxx xxx"
-            icon={Phone}
-            prefix={countries.find((c: CountryDisplay) => c.name === profileData.country)?.dialCode}
+            prefix={countries.find(c => c.name === profileData.country)?.dialCode}
             value={profileData.contactNumber}
             onChange={(e) => handleChange("contactNumber", e.target.value)}
           />

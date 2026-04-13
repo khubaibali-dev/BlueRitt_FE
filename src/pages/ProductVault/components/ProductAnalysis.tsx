@@ -257,19 +257,19 @@ const ProductAnalysis: React.FC = () => {
             <table className="min-w-full table-auto text-left">
               <thead>
                 <tr>
-                  <th className="analysis-table-th">SR NO.</th>
-                  <th className="analysis-table-th">PRODUCT SOURCING COST</th>
-                  <th className="analysis-table-th">PRODUCT REVENUE</th>
-                  <th className="analysis-table-th">GROSS PROFIT</th>
-                  <th className="analysis-table-th">NET PROFIT</th>
-                  <th className="analysis-table-th">MODIFIED AT</th>
-                  <th className="analysis-table-th text-center">ACTION</th>
+                  <th className="analysis-table-th">Sr No.</th>
+                  <th className="analysis-table-th">Product Sourcing Cost</th>
+                  <th className="analysis-table-th">Product Revenue</th>
+                  <th className="analysis-table-th">Gross Profit</th>
+                  <th className="analysis-table-th">Net Profit</th>
+                  <th className="analysis-table-th">Modified At</th>
+                  <th className="analysis-table-th text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-border dark:divide-white/5">
                 {history.length > 0 ? history.map((calc: any, index: number) => (
                   <tr key={calc.id || index} className="hover:bg-brand-hover dark:hover:bg-white/[0.02] transition-colors">
-                     <td className="analysis-table-td font-medium !text-brand-textSecondary">{index + 1}</td>
+                    <td className="analysis-table-td font-medium !text-brand-textSecondary">{index + 1}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_sourcing_cost || 0).toLocaleString()}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_revenue || 0).toLocaleString()}</td>
                     <td className="analysis-table-td font-bold">${(calc.product_gross_profit || 0).toLocaleString()}</td>

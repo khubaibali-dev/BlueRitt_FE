@@ -192,9 +192,9 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           {/* Region Selection */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <label className="text-[12px] font-medium text-brand-textSecondary">Select Region</label>
+              <label className="text-[12px] font-bold text-brand-textSecondary">Select Region</label>
               <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center cursor-help">
-                <span className="text-[10px] font-bold text-blue-400">i</span>
+                <span className="text-[10px] font-bold ">i</span>
               </div>
             </div>
             <SelectField
@@ -212,7 +212,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <label className="text-[12px] font-medium text-brand-textSecondary">VAT</label>
-                <div className="bg-brand-bg/60 dark:bg-[#FFFFFF0D] border border-brand-border dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary flex items-center gap-1">
+                <div className="bg-brand-bg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary flex items-center gap-1">
                   <input
                     type="number"
                     value={formData.tax_VAT}
@@ -228,7 +228,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 max="100"
                 value={formData.tax_VAT}
                 onChange={(e) => handleFieldChange("tax_VAT", e.target.value)}
-                className="w-full h-1.5 bg-brand-bg/60 dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-1.5 bg-brand-bg dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
 
@@ -236,7 +236,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <label className="text-[12px] font-medium text-brand-textSecondary">GST</label>
-                <div className="bg-brand-bg/60 dark:bg-[#FFFFFF0D] border border-brand-border dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary flex items-center gap-1">
+                <div className="bg-brand-bg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary flex items-center gap-1">
                   <input
                     type="number"
                     value={formData.tax_GST}
@@ -252,7 +252,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 max="100"
                 value={formData.tax_GST}
                 onChange={(e) => handleFieldChange("tax_GST", e.target.value)}
-                className="w-full h-1.5 bg-brand-bg/60 dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-1.5 bg-brand-bg dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
 
@@ -260,7 +260,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <label className="text-[12px] font-medium text-brand-textSecondary">Sales Tax</label>
-                <div className="bg-brand-bg/60 dark:bg-[#FFFFFF0D] border border-brand-border dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary flex items-center gap-1">
+                <div className="bg-brand-bg dark:bg-[#FFFFFF0D] border border-brand-border dark:border-white/5 rounded-lg px-3 py-1 text-[13px] font-bold text-brand-textPrimary flex items-center gap-1">
                   <input
                     type="number"
                     value={formData.tax_salesTax}
@@ -276,7 +276,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
                 max="100"
                 value={formData.tax_salesTax}
                 onChange={(e) => handleFieldChange("tax_salesTax", e.target.value)}
-                className="w-full h-1.5 bg-brand-bg/60 dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
+                className="w-full h-1.5 bg-brand-bg dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
             </div>
           </div>

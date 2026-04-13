@@ -37,7 +37,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
   title,
   image,
   category,
-  price = "$10.90",
+  price = "$00.00",
   metrics,
   variant = "grid",
   onDetailsClick,
@@ -52,13 +52,13 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
   if (variant === "selected") {
     return (
       <div className="discovery-card-list flex-col !p-0 isolate bg-brand-card border border-brand-inputBorder rounded-[24px]">
-        <div className="px-5 py-4 border-b border-brand-inputBorder flex items-center gap-2 w-full">
+        <div className="px-5 py-4  flex items-center gap-2 w-full">
           <Package size={14} className="text-[#FF5900]" />
           <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected TikTok Trend</span>
         </div>
         <div className="p-4 sm:p-2 w-full">
           <div className="flex flex-col lg:flex-row gap-5 items-start">
-            <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-md mx-auto lg:mx-0 shrink-0 bg-brand-card-alt border border-brand-inputBorder">
+            <div className="product-img-wrapper-list !w-[100px] !h-[100px]  mx-auto lg:mx-0 shrink-0 bg-brand-card-alt border border-brand-inputBorder">
               <img src={image} alt={title} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 w-full flex flex-col gap-4">
@@ -74,19 +74,19 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                   <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Package size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Posts</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.post_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Posts</span><span className="metric-value">{metrics.post_count || 0}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Heart size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Likes</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.like_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Likes</span><span className="metric-value">{metrics.like_count || 0}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Share2 size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Shares</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.share_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Shares</span><span className="metric-value">{metrics.share_count || 0}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><MessageCircle size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label text-brand-textSecondary text-[11px] uppercase tracking-wider">Comments</span><span className="metric-value text-brand-textPrimary font-bold">{metrics.comment_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Comments</span><span className="metric-value">{metrics.comment_count || 0}</span></div>
                     </div>
                   </div>
                 )}
@@ -100,7 +100,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
           </div>
 
           {isCalculator ? (
-            <div className="grid mt-4 pt-2 border-t border-brand-border grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 px-1">
+            <div className="grid mt-4 pt-2 border-t border-brand-border grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 px-1 ">
               {[
                 { label: "Sub-Category", value: metrics.subcategory1 || "Makeup & Perfume" },
                 { label: "Sub-Category", value: metrics.subcategory2 || "Perfume" },
@@ -118,8 +118,8 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                 { label: "CPA", value: metrics.cpa },
               ].map((m, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <span className="text-[12px] text-brand-textSecondary mb-0 opacity-80">{m.label}</span>
-                  <span className={`text-[14px] font-medium leading-tight truncate ${m.isRed ? 'text-[#ff4e4e] font-bold' : 'text-brand-textPrimary'}`}>{m.value}</span>
+                  <span className="metric-label">{m.label}</span>
+                  <span className={`metric-value ${m.isRed ? 'text-[#ff4e4e] font-bold' : 'text-brand-textPrimary'}`}>{m.value}</span>
                 </div>
               ))}
             </div>
@@ -137,9 +137,9 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                   { label: "Subcategory", value: metrics.subcategory1 || "N/A" }
                 ] : [])
               ].map((m, i) => (
-                <div key={i} className="flex-[1] bg-transparent py-2.5 px-4 rounded-xl border border-brand-border flex flex-col justify-center min-h-[58px]">
-                  <span className="text-[12px] text-brand-textSecondary mb-1 opacity-80">{m.label}</span>
-                  <span className="text-[14px] text-brand-textPrimary font-bold leading-tight truncate">{m.value}</span>
+                <div key={i} className="flex-[1] bg-brand-card-alt py-2.5 px-4 rounded-xl border border-brand-inputBorder flex flex-col justify-center min-h-[58px]">
+                  <span className="metric-label">{m.label}</span>
+                  <span className="metric-value">{m.value}</span>
                 </div>
               ))}
             </div>
@@ -164,6 +164,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
       </div>
     );
   }
+
 
   const handleDiscoverSupplier = () => {
     if (onDiscoverSupplier) {
@@ -210,20 +211,20 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
         {/* Metrics Grid */}
         <div className="product-metric-grid mb-6">
           <div className="product-metric-item">
-            <span className="product-metric-label">CTR</span>
-            <span className="product-metric-value">{metrics.ctr}</span>
+            <span className="metric-label">CTR</span>
+            <span className="metric-value">{metrics.ctr}</span>
           </div>
           <div className="product-metric-item">
-            <span className="product-metric-label">CVR</span>
-            <span className="product-metric-value">{metrics.cvr}</span>
+            <span className="metric-label">CVR</span>
+            <span className="metric-value">{metrics.cvr}</span>
           </div>
           <div className="product-metric-item">
-            <span className="product-metric-label">CPA</span>
-            <span className="product-metric-value">{metrics.cpa}</span>
+            <span className="metric-label">CPA</span>
+            <span className="metric-value">{metrics.cpa}</span>
           </div>
           <div className="product-metric-item">
-            <span className="product-metric-label">Impressions</span>
-            <span className="product-metric-value">{metrics.impressions}</span>
+            <span className="metric-label">Impressions</span>
+            <span className="metric-value">{metrics.impressions}</span>
           </div>
         </div>
 

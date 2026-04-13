@@ -14,7 +14,8 @@ const COUNTRY_OPTIONS = [
   { label: "India", value: "IN" },
 ];
 
-const countries = [
+const countries =
+ [
   { name: "Afghanistan", dialCode: "+93", code: "af" },
   { name: "Albania", dialCode: "+355", code: "al" },
   { name: "Algeria", dialCode: "+213", code: "dz" },

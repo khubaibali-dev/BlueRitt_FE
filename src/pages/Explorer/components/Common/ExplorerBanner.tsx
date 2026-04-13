@@ -114,7 +114,7 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
         <h1 className="banner-heading-text !mb-10">
           <span className="inline-flex items-center justify-center gap-4">
             Explore with IntelliScan
-            <div className="relative flex items-center justify-center shrink-0 rounded-full w-[38px] h-[38px] bg-brand-inputBg backdrop-blur-[20px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
+            <div className="relative flex items-center justify-center shrink-0 rounded-full w-[38px] h-[38px] bg-brand-inputBg backdrop-blur-[10px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
               <span className="font-serif italic text-brand-textPrimary dark:text-white text-[22px] font-bold leading-none pr-[2px]">i</span>
             </div>
           </span>
@@ -142,7 +142,7 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
             className="dashboard-filter-btn"
             onClick={() => setFilterOpen(true)}
           >
-            Filters <SlidersHorizontal size={18} className="text-white" />
+            Filters <SlidersHorizontal size={18} className="dark:text-white text-black" />
           </button>
         </div>
 
@@ -187,7 +187,7 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
 
       </div>
       {/* Usage Insights Bottom Row */}
-      <div className="w-full flex items-center justify-between mt-[85px] mb-[-50px] !px-0">
+      <div className="w-full flex items-center justify-between mt-[135px] mb-[-80px] !px-0">
         <h2 className="dashboard-section-title !mb-0 px-4">Usage Insights</h2>
         <button className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6">
           <Crown size={18} className="text-white" />

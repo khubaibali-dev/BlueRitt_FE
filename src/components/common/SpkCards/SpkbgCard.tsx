@@ -83,7 +83,7 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-0.5 bg-brand-inputBg px-2 py-1 rounded-full shrink-0 border border-brand-border">
+              <div className="flex items-center gap-0.5 bg-brand-card-alt px-2 py-1 rounded-full shrink-0 border border-brand-inputBorder">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={12} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
                 ))}
@@ -95,21 +95,21 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
             <div className="flex items-center gap-2.5">
               <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><Box size={14} className="text-brand-primary dark:text-white" /></div>
               <div className="flex flex-col">
-                <span className="metric-label leading-none mb-1">ASIN</span>
+                <span className="metric-label leading-none mb-1">Asin</span>
                 <span className="metric-value leading-none">{asin}</span>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
               <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><DollarSign size={14} className="text-brand-primary dark:text-white" /></div>
               <div className="flex flex-col">
-                <span className="metric-label leading-none mb-1">OFFERS</span>
+                <span className="metric-label leading-none mb-1">Offers</span>
                 <span className="metric-value leading-none">{offers} sellers</span>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
               <div className="quick-action-icon-circle !w-8 !h-8 shrink-0"><BarChart3 size={14} className="text-brand-primary dark:text-white" /></div>
               <div className="flex flex-col">
-                <span className="metric-label leading-none mb-1">MONTHLY SALES VOL</span>
+                <span className="metric-label leading-none mb-1">Monthly Sales Volume</span>
                 <span className="metric-value leading-none">{salesVol}</span>
               </div>
             </div>
@@ -118,7 +118,7 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
         <div className="product-price-section-list">
           <div className="flex flex-col items-end mb-2">
             <div className="flex items-baseline gap-2">
-              <span className="product-old-price-primary text-[20px]">${oldPrice}</span>
+              <span className="text-[#082656B0]dark:product-old-price-primary text-[20px]">${oldPrice}</span>
               <span className="product-price-primary text-[28px]">${price}</span>
             </div>
             <div className="flex items-center gap-3">
@@ -157,11 +157,11 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
             <div className="flex items-center gap-3">
               <div className="flex items-baseline gap-1.5">
                 <span className="product-price-primary text-[20px]">${price}</span>
-                <span className="product-old-price-primary text-[14px]">${oldPrice}</span>
+                <span className="text-[#082656B0]dark:product-old-price-primary text-[14px] ">${oldPrice}</span>
               </div>
               {growth && <div className="trending-badge-standard"><TrendingUp size={12} /> {growth}</div>}
             </div>
-            <div className="flex items-center gap-2 bg-brand-inputBg px-2 py-1 rounded-full shrink-0 border border-brand-border">
+            <div className="flex items-center gap-2 bg-brand-card-alt px-2 py-1 rounded-full shrink-0 border border-brand-inputBorder">
               <div className="flex items-center gap-0.5">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={11} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
@@ -173,12 +173,12 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
           <div className="product-metrics-row-grid grid grid-cols-3 py-4 border-t border-brand-border mt-auto">
             <div className="flex flex-col items-center text-center">
               <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><Box size={14} className="text-brand-primary dark:text-white" /></div>
-              <span className="metric-label mb-0.5">ASIN</span>
+              <span className="metric-label mb-0.5">Asin</span>
               <span className="metric-value">{asin}</span>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="quick-action-icon-circle !w-8 !h-8 mb-2 shrink-0"><DollarSign size={14} className="text-brand-primary dark:text-white" /></div>
-              <span className="metric-label mb-0.5">OFFERS</span>
+              <span className="metric-label mb-0.5">Offers</span>
               <span className="metric-value">{offers} sellers</span>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -220,19 +220,19 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
               <div className="product-metrics-row-list !mt-0 !gap-x-4 !gap-y-3 flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-brand-primary dark:text-white" /></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">ASIN</span><span className="metric-value leading-none">{asin}</span></div>
+                  <div className="flex flex-col"><span className="metric-label mb-1">Asin</span><span className="metric-value">{asin}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-brand-primary dark:text-white"><TrendingUp size={15} /></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">Monthly Sales Volume</span><span className="metric-value leading-none">{salesVol}</span></div>
+                  <div className="flex flex-col"><span className="metric-label mb-1">Monthly Sales Volume</span><span className="metric-value">{salesVol}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white font-bold text-[14px] leading-none">%</span></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">OFFERS</span><span className="metric-value leading-none">{offers}</span></div>
+                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">Offers</span><span className="metric-value leading-none">{offers}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Truck size={15} className="text-brand-primary dark:text-white" /></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">DELIVERY</span><span className="metric-value leading-none">Free</span></div>
+                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">Delivery</span><span className="metric-value leading-none">Free</span></div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5 overflow-hidden">
@@ -245,14 +245,14 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0.5">
+                  <div className="flex items-end gap-2">
+                    <div className="flex items-end gap-0.5">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} size={12} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
                       ))}
                     </div>
-                    <span className="text-[12px] font-bold text-[#FFC107] leading-none">{rating}</span>
-                    <span className="text-[10px] text-brand-textSecondary font-bold">({numRatings})</span>
+                    <span className="text-[12px] font-bold text-brand-textPrimary leading-none">{rating}</span>
+                    <span className="text-[14px] text-brand-textSecondary font-bold">({numRatings})</span>
                   </div>
                 </div>
               </div>
@@ -270,11 +270,11 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
           ].map((m, i) => (
             isCalculator ? (
               <div key={i} className="flex flex-col gap-1.5">
-                <span className="metric-label !text-brand-textSecondary uppercase tracking-wider">{m.label}</span>
-                <span className="metric-value text-brand-textPrimary">{m.value}</span>
+                <span className="metric-label">{m.label}</span>
+                <span className="metric-value">{m.value}</span>
               </div>
             ) : (
-              <div key={i} className={`${m.flex} bg-slate-50 dark:bg-[#04132B] py-2.5 px-4 rounded-md border border-brand-inputBorder flex flex-col justify-center min-h-[48px] transition-colors`}>
+              <div key={i} className={`${m.flex} bg-[#FAFAFA] dark:bg-[#04132B] py-2.5 px-4 rounded-md border border-[#ECECEC] dark:border-[#1E293B] flex flex-col justify-center min-h-[48px] transition-colors`}>
                 <span className="metric-label leading-none mb-1">{m.label}</span>
                 <span className="metric-value leading-none truncate">{m.value}</span>
               </div>

@@ -5,13 +5,14 @@ import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import InputField from "../../../components/common/input/InputField";
 
 import { updatePassword } from "../../../api/auth";
-import { toast } from "react-toastify";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 
 interface ChangePasswordProps {
   defaultOpen?: boolean;
 }
 
 const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) => {
+  const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [passwords, setPasswords] = useState({
     currentPassword: "",

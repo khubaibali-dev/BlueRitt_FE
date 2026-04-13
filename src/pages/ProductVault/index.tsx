@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { MoreVertical, Trash2, Eye, Calendar, Folder } from "lucide-react";
+import { MoreVertical, Trash2, Eye, Calendar } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CollectionDetails from "./components/CollectionDetails";
 import { getCategory, deleteCategory } from "../../api/savedProducts";
@@ -94,9 +94,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt,
       {/* Content Section */}
       <div className="p-5 flex flex-col gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
-            <Folder size={18} />
-          </div>
           <h3 className="product-card-title text-[16px] mb-0 text-brand-textPrimary dark:text-white group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors uppercase tracking-wider font-bold">
             {name}
           </h3>
@@ -123,7 +120,52 @@ const ProductVault: React.FC = () => {
     queryFn: getCategory
   });
 
+  const FIXED_CATEGORIES = [
+    {
+      id: "fixed-1",
+      name: "Electronics",
+      product_count: 12,
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+      created_at: "10-04-2026"
+    },
+    {
+      id: "fixed-2",
+      name: "Clothing",
+      product_count: 8,
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+      created_at: "10-04-2026"
+
+    },
+    {
+      id: "fixed-3",
+      name: "Home",
+      product_count: 5,
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+      created_at: "10-04-2026"
+
+    },
+    {
+      id: "fixed-4",
+      name: "Beauty",
+      product_count: 10,
+      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
+      created_at: "10-04-2026"
+
+    },
+    {
+      id: "fixed-5",
+      name: "Sports",
+      product_count: 6,
+      image: "https://images.unsplash.com/photo-1517649763962-0c623066013b",
+      created_at: "10-04-2026"
+
+    },
+  ];
+
   const categories = categoriesResponse?.data || [];
+
+  // ✅ Merge both
+  const allCategories = [...FIXED_CATEGORIES, ...categories];
 
   // Derive selected collection from URL (Single Source of Truth)
   const collectionIdParam = searchParams.get("collectionId");
@@ -187,8 +229,8 @@ const ProductVault: React.FC = () => {
         ) : (
           <div className="animate-in fade-in duration-500">
             <div className="mb-10">
-              <h1 className="banner-heading-text !text-left !mb-1 text-brand-textPrimary dark:text-white">Product Vault</h1>
-              <p className="page-header-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary">Analyze and manage your saved product research</p>
+              <h1 className="banner-heading-text !text-left !mb-1 text-brand-textPrimary dark:text-white !text-[24px]">Product Vault</h1>
+              <p className="page-header-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary ">Analyze and manage your saved product research</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -198,7 +240,7 @@ const ProductVault: React.FC = () => {
                   <div key={i} className="vault-card h-[280px] animate-pulse bg-brand-hover dark:bg-white/5 rounded-2xl" />
                 ))
               ) : (
-                categories.map((col: any, idx: number) => (
+                allCategories.map((col: any, idx: number) => (
                   <CategoryCard
                     key={idx}
                     id={col.id}

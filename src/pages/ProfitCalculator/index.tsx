@@ -104,7 +104,7 @@ const ProfitCalculator: React.FC = () => {
 
         // Auto-fill Amazon Fees if possible
         if (product.product_offers?.[0]) {
-           // We can add more logic here if backend provides more distinct fee data
+          // We can add more logic here if backend provides more distinct fee data
         }
       }
     } catch (err: any) {
@@ -164,7 +164,7 @@ const ProfitCalculator: React.FC = () => {
         return (
           <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative  min-h-screen">
             {/* Hero Banner Section */}
-            <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible !min-h-0">
+            <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible min-h-[500px]">
               <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
                 <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
                 <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
@@ -201,12 +201,12 @@ const ProfitCalculator: React.FC = () => {
                         value={selectedMarketplace}
                         options={countryOptions}
                         onChange={(opt) => setSelectedMarketplace(opt.value)}
-                        buttonClassName="flex items-center gap-2 bg-brand-inputBg dark:bg-[#FFFFFF0D] hover:bg-brand-hover/10 dark:hover:bg-[#FFFFFF1A] border border-brand-inputBorder dark:border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-brand-textPrimary dark:text-white transition-all shadow-sm w-[190px] justify-between whitespace-nowrap"
+                        buttonClassName="flex items-center gap-2 bg-brand-card-alt dark:bg-[#FFFFFF0D] hover:bg-brand-hover/10 dark:hover:bg-[#FFFFFF1A] border border-brand-inputBorder dark:border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-brand-textPrimary dark:text-white transition-all w-[190px] justify-between whitespace-nowrap"
                         dropdownWidth="w-[200px]"
                       />
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => handleAsinSearch(formik)}
                       disabled={isSearching}
                       className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -253,8 +253,8 @@ const ProfitCalculator: React.FC = () => {
 
                 {selectedProduct && (
                   <div className="w-full max-w-[1200px] mt-8 animate-in fade-in zoom-in-95 duration-500">
-                    <AmazonProductCard 
-                      product={selectedProduct} 
+                    <AmazonProductCard
+                      product={selectedProduct}
                       variant="selected"
                       isCalculator={true}
                     />
@@ -265,7 +265,7 @@ const ProfitCalculator: React.FC = () => {
 
             {/* Main Content Layout */}
             <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-14 relative z-10 flex flex-col gap-8">
-              <div className="flex flex-col lg:flex-row gap-8 items-start pb-20">
+              <div className="flex flex-col lg:flex-row gap-8 items-start pb-20 min-h-[800px]">
 
                 {/* Left Column: Form Accordions */}
                 <div className="flex-1 w-full flex flex-col gap-4">

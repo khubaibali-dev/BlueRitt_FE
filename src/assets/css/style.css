@@ -35,7 +35,7 @@
   .dark {
     --brand-bg: #04132B;
     --brand-card-alt: #030F23;
-    --brand-card: #0B1828;
+    --brand-card: #04132B;
     --brand-border: #082656;
     --brand-border-ui: #082656;
     --brand-primary: #F05A2B;
@@ -278,8 +278,6 @@
   }
 
   /* === NEW STANDARD CLASSES === */
-  
-  /* Custom Scrollbar for inner containers */
   /* Custom Scrollbar for inner containers */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -691,7 +689,7 @@
 }
 
 .calculator-toggle-container {
-  @apply bg-[#F1F5F9]/40 sm:bg-[#F1F5F9]/10 sm:backdrop-blur-xl flex items-center figma-pill-border overflow-hidden rounded-full;
+  @apply bg-[#F1F5F9]/40 sm:bg-[#F1F5F9]/10 sm:backdrop-blur-xl flex items-center figma-pill-border overflow-hidden rounded-full px-2 py-1.5;
 }
 
 .dark .calculator-toggle-container {
@@ -699,7 +697,7 @@
 }
 
 .calculator-toggle-btn {
-  @apply px-8 py-2 rounded-full text-[13px] font-bold transition-all;
+  @apply px-8 py-2  rounded-full text-[13px] font-bold transition-all;
 }
 
 .calculator-toggle-btn-active {
@@ -735,7 +733,7 @@
 }
 
 .page-header-subtitle {
-  @apply text-[14px] sm:text-[16px] md:text-[18px] text-brand-textSecondary font-medium leading-normal block;
+  @apply text-[14px] sm:text-[16px] md:text-[14px] text-brand-textSecondary font-medium leading-normal block;
   opacity: 1;
 }
 
@@ -868,7 +866,7 @@
   }
 
   .quick-action-card {
-    @apply flex items-center gap-3 rounded-[12px] p-5 transition-all cursor-pointer border border-brand-border;
+    @apply flex items-center gap-3 rounded-[12px] p-4 transition-all cursor-pointer border border-brand-inputBorder;
     background: var(--brand-bg-alt);
     backdrop-filter: blur(38.5px);
   }
@@ -1047,7 +1045,7 @@
 
   .trend-tab-active {
     background: linear-gradient(90.17deg, #101B2B 0%, #101B2B 5%, #4871c7 100%);
-    @apply text-white border-none shadow-xl shadow-blue-500/10 !important;
+    @apply text-white border-none !important;
   }
 
   :root:not(.dark) .trend-tab-active {
@@ -1206,7 +1204,7 @@
   }
   
   .explorer-badge-pill {
-    @apply flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-border bg-brand-inputBg backdrop-blur-md;
+    @apply flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#109EF0] dark:bg-[#15151526] backdrop-blur-md;
   }
   
   .explorer-badge-icon {
@@ -1252,7 +1250,7 @@
   }
   
   .dashboard-filter-btn {
-    @apply filter-pill whitespace-nowrap text-[12px] sm:text-[14px] px-3 sm:px-5 py-2.5 sm:py-3 flex items-center gap-2 transition-all;
+    @apply filter-pill whitespace-nowrap text-[12px] sm:text-[14px] px-3 sm:px-5 py-2.5 sm:py-2.5 flex items-center gap-2 transition-all;
   }
 
   /* Tour Modal Layout & Components */
@@ -1414,7 +1412,7 @@
   
   .sidebar-badge {
     background: linear-gradient(81.39deg, #36438A -103.26%, rgba(244, 128, 255, 0.2) -60.9%, #CD5150 66.97%);
-    @apply text-white text-[12px] px-2 py-0.5 rounded-full font-semibold;
+    @apply text-white text-[11px] w-5 h-5 flex items-center justify-center rounded-full font-semibold;
   }
 
   /* Submenu Styles */
@@ -1435,7 +1433,7 @@
 
   /* Usage Insights & Stats */
   .insight-card {
-    @apply bg-brand-card border border-brand-border rounded-[12px] p-5 flex flex-col gap-5 relative overflow-hidden transition-all hover:bg-brand-hover;
+    @apply bg-brand-card border border-brand-inputBorder rounded-[12px] p-5 flex flex-col gap-5 relative overflow-hidden transition-all ;
   }
   
   .insight-icon-circle {
@@ -1453,7 +1451,7 @@
 
   /* Trend Product Card Styles */
   .trend-product-card {
-    @apply bg-brand-card border border-brand-border rounded-[24px] overflow-hidden transition-all duration-300 hover:translate-y-[-4px];
+    @apply bg-brand-card border border-brand-inputBorder rounded-[24px] overflow-hidden transition-all duration-300 hover:translate-y-[-4px];
   }
 :root:not(.dark) .product-img-badge {
   background: #155DFC14 !important;
@@ -1474,7 +1472,7 @@
   }
 
   .product-metric-item {
-    @apply bg-brand-inputBg border border-brand-border rounded-xl p-3 flex flex-col justify-center;
+    @apply bg-[#FAFAFA] dark:bg-brand-card border border-brand-inputBorder rounded-xl p-3 flex flex-col justify-center;
   }
 
   .product-metric-label {
@@ -1660,24 +1658,28 @@
 
   /* Global Dashboard Header */
   .dashboard-header {
-    @apply h-[70px] bg-brand-bg  flex items-center justify-between pl-4 pr-6 sm:pl-2 sm:pr-2 shrink-0;
+    @apply h-[70px] bg-brand-bg flex items-center justify-between px-4 sm:px-6 shrink-0;
   }
   
   .header-greeting {
-    @apply text-[20px] text-brand-textPrimary tracking-tight mt-2 ml-4 font-normal;
+    @apply text-[20px] text-brand-textPrimary tracking-tight mt-2 ml-0 font-normal;
   }
   
   .header-subtitle {
-    @apply text-[14px] ml-4;
+    @apply text-[14px] ml-0;
     color: var(--brand-text-dim);
   }
   
   .theme-toggle-wrapper {
-    @apply hidden sm:flex items-center bg-brand-inputBg px-2 py-0.5 gap-[5.76px] rounded-full border border-brand-inputBorder;
+    @apply hidden sm:flex items-center bg-brand-inputBg px-2 py-0.5 gap-[5.76px] rounded-full ;
+  }
+
+  .dark .theme-toggle-wrapper {
+    @apply bg-[#1E293B];
   }
   
   .profile-section {
-    @apply flex items-center gap-3 pl-2 sm:pl-6 border-l border-brand-border-ui;
+    @apply flex items-center gap-3 pl-2 sm:pr-6;
   }
   
   .user-avatar {
@@ -1729,7 +1731,7 @@
 
 :root:not(.dark) .btn-secondary-standard {
   background: #FCFCFC !important;
-  @apply !text-brand-textPrimary border-brand-border h-[48px] !important;
+  @apply !text-brand-textPrimary border-brand-inputBorder h-[48px] !important;
 }
 
 .trends-empty-title {
@@ -1784,7 +1786,7 @@
 }
 
 .tool-card {
-  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-2 lg:p-4 gap-6 sm:gap-4 transition-all;
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 sm:p-2 lg:p-4 gap-6 sm:gap-4 transition-all ;
 }
 
 .tool-card-content {
@@ -2250,7 +2252,7 @@
 }
 
 .purchase-cancel-btn {
-  @apply w-full flex-1 py-3 px-6 rounded-full border border-brand-border dark:border-[#A1A1A1] text-[13px] font-bold text-brand-textSecondary dark:text-white transition-all hover:bg-brand-hover dark:hover:bg-white/5 active:scale-95;
+  @apply w-full flex-1 py-3 px-6 rounded-full border border-brand-inputBorder dark:border-[#A1A1A1] text-[13px] font-bold text-brand-textSecondary dark:text-white transition-all bg-brand-hover dark:hover:bg-white/5 active:scale-95;
 }
 
 .purchase-submit-btn {

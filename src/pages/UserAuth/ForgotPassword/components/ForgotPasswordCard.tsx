@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../components/common/Toast/ToastContext";
 import PrimaryButton from "../../../../components/common/button/PrimaryButton";
 import InputField from "../../../../components/common/input/InputField";
 import { forgotPassword } from "../../../../api/auth";
@@ -12,6 +12,7 @@ import starImg from "../../../../assets/images/star.png";
 
 const ForgotPasswordCard: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const toast = useToast();
 
   const formik = useFormik({
     initialValues: {
