@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Crown, RefreshCw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchAccountSummary, toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
@@ -13,7 +14,13 @@ interface SubscriptionProps {
 
 const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  // Sync state with prop for URL-based navigation
+  useEffect(() => {
+    setIsOpen(defaultOpen);
+  }, [defaultOpen]);
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -28,9 +35,76 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
     enabled: isOpen,
   });
 
-  // const today = new Date();
-  // const dueDate = summary?.dueDate ? new Date(summary.dueDate) : today;
-  // const isExpired = dueDate < today;
+  const today = new Date();
+  const dueDateStr = summary?.dueDate || "";
+  // Handle "16 Apr 2026" or similar formats
+  const dueDate = dueDateStr ? new Date(dueDateStr) : today;
+  const isExpired = dueDate < today;
+  const isTrial = summary?.plan === "Trial";
+  const isSubscribed = summary?.activeSubscription === true;
+
+  // Condition cases from reference
+  const isTrialCancel = isTrial && !isSubscribed && !isExpired;
+  const isTrialCancelExpired = isTrial && !isSubscribed && isExpired;
+  const isTrialActiveSubscribed = isTrial && isSubscribed;
+  const isTrialExpiredUnsubscribed = isTrial && isExpired && isSubscribed;
+
+  const navigateToPlans = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate("/settings?tab=plan");
+  };
+
+  const getStatusMessage = () => {
+    if (isTrialCancel) {
+      return (
+        <>
+          Trial active and ending on {dueDateStr}.{" "}
+          <button onClick={navigateToPlans} className="subscription-link-orange !text-[13px] underline">
+            Resubscribe Now
+          </button>{" "}
+          to maintain full access.
+        </>
+      );
+    }
+
+    if (isTrialActiveSubscribed) {
+      return (
+        <>
+          Trial in progress.{" "}
+          <button onClick={navigateToPlans} className="subscription-link-orange !text-[13px] underline">
+            Subscribe Now
+          </button>{" "}
+          to unlock full access.
+        </>
+      );
+    }
+
+    if (isTrialCancelExpired || isTrialExpiredUnsubscribed) {
+      return (
+        <>
+          Trial expired.{" "}
+          <button onClick={navigateToPlans} className="subscription-link-orange !text-[13px] underline">
+            Update Your Plan
+          </button>
+        </>
+      );
+    }
+
+    if (isSubscribed && !isTrial) {
+      return null;
+    }
+
+    if (!isSubscribed && !isExpired && summary?.plan !== "N/A" && summary?.plan !== "Basic") {
+      return (
+        <span className="flex flex-col gap-1">
+          <span>Your subscription remains active and is scheduled for cancellation at the end of the current billing period.</span>
+          <span className="font-semibold">{`You will retain full access until ${dueDateStr}.`}</span>
+        </span>
+      );
+    }
+
+    return "Your subscription is currently inactive or cancelled.";
+  };
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
@@ -63,29 +137,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
       setIsCancelling(false);
     }
   };
-
-  // const getStatusMessage = () => {
-  //   if (summary?.activeSubscription) {
-  //     if (summary.autoRenew) {
-  //       return `Your subscription is active and will automatically renew on ${summary.dueDate}.`;
-  //     }
-  //     return `Your subscription remains active and is scheduled for completion at the end of the current billing period. You will retain full access until ${summary.dueDate}.`;
-  //   }
-
-  //   if (!isExpired) {
-  //     return (
-  //       <>
-  //         Your subscription remains active and is scheduled for cancellation at the end of the current billing period.
-  //         <br />
-  //         <span className="flex justify-start">
-  //           {`You will retain full access until ${summary?.dueDate}.`}
-  //         </span>
-  //       </>
-  //     );
-  //   }
-
-  //   return "Your subscription is currently inactive and cancelled.";
-  // };
 
   return (
     <>
@@ -136,7 +187,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
                 <div className="subscription-info-label">
                   Current Plan: <span className="subscription-info-value">{isLoading ? "Loading..." : (summary?.plan || "N/A")}</span>
                 </div>
-                <button className="subscription-link-orange">Update Your Plan</button>
+                <button
+                  className="subscription-link-orange"
+                  onClick={() => navigate("/settings?tab=plan")}
+                >
+                  Update Your Plan
+                </button>
               </div>
               <div className="subscription-info-value-group">
                 <div className="subscription-info-label">
@@ -152,7 +208,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
             <div className="subscription-info-row">
               <div className="subscription-info-label-group">
                 <div className="subscription-info-label">Last Filled Amount</div>
-                <button className="subscription-link-orange">Balance History</button>
+                <button
+                  className="subscription-link-orange"
+                  onClick={() => navigate("/settings?tab=billing")}
+                >
+                  Balance History
+                </button>
               </div>
               <div className="subscription-info-value-group">
                 <span className="subscription-info-value">${summary?.lastFilledAmount || "0.00"}</span>
@@ -164,7 +225,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
             <div className="subscription-info-row-last">
               <div className="subscription-info-label-group">
                 <div className="subscription-info-label">Last Payment Cleared At</div>
-                <button className="subscription-link-orange">Payment History</button>
+                <button
+                  className="subscription-link-orange"
+                  onClick={() => navigate("/settings?tab=billing")}
+                >
+                  Payment History
+                </button>
               </div>
               <div className="subscription-info-value-group">
                 <span className="text-[13px] text-brand-textSecondary dark:text-slate-300 font-semibold">{summary?.lastPaymentDate || "N/A"}</span>
@@ -197,13 +263,13 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
               </div>
 
               <div className="flex flex-col gap-2">
-                {/* <p className="subscription-status-note">
+                <p className="subscription-status-note !text-[13px] leading-relaxed">
                   {isLoading ? "Fetching subscription status..." : getStatusMessage()}
-                </p> */}
+                </p>
                 {summary?.activeSubscription && (
                   <button
                     onClick={handleCancelSubscription}
-                    className="text-brand-textSecondary dark:text-slate-400 hover:text-brand-primary dark:hover:text-white/80 underline text-[13px] w-fit font-bold transition-colors"
+                    className="text-brand-textSecondary dark:text-slate-400 hover:text-brand-primary dark:hover:text-white/80 underline text-[13px] w-fit font-bold transition-colors mt-1"
                   >
                     Cancel Subscription
                   </button>

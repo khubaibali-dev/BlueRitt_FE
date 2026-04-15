@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Sparkles,
@@ -88,6 +89,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   const [internalActiveTab, setInternalActiveTab] = useState(tabs[0].value);
   const [internalSearchQuery, setInternalSearchQuery] = useState("");
   const [internalHasSearched, setInternalHasSearched] = useState(false);
+  const navigate = useNavigate();
 
   const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
   const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
@@ -153,7 +155,8 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
               />
             </div>
 
-            <button className="upgrade-gradient-btn group !rounded-full w-full sm:w-auto shrink-0">
+            <button className="upgrade-gradient-btn group !rounded-full w-full sm:w-auto shrink-0"
+              onClick={() => navigate("/settings?tab=plan")}>
               <Crown size={18} className="text-white group-hover:rotate-12 transition-transform" />
               Upgrade Your Plan
             </button>

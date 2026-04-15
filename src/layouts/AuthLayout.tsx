@@ -55,7 +55,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         </main>
 
         {/* Footer */}
-        <Footer className="relative z-10 pb-8 px-4 max-w-[95%] mx-auto justify-center" />
+        <Footer 
+          showVersion={false} 
+          className="relative z-10 pb-8 px-4 max-w-[95%] mx-auto justify-center" 
+        />
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import AmazonProductCard from "../Common/Cards/AmazonProductCard";
 import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import SelectField from "../../../../components/common/select/SelectField";
 import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
+import Tooltip from "../../../../components/common/Tooltip/Tooltip";
 import { formatNumber } from "../../../../api/tiktokTrends";
 
 interface SupplierSourceLinkProps {
@@ -213,7 +214,7 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
 
         {/* Hero Header Section */}
         <div className="text-center mb-8 md:mb-12 px-4">
-          <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:gap-4 mb-4">
+          <div className="flex flex-col items-center justify-center gap-1 md:flex-row md:gap-1 mb-4">
 
             <h1 className="banner-heading-text !mb-0">
               AI-Powered Supplier <br className="hidden sm:block" />
@@ -221,21 +222,17 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
             </h1>
 
             {/* Info Icon */}
-            <div className="relative group shrink-0 md:mt-12">
-              <div className="figma-pill-border w-[32px] h-[32px] md:w-[36px] md:h-[36px] cursor-help transition-all duration-300 group-hover:scale-110 flex items-center justify-center bg-black/5 dark:bg-transparent">
+            <Tooltip
+              content="BlueRitt’s AI matches your product with verified, high-rated suppliers and assigns a fit score."
+              className="md:mt-12"
+              width="320px"
+            >
+              <div className="figma-pill-border w-[32px] h-[32px] md:w-[32px] md:h-[32px] cursor-help transition-all duration-300 hover:scale-110 flex items-center justify-center bg-black/5 dark:bg-transparent">
                 <span className="text-brand-textPrimary text-[18px] md:text-[22px] font-black italic font-serif select-none">
                   i
                 </span>
               </div>
-
-              {/* Tooltip */}
-              <div className="absolute bottom-full mb-3 md:mb-5 left-1/2 -translate-x-1/2 w-[260px] sm:w-[300px] md:w-[320px] p-3 md:p-4 rounded-xl backdrop-blur-[20px] bg-white/90 dark:bg-black/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 text-left shadow-2xl scale-95 group-hover:scale-100 origin-bottom">
-                <div className="tooltip-pro-border" />
-                <p className="text-brand-textPrimary text-[11px] md:text-[12px] font-medium leading-relaxed relative z-10">
-                  BlueRitt’s AI matches your product with verified, high-rated suppliers and assigns a fit score.
-                </p>
-              </div>
-            </div>
+            </Tooltip>
 
           </div>
 

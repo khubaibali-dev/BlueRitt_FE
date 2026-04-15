@@ -24,15 +24,15 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="help-page-container">
       {/* Header Section */}
-      <div className="max-w-[1000px] mb-4 text-left">
-        <h1 className="page-header-title !mb-0 !font-normal !text-[24px]">Settings</h1>
+      <div className="max-w-[1200px] w-full mx-auto mb-4 text-left">
+        <h1 className="page-header-title !mb-0 !font-normal !text-[24px] mt-8">Settings</h1>
         <p className="page-subtitle mt-0 !text-[14px]">
           Manage your account, preferences, and subscription
         </p>
       </div>
 
       {/* Main Content Section */}
-      <div className="flex flex-col gap-6 max-w-[1000px] w-full">
+      <div className="flex flex-col gap-6 max-w-[1200px] w-full mx-auto">
         <ProfileInformation defaultOpen={isProfileOpen} />
         <AdditionalInformation defaultOpen={isProfileOpen} />
         <ChangePassword defaultOpen={isSecurityOpen} />

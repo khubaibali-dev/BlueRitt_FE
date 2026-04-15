@@ -3,6 +3,7 @@ import { Wallet, ShoppingCart, ShieldCheck, Search, Users, Calculator, TrendingU
 import PurchaseModal from "./PurchaseModal";
 import { useQuery } from "@tanstack/react-query";
 import { getActiveAddons, Addon } from "../../api/addons";
+import { fetchAccountSummary } from "../../api/pricing";
 import AddOnsSkeleton from "../../components/common/Skeletons/AddOnsSkeleton";
 import AddonCard from "../../components/common/cards/AddonCard";
 
@@ -63,6 +64,15 @@ const AddOns: React.FC = () => {
     queryFn: getActiveAddons,
   });
 
+  const { data: walletBalance } = useQuery({
+    queryKey: ["wallet", "balance"],
+    queryFn: fetchAccountSummary,
+  });
+
+  const displayBalance = walletBalance?.data?.remainingBalance || "$0.00";
+
+
+
   const handlePurchaseClick = (addon: Addon) => {
     setSelectedAddon(addon);
   };
@@ -72,7 +82,7 @@ const AddOns: React.FC = () => {
     if (!addons) return {};
     return addons.reduce((acc: Record<string, Addon[]>, addon) => {
       let key = addon.type_display;
-      
+
       // Coordinate title swaps and renames
       if (key === "AI Supplier Matches") key = "Supplier Discoveries";
       else if (key === "Amazon Product Searches") key = "Product Searches";
@@ -88,7 +98,7 @@ const AddOns: React.FC = () => {
 
       if (!acc[key]) acc[key] = [];
       acc[key].push({ ...addon, type_display: key, description: cleanDesc });
-      
+
       // Sort by num_searches within the group
       acc[key].sort((a, b) => a.num_searches - b.num_searches);
       return acc;
@@ -134,11 +144,11 @@ const AddOns: React.FC = () => {
             <Wallet size={24} />
           </div>
           <span className="addon-balance-label">Your Balance</span>
-          <div className="addon-balance-value">$90.00</div>
+          <div className="addon-balance-value">{displayBalance}</div>
         </div>
 
-        <div 
-          className="addon-balance-card addon-balance-card-alt cursor-pointer hover:bg-brand-hover dark:hover:bg-white/10 transition-colors"
+        <div
+          className="addon-balance-card addon-balance-card cursor-pointer hover:bg-brand-hover dark:hover:bg-white/10 transition-colors"
           onClick={() => setIsBalanceModalOpen(true)}
         >
           <div className="addon-add-balance-icon">
@@ -200,12 +210,13 @@ const AddOns: React.FC = () => {
         isOpen={!!selectedAddon}
         onClose={() => setSelectedAddon(null)}
         addon={selectedAddon}
+        currentBalance={displayBalance}
       />
 
       <AddBalanceModal
         isOpen={isBalanceModalOpen}
         onClose={() => setIsBalanceModalOpen(false)}
-        currentBalance="$90.00"
+        currentBalance={displayBalance}
       />
     </div>
   );

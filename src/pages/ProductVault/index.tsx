@@ -1,176 +1,92 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { MoreVertical, Trash2, Eye, Calendar } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CollectionDetails from "./components/CollectionDetails";
-import { getCategory, deleteCategory } from "../../api/savedProducts";
+import { getCategory, deleteCategory, createCategory, getSavedProducts, getSavedCategoriesDetail } from "../../api/savedProducts";
 import ConfirmationModal from "../../components/common/Modals/ConfirmationModal";
+import CreateCollectionModal from "./components/CreateCollectionModal";
 import { useToast } from "../../components/common/Toast/ToastContext";
 
-interface CategoryCardProps {
-  id: string;
-  name: string;
-  image?: string;
-  createdAt: string;
-  onClick: () => void;
-  onDelete: (id: string, name: string) => void;
-}
-
-const CategoryCard: React.FC<CategoryCardProps> = ({ id, name, image, createdAt, onClick, onDelete }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMenuOpen]);
-
-  const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  return (
-    <div
-      onClick={onClick}
-      className="group relative vault-card cursor-pointer !h-auto flex flex-col"
-    >
-      {/* Image Section */}
-      <div className="vault-image-box !h-[180px] bg-brand-hover dark:bg-white">
-        <img
-          src={image || ""}
-          alt={name}
-          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
-        />
-
-        <div className="absolute top-3 right-3" ref={menuRef}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsMenuOpen(!isMenuOpen);
-            }}
-            className={`p-1.5 rounded-full text-white dark:text-white transition-all glass-action-circle-dark ${isMenuOpen ? "opacity-100 scale-110" : "opacity-100"}`}
-          >
-            <MoreVertical size={16} />
-          </button>
-
-          {isMenuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-[160px] bg-white dark:bg-[#04132B] border border-brand-border dark:border-white/10 rounded-xl shadow-2xl overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen(false);
-                  onClick();
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-brand-textPrimary dark:text-slate-200 hover:bg-brand-hover dark:hover:bg-white/5 transition-colors text-left"
-              >
-                <Eye size={14} className="text-[#6291DE]" />
-                View Details
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen(false);
-                  onDelete(id, name);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-medium text-red-400 hover:bg-red-400/5 transition-colors text-left"
-              >
-                <Trash2 size={14} />
-                Delete
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="p-5 flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <h3 className="product-card-title text-[16px] mb-0 text-brand-textPrimary dark:text-white group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors uppercase tracking-wider font-bold">
-            {name}
-          </h3>
-        </div>
-
-        <div className="flex items-center gap-2 text-brand-textSecondary dark:text-slate-500">
-          <Calendar size={14} />
-          <span className="text-[12px] font-medium">{formattedDate}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
+import CategoryCard from "../../components/common/cards/CategoryCard";
+import { useCategorySync } from "../../hooks/useCategorySync";
 
 const ProductVault: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const { success, error: toastError } = useToast();
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, id: string, name: string }>({ isOpen: false, id: "", name: "" });
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // UseQuery for Categories
-  const { data: categoriesResponse, isLoading } = useQuery({
+  // UseQuery for Categories with Product Counts
+  const { data: categoriesResponse, isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["vault-categories"],
-    queryFn: getCategory
+    queryFn: async () => {
+      const res = await getCategory();
+      const categoriesWithCounts = await Promise.all(
+        res.data.map(async (cat: any) => {
+          try {
+            const detailRes = await getSavedCategoriesDetail({ id: cat.id });
+            return {
+              ...cat,
+              product_count: detailRes?.data?.products?.length || 0
+            };
+          } catch (err) {
+            console.error(`Failed to fetch count for category ${cat.id}:`, err);
+            return { ...cat, product_count: 0 };
+          }
+        })
+      );
+      return { data: categoriesWithCounts };
+    }
   });
-
-  const FIXED_CATEGORIES = [
-    {
-      id: "fixed-1",
-      name: "Electronics",
-      product_count: 12,
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-      created_at: "10-04-2026"
-    },
-    {
-      id: "fixed-2",
-      name: "Clothing",
-      product_count: 8,
-      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
-      created_at: "10-04-2026"
-
-    },
-    {
-      id: "fixed-3",
-      name: "Home",
-      product_count: 5,
-      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
-      created_at: "10-04-2026"
-
-    },
-    {
-      id: "fixed-4",
-      name: "Beauty",
-      product_count: 10,
-      image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
-      created_at: "10-04-2026"
-
-    },
-    {
-      id: "fixed-5",
-      name: "Sports",
-      product_count: 6,
-      image: "https://images.unsplash.com/photo-1517649763962-0c623066013b",
-      created_at: "10-04-2026"
-
-    },
-  ];
 
   const categories = categoriesResponse?.data || [];
 
-  // ✅ Merge both
-  const allCategories = [...FIXED_CATEGORIES, ...categories];
+  // ✅ Use Centralized Sync logic
+  useCategorySync(categories, isCategoriesLoading, !!categoriesResponse);
+
+  // UseQuery for All Products (to get total count and preview images)
+  const { data: productsResponse, isLoading: isProductsLoading } = useQuery({
+    queryKey: ["vault-all-products"],
+    queryFn: getSavedProducts
+  });
+
+  const allProducts = productsResponse?.data || [];
+
+  // ✅ Merge and add All Products at the start
+  const allCategoriesMerged = useMemo(() => {
+    // FIXED_CATEGORIES are now synced to backend, so we only show what's in the DB (+ All Products)
+    // Filter out duplicates by name just in case backend has them
+    const uniqueCategories = Array.from(
+      new Map(categories.map((c: any) => [c.name.trim().toLowerCase(), c])).values()
+    );
+
+    const list = [...uniqueCategories];
+
+    // sum counts from all fetched categories
+    const totalCountFromCategories = categories.reduce((sum, cat) => sum + (cat.product_count || 0), 0);
+
+    const allProductsInfo = {
+      id: "all-products",
+      name: "All Products",
+      product_count: totalCountFromCategories,
+      created_at: new Date().toISOString(),
+      isAllProducts: true,
+      previewImages: allProducts.slice(0, 3).map((p: any) => p.image || p.ProductImage)
+    };
+
+    return [allProductsInfo, ...list];
+  }, [categories, allProducts]);
 
   // Derive selected collection from URL (Single Source of Truth)
   const collectionIdParam = searchParams.get("collectionId");
   const selectedCollection = useMemo(() => {
-    if (!collectionIdParam || categories.length === 0) return null;
+    if (!collectionIdParam) return null;
+    if (collectionIdParam === "all-products") {
+      return { id: "all-products", name: "All Products" };
+    }
+    if (categories.length === 0) return null;
     const col = categories.find((c: any) => c.id.toString() === collectionIdParam);
     return col ? { id: col.id.toString(), name: col.name } : null;
   }, [collectionIdParam, categories]);
@@ -202,6 +118,22 @@ const ProductVault: React.FC = () => {
     setDeleteModal({ isOpen: true, id, name });
   };
 
+  // UseMutation for Creating
+  const createMutation = useMutation({
+    mutationFn: (name: string) => createCategory({ name }),
+    onSuccess: () => {
+      success("Collection created successfully");
+      queryClient.invalidateQueries({ queryKey: ["vault-categories"] });
+      setIsCreateModalOpen(false);
+    },
+    onError: (error: any) => {
+      console.error("Create error:", error);
+      toastError("Failed to create collection");
+    }
+  });
+
+  const isLoadingTotal = isCategoriesLoading || isProductsLoading;
+
   return (
     <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative  min-h-screen">
       {/* Confirmation Modal */}
@@ -216,7 +148,15 @@ const ProductVault: React.FC = () => {
         type="danger"
       />
 
-      <div className="relative z-10 p-6 sm:p-10">
+      {/* Create Modal */}
+      <CreateCollectionModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onConfirm={(name) => createMutation.mutate(name)}
+        isLoading={createMutation.isPending}
+      />
+
+      <div className="relative z-10 px-4 py-8 sm:px-4 sm:py-10">
         {selectedCollection ? (
           <div className="animate-in fade-in duration-500">
             <CollectionDetails
@@ -233,19 +173,22 @@ const ProductVault: React.FC = () => {
               <p className="page-header-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary ">Analyze and manage your saved product research</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {isLoadingTotal ? (
                 // Loading Skeletons
                 Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="vault-card h-[280px] animate-pulse bg-brand-hover dark:bg-white/5 rounded-2xl" />
                 ))
               ) : (
-                allCategories.map((col: any, idx: number) => (
+                allCategoriesMerged.map((col: any, idx: number) => (
                   <CategoryCard
                     key={idx}
                     id={col.id}
                     name={col.name}
                     image={col.image}
+                    productCount={col.product_count}
+                    previewImages={col.previewImages}
+                    isAllProducts={col.isAllProducts}
                     createdAt={col.created_at}
                     onClick={() => handleSetSelectedCollection(col.id.toString())}
                     onDelete={handleDeleteCategory}
@@ -254,12 +197,15 @@ const ProductVault: React.FC = () => {
               )}
 
               {/* Add New Collection Card */}
-              {/* <div className="group vault-add-card flex-col !bg-[#04132B] !min-h-[280px] cursor-pointer">
-                <div className="p-4 rounded-full bg-white/5 text-white group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-all group-hover:scale-110 mb-4">
+              <div
+                onClick={() => setIsCreateModalOpen(true)}
+                className="group vault-card flex flex-col items-center justify-center gap-3 !min-h-[240px] cursor-pointer bg-brand-card dark:bg-[#04132B] !border-brand-inputBorder shadow-xl shadow-black/5 dark:shadow-none"
+              >
+                <div className="p-4 rounded-full bg-slate-200 dark:bg-white/5 text-brand-primary dark:text-white transition-all group-hover:scale-110 mb-4">
                   <Plus size={34} />
                 </div>
-                <span className="text-white font-bold text-[15px] tracking-tight group-hover:text-blue-400 transition-colors">Add New Collection</span>
-              </div> */}
+                <span className="text-brand-textPrimary dark:text-white font-bold text-[15px] tracking-tight transition-colors">Add New Collection</span>
+              </div>
             </div>
           </div>
         )}

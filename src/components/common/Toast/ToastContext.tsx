@@ -14,7 +14,10 @@ interface ToastContextType {
   error: (message: string, options?: ToastOptions) => void;
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+const ToastContext = createContext<ToastContextType>({
+  success: () => { console.warn("useToast called outside ToastProvider"); },
+  error: () => { console.warn("useToast called outside ToastProvider"); },
+});
 
 /**
  * Global Toast Provider.

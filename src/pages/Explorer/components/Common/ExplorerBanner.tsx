@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { SlidersHorizontal, Search, Crown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import explorerBg from "../../../../assets/images/explorer.png";
@@ -12,6 +13,7 @@ import { COUNTRY_OPTIONS } from "../../../../utils/Country";
 import { PRODUCT_FILTER_OPTIONS } from "../../../../utils/SearchOptions";
 import { getAmazonCategoriesandSubcategories } from "../../../../api/product";
 import { useToast } from "../../../../components/common/Toast/ToastContext";
+import Tooltip from "../../../../components/common/Tooltip/Tooltip";
 
 interface ExplorerBannerProps {
   onSearch: (query: string, country: string, searchType: string) => void;
@@ -19,6 +21,7 @@ interface ExplorerBannerProps {
 
 const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
   const toast = useToast();
+  const navigate = useNavigate();
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterType, setFilterType] = useState(PRODUCT_FILTER_OPTIONS[0]);
   const defaultCountry = COUNTRY_OPTIONS.find(opt => opt.value === "US") || COUNTRY_OPTIONS[0];
@@ -112,11 +115,16 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
       <div className="flex flex-col items-center w-full max-w-[900px] px-3 sm:px-4">
 
         <h1 className="banner-heading-text !mb-10">
-          <span className="inline-flex items-center justify-center gap-4">
+          <span className="inline-flex items-center justify-center gap-2">
             Explore with IntelliScan
-            <div className="relative flex items-center justify-center shrink-0 rounded-full w-[38px] h-[38px] bg-brand-inputBg backdrop-blur-[10px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
-              <span className="font-serif italic text-brand-textPrimary dark:text-white text-[22px] font-bold leading-none pr-[2px]">i</span>
-            </div>
+            <Tooltip 
+              content="BlueRitt Explorer is your AI-driven flow: discover Amazon products (IntelliScan), match verified Alibaba suppliers with AI Scores (SourceLink), analyze profit (MarginMax), and save your work (ProductVault)."
+              width="320px"
+            >
+              <div className="flex items-center justify-center shrink-0 rounded-full w-[32px] h-[32px] bg-brand-inputBg backdrop-blur-[10px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
+                <span className="font-serif italic text-brand-textPrimary dark:text-white text-[20px] font-bold leading-none pr-[2px] select-none">i</span>
+              </div>
+            </Tooltip>
           </span>
         </h1>
 
@@ -148,7 +156,7 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
 
         {/* Search bar */}
         {filterType.value === "category" ? (
-          <div className="w-full max-w-[840px] flex flex-col md:flex-row items-center gap-3 bg-white/5 backdrop-blur-[40px] p-3 rounded-full border border-white/10 shadow-2xl">
+          <div className="w-full max-w-[840px] flex flex-col md:flex-row items-center gap-3 bg-white/5 backdrop-blur-[40px] p-3 rounded-full border border-brand-inputBorder shadow-xl">
             <div className="flex-1 w-full">
               <SelectField
                 id="banner-category"
@@ -189,11 +197,15 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
       {/* Usage Insights Bottom Row */}
       <div className="w-full flex items-center justify-between mt-[135px] mb-[-80px] !px-0">
         <h2 className="dashboard-section-title !mb-0 px-4">Usage Insights</h2>
-        <button className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6">
+        <button
+          className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6"
+          onClick={() => navigate("/settings?tab=plan")}
+        >
           <Crown size={18} className="text-white" />
           Upgrade Your Plan
         </button>
       </div>
+
 
       {/* Filter Drawer */}
       <FilterDrawer

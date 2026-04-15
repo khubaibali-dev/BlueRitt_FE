@@ -68,24 +68,24 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
 
               {/* Mobile-only Dropdown */}
               {isMenuOpen && (
-                <div className="header-dropdown-menu absolute top-[calc(100%+8px)] left-auto right-0 w-40 bg-[#04132B] border border-[#1E293B] rounded-xl shadow-2xl z-[100] overflow-hidden">
-                  <div className="p-1 space-y-0.5">
+                <div className="header-dropdown-menu absolute top-[calc(100%+8px)] left-auto right-0 w-48 bg-white dark:bg-[#04132B] border border-brand-border dark:border-[#1E293B] rounded-xl shadow-2xl z-[100] overflow-hidden">
+                  <div className="p-1.5 space-y-1">
                     <button
                       onClick={() => { theme !== 'light' && toggleTheme(); setIsMenuOpen(false); }}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-colors ${theme === 'light' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-dim hover:bg-white/5'}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors ${theme === 'light' ? 'bg-brand-primary/10 text-brand-primary' : 'text-brand-textSecondary dark:text-dim hover:bg-brand-hover dark:hover:bg-white/5'}`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Sun size={14} />
+                      <div className="flex items-center gap-2.5">
+                        <Sun size={15} />
                         <span>Light Mode</span>
                       </div>
-                      {theme === 'light' && <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />}
+                      {theme === 'light' && <div className="w-1.5 h-1.5 rounded-full bg-brand-primary" />}
                     </button>
                     <button
                       onClick={() => { theme !== 'dark' && toggleTheme(); setIsMenuOpen(false); }}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-colors ${theme === 'dark' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-dim hover:bg-white/5'}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors ${theme === 'dark' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'text-brand-textSecondary dark:text-dim hover:bg-brand-hover dark:hover:bg-white/5'}`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Moon size={14} />
+                      <div className="flex items-center gap-2.5">
+                        <Moon size={15} />
                         <span>Dark Mode</span>
                       </div>
                       {theme === 'dark' && <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />}
@@ -98,7 +98,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
         </div>
 
         {/* Right: Desktop Actions & Profile */}
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-2">
           <div className="theme-toggle-wrapper">
             <button
               onClick={() => theme === 'light' && toggleTheme()}
@@ -114,9 +114,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
             </button>
           </div>
 
-          <div className="profile-section pl-2 h-full flex items-center gap-3">
+          <div className="profile-section h-full flex items-center !gap-1">
             <div className=" flex items-center justify-center shrink-0 shadow-inner">
-              <CircleUser size={28} className="text-brand-textPrimary" />
+              <CircleUser size={26} className="text-brand-textPrimary" />
             </div>
             <div className="flex flex-col items-start">
               <p className="text-[14px] font-semibold text-brand-textPrimary">

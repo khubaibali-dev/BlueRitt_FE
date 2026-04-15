@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Receipt, Search, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
+import { Receipt, Search, ArrowUpDown, Download, Mail, Eye, Loader2 } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
-import { getSubscriptionInvoices, fetchAccountSummary } from "../../../api/pricing";
+import { getSubscriptionInvoices, fetchAccountSummary, emailInvoice } from "../../../api/pricing";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 
 interface InvoicesProps {
   defaultOpen?: boolean;
@@ -11,6 +12,11 @@ interface InvoicesProps {
 const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [sortField, setSortField] = useState<string | null>("invoiceDate");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+  const [emailingInvoiceIds, setEmailingInvoiceIds] = useState<string[]>([]);
+  const toast = useToast();
 
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['subscription', 'account_summary'],
@@ -27,11 +33,77 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
     enabled: isOpen,
   });
 
-  const filteredInvoices = invoices.filter((invoice: any) => 
-    invoice.card.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.invoiceDate.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredInvoices = (invoices || []).filter((invoice: any) => {
+    const searchLower = searchQuery.toLowerCase();
+    const cardStr = invoice.card?.toLowerCase() || "";
+    const dateStr = invoice.invoiceDate?.toLowerCase() || "";
+    const amountStr = invoice.amount?.toLowerCase() || "";
+    const descStr = invoice.description?.toLowerCase() || "";
+    const statusStr = invoice.status?.toLowerCase() || "";
+
+    return (
+      cardStr.includes(searchLower) ||
+      dateStr.includes(searchLower) ||
+      amountStr.includes(searchLower) ||
+      descStr.includes(searchLower) ||
+      statusStr.includes(searchLower)
+    );
+  });
+
+  const sortedInvoices = [...filteredInvoices].sort((a: any, b: any) => {
+    if (!sortField) return 0;
+
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+
+    // Handle date sorting
+    if (sortField === "invoiceDate") {
+      aValue = new Date(aValue).getTime();
+      bValue = new Date(bValue).getTime();
+    }
+
+    // Handle numeric strings (amount)
+    if (sortField === "amount") {
+      aValue = parseFloat(aValue.replace(/[^0-9.-]+/g, ""));
+      bValue = parseFloat(bValue.replace(/[^0-9.-]+/g, ""));
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: string) => {
+    if (sortField !== field) return <ArrowUpDown size={14} className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />;
+    return sortDirection === "asc" ? (
+      <ArrowUpDown size={14} className="text-brand-primary" />
+    ) : (
+      <ArrowUpDown size={14} className="text-brand-primary rotate-180 transition-transform" />
+    );
+  };
+
+  const handleEmailInvoice = async (invoiceId: string) => {
+    try {
+      setEmailingInvoiceIds((prev: any) => [...prev, invoiceId]);
+      await emailInvoice(invoiceId);
+      toast.success("Invoice sent to your email!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to send email");
+    } finally {
+      setEmailingInvoiceIds((prev: any) => prev.filter((id: string) => id !== invoiceId));
+    }
+  };
+
+  // Sorting and list logic
 
   return (
     <CollapsibleCard
@@ -67,20 +139,20 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
           <table className="invoice-table">
             <thead>
               <tr>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Card <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("card")}>
+                  <div className="flex items-center gap-2">Card {getSortIcon("card")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Invoice Date <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("invoiceDate")}>
+                  <div className="flex items-center gap-2">Invoice Date {getSortIcon("invoiceDate")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Amount <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("amount")}>
+                  <div className="flex items-center gap-2">Amount {getSortIcon("amount")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Description <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("description")}>
+                  <div className="flex items-center gap-2">Description {getSortIcon("description")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Status <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("status")}>
+                  <div className="flex items-center gap-2">Status {getSortIcon("status")}</div>
                 </th>
                 <th className="invoice-table-th text-right">Actions</th>
               </tr>
@@ -92,17 +164,19 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
                     Loading invoices...
                   </td>
                 </tr>
-              ) : filteredInvoices.length === 0 ? (
+              ) : sortedInvoices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500 italic">
                     No invoices found
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map((invoice: any) => (
+                sortedInvoices.map((invoice: any) => (
                   <tr key={invoice.id} className="hover:bg-white/5 transition-colors">
                     <td className="invoice-table-td text-white font-medium">{invoice.card}</td>
-                    <td className="invoice-table-td text-slate-300">{invoice.invoiceDate}</td>
+                    <td className="invoice-table-td text-slate-300">
+                      {new Date(invoice.invoiceDate).toLocaleDateString("en-GB")}
+                    </td>
                     <td className="invoice-table-td text-white font-semibold">{invoice.amount}</td>
                     <td className="invoice-table-td text-slate-300">{invoice.description}</td>
                     <td className="invoice-table-td">
@@ -111,14 +185,38 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
                       </span>
                     </td>
                     <td className="invoice-table-td text-right">
-                      <a 
-                        href={invoice.viewInvoicePdf} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="invoice-action-link"
-                      >
-                        View
-                      </a>
+                      <div className="flex items-center justify-end gap-2 text-slate-400">
+                        <a
+                          href={invoice.viewInvoicePdf}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all"
+                          title="View PDF"
+                        >
+                          <Eye size={16} />
+                        </a>
+                        <a
+                          href={invoice.downloadInvoicePdf}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all"
+                          title="Download PDF"
+                        >
+                          <Download size={16} />
+                        </a>
+                        <button
+                          onClick={() => handleEmailInvoice(invoice.id)}
+                          disabled={emailingInvoiceIds.includes(invoice.id)}
+                          className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all disabled:opacity-50"
+                          title="Email Invoice"
+                        >
+                          {emailingInvoiceIds.includes(invoice.id) ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <Mail size={16} />
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -127,23 +225,9 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
-          <span className="text-[13px] text-slate-500">1 of 1 pages</span>
-          <div className="flex items-center gap-2">
-            <button className="invoice-pagination-btn opacity-50 cursor-not-allowed">
-              <ChevronLeft size={16} /> Prev
-            </button>
-            <button className="invoice-pagination-btn-active">
-              1
-            </button>
-            <button className="invoice-pagination-btn opacity-50 cursor-not-allowed">
-              Next <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+
       </div>
-    </CollapsibleCard>
+    </CollapsibleCard >
   );
 };
 

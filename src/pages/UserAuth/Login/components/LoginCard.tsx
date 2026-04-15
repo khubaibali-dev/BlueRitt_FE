@@ -43,7 +43,9 @@ const LoginCard: React.FC = () => {
       <p className="auth-help-text">
         Need help?{" "}
         <a
-          href="/support"
+          href="https://www.blueritt.com/contact-us/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="auth-help-link"
         >
           Contact Support

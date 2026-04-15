@@ -34,26 +34,26 @@ const CancelSubscriptionModal: React.FC<CancelSubscriptionModalProps> = ({
               <AlertTriangle size={24} className="text-red-500" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15px] text-white font-semibold">Are you sure?</span>
+              <span className="text-[15px] text-gray-900 dark:text-white font-semibold">Are you sure?</span>
               <span className="text-[13px] text-red-500/80">This action cannot be undone instantly.</span>
             </div>
           </div>
 
           <div className="space-y-3">
-            <p className="text-[14px] text-[#FFFFFFCC] leading-relaxed">
+            <p className="text-[14px] text-gray-700 dark:text-[#FFFFFFCC] leading-relaxed">
               By cancelling your subscription, you will no longer be charged automatically. 
               However, you'll still have access to all your premium features until the end of the current billing period.
             </p>
-            <p className="text-[13px] text-[#FFFFFF99] italic">
+            <p className="text-[13px] text-gray-500 dark:text-[#FFFFFF99] italic">
               "We're sorry to see you go! Is there anything we can do to change your mind?"
             </p>
           </div>
         </div>
 
         {/* Action Row */}
-        <div className="purchase-action-row pt-6 mt-4 border-t border-white/5">
+        <div className="purchase-action-row pt-6 mt-4 border-t border-gray-200 dark:border-white/5">
           <button
-            className="purchase-cancel-btn !py-2 !text-[#FFFFFFB0] hover:text-white font-semibold transition-colors"
+            className="purchase-cancel-btn !py-2 !text-gray-500 dark:!text-[#FFFFFFB0] hover:!text-gray-800 dark:hover:!text-white font-semibold transition-colors"
             onClick={onClose}
             disabled={isCancelling}
           >
@@ -63,7 +63,7 @@ const CancelSubscriptionModal: React.FC<CancelSubscriptionModalProps> = ({
             className={`
               px-6 py-2 rounded-full font-bold text-[14px] transition-all
               ${isCancelling 
-                ? 'bg-slate-700 text-slate-500 cursor-not-allowed' 
+                ? 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500 cursor-not-allowed' 
                 : 'bg-red-500 hover:bg-red-600 text-white active:scale-95 shadow-lg shadow-red-500/20'}
             `}
             onClick={onConfirm}

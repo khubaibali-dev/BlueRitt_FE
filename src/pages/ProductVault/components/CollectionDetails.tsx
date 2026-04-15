@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, ShoppingBag, ExternalLink, Trash2
 } from "lucide-react";
-import { getSavedCategoriesDetail, deleteSavedProducts } from "../../../api/savedProducts";
+import { getSavedCategoriesDetail, deleteSavedProducts, getSavedProducts } from "../../../api/savedProducts";
 import ConfirmationModal from "../../../components/common/Modals/ConfirmationModal";
 import { useToast } from "../../../components/common/Toast/ToastContext";
 import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProductCard";
@@ -240,17 +240,25 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
   // UseQuery for Collection Details (products)
   const { data: collectionResponse, isLoading } = useQuery({
     queryKey: ["collection-details", collectionId],
-    queryFn: () => getSavedCategoriesDetail({ id: collectionId }),
+    queryFn: () => {
+      if (collectionId === "all-products") {
+        return getSavedProducts();
+      }
+      return getSavedCategoriesDetail({ id: collectionId });
+    },
     enabled: !!collectionId
   });
 
-  const products = collectionResponse?.data?.products || [];
+  const products = collectionId === "all-products"
+    ? (Array.isArray(collectionResponse?.data) ? collectionResponse.data : [])
+    : (collectionResponse?.data?.products || []);
 
   // Deletion Mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteSavedProducts({ saveID: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["collection-details", collectionId] });
+      queryClient.invalidateQueries({ queryKey: ["vault-all-products"] }); // Refresh counts in vault
       success("Record deleted successfully");
       setDeleteModal({ isOpen: false, id: "", name: "" });
     },

@@ -99,14 +99,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
           id="country"
           label="Country"
           value={fields.country}
-          options={countries.map(c => ({ 
+          options={countries.map(c => ({
             label: (
               <div className="flex items-center gap-2">
                 <img src={`https://flagcdn.com/w20/${c.code}.png`} alt={c.name} className="w-5 h-[14px] object-cover rounded-[2px]" />
                 <span>{c.name}</span>
               </div>
-            ), 
-            value: c.name 
+            ),
+            value: c.name
           }))}
           onChange={(val) => {
             handleChange("country")({
@@ -176,7 +176,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
             </div>
           </div>
           <span className="text-[13px] font-normal leading-[16px] tracking-[0px] text-brand-textSecondary">
-            By creating an account you agree to our <a href="https://www.blueritt.com/blueritt-terms-conditions/" className="text-[#568AFC] underline font-bold">Terms & Conditions</a> and <a href="https://www.blueritt.com/privacy-policy/" className="text-[#568AFC] underline font-bold">Privacy Policy</a>
+            By creating an account you agree to our <a href="https://www.blueritt.com/blueritt-terms-conditions/" target="_blank" rel="noopener noreferrer" className="text-[#568AFC] underline font-bold">Terms & Conditions</a> and <a href="https://www.blueritt.com/privacy-policy/" target="_blank" rel="noopener noreferrer" className="text-[#568AFC] underline font-bold">Privacy Policy</a>
           </span>
         </label>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Check, X, ChevronDown } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
@@ -48,6 +48,11 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "quarterly" | "annually">("monthly");
   const [updatingPlanId, setUpdatingPlanId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  // Sync state with prop for URL-based navigation
+  useEffect(() => {
+    setIsOpen(defaultOpen);
+  }, [defaultOpen]);
 
   const { data: rawPackages, isLoading } = useQuery({
     queryKey: ['subscription', 'packages', subscriptionType],
@@ -155,11 +160,11 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
       onToggle={setIsOpen}
       icon={<Box size={24} className="text-brand-primary dark:text-white" />}
       headerRight={
-        <div className="relative w-full sm:w-auto">
+        <div className="relative w-full sm:w-auto figma-pill-border rounded-full p-[1px]">
           <select
             value={subscriptionType}
             onChange={(e) => setSubscriptionType(e.target.value as "subscription" | "one_time")}
-            className="appearance-none bg-brand-inputBg dark:bg-[#041024] border border-brand-inputBorder dark:border-brand-border text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none focus:border-brand-primary dark:focus:border-[#3B82F6]/50 transition-colors w-full"
+            className="appearance-none bg-brand-inputBg dark:bg-[#041024] text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none transition-colors w-full border-none shadow-none"
           >
             <option value="subscription">Recurring Subscription</option>
             <option value="one_time">One Time Prepaid</option>

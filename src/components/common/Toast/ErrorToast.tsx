@@ -55,10 +55,7 @@ const ErrorToast: React.FC<ErrorToastProps> = ({
 
             {/* Content Wrapper */}
             <div className="flex flex-col min-w-0">
-              <h4 className="text-[15px] font-bold text-slate-800 dark:text-white tracking-tight leading-tight mb-0.5">
-                {title}
-              </h4>
-              <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium leading-snug">
+              <p className="text-[13px] text-slate-800 dark:text-white font-medium leading-snug">
                 {message}
               </p>
             </div>

@@ -9,7 +9,7 @@ import DiscoveryResults from "./components/Discovery/DiscoveryResults";
 
 const ExplorerPage: React.FC = () => {
   const location = useLocation();
-  const [showTour, setShowTour] = useState(true);
+  const [showTour, setShowTour] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isResultsView, setIsResultsView] = useState(false);
   const [searchQuery, setSearchQuery] = useState(location.state?.initialQuery || "");
@@ -17,6 +17,18 @@ const ExplorerPage: React.FC = () => {
   const [searchType, setSearchType] = useState(location.state?.initialSearchType || "product");
   const [appliedFilters, setAppliedFilters] = useState<any>(location.state?.appliedFilters || {});
   const [isDetailedLoading, setIsDetailedLoading] = useState(false);
+
+  useEffect(() => {
+    const hasCompleted = localStorage.getItem("blueritt_explorer_tour_completed");
+    if (!hasCompleted) {
+      setShowTour(true);
+    }
+  }, []);
+
+  const handleCloseTour = () => {
+    setShowTour(false);
+    localStorage.setItem("blueritt_explorer_tour_completed", "true");
+  };
 
   useEffect(() => {
     if (location.state?.autoSourceLink || location.state?.initialQuery) {
@@ -42,38 +54,40 @@ const ExplorerPage: React.FC = () => {
   };
 
   return (
-    <div className={`bg-brand-card-alt rounded-[32px] relative shadow-md transition-all duration-500 ${isAnalyzing ? 'h-[600px] overflow-hidden' : 'min-h-[600px] overflow-visible'} ${isResultsView ? 'bg-brand-card' : ''}`}>
-      {isResultsView ? (
-        <DiscoveryResults
-          onBack={() => setIsResultsView(false)}
-          initialQuery={searchQuery}
-          initialCountry={searchCountry}
-          initialSearchType={searchType}
-          appliedFilters={appliedFilters}
-          onLoadingChange={(isLoading, isDetailed) => {
-            setIsAnalyzing(isLoading);
-            setIsDetailedLoading(!!isDetailed);
-          }}
-        />
-      ) : (
-        <div className="pb-12 animate-in fade-in duration-500">
-          <ExplorerBanner onSearch={handleSearch} />
+    <div className="dashboard-container relative min-h-screen bg-brand-bg lg:p-1">
+      <div className={`bg-brand-card-alt rounded-[32px] relative shadow-md transition-all duration-500 ${isAnalyzing ? 'h-[600px] overflow-hidden' : 'min-h-[600px] overflow-visible'} ${isResultsView ? 'bg-brand-card' : ''}`}>
+        {isResultsView ? (
+          <DiscoveryResults
+            onBack={() => setIsResultsView(false)}
+            initialQuery={searchQuery}
+            initialCountry={searchCountry}
+            initialSearchType={searchType}
+            appliedFilters={appliedFilters}
+            onLoadingChange={(isLoading, isDetailed) => {
+              setIsAnalyzing(isLoading);
+              setIsDetailedLoading(!!isDetailed);
+            }}
+          />
+        ) : (
+          <div className="pb-12 animate-in fade-in duration-500">
+            <ExplorerBanner onSearch={handleSearch} />
 
-          <div className="px-6 sm:px-10 space-y-8 mt-8">
-            <UsageInsights />
-            <ExplorerStats />
+            <div className="px-6 sm:px-10 space-y-8 mt-8">
+              <UsageInsights />
+              <ExplorerStats />
+            </div>
           </div>
-        </div>
-      )}
-      {isAnalyzing && (
-        <AnalyzingScreen
-          // onCancel={() => setIsAnalyzing(false)}
-          isDetailed={isDetailedLoading}
-        />
-      )}
+        )}
+        {isAnalyzing && (
+          <AnalyzingScreen
+            // onCancel={() => setIsAnalyzing(false)}
+            isDetailed={isDetailedLoading}
+          />
+        )}
 
-      {/* Tour Modal */}
-      {showTour && !isAnalyzing && !isResultsView && <ExplorerTourModal onClose={() => setShowTour(false)} />}
+        {/* Tour Modal */}
+        {showTour && !isAnalyzing && !isResultsView && <ExplorerTourModal onClose={handleCloseTour} />}
+      </div>
     </div>
   );
 };

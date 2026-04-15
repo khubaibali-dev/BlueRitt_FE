@@ -25,7 +25,7 @@ const VaultAlibabaCard: React.FC<VaultAlibabaCardProps> = ({ supplier }) => {
 
       {/* Main Info Section */}
       <div className="flex flex-col sm:flex-row gap-6 mb-8">
-        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-brand-hover dark:bg-white/5 border border-brand-border dark:border-white/5 shadow-sm dark:shadow-2xl shrink-0">
+        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-brand-hover bg-white border border-brand-inputBorder dark:border-white/5 shadow-sm dark:shadow-2xl shrink-0">
           <img src={supplier.image} alt="" className="w-full h-full object-cover p-2" />
         </div>
         <div className="flex-1 flex flex-col justify-center">
@@ -56,7 +56,7 @@ const VaultAlibabaCard: React.FC<VaultAlibabaCardProps> = ({ supplier }) => {
       </div>
 
       {/* Detailed Metrics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8 mt-4 pt-8 border-t border-brand-border dark:border-white/5">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8 mt-1 pt-8 border-t border-brand-border dark:border-white/5">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Zap size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />

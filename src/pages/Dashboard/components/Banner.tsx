@@ -1,31 +1,90 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Search } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import shadowBg from "../../../assets/images/dashboard1.png";
 import starImg from "../../../assets/images/star.png";
 import PremiumSearchBar from "../../../components/common/search/PremiumSearchBar";
 import FilterDropdown from "../../../components/common/select/FilterDropdown";
+import SelectField from "../../../components/common/select/SelectField";
 import FilterDrawer, { FilterState } from "../../Explorer/components/FilterDrawer/FilterDrawer";
 import { COUNTRY_OPTIONS } from "../../../utils/Country";
 import { PRODUCT_FILTER_OPTIONS } from "../../../utils/SearchOptions";
+import { getAmazonCategoriesandSubcategories } from "../../../api/product";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 import shadowBgLight from "../../../assets/images/Dashboard-light.png";
 
 const Banner = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
   const [filterType, setFilterType] = useState(PRODUCT_FILTER_OPTIONS[0]);
-  const pakistanOption = COUNTRY_OPTIONS.find(opt => opt.value === "PK") || COUNTRY_OPTIONS[0];
-  const [selectedCountry, setSelectedCountry] = useState(pakistanOption);
+  const defaultCountry = COUNTRY_OPTIONS.find(opt => opt.value === "US") || COUNTRY_OPTIONS[0];
+  const [selectedCountry, setSelectedCountry] = useState(defaultCountry);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({} as FilterState);
 
-  const navigate = useNavigate();
+  // Category Selection States
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+  const [subcategoriesList, setSubcategoriesList] = useState<any[]>([]);
+
+  const { data: categoriesAndSubcategoriesData } = useQuery({
+    queryKey: ["amazon-categories-subcategories", selectedCountry.value],
+    queryFn: () => getAmazonCategoriesandSubcategories(selectedCountry.value),
+    staleTime: 1000 * 60 * 60, // 60 minutes
+  });
+
+  const categoriesList = useMemo(() => {
+    if (!categoriesAndSubcategoriesData?.data?.res) return [];
+    return categoriesAndSubcategoriesData.data.res.map((cat: any) => ({
+      label: cat.category,
+      value: cat.category,
+    }));
+  }, [categoriesAndSubcategoriesData]);
+
+  useEffect(() => {
+    if (selectedCategory && categoriesAndSubcategoriesData?.data?.res) {
+      const categoryData = categoriesAndSubcategoriesData.data.res.find(
+        (cat: any) => cat.category === selectedCategory
+      );
+      if (categoryData && categoryData.subcategories) {
+        const subcategories = categoryData.subcategories.map((subcat: any) => ({
+          label: subcat.subcategory_name,
+          value: subcat.ids.subcategory_id,
+        }));
+        setSubcategoriesList(subcategories);
+        if (subcategories.length > 0) {
+          setSelectedSubcategory(subcategories[0].value);
+        }
+      } else {
+        setSubcategoriesList([]);
+        setSelectedSubcategory("");
+      }
+    }
+  }, [selectedCategory, categoriesAndSubcategoriesData]);
+
   const handleSearch = (value: string) => {
     if (!value.trim()) return;
-    navigate("/explorer", { 
-      state: { 
-        initialQuery: value, 
+    navigate("/explorer", {
+      state: {
+        initialQuery: value,
         initialCountry: selectedCountry.value,
         initialSearchType: filterType.value
-      } 
+      }
+    });
+  };
+
+  const handleCategorySearch = () => {
+    if (!selectedSubcategory) {
+      toast.error("Please select a subcategory", { title: "Search Failed" });
+      return;
+    }
+    navigate("/explorer", {
+      state: {
+        initialQuery: selectedSubcategory,
+        initialCountry: selectedCountry.value,
+        initialSearchType: "category"
+      }
     });
   };
 
@@ -34,23 +93,19 @@ const Banner = () => {
     setIsFilterOpen(false);
   };
 
-  // Map country options to include code for flags
   const countryOptions = COUNTRY_OPTIONS.map((opt) => ({
     ...opt,
-    code: opt.value, // ISO code for flagcdn
+    code: opt.value,
   }));
 
   return (
     <section className="dashboard-banner-container relative isolate rounded-t-[32px]">
-      {/* Background Image Layer with Bottom Fade */}
       <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
         <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
         <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
-        {/* Bottom Fade Overlay - Merges image into #030F23 background */}
         <div className="absolute bottom-0 left-0 right-0 h-[280px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/40 to-transparent pointer-events-none hidden dark:block" />
       </div>
 
-      {/* Top Star */}
       <div className="explorer-badge-wrapper">
         <img src={starImg} alt="" className="brand-star-standard" />
       </div>
@@ -61,7 +116,6 @@ const Banner = () => {
         <span className="banner-heading-text mt-2 sm:mt-1">with IntelliScan</span>
       </h2>
 
-      {/* Filter Row */}
       <div className="dashboard-filter-row">
         <div className="dashboard-filter-group">
           <FilterDropdown
@@ -87,13 +141,44 @@ const Banner = () => {
         </button>
       </div>
 
-      {/* Search bar */}
-      <PremiumSearchBar
-        onSearch={handleSearch}
-        className="max-w-[840px]"
-      />
+      {filterType.value === "category" ? (
+        <div className="w-full max-w-[840px] flex flex-col md:flex-row items-center gap-3 bg-white/5 backdrop-blur-[40px] p-3 rounded-full border border-brand-inputBorder shadow-xl mx-auto">
+          <div className="flex-1 w-full">
+            <SelectField
+              id="banner-category"
+              value={selectedCategory}
+              onChange={(v) => setSelectedCategory(v)}
+              options={categoriesList}
+              placeholder="Select Category"
+              className="rounded-full"
+            />
+          </div>
+          <div className="flex-1 w-full">
+            <SelectField
+              id="banner-subcategory"
+              value={selectedSubcategory}
+              onChange={(v) => setSelectedSubcategory(v)}
+              options={subcategoriesList}
+              placeholder={subcategoriesList.length === 0 ? "No Subcategories" : "Select Subcategory"}
+              className="rounded-full"
+            />
+          </div>
+          <button
+            onClick={handleCategorySearch}
+            className="w-full md:w-auto bg-brand-gradient text-white px-8 h-[48px] rounded-full font-semibold hover:opacity-95 transition-all flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-blue-500/20"
+          >
+            <Search size={18} />
+            <span>Search Category</span>
+          </button>
+        </div>
+      ) : (
+        <PremiumSearchBar
+          onSearch={handleSearch}
+          className="max-w-[840px]"
+          placeholder={filterType.value === "asin" ? "Enter ASIN (e.g. B08N5KWB9H)" : "Search by keyword, product (e.g. Apple Watch)"}
+        />
+      )}
 
-      {/* Filter Drawer */}
       <FilterDrawer
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}

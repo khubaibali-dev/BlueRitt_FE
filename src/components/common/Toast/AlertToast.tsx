@@ -10,12 +10,11 @@ interface AlertToastProps {
   duration?: number;
 }
 
-const AlertToast: React.FC<AlertToastProps> = ({ 
-  type, 
-  title, 
-  message, 
-  onClose, 
-  duration = 3000 
+const AlertToast: React.FC<AlertToastProps> = ({
+  type,
+  message,
+  onClose,
+  duration = 3000
 }) => {
   const [isExiting, setIsExiting] = useState(false);
 
@@ -37,10 +36,10 @@ const AlertToast: React.FC<AlertToastProps> = ({
   const toastContent = (
     <div className={`fixed top-6 right-6 z-[10001] w-[calc(100%-48px)] max-w-[340px] pointer-events-auto
       ${isExiting ? "animate-out slide-out-to-right duration-500 fill-mode-forwards" : "animate-in slide-in-from-right duration-500"}`}>
-      
+
       <div className="relative p-[1px] rounded-[14px] bg-gradient-to-r from-[#155DFC] to-[#FF5900] shadow-2xl shadow-blue-500/10">
         <div className="bg-white dark:bg-[#04132B] rounded-[13px] p-3 flex items-center justify-between gap-3">
-          
+
           <div className="flex items-center gap-3 flex-1">
             {/* Icon Circle */}
             <div className={`quick-action-icon-circle !w-8 !h-8 shrink-0
@@ -50,17 +49,14 @@ const AlertToast: React.FC<AlertToastProps> = ({
 
             {/* Text Content */}
             <div className="flex flex-col min-w-0">
-              <h4 className="text-[15px] font-bold text-slate-800 dark:text-white tracking-tight leading-tight mb-0.5">
-                {title}
-              </h4>
-              <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium line-clamp-1 leading-tight">
+              <p className="text-[13px] text-slate-800 dark:text-white font-medium line-clamp-2 leading-tight">
                 {message}
               </p>
             </div>
           </div>
 
           {/* Manual Close */}
-          <button 
+          <button
             onClick={handleClose}
             className="p-1 -mr-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 dark:text-slate-600 hover:text-slate-700 dark:hover:text-white transition-all active:scale-90"
           >

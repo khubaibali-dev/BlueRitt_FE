@@ -2,9 +2,10 @@ import React from "react";
 
 interface FooterProps {
   className?: string;
+  showVersion?: boolean;
 }
 
-const Footer: React.FC<FooterProps> = ({ className = "" }) => {
+const Footer: React.FC<FooterProps> = ({ className = "", showVersion = true }) => {
   return (
     <footer className={`w-full flex flex-col items-center justify-center gap-y-1 text-[12px] sm:text-[14px] ${className}`}>
       <div className="text-center p-0">
@@ -30,11 +31,13 @@ const Footer: React.FC<FooterProps> = ({ className = "" }) => {
           </a>
         </span>
       </div>
-      <div className="flex items-center mb-0 p-0 m-0 leading-none">
-        <span className="block leading-none text-brand-textSecondary dark:text-[#FFFFFF80] dark:text-slate-400">
-          <span className="font-bold">Version:</span> 1.1
-        </span>
-      </div>
+      {showVersion && (
+        <div className="flex items-center mb-0 p-0 m-0 leading-none">
+          <span className="block leading-none text-brand-textSecondary dark:text-[#FFFFFF80] dark:text-slate-400">
+            <span className="font-bold">Version:</span> 1.1
+          </span>
+        </div>
+      )}
     </footer>
   );
 };

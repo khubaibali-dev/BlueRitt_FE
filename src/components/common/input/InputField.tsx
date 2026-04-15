@@ -9,6 +9,8 @@ interface InputFieldProps {
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   icon?: React.ComponentType<{ className?: string }>;
   prefix?: string;
   rightElement?: React.ReactNode;
@@ -26,6 +28,8 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder = "",
   value,
   onChange,
+  onKeyDown,
+  onPaste,
   icon: Icon,
   prefix,
   rightElement = null,
@@ -78,6 +82,8 @@ const InputField: React.FC<InputFieldProps> = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
+          onPaste={onPaste}
           autoComplete={autoComplete}
           required={required}
           readOnly={readOnly}

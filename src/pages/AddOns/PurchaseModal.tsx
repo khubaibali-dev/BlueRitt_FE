@@ -8,6 +8,7 @@ interface PurchaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   addon: Addon | null;
+  currentBalance: string;
 }
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -20,7 +21,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   amazon_trends_search: Zap,
 };
 
-const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon }) => {
+const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, currentBalance }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
   
@@ -28,10 +29,12 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
     mutationFn: (id: string) => postPurchaseAddon({ id }),
     onSuccess: () => {
       toast.success("Purchase complete!");
+      // Refresh balance and addon data
       queryClient.invalidateQueries({ queryKey: ["active-addons"] });
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      queryClient.invalidateQueries({ queryKey: ["subscription", "account_summary"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet", "balance"] });
+      
+      onClose();
     },
     onError: (err: any) => {
       toast.error(
@@ -98,7 +101,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon })
             <div className="purchase-info-desc">
               ${addon.cost} will be deducted from your account balance
               <br />
-              ($90.00 available)
+              ({currentBalance} available)
             </div>
           </div>
         </div>

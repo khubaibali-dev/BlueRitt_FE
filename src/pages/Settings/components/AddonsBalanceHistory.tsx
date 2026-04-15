@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { History, Search, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
+import { History, Search, ArrowUpDown } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
-import { getBalanceHistory, getWalletBalance } from "../../../api/pricing";
+import { getBalanceHistory, fetchAccountSummary } from "../../../api/pricing";
 
 interface AddonsBalanceHistoryProps {
   defaultOpen?: boolean;
@@ -11,12 +11,16 @@ interface AddonsBalanceHistoryProps {
 const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen = false }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [sortField, setSortField] = useState<string | null>("created_at");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const { data: walletBalance, isLoading: isBalanceLoading } = useQuery({
     queryKey: ['wallet', 'balance'],
-    queryFn: getWalletBalance,
+    queryFn: fetchAccountSummary,
     enabled: isOpen,
   });
+
+  const displayBalance = walletBalance?.data?.remainingBalance || "$0.00";
 
   const { data: transactions = [], isLoading: isTransactionsLoading } = useQuery({
     queryKey: ['wallet', 'transactions'],
@@ -24,11 +28,66 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
     enabled: isOpen,
   });
 
-  const filteredTransactions = (transactions || []).filter((tx: any) => 
-    tx.payment_method?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tx.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tx.created_at?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredTransactions = (transactions || []).filter((tx: any) => {
+    const searchLower = searchQuery.toLowerCase();
+    const dateStr = tx.created_at ? new Date(tx.created_at).toLocaleDateString().toLowerCase() : "";
+    const typeStr = (tx.type || tx.payment_method || "Purchase").toLowerCase();
+    const amountStr = tx.amount?.toString().toLowerCase() || "";
+    const descStr = tx.description?.toLowerCase() || "";
+    const statusStr = tx.status?.toLowerCase() || "";
+
+    return (
+      typeStr.includes(searchLower) ||
+      amountStr.includes(searchLower) ||
+      descStr.includes(searchLower) ||
+      statusStr.includes(searchLower) ||
+      dateStr.includes(searchLower)
+    );
+  });
+
+  const sortedTransactions = [...filteredTransactions].sort((a: any, b: any) => {
+    if (!sortField) return 0;
+
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+
+    // Handle date sorting
+    if (sortField === "created_at") {
+      aValue = new Date(aValue).getTime();
+      bValue = new Date(bValue).getTime();
+    }
+
+    // Handle numeric values
+    if (sortField === "amount") {
+      aValue = parseFloat(aValue.toString());
+      bValue = parseFloat(bValue.toString());
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: string) => {
+    if (sortField !== field) return <ArrowUpDown size={14} className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />;
+    return sortDirection === "asc" ? (
+      <ArrowUpDown size={14} className="text-brand-primary" />
+    ) : (
+      <ArrowUpDown size={14} className="text-brand-primary rotate-180 transition-transform" />
+    );
+  };
+
+  // Transaction sorting and list
+  // const totalItems = sortedTransactions.length;
 
   return (
     <CollapsibleCard
@@ -43,7 +102,7 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
         <div className="flex flex-col gap-1">
           <span className="invoice-next-payment-label">Remaining balance</span>
           <h4 className="invoice-next-payment-date">
-            {isBalanceLoading ? "..." : `$${walletBalance?.fund ? Number(walletBalance.fund).toFixed(2) : "0.00"}`}
+            {isBalanceLoading ? "..." : displayBalance}
           </h4>
         </div>
 
@@ -64,20 +123,20 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
           <table className="invoice-table">
             <thead>
               <tr>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Transaction Type <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("type")}>
+                  <div className="flex items-center gap-2">Transaction Type {getSortIcon("type")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Amount <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("amount")}>
+                  <div className="flex items-center gap-2">Amount {getSortIcon("amount")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Description <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("description")}>
+                  <div className="flex items-center gap-2">Description {getSortIcon("description")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Status <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("status")}>
+                  <div className="flex items-center gap-2">Status {getSortIcon("status")}</div>
                 </th>
-                <th className="invoice-table-th">
-                  <div className="flex items-center gap-2">Transaction Date <ArrowUpDown size={14} className="text-slate-500" /></div>
+                <th className="invoice-table-th cursor-pointer group" onClick={() => handleSort("created_at")}>
+                  <div className="flex items-center gap-2">Transaction Date {getSortIcon("created_at")}</div>
                 </th>
               </tr>
             </thead>
@@ -88,14 +147,14 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
                     Loading history...
                   </td>
                 </tr>
-              ) : filteredTransactions.length === 0 ? (
+              ) : sortedTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-500 italic">
                     No history found
                   </td>
                 </tr>
               ) : (
-                filteredTransactions.map((tx: any) => (
+                sortedTransactions.map((tx: any) => (
                   <tr key={tx.id} className="hover:bg-white/5 transition-colors">
                     <td className="invoice-table-td text-white font-medium">
                       {tx.type || tx.payment_method || "Purchase"}
@@ -110,7 +169,7 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
                       </span>
                     </td>
                     <td className="invoice-table-td text-slate-300">
-                      {new Date(tx.created_at).toLocaleDateString()}
+                      {new Date(tx.created_at).toLocaleDateString("en-GB")}
                     </td>
                   </tr>
                 ))
@@ -119,21 +178,8 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
           </table>
         </div>
 
-        {/* Pagination placeholder */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
-          <span className="text-[13px] text-slate-500">1 of 1 pages</span>
-          <div className="flex items-center gap-2">
-            <button className="invoice-pagination-btn opacity-50 cursor-not-allowed">
-              <ChevronLeft size={16} /> Prev
-            </button>
-            <button className="invoice-pagination-btn-active">
-              1
-            </button>
-            <button className="invoice-pagination-btn opacity-50 cursor-not-allowed">
-              Next <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        {/* Item Counter */}
+
       </div>
     </CollapsibleCard>
   );

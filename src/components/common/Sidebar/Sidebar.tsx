@@ -17,8 +17,8 @@ import {
   LayoutGrid
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getCategory } from "../../../api/savedProducts";
+// import { useQuery } from "@tanstack/react-query";
+// import { getCategory } from "../../../api/savedProducts";
 import BlueRittLogo from "../logo/BlueRittLogo";
 
 interface NavItemProps {
@@ -72,23 +72,29 @@ const NavItem: React.FC<NavItemProps> = ({
           />
         </button>
 
-        {isExpanded && (
-          <div className="sidebar-submenu-container animate-in slide-in-from-top-1 duration-300">
-            {children.map((child) => (
-              <NavLink
-                key={child.to}
-                to={child.to}
-                end
-                className={({ isActive }) =>
-                  `sidebar-submenu-item group !outline-none focus:!ring-0 ${isActive ? "sidebar-submenu-active" : ""}`
-                }
-              >
-                <child.icon size={18} />
-                <span className="text-[14px] font-normal">{child.label}</span>
-              </NavLink>
-            ))}
+        <div
+          className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            }`}
+        >
+          <div className="overflow-hidden">
+            <div className="sidebar-submenu-container">
+              {children.map((child) => (
+                <NavLink
+                  key={child.to}
+                  to={child.to}
+                  onClick={onClick}
+                  end
+                  className={({ isActive }) =>
+                    `sidebar-submenu-item group !outline-none focus:!ring-0 ${isActive ? "sidebar-submenu-active" : ""}`
+                  }
+                >
+                  <child.icon size={18} />
+                  <span className="text-[14px] font-normal">{child.label}</span>
+                </NavLink>
+              ))}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     );
   }
@@ -133,17 +139,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
-  // Fetch categories count for the badge
-  const { data: categoriesResponse } = useQuery({
-    queryKey: ["vault-categories"],
-    queryFn: getCategory,
-    staleTime: 5 * 60 * 1000, // 5 minutes cache is fine for a badge
-  });
-
-  const categoriesCount = React.useMemo(() => {
-    return categoriesResponse?.data?.length || 0;
-  }, [categoriesResponse]);
-
   // Auto-close menu when navigating to a route not within that menu
   useEffect(() => {
     const isChildRoute = ["/tiktok-trends", "/amazon-trends", "/influencer-link"].includes(location.pathname);
@@ -164,6 +159,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
   };
 
   const isAnyMenuExpanded = expandedMenus.length > 0;
+
+  const handleNavItemClick = () => {
+    if (window.innerWidth < 1024) {
+      toggleSidebar();
+    }
+  };
 
   return (
     <>
@@ -190,10 +191,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col min-h-0">
           {/* Main Nav */}
           <nav className="flex-1 space-y-1 px-3">
-            <NavItem icon={LayoutGrid} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={Calculator} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={Puzzle} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={LayoutGrid} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={Calculator} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={Puzzle} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
 
 
             <NavItem
@@ -204,6 +205,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
               isExpanded={expandedMenus.includes("SocialPulse")}
               onToggle={() => toggleMenu("SocialPulse")}
               isAnyMenuExpanded={isAnyMenuExpanded}
+              onClick={handleNavItemClick}
               children={[
                 { label: "TikTok Trends", to: "/tiktok-trends", icon: Hash },
                 { label: "Amazon Trends", to: "/amazon-trends", icon: ShoppingBag },
@@ -211,22 +213,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
               ]}
             />
 
-            <NavItem icon={Package} label="Product Vault" to="/products" extraPaths={["/calculator/product"]} badge={categoriesCount > 0 ? categoriesCount.toString() : ""} isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            {/*badge={categoriesCount > 0 ? categoriesCount.toString() : ""}*/}
+            <NavItem icon={Package} label="Product Vault" to="/products" extraPaths={["/calculator/product"]} isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
           </nav>
 
           {/* Bottom Nav */}
           <div className="pt-3 space-y-1 px-3 mb-2">
             <div className="mt-auto mb-4" />
-            <NavItem icon={TrendingUp} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
-            <NavItem icon={CircleHelp} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} />
+            <NavItem icon={TrendingUp} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={CircleHelp} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem
               icon={LogOut}
               label="Log Out"
               to="/logout"
               isCollapsed={isCollapsed}
               isAnyMenuExpanded={isAnyMenuExpanded}
-              onClick={logoutUser}
+              onClick={() => {
+                logoutUser();
+                handleNavItemClick();
+              }}
             />
           </div>
         </div>

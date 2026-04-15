@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Star, Box, BarChart3, Truck, DollarSign, ChevronDown, ChevronUp, AlertTriangle, Zap, Check, Loader2, Store } from "lucide-react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
@@ -152,7 +152,20 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
     setExpandedSection(expandedSection === section ? null : section);
   };
 
-  const tagsToDisplay = displayProduct?.tags || [];
+  const tagsToDisplay = useMemo(() => {
+    // Priority 1: Use tags from detailed API if available
+    if (details) {
+      const tags = [];
+      if (details.is_best_seller) tags.push("Best Seller");
+      if (details.is_amazon_choice) tags.push("Amazon Choice");
+      if (details.is_prime) tags.push("Prime");
+      if (details.climate_pledge_friendly) tags.push("Climate Friendly");
+      if (tags.length > 0) return tags;
+    }
+    
+    // Priority 2: Fallback to initial product tags
+    return displayProduct?.tags || [];
+  }, [details, displayProduct]);
 
   return createPortal(
     <>
@@ -228,9 +241,14 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                         )}
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <div className="bg-brand-card-alt rounded-full px-3 py-1 flex items-center gap-1 border border-brand-border">
-                          <span className="text-brand-textPrimary text-[13px] font-bold">{details?.product_star_rating || displayProduct.rating}</span>
-                          <Star size={12} fill="#FFC107" className="text-[#FFC107]" />
+                        <div className="flex items-center gap-3">
+                          <span className="text-brand-textSecondary text-[13px] dark:text-white/60 font-medium">
+                            {details?.product_num_ratings || displayProduct.ratings} ratings
+                          </span>
+                          <div className="bg-brand-card-alt rounded-full px-3 py-1 flex items-center gap-1 border border-brand-border">
+                            <span className="text-brand-textPrimary text-[13px] font-bold">{details?.product_star_rating || displayProduct.rating}</span>
+                            <Star size={12} fill="#FFC107" className="text-[#FFC107]" />
+                          </div>
                         </div>
                         <div className="flex flex-col items-end gap-1.5 justify-start">
                           {tagsToDisplay.map((tag, index) => (
@@ -251,12 +269,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                   </div>
                 </div>
 
-                {/* Growth Row */}
-                <div className="flex items-center gap-4 mb-9 px-1">
-                  <span className="text-brand-textSecondary text-[13px] dark:text-white font-medium">{details?.product_num_ratings || displayProduct.ratings} ratings</span>
-                </div>
 
-                <div className="border-b border-brand-border mb-10" />
+                <div className="border-b border-brand-border mb-8 mt-2" />
 
                 <div className="grid grid-cols-4 gap-2 mb-8">
                   {[
@@ -527,12 +541,12 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                           </div>
 
                           {/* Column 2 */}
-                          <div className="flex flex-col gap-6">
-                            <div className="flex flex-col gap-1">
+                          <div className="flex flex-col gap-6 items-end">
+                            <div className="flex flex-col gap-1 items-end">
                               <span className="metric-label">Price</span>
                               <span className="metric-value">{offer.product_price}</span>
                             </div>
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-1 items-end">
                               <span className="metric-label">Rating</span>
                               <div className="flex items-center gap-2 px-3 py-1 bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-full w-fit">
                                 <div className="flex">
@@ -543,13 +557,13 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                                 <span className="text-brand-textPrimary text-[12px] font-bold leading-none">{Math.floor(parseFloat(offer.seller_star_rating || "5"))}</span>
                               </div>
                             </div>
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-1 items-end">
                               <span className="metric-label">Product Condition</span>
                               <div className=" w-fit">
                                 <span className="text-brand-textPrimary text-[12px] font-bold">{offer.product_condition || "New"}</span>
                               </div>
                             </div>
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-1 items-end">
                               <span className="metric-label">Delivery Price</span>
                               <div className="px-3 py-0.5 bg-black/5 dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-full w-fit">
                                 <span className="text-[#6291DE] text-[12px] font-bold">{offer.delivery_price || "FREE"}</span>
@@ -559,8 +573,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                         </div>
                         <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
                           <div className="flex items-center gap-2 text-brand-textSecondary">
-                            <Store size={16} />
-                            <span className="text-[13px] font-medium">Sold by {offer.seller || "Amazon.com"}</span>
+                            <Store size={16} className="dark:text-[#FFFFFFB2]" />
+                            <span className="text-[13px] font-medium dark:text-[#FFFFFFB2]">Sold by {offer.seller || "Amazon.com"}</span>
                           </div>
                           <a
                             href={offer.seller_link || "#"}

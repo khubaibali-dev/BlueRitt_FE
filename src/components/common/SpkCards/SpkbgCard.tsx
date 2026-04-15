@@ -137,8 +137,8 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
 
   if (variant === 'grid') {
     return (
-      <div className="discovery-card-grid group">
-        <div className="product-img-wrapper-grid">
+      <div className="discovery-card-grid group border border-brand-inputBorder">
+        <div className="product-img-wrapper-grid !border-none">
           <img src={image} alt={title} className="w-full h-full object-contain transition-transform duration-700" />
         </div>
         <div className="p-5 flex flex-col flex-1">

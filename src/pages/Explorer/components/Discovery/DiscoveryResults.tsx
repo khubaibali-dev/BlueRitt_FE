@@ -74,7 +74,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    // Real Data Fetching using React Query
    const { data: searchResponse, isLoading, error, refetch } = useQuery({
       queryKey: ["amazon-search", activeSearchQuery, activeCountryCode, filters, activeSearchType, activeCategoryId],
-      queryFn: () => {
+      queryFn: async () => {
          if (activeSearchType === "category") {
             return getAmazonExplorerProductsByCategory({
                category_id: activeCategoryId || "",
@@ -87,6 +87,30 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                max_price: filters.max_price,
             });
          }
+         
+         if (activeSearchType === "asin" && activeSearchQuery) {
+            const res = await getAmazonExplorerProductDetails({
+               asin: activeSearchQuery,
+               country: activeCountryCode || "US"
+            });
+            if (res?.data) {
+               return {
+                  data: {
+                     products: [{
+                        ...res.data,
+                        product_photo: res.data.product_photos?.[0] || "",
+                        // Ensure flags are mapped correctly from detail API names if they differ
+                        is_amazon_choice: res.data.is_amazon_choice,
+                        is_best_seller: res.data.is_best_seller,
+                        is_prime: res.data.is_prime,
+                     }],
+                     total: 1
+                  },
+                  status: res.status
+               };
+            }
+         }
+
          return searchAmazonExplorerProducts({
             query: activeSearchQuery || "",
             country: activeCountryCode || "US",

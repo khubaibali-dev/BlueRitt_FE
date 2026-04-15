@@ -1,7 +1,7 @@
 import React from "react";
 import badgeImg from "../../../../assets/images/Badge.png";
 import explorerLoading from "../../../../assets/images/ExplorerLoading.png";
-import aiIcon from "../../../../assets/images/Icon.png";
+import starImg from "../../../../assets/images/star.png";
 import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
 
 interface AnalyzingScreenProps {
@@ -41,9 +41,9 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ isDetailed = false })
 
         {/* Scanning Trends Pill */}
         <div
-          className="w-fit bg-brand-inputBg text-brand-textPrimary px-8 py-3 !rounded-full text-xs font-semibold shadow-xl transition-all tracking-[0.2em] relative flex items-center gap-3 active:scale-95 border border-brand-border"
+          className="w-fit bg-brand-inputBg text-brand-textPrimary px-8 py-3 !rounded-full text-xs font-semibold shadow-xl transition-all tracking-[0.2em] relative flex items-center gap-2 active:scale-95 figma-pill-border"
         >
-          <img src={aiIcon} alt="" className="w-5 h-5 object-contain animate-spin duration-[4000ms]" />
+          <img src={starImg} alt="" className="w-5 h-5 object-contain" />
           <span className="text-[14px] font-medium tracking-wide">
             Scanning trends....
           </span>

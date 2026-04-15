@@ -37,15 +37,34 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
     onToggle?.(nextState);
   };
 
+  // Sync internal state when defaultOpen changes (e.g. URL tab navigation while already on page)
+  useEffect(() => {
+    if (controlledIsOpen === undefined) {
+      setInternalIsOpen(defaultOpen);
+    }
+  }, [defaultOpen]);
+
   useEffect(() => {
     if (!isOpen) {
       setHeight(0);
-    } else if (contentRef.current) {
-      // Small timeout to allow DOM to calculate actual height
-      setTimeout(() => {
-        setHeight(contentRef.current?.scrollHeight);
-      }, 10);
+      return;
     }
+
+    if (!contentRef.current) return;
+
+    // Use ResizeObserver to handle dynamic content height changes (data loading, re-renders)
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Use scrollHeight to get the full height of the inner content
+        setHeight(entry.target.scrollHeight);
+      }
+    });
+
+    observer.observe(contentRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
   }, [isOpen]);
 
   return (

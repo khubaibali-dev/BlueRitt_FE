@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, Info, Globe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import shadowBg from "../../assets/images/marganmax.png";
@@ -11,6 +12,7 @@ import AdvancedTab from "./Advance/AdvancedTab";
 import FilterDropdown from "../../components/common/select/FilterDropdown";
 import { COUNTRY_OPTIONS } from "../../utils/Country";
 import { useProfitCalculation } from "../../hooks/useProfitCalculation";
+import { useUserDetails } from "../../hooks/useUserDetails";
 import { getAmazonExplorerProductDetails } from "../../api/amazonExplorer";
 import AmazonProductCard from "../Explorer/components/Common/Cards/AmazonProductCard";
 import { useToast } from "../../components/common/Toast/ToastContext";
@@ -73,12 +75,26 @@ const initialValues = {
 
 const ProfitCalculator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"Basic" | "Advanced">("Basic");
-  const [showTour, setShowTour] = useState(true);
+  const [showTour, setShowTour] = useState(false);
   const [selectedMarketplace, setSelectedMarketplace] = useState("US");
   const [searchAsin, setSearchAsin] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const { error: toastError } = useToast();
+  const navigate = useNavigate();
+  const { data: userDetails } = useUserDetails();
+
+  useEffect(() => {
+    const hasCompleted = localStorage.getItem("blueritt_profit_calculator_tour_completed");
+    if (!hasCompleted) {
+      setShowTour(true);
+    }
+  }, []);
+
+  const handleCloseTour = () => {
+    setShowTour(false);
+    localStorage.setItem("blueritt_profit_calculator_tour_completed", "true");
+  };
 
   const handleAsinSearch = async (formik: any) => {
     if (!searchAsin.trim()) {
@@ -162,163 +178,170 @@ const ProfitCalculator: React.FC = () => {
         }, [formik.values, setFormData]);
 
         return (
-          <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative  min-h-screen">
-            {/* Hero Banner Section */}
-            <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible min-h-[500px]">
-              <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
-                <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
-                <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
-                <div className="calculator-hero-glow dark:block hidden" />
-                <div className="calculator-hero-fade" />
-                <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent dark:flex hidden pointer-events-none" />
-              </div>
+          <div className="dashboard-container relative min-h-screen bg-brand-bg lg:p-1">
+            <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative min-h-screen shadow-md">
+              {/* Hero Banner Section */}
+              <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible min-h-[500px]">
+                <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
+                  <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
+                  <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
+                  <div className="calculator-hero-glow dark:block hidden" />
+                  <div className="calculator-hero-fade" />
+                  <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent dark:flex hidden pointer-events-none" />
+                </div>
 
-              <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
-                <h1 className="banner-heading-text !mb-1">
-                  Calculate Your Product Profit
-                </h1>
-                <p className="auth-subtitle mb-6 text-center max-w-[600px]">
-                  Search by ASIN to auto-fill product details instantly
-                </p>
+                <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
+                  <h1 className="banner-heading-text !mb-1">
+                    Calculate Your Product Profit
+                  </h1>
+                  <p className="auth-subtitle mb-6 text-center max-w-[600px]">
+                    Search by ASIN to auto-fill product details instantly
+                  </p>
 
-                {/* ASIN Search Box */}
-                <div className="calculator-search-box !z-[60]">
-                  <input
-                    type="text"
-                    value={searchAsin}
-                    onChange={(e) => setSearchAsin(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleAsinSearch(formik)}
-                    placeholder="Enter ASIN (e.g. B07HL6FV5F)"
-                    className="w-full bg-brand-inputBg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-none rounded-xl px-5 py-3.5 text-brand-textPrimary dark:text-white text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#3B82F6] mb-5 transition-all"
-                  />
+                  {/* ASIN Search Box */}
+                  <div className="calculator-search-box !z-[60]">
+                    <input
+                      type="text"
+                      value={searchAsin}
+                      onChange={(e) => setSearchAsin(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleAsinSearch(formik)}
+                      placeholder="Enter ASIN (e.g. B07HL6FV5F)"
+                      className="w-full bg-brand-inputBg dark:bg-[#FFFFFF0D] border border-brand-inputBorder dark:border-none rounded-xl px-5 py-3.5 text-brand-textPrimary dark:text-white text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#3B82F6] mb-5 transition-all"
+                    />
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                      <span className="text-[12px] text-brand-textPrimary dark:text-white flex items-center gap-1.5 font-medium">
-                        <Globe size={14} /> Marketplace:
-                      </span>
-                      <FilterDropdown
-                        value={selectedMarketplace}
-                        options={countryOptions}
-                        onChange={(opt) => setSelectedMarketplace(opt.value)}
-                        buttonClassName="flex items-center gap-2 bg-brand-card-alt dark:bg-[#FFFFFF0D] hover:bg-brand-hover/10 dark:hover:bg-[#FFFFFF1A] border border-brand-inputBorder dark:border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-brand-textPrimary dark:text-white transition-all w-[190px] justify-between whitespace-nowrap"
-                        dropdownWidth="w-[200px]"
-                      />
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <span className="text-[12px] text-brand-textPrimary dark:text-white flex items-center gap-1.5 font-medium">
+                          <Globe size={14} /> Marketplace:
+                        </span>
+                        <FilterDropdown
+                          value={selectedMarketplace}
+                          options={countryOptions}
+                          onChange={(opt) => setSelectedMarketplace(opt.value)}
+                          buttonClassName="flex items-center gap-2 bg-brand-card-alt dark:bg-[#FFFFFF0D] hover:bg-brand-hover/10 dark:hover:bg-[#FFFFFF1A] border border-brand-inputBorder dark:border-white/5 px-4 py-2 rounded-full text-[13px] font-bold text-brand-textPrimary dark:text-white transition-all w-[190px] justify-between whitespace-nowrap"
+                          dropdownWidth="w-[200px]"
+                        />
+                      </div>
+
+                      <button
+                        onClick={() => handleAsinSearch(formik)}
+                        disabled={isSearching}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSearching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+                        {isSearching ? "Searching..." : "Search ASIN"}
+                      </button>
                     </div>
 
-                    <button
-                      onClick={() => handleAsinSearch(formik)}
-                      disabled={isSearching}
-                      className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:scale-95 text-white px-8 py-2.5 rounded-full text-[13px] font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSearching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
-                      {isSearching ? "Searching..." : "Search ASIN"}
-                    </button>
+                    <div className="mt-2 text-[11px] text-slate-400 text-left">
+                      <span className="font-semibold text-brand-textPrimary dark:text-white">Pro tip:</span> Enter any Amazon ASIN to automatically fetch product details, pricing, and fees
+                    </div>
                   </div>
 
-                  <div className="mt-2 text-[11px] text-slate-400 text-left">
-                    <span className="font-semibold text-brand-textPrimary dark:text-white">Pro tip:</span> Enter any Amazon ASIN to automatically fetch product details, pricing, and fees
+                  {/* Plan Info Pill */}
+                  <div className="w-full max-w-3xl flex items-center gap-2 text-[12px] text-brand-textSecondary dark:text-slate-300 font-medium text-left mt-1">
+                    <Info size={22} className="text-brand-textSecondary dark:text-white shrink-0" />
+                    <span>
+                      {userDetails?.subscription_status?.package?.name || userDetails?.profile?.plan || "Standard"} plan - You have <span className="text-[#3B82F6] font-bold">{userDetails?.search_quota?.no_of_gross_profit_calculations || 0}</span> Searches.
+                      Purchase Search <a href="/addons" className="text-[#F05A2B] hover:underline ml-1">Add-ons</a> OR
+                      <button
+                        onClick={() => navigate("/settings?tab=plan")}
+                        className="text-[#F05A2B] hover:underline ml-1 bg-transparent border-none p-0 cursor-pointer font-medium"
+                      >
+                        Update your Subscription
+                      </button>
+                    </span>
                   </div>
-                </div>
 
-                {/* Plan Info Pill */}
-                <div className="w-full max-w-3xl flex items-center gap-2 text-[12px] text-brand-textSecondary dark:text-slate-300 font-medium text-left mt-1">
-                  <Info size={22} className="text-brand-textSecondary dark:text-white shrink-0" />
-                  <span>
-                    Advance plan - You have <span className="text-[#3B82F6] font-bold">260</span> Searches.
-                    Purchase Search <a href="/addons" className="text-[#F05A2B] hover:underline ml-1">Add-ons</a> OR
-                    <a href="/settings" className="text-[#F05A2B] hover:underline ml-1">Update your Subscription</a>
-                  </span>
-                </div>
-
-                {/* Basic / Advanced Toggle */}
-                <div className="calculator-toggle-wrapper">
-                  <div className="calculator-toggle-container">
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("Basic")}
-                      className={`calculator-toggle-btn ${activeTab === 'Basic' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
-                    >
-                      Basic
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("Advanced")}
-                      className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
-                    >
-                      Advanced
-                    </button>
+                  {/* Basic / Advanced Toggle */}
+                  <div className="calculator-toggle-wrapper">
+                    <div className="calculator-toggle-container">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("Basic")}
+                        className={`calculator-toggle-btn ${activeTab === 'Basic' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
+                      >
+                        Basic
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("Advanced")}
+                        className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
+                      >
+                        Advanced
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                {selectedProduct && (
-                  <div className="w-full max-w-[1200px] mt-8 animate-in fade-in zoom-in-95 duration-500">
-                    <AmazonProductCard
-                      product={selectedProduct}
-                      variant="selected"
-                      isCalculator={true}
+                  {selectedProduct && (
+                    <div className="w-full max-w-[1200px] mt-8 animate-in fade-in zoom-in-95 duration-500">
+                      <AmazonProductCard
+                        product={selectedProduct}
+                        variant="selected"
+                        isCalculator={true}
+                      />
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* Main Content Layout */}
+              <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-14 relative z-10 flex flex-col gap-8">
+                <div className="flex flex-col lg:flex-row gap-8 items-start pb-20 min-h-[800px]">
+
+                  {/* Left Column: Form Accordions */}
+                  <div className="flex-1 w-full flex flex-col gap-4">
+                    <BasicTab
+                      formData={formik.values as any}
+                      handleFieldChange={formik.setFieldValue}
+                      totalRevenue={totalRevenue}
+                      sourcingCostUnit={sourcingCostUnit}
+                      totalSourcingCost={totalSourcingCost}
+                      fulfillmentCostUnit={fulfillmentCostUnit}
+                      totalFulfillmentCost={totalFulfillmentCost}
+                      errors={formik.errors}
+                      touched={formik.touched}
+                    />
+
+                    <AdvancedTab
+                      formData={formik.values as any}
+                      handleFieldChange={formik.setFieldValue}
+                      marketingCostUnit={marketingCostUnit}
+                      totalMarketingCost={totalMarketingCost}
+                      graphicsCostUnit={graphicsCostUnit}
+                      totalGraphicsCost={totalGraphicsCost}
+                      reviewerCostUnit={reviewerCostUnit}
+                      totalReviewerCost={totalReviewerCost}
+                      additionalCostUnit={additionalCostUnit}
+                      totalAdditionalCost={totalAdditionalCost}
+                      taxesUnit={taxesUnit}
+                      totalTaxes={totalTaxes}
+                      errors={formik.errors}
+                      touched={formik.touched}
+                      disabled={activeTab === "Basic"}
                     />
                   </div>
-                )}
-              </div>
-            </section>
 
-            {/* Main Content Layout */}
-            <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-14 relative z-10 flex flex-col gap-8">
-              <div className="flex flex-col lg:flex-row gap-8 items-start pb-20 min-h-[800px]">
+                  {/* Right Column: Sticky Results */}
+                  <div className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-8 flex flex-col gap-6">
+                    <ResultPanels
+                      grossProfitUnit={grossProfitUnit}
+                      totalGrossProfit={totalGrossProfit}
+                      netProfitUnit={netProfitUnit}
+                      totalNetProfit={totalNetProfit}
+                      marginPerc={marginPerc}
+                      roiPerc={roiPerc}
+                      quantity={formik.values.pi_quantity}
+                      isAdvanced={activeTab === "Advanced"}
+                    />
+                  </div>
 
-                {/* Left Column: Form Accordions */}
-                <div className="flex-1 w-full flex flex-col gap-4">
-                  <BasicTab
-                    formData={formik.values as any}
-                    handleFieldChange={formik.setFieldValue}
-                    totalRevenue={totalRevenue}
-                    sourcingCostUnit={sourcingCostUnit}
-                    totalSourcingCost={totalSourcingCost}
-                    fulfillmentCostUnit={fulfillmentCostUnit}
-                    totalFulfillmentCost={totalFulfillmentCost}
-                    errors={formik.errors}
-                    touched={formik.touched}
-                  />
-
-                  <AdvancedTab
-                    formData={formik.values as any}
-                    handleFieldChange={formik.setFieldValue}
-                    marketingCostUnit={marketingCostUnit}
-                    totalMarketingCost={totalMarketingCost}
-                    graphicsCostUnit={graphicsCostUnit}
-                    totalGraphicsCost={totalGraphicsCost}
-                    reviewerCostUnit={reviewerCostUnit}
-                    totalReviewerCost={totalReviewerCost}
-                    additionalCostUnit={additionalCostUnit}
-                    totalAdditionalCost={totalAdditionalCost}
-                    taxesUnit={taxesUnit}
-                    totalTaxes={totalTaxes}
-                    errors={formik.errors}
-                    touched={formik.touched}
-                    disabled={activeTab === "Basic"}
-                  />
                 </div>
-
-                {/* Right Column: Sticky Results */}
-                <div className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-8 flex flex-col gap-6">
-                  <ResultPanels
-                    grossProfitUnit={grossProfitUnit}
-                    totalGrossProfit={totalGrossProfit}
-                    netProfitUnit={netProfitUnit}
-                    totalNetProfit={totalNetProfit}
-                    marginPerc={marginPerc}
-                    roiPerc={roiPerc}
-                    quantity={formik.values.pi_quantity}
-                    isAdvanced={activeTab === "Advanced"}
-                  />
-                </div>
-
               </div>
+
+              {/* Tour Modal */}
+              {showTour && <MarginMaxTourModal onClose={handleCloseTour} />}
             </div>
-
-            {/* Tour Modal */}
-            {showTour && <MarginMaxTourModal onClose={() => setShowTour(false)} />}
           </div>
         );
       }}

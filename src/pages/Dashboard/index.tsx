@@ -5,9 +5,22 @@ import QuickActions from "./components/QuickActions";
 import SubscriptionSnapshot from "./components/SubscriptionSnapshot";
 import AccountSettings from "./components/AccountSettings";
 import RecentSearches from "./components/RecentSearches";
-import TikTokHashtags from "./components/TikTokHashtags";
+// import TikTokHashtags from "./components/TikTokHashtags";
+import OnboardingModal from "../../components/common/Modals/OnboardingModal";
+import { useState, useEffect } from "react";
 
 const DashboardPage: React.FC = () => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const hasCompleted = localStorage.getItem("blueritt_onboarding_completed");
+    if (!hasCompleted) {
+      const timer = setTimeout(() => {
+        setShowOnboarding(true);
+      }, 1000); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   return (
     <div className="dashboard-container relative min-h-screen bg-brand-bg  lg:p-1">
@@ -48,7 +61,7 @@ const DashboardPage: React.FC = () => {
 
             {/* Lower Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 sm:gap-5 items-stretch pt-2">
-              <div className="xl:col-span-2 flex flex-col">
+              <div className="xl:col-span-3 flex flex-col">
                 <div className="dashboard-card-header">
                   <h3 className="dashboard-card-title">Recent Searches</h3>
                 </div>
@@ -56,18 +69,22 @@ const DashboardPage: React.FC = () => {
                   <RecentSearches />
                 </div>
               </div>
-              <div className="flex flex-col mt-2 xl:mt-0">
+              {/* <div className="flex flex-col mt-2 xl:mt-0">
                 <div className="dashboard-card-header">
                   <h3 className="dashboard-card-title">Recent TikTok Hashtags</h3>
                 </div>
                 <div className="flex-1">
                   <TikTokHashtags />
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
       </div>
+      <OnboardingModal
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+      />
     </div>
   );
 };

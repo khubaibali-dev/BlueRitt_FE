@@ -1,6 +1,9 @@
-import React from "react";
-import { X, CreditCard } from "lucide-react";
+import React, { useState } from "react";
+import { X, CreditCard, Loader2 } from "lucide-react";
 import InputField from "../../components/common/input/InputField";
+import { chargeCard } from "../../api/pricing";
+import { useToast } from "../../components/common/Toast/ToastContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddBalanceModalProps {
   isOpen: boolean;
@@ -9,7 +12,35 @@ interface AddBalanceModalProps {
 }
 
 const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, currentBalance }) => {
-  const [amount, setAmount] = React.useState("");
+  const [amount, setAmount] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
+  const handleProceed = async () => {
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await chargeCard(Number(amount));
+      
+      toast.success(`Successfully added $${Number(amount).toFixed(2)} to your balance!`);
+      
+      // Invalidate both wallet and summary queries to update UI everywhere
+      queryClient.invalidateQueries({ queryKey: ["wallet", "balance"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription", "account_summary"] });
+      
+      onClose();
+      setAmount("");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to charge card. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -50,20 +81,25 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
 
         <div className="purchase-action-row pt-6 border-t border-brand-border dark:border-white/5">
           <button
-            className="purchase-cancel-btn !py-2 !text-brand-textSecondary dark:text-[#FFFFFFB0] hover:text-brand-textPrimary dark:hover:text-white font-semibold transition-colors"
+            className="purchase-cancel-btn !py-2 !text-brand-textSecondary dark:text-[#FFFFFFB0] hover:text-brand-textPrimary dark:hover:text-white font-semibold transition-colors disabled:opacity-50"
             onClick={onClose}
+            disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
-            className={`purchase-submit-btn !bg-brand-gradient !py-2 text-white !w-auto min-w-[210px] !h-[40px] !text-[15px] ${!amount ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
-            disabled={!amount}
-            onClick={() => {
-              alert(`Redirecting to checkout for $${amount}`);
-              onClose();
-            }}
+            className={`purchase-submit-btn !bg-brand-gradient !py-2 text-white !w-auto min-w-[210px] !h-[40px] !text-[15px] flex items-center justify-center gap-2 ${(!amount || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
+            disabled={!amount || isSubmitting}
+            onClick={handleProceed}
           >
-            Proceed to checkout
+            {isSubmitting ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Proceed to checkout"
+            )}
           </button>
         </div>
       </div>

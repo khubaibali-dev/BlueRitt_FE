@@ -40,7 +40,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <div className="flex-1">
             {children}
           </div>
-          <Footer className="mt-4 pt-4 shrink-0 border-t border-brand-border/40 dark:border-white/5" />
+          <Footer 
+            showVersion={false} 
+            className="mt-4 pt-4 shrink-0 border-t border-brand-border/40 dark:border-white/5" 
+          />
         </main>
       </div>
     </div>
