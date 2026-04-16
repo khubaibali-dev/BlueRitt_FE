@@ -11,6 +11,7 @@ interface CalculatorFieldProps {
   type?: string;
   className?: string;
   error?: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 const CalculatorField: React.FC<CalculatorFieldProps> = ({
@@ -22,7 +23,8 @@ const CalculatorField: React.FC<CalculatorFieldProps> = ({
   readOnly,
   type = "text",
   className = "",
-  error
+  error,
+  onBlur
 }) => {
   return (
     <div className={className}>
@@ -36,6 +38,7 @@ const CalculatorField: React.FC<CalculatorFieldProps> = ({
         required={required}
         readOnly={readOnly}
         error={error}
+        onBlur={onBlur}
         // InputField handles the rest of the styling
       />
     </div>

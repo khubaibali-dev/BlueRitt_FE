@@ -19,8 +19,8 @@
     --brand-hover: #F1F5F9;
     --brand-card-alt: #F9F9F9;
     --auth-border: #D5D2D2;
-    --brand-scrollbar-thumb: #E2E8F0;
-    --brand-scrollbar-thumb-hover: #CBD5E1;
+    --brand-scrollbar-thumb: #d0d3d6;
+    --brand-scrollbar-thumb-hover: #cad0d8;
     --brand-sidebar-text: #082656;
     --brand-bg-alt: #FFFFFF;
     --brand-text-dim: #64748B;
@@ -46,8 +46,8 @@
     --brand-input-border: var(--brand-border);
     --brand-hover: #15273F;
     --auth-border: var(--brand-border);
-    --brand-scrollbar-thumb: #1E293B;
-    --brand-scrollbar-thumb-hover: #334155;
+    --brand-scrollbar-thumb: #334155;
+    --brand-scrollbar-thumb-hover: #475569;
     --brand-sidebar-text: #FFFFFFB0;
     --brand-bg-alt: #04132B;
     --brand-text-dim: #9F9F9F;
@@ -280,14 +280,16 @@
   /* === NEW STANDARD CLASSES === */
   /* Custom Scrollbar for inner containers */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 12px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background-color: var(--brand-scrollbar-thumb);
-    border-radius: 10px;
+    border-radius: 20px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: var(--brand-scrollbar-thumb-hover);
@@ -295,14 +297,16 @@
   
   /* Global Scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 10px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
     background-color: var(--brand-scrollbar-thumb);
-    border-radius: 10px;
+    border-radius: 20px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--brand-scrollbar-thumb-hover);
@@ -628,6 +632,7 @@
   .auth-subtitle {
     @apply text-[14px] font-medium leading-[1.4] text-brand-textSecondary dark:text-[#FFFFFFB2];
   }
+  
   .auth-link {
     @apply text-[#568AFC] text-[14px] font-semibold hover:underline transition-colors;
   }
@@ -756,15 +761,14 @@
 }
 
 .dashboard-banner-image {
-  @apply absolute top-0 left-0 w-full h-full object-contain object-top pointer-events-none opacity-100;
+  @apply absolute top-0 left-0 w-full h-full object-cover object-center pointer-events-none opacity-100;
   z-index: -1;
 }
   /* Perfectly balanced zoom for both left and right sides in light mode */
   /* Balanced zoom (20%) and centered position, shifted down from the top for light mode */
   :root:not(.dark) .dashboard-banner-image {
-    transform: scale(1.05) !important; /* zoom in 20% */
-   object-position: left top !important;
-   
+    transform: scale(1.02) !important;
+    object-position: center !important;
   }
   .dashboard-shadow-overlay {
     @apply absolute pointer-events-none opacity-60;
@@ -990,6 +994,7 @@
     border-radius: 10px;
     border: 1px solid transparent; /* Prevent layout shift */
     outline: none !important;
+    white-space: nowrap;
   }
 
   .sidebar-submenu-item:focus, 
@@ -2693,11 +2698,11 @@
 }
 
 .pricing-row-standard {
-  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-brand-border dark:border-[#1E293B]/40 items-center min-w-[600px] bg-brand-hover dark:bg-[#041024];
+  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-brand-border dark:border-[#1E293B]/40 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px] bg-brand-hover dark:bg-[#041024];
 }
 
 .pricing-row-no-bg {
-  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-brand-border dark:border-[#1E293B]/40 items-center min-w-[600px];
+  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-brand-border dark:border-[#1E293B]/40 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px];
 }
 
 .pricing-header-row {

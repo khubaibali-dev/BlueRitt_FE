@@ -9,6 +9,7 @@ interface InputFieldProps {
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   icon?: React.ComponentType<{ className?: string }>;
@@ -28,6 +29,7 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder = "",
   value,
   onChange,
+  onBlur,
   onKeyDown,
   onPaste,
   icon: Icon,
@@ -82,10 +84,10 @@ const InputField: React.FC<InputFieldProps> = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
           autoComplete={autoComplete}
-          required={required}
           readOnly={readOnly}
           className="
             flex-1 bg-transparent text-[14px] font-normal leading-[16px] tracking-[0px] text-brand-textPrimary 

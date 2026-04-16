@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Search,
   Sparkles,
   SlidersHorizontal,
-  Crown,
+  Package,
 } from "lucide-react";
 import TrendsHeader from "./components/TrendsHeader";
 import TrendsTabs, { TabOption } from "./components/TrendsTabs";
 import TrendsMetricCard from "./components/TrendsMetricCard";
-import SelectField from "../../../components/common/select/SelectField";
+import SelectField, { SelectOption } from "../../../components/common/select/SelectField";
 
 interface MetricData {
   label: string;
@@ -47,7 +46,8 @@ interface TrendsPageTemplateProps {
   showFilterButton?: boolean;
   sortBy?: string;
   onSortByChange?: (value: string) => void;
-  sortOptions?: { label: string; value: string }[];
+  sortOptions?: SelectOption[];
+  showProductTrendsHeader?: boolean;
   // Controlled props
   activeTab?: string;
   onTabChange?: (value: string) => void;
@@ -57,6 +57,7 @@ interface TrendsPageTemplateProps {
   hasSearched?: boolean;
   metricsAction?: React.ReactNode;
   showSearchForm?: boolean;
+  rightSidebar?: React.ReactNode;
 }
 
 const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
@@ -77,6 +78,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   sortBy,
   onSortByChange,
   sortOptions,
+  showProductTrendsHeader = false,
   activeTab: controlledActiveTab,
   onTabChange: controlledOnTabChange,
   searchQuery: controlledSearchQuery,
@@ -85,11 +87,11 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   hasSearched: controlledHasSearched,
   metricsAction,
   showSearchForm = true,
+  rightSidebar,
 }) => {
   const [internalActiveTab, setInternalActiveTab] = useState(tabs[0].value);
   const [internalSearchQuery, setInternalSearchQuery] = useState("");
   const [internalHasSearched, setInternalHasSearched] = useState(false);
-  const navigate = useNavigate();
 
   const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
   const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
@@ -127,117 +129,143 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   };
 
   return (
-    <div className={`bg-brand-card-alt rounded-[32px] relative  overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700 ${analyzingScreen ? 'h-[600px]' : 'min-h-[600px] pb-12'}`}>
+    <div className={`bg-brand-card-alt rounded-[32px] relative overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700 ${analyzingScreen ? 'h-[600px]' : 'min-h-[600px]'}`}>
 
-      {/* Banner Section */}
-      <section className="tiktok-banner-wrapper relative isolate">
-        <div className="absolute inset-0 z-[-1]">
-          <img src={bannerImage} alt="" className={`tiktok-banner-image ${lightBannerImage ? 'hidden dark:block' : ''}`} />
-          {lightBannerImage && (
-            <img src={lightBannerImage} alt="" className="tiktok-banner-image block dark:hidden" />
-          )}
-          <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/5 to-transparent pointer-events-none" />
-        </div>
+      {/* Shared Banner Background */}
+      <div className="absolute top-0 left-0 right-0 h-[420px] z-0 pointer-events-none overflow-hidden isolate">
+        <img src={bannerImage} alt="" className={`tiktok-banner-image ${lightBannerImage ? 'hidden dark:block' : ''}`} />
+        {lightBannerImage && (
+          <img src={lightBannerImage} alt="" className="tiktok-banner-image block dark:hidden" />
+        )}
+        <div className="absolute bottom-0 left-0 right-0 h-[260px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent" />
+      </div>
 
-        <div className="w-full max-w-[1240px] z-10 flex flex-col items-start text-left px-6 sm:px-1">
-          <div className="w-full flex justify-between items-start">
-            <TrendsHeader title={title} subtitle={subtitle} />
-            <div className="mt-4">{metricsAction}</div>
-          </div>
-
-          {/* Tabs & Upgrade */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-4 sm:gap-6 mb-8 sm:mb-12">
-            <div className="w-full md:w-auto overflow-x-auto scrollbar-hide pb-2 sm:pb-0">
-              <TrendsTabs
-                options={tabs}
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-              />
-            </div>
-
-            <button className="upgrade-gradient-btn group !rounded-full w-full sm:w-auto shrink-0"
-              onClick={() => navigate("/settings?tab=plan")}>
-              <Crown size={18} className="text-white group-hover:rotate-12 transition-transform" />
-              Upgrade Your Plan
-            </button>
-          </div>
-
-          {/* Metrics Row */}
-          <div className="flex items-center justify-between w-full mb-4 px-1">
-            <h2 className="text-[24px] sm:text-[20px] text-brand-textPrimary dark:text-white tracking-tight leading-tight hidden md:block">Usage Insights</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            {metrics.map((metric, idx) => (
-              <TrendsMetricCard key={idx} {...metric} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content Area */}
-      <div className="px-6 sm:px-10 mt-10 space-y-8 transition-all">
-        {/* Search & Actions Area */}
-        <div className="space-y-6">
-          {showSearchForm && (
-            <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-center gap-3">
-              <div className="flex-1 w-full figma-rect-border group overflow-hidden bg-[#E5E3E333] dark:bg-[#04132B]/50 relative transition-all">
-                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-brand-textPrimary dark:group-focus-within:text-white transition-colors">
-                  <Search size={20} />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  placeholder={searchPlaceholder[activeTab] || "Search..."}
-                  className="w-full bg-transparent py-4 pl-14 pr-6 text-brand-textPrimary dark:text-white text-[15px] placeholder-[#08265675] dark:placeholder-slate-500 outline-none transition-all"
-                />
+      <div className={`relative z-10 flex flex-col ${rightSidebar ? 'lg:flex-row' : ''} w-full flex-1`}>
+        {/* Main Part (Left) */}
+        <div className="flex-1 flex flex-col min-w-0 pb-2">
+          {/* Top Banner Content Section */}
+          <section className="relative min-h-[400px] flex flex-col pt-14 pb-4 mx-4">
+            <div className="w-full max-w-[1240px] z-10 flex flex-col items-start text-left px-6 sm:px-1">
+              <div className="w-full flex justify-between items-start">
+                <TrendsHeader title={title} subtitle={subtitle} />
+                <div className="mt-2">{metricsAction}</div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                <button type="submit" className="upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[48px] w-full sm:w-auto">
-                  <Sparkles size={16} />
-                  {searchBtnText[activeTab] || "Search"}
-                </button>
+              {/* Tabs */}
+              {tabs.length > 1 && (
+                <div className="flex flex-col md:flex-row md:items-center justify-between w-full gap-4 sm:gap-6 mb-8 sm:mb-12">
+                  <div className="w-full md:w-auto overflow-x-auto scrollbar-hide pb-2 sm:pb-0">
+                    <TrendsTabs
+                      options={tabs}
+                      activeTab={activeTab}
+                      onTabChange={handleTabChange}
+                    />
+                  </div>
+                </div>
+              )}
 
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  {onSortByChange && sortOptions && (
-                    <div className="w-[160px]">
-                      <SelectField
-                        id="header-sort"
-                        value={sortBy || ""}
-                        options={sortOptions}
-                        onChange={onSortByChange}
-                        placeholder="Sort By"
-                        className="!rounded-[14px] !bg-brand-card/50 !py-3"
-                      />
+              {/* tiktoktrends Row */}
+              {showProductTrendsHeader && (
+                <div className="flex mb-4 items-center gap-2 animate-in fade-in slide-in-from-right-4 duration-500">
+                  <div className="w-10 h-10 rounded-xl 
+    bg-gradient-to-b from-black/10 to-[#6b96f3] 
+    border border-brand-inpuBorder dark:border-none
+    flex items-center justify-center 
+    text-brand-primary shadow-2xl shadow-brand-primary/10 
+    text-brand-textSecondary dark:text-[#FFFFFFB2]">
+
+                    <Package size={22} className="text-white" />
+                  </div>
+                  <div className="flex flex-col">
+                    <h3 className="text-[16px] font-medium dark:text-white tracking-tight  leading-none mb-1">Products Trends</h3>
+                    <p className="text-[12px] dark:text-[#FFFFFF99] font-medium tracking-tight">Discover viral products</p>
+                  </div>
+                </div>
+              )}
+              <div className={`grid grid-cols-1 md:grid-cols-2 ${rightSidebar ? 'lg:grid-cols-2 xl:grid-cols-3' : 'lg:grid-cols-3'} gap-4 w-full`}>
+                {metrics.map((metric, idx) => (
+                  <TrendsMetricCard key={idx} {...metric} />
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Body Content Area */}
+          <div className="px-6 sm:px-4 mt-0 space-y-8 transition-all">
+            {/* Search & Actions Area */}
+            <div className="space-y-6">
+              {showSearchForm && (
+                <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-center gap-3">
+                  <div className="flex-1 w-full figma-rect-border group overflow-hidden bg-[#E5E3E333] dark:bg-[#04132B]/50 relative transition-all">
+                    <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-brand-textPrimary dark:group-focus-within:text-white transition-colors">
+                      <Search size={20} />
                     </div>
-                  )}
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => handleSearchChange(e.target.value)}
+                      placeholder={searchPlaceholder[activeTab] || "Search..."}
+                      className="w-full bg-transparent py-4 pl-14 pr-6 text-brand-textPrimary dark:text-white text-[15px] placeholder-[#08265675] dark:placeholder-slate-500 outline-none transition-all"
+                    />
+                  </div>
 
-                  {showFilterButton && (
-                    <button
-                      type="button"
-                      onClick={() => setIsFilterOpen(true)}
-                      className="btn-secondary-standard"
-                    >
-                      Filters <SlidersHorizontal size={14} />
+                  <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                    <button type="submit" className="upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[48px] w-full sm:w-auto">
+                      <Sparkles size={16} />
+                      {searchBtnText[activeTab] || "Search"}
                     </button>
-                  )}
+
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                      {onSortByChange && sortOptions && (
+                        <div className="w-[160px]">
+                          <SelectField
+                            id="header-sort"
+                            value={sortBy || ""}
+                            options={sortOptions}
+                            onChange={onSortByChange}
+                            placeholder="Sort By"
+                            className="!rounded-[14px] !bg-brand-card/50 !py-3"
+                          />
+                        </div>
+                      )}
+
+                      {showFilterButton && (
+                        <button
+                          type="button"
+                          onClick={() => setIsFilterOpen(true)}
+                          className="btn-secondary-standard"
+                        >
+                          Filters <SlidersHorizontal size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </form>
+              )}
+
+              {/* Inline Filters */}
+              {inlineFilters && (
+                <div className="animate-in fade-in slide-in-from-top-2 duration-500">
+                  {inlineFilters}
                 </div>
-              </div>
-            </form>
-          )}
-
-          {/* Inline Filters */}
-          {inlineFilters && (
-            <div className="animate-in fade-in slide-in-from-top-2 duration-500">
-              {inlineFilters}
+              )}
             </div>
-          )}
+
+            <div className="animate-in fade-in zoom-in-95 duration-500 pb-10">
+              {renderContent(activeTab, hasSearched, () => setIsDetailsOpen(true), setSelectedProduct)}
+            </div>
+          </div>
         </div>
 
-        <div className="animate-in fade-in zoom-in-95 duration-500 pb-10">
-          {renderContent(activeTab, hasSearched, () => setIsDetailsOpen(true), setSelectedProduct)}
-        </div>
+        {/* Sidebar (Right) */}
+        {rightSidebar && (
+          <>
+            <div className="hidden lg:block w-[1px] border-l border-white/[0.05] dark:border-[#082656] mx-4 xl:mx-1"></div>
+            <div className="w-full lg:w-[310px] xl:w-[350px] flex flex-col p-8 lg:p-4 xl:p-5 gap-8 mt-[40px] pb-6">
+              {rightSidebar}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Drawers */}

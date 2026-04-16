@@ -29,6 +29,7 @@ const validationSchema = Yup.object({
   fm_monthlyStorageFees: Yup.number().required("Storage Cost is required.").typeError("Must be a number."),
   fm_returnsRate: Yup.number().required("Returns Rate is required.").typeError("Must be a number."),
   gc_imagingAndPhotographyCost: Yup.number().required("Imaging and Photography Cost is required.").typeError("Must be a number."),
+  marc_marketingCost: Yup.number().required("Marketing Cost is required.").typeError("Must be a number."),
 });
 
 const initialValues = {
@@ -301,6 +302,7 @@ const ProfitCalculator: React.FC = () => {
                       totalFulfillmentCost={totalFulfillmentCost}
                       errors={formik.errors}
                       touched={formik.touched}
+                      handleBlur={formik.handleBlur}
                     />
 
                     <AdvancedTab
@@ -318,6 +320,7 @@ const ProfitCalculator: React.FC = () => {
                       totalTaxes={totalTaxes}
                       errors={formik.errors}
                       touched={formik.touched}
+                      handleBlur={formik.handleBlur}
                       disabled={activeTab === "Basic"}
                     />
                   </div>

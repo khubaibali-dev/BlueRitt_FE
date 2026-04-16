@@ -27,7 +27,7 @@ const TrendsMetricCard: React.FC<TrendsMetricCardProps> = ({
     return (
       <div
         onClick={onClick}
-        className={`flex-1 w-full sm:min-w-[280px] rounded-[12px] p-4 flex flex-col items-center justify-center text-center gap-3 transition-all bg-white dark:bg-brand-card border border-brand-inputBorder group dark:border-none
+        className={`flex-1 w-full rounded-[12px] p-4 flex flex-col items-center justify-center text-center gap-3 transition-all bg-white dark:bg-brand-card border border-brand-inputBorder group dark:border-none
 ${onClick ? 'cursor-pointer' : ''}
 shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
       >
@@ -43,7 +43,7 @@ shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
   }
 
   return (
-    <div className="flex-1 w-full sm:min-w-[280px] trend-card-glow group">
+    <div className="flex-1 w-full trend-card-glow group">
       {/* Icon and Info */}
       <div className="flex items-center justify-between mb-2">
         <div className="quick-action-icon-circle !w-11 !h-11 group-hover:bg-white/10 transition-colors">
@@ -53,13 +53,13 @@ shadow-[0px_4px_6px_-4px_#00C9500D,0px_10px_15px_-3px_#00C9500D]`}
 
       {/* Label and Value */}
       <div className="flex flex-col mb-0">
-        <span className="text-[14px] font-bold text-white tracking-tight group-hover:text-slate-300 transition-colors">
+        <span className="text-[14px] font-medium text-white tracking-tight group-hover:text-slate-300 transition-colors">
           {label}
           <button className="text-white text-[12px] font-medium hover:text-slate-400 transition-colors ml-2 mt-[-2px]">
             <Info size={18} />
           </button>
         </span>
-        <h3 className="text-[28px] sm:text-[32px] font-bold text-white leading-tight tracking-tight">
+        <h3 className="text-[28px] sm:text-[28px] font-bold text-white leading-tight tracking-tight">
           {value || "0"}
         </h3>
       </div>

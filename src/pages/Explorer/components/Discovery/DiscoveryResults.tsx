@@ -87,7 +87,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                max_price: filters.max_price,
             });
          }
-         
+
          if (activeSearchType === "asin" && activeSearchQuery) {
             const res = await getAmazonExplorerProductDetails({
                asin: activeSearchQuery,
@@ -201,7 +201,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          minStarRating: filters.min_star_rating || 0,
          maxStarRating: filters.max_star_rating || 5,
          minNumOfRating: filters.min_reviews || 0,
-         maxNumOfRating: filters.max_reviews || 10000000,
+         maxNumOfRating: filters.max_reviews || 99999990,
          categoryId: activeSearchType === "category" ? (activeCategoryId || undefined) : undefined,
          isAmazonChoice: filters.is_amazon_choice,
       }),

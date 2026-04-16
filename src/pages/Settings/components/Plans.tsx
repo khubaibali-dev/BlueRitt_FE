@@ -182,8 +182,8 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
                 <button
                   key={cycle}
                   onClick={() => setBillingCycle(cycle)}
-                  className={`px-4 sm:px-6 py-2 rounded-full text-[12px] sm:text-[13px] font-bold transition-all duration-300 capitalize z-10
-                    ${billingCycle === cycle ? "bg-brand-gradient text-white shadow-lg" : "text-brand-textSecondary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5"}`}
+                  className={`px-4 sm:px-6 py-2 rounded-full text-[12px] sm:text-[13px] font-bold transition-colors duration-200 capitalize z-10
+                    ${billingCycle === cycle ? "bg-brand-gradient text-white shadow-md scale-[1.02]" : "text-brand-textSecondary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5"}`}
                 >
                   {cycle}
                 </button>

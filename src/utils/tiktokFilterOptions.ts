@@ -36,6 +36,12 @@ export const TIME_RANGES = [
   { value: '7', label: 'This Week' },
   { value: '30', label: 'This Month' },
 ];
+export const TIME_PERIOD = [
+  { value: '7', label: 'Last 7 days' },
+  { value: '30', label: 'Last 30 days' },
+  { value: '120', label: 'Last 120 days' },
+];
+
 
 // Sort options
 export const SORT_OPTIONS = [
@@ -121,13 +127,46 @@ export const COUNTRY_OPTIONS = [
   { value: 'GH', label: 'Ghana' },
 ];
 
+const INDUSTRY_OPTIONS = [
+  { id: '22000000000', name: 'Apparel & Accessories' },
+  { id: '16000000000', name: 'Appliances' },
+  { id: '20000000000', name: 'Apps' },
+  { id: '12000000000', name: 'Baby, Kids & Maternity' },
+  { id: '14000000000', name: 'Beauty & Personal Care' },
+  { id: '24000000000', name: 'Business Services' },
+  { id: '30000000000', name: 'E-Commerce (Non-app)' },
+  { id: '10000000000', name: 'Education' },
+  { id: '13000000000', name: 'Financial Services' },
+  { id: '27000000000', name: 'Food & Beverage' },
+  { id: '25000000000', name: 'Games' },
+  { id: '29000000000', name: 'Health' },
+  { id: '21000000000', name: 'Home Improvement' },
+  { id: '18000000000', name: 'Household Products' },
+  { id: '26000000000', name: 'Life Services' },
+  { id: '23000000000', name: 'News & Entertainment' },
+  { id: '19000000000', name: 'Pets' },
+  { id: '28000000000', name: 'Sports & Outdoor' },
+  { id: '15000000000', name: 'Tech & Electronics' },
+  { id: '17000000000', name: 'Travel' },
+  { id: '11000000000', name: 'Vehicle & Transportation' },
+];
+
 // Derived SelectField-compatible options
 export const categorySelectOptions = [
   { label: 'All Categories', value: '' },
   ...TIKTOK_CATEGORIES.map(c => ({ label: c.name, value: c.id })),
 ];
 
+export const hastagslection = [
+  { label: 'All Industries', value: '' },
+  ...INDUSTRY_OPTIONS.map(i => ({ label: i.name, value: i.id })),
+]
+
 export const periodSelectOptions = TIME_RANGES.map(t => ({
+  label: t.label,
+  value: t.value,
+}));
+export const periodOption = TIME_PERIOD.map(t => ({
   label: t.label,
   value: t.value,
 }));

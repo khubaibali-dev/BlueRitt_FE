@@ -7,18 +7,26 @@ import InputField from "../../../components/common/input/InputField";
 import { updatePassword } from "../../../api/auth";
 import { useToast } from "../../../components/common/Toast/ToastContext";
 
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 interface ChangePasswordProps {
   defaultOpen?: boolean;
 }
 
+const validationSchema = Yup.object().shape({
+  currentPassword: Yup.string().required("Current password is required"),
+  newPassword: Yup.string()
+    .min(8, "Password must be at least 8 characters")
+    .required("New password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword")], "Passwords must match")
+    .required("Confirm password is required"),
+});
+
 const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) => {
   const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [passwords, setPasswords] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
 
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -30,39 +38,33 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) 
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleSave = async () => {
-    if (!passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword) {
-      toast.error("Please fill in all password fields.");
-      return;
-    }
+  const formik = useFormik({
+    initialValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        setIsSaving(true);
+        await updatePassword({
+          current_password: values.currentPassword,
+          new_password: values.newPassword,
+          confirm_password: values.confirmPassword,
+        });
 
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      toast.error("New passwords do not match.");
-      return;
-    }
+        toast.success("Password updated successfully!");
 
-    try {
-      setIsSaving(true);
-      await updatePassword({
-        current_password: passwords.currentPassword,
-        new_password: passwords.newPassword,
-        confirm_password: passwords.confirmPassword,
-      });
-      
-      toast.success("Password updated successfully!");
-      
-      // Clear form on success
-      setPasswords({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to update password. Please check your current password.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+        // Clear form on success
+        formik.resetForm();
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || "Failed to update password. Please check your current password.");
+      } finally {
+        setIsSaving(false);
+      }
+    },
+  });
 
   return (
     <CollapsibleCard
@@ -71,15 +73,18 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) 
       defaultOpen={defaultOpen}
       icon={<Lock size={24} className="text-white" />}
     >
-      <div className="flex flex-col gap-6">
+      <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <InputField
             id="currentPassword"
+            required
             label="Current Password"
+            autoComplete="current-password"
             type={showPasswords.current ? "text" : "password"}
             placeholder="••••••••"
-            value={passwords.currentPassword}
-            onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
+            value={formik.values.currentPassword}
+            onChange={formik.handleChange}
+            error={formik.touched.currentPassword ? formik.errors.currentPassword : undefined}
             rightElement={
               <button
                 type="button"
@@ -93,11 +98,14 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) 
           />
           <InputField
             id="newPassword"
+            required
             label="New Password"
+            autoComplete="new-password"
             type={showPasswords.new ? "text" : "password"}
             placeholder="••••••••"
-            value={passwords.newPassword}
-            onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+            value={formik.values.newPassword}
+            onChange={formik.handleChange}
+            error={formik.touched.newPassword ? formik.errors.newPassword : undefined}
             rightElement={
               <button
                 type="button"
@@ -111,11 +119,14 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) 
           />
           <InputField
             id="confirmPassword"
+            required
             label="Confirm New Password"
+            autoComplete="new-password"
             type={showPasswords.confirm ? "text" : "password"}
             placeholder="••••••••"
-            value={passwords.confirmPassword}
-            onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            error={formik.touched.confirmPassword ? formik.errors.confirmPassword : undefined}
             rightElement={
               <button
                 type="button"
@@ -131,17 +142,15 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) 
 
         <div className="flex justify-end mt-2">
           <button
-            type="button"
-            onClick={handleSave}
+            type="submit"
             disabled={isSaving}
-            className={`bg-brand-gradient text-white px-10 py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${
-              isSaving ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`bg-brand-gradient text-white px-10 py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${isSaving ? "opacity-70 cursor-not-allowed" : ""
+              }`}
           >
             {isSaving ? "Updating..." : "Save"}
           </button>
         </div>
-      </div>
+      </form>
     </CollapsibleCard>
   );
 };

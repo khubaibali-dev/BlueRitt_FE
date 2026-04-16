@@ -13,6 +13,7 @@ interface BasicTabProps {
   totalFulfillmentCost: string;
   errors: any;
   touched: any;
+  handleBlur: (field: string) => void;
 }
 
 const BasicTab: React.FC<BasicTabProps> = ({
@@ -25,6 +26,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
   totalFulfillmentCost,
   errors,
   touched,
+  handleBlur,
 }) => {
   return (
     <>
@@ -35,15 +37,17 @@ const BasicTab: React.FC<BasicTabProps> = ({
             label="Selling Price"
             required
             prefix="$"
-            value={formData.pi_sellingPrice}
+             value={formData.pi_sellingPrice}
             onChange={(val) => handleFieldChange("pi_sellingPrice", val)}
+            onBlur={() => handleBlur("pi_sellingPrice")}
             error={touched.pi_sellingPrice && errors.pi_sellingPrice}
           />
           <CalculatorField
             label="Product Quantity"
             required
-            value={formData.pi_quantity}
+             value={formData.pi_quantity}
             onChange={(val) => handleFieldChange("pi_quantity", val)}
+            onBlur={() => handleBlur("pi_quantity")}
             error={touched.pi_quantity && errors.pi_quantity}
           />
           <CalculatorField label="Revenue/Unit" prefix="$" value={formData.pi_sellingPrice} readOnly />
@@ -58,30 +62,34 @@ const BasicTab: React.FC<BasicTabProps> = ({
             label="Product Manufacturing"
             required
             prefix="$"
-            value={formData.psc_manufacturingCost}
+             value={formData.psc_manufacturingCost}
             onChange={(val) => handleFieldChange("psc_manufacturingCost", val)}
+            onBlur={() => handleBlur("psc_manufacturingCost")}
             error={touched.psc_manufacturingCost && errors.psc_manufacturingCost}
           />
           <CalculatorField
             label="Shipping Cost"
             required
             prefix="$"
-            value={formData.psc_shippingCost}
+             value={formData.psc_shippingCost}
             onChange={(val) => handleFieldChange("psc_shippingCost", val)}
+            onBlur={() => handleBlur("psc_shippingCost")}
             error={touched.psc_shippingCost && errors.psc_shippingCost}
           />
           <CalculatorField
             label="Other Sourcing Costs"
             prefix="$"
-            value={formData.psc_miscCost}
+             value={formData.psc_miscCost}
             onChange={(val) => handleFieldChange("psc_miscCost", val)}
+            onBlur={() => handleBlur("psc_miscCost")}
             error={touched.psc_miscCost && errors.psc_miscCost}
           />
           <CalculatorField
             label="Order Quantity"
             required
-            value={formData.psc_orderQuantity}
+             value={formData.psc_orderQuantity}
             onChange={(val) => handleFieldChange("psc_orderQuantity", val)}
+            onBlur={() => handleBlur("psc_orderQuantity")}
             error={touched.psc_orderQuantity && errors.psc_orderQuantity}
           />
           <CalculatorField label="Sourcing Cost/Unit" prefix="$" value={sourcingCostUnit} readOnly />
@@ -134,8 +142,9 @@ const BasicTab: React.FC<BasicTabProps> = ({
               label="Amazon Fees"
               required
               prefix="$"
-              value={formData.fm_referrfalFees}
+               value={formData.fm_referrfalFees}
               onChange={(val) => handleFieldChange("fm_referrfalFees", val)}
+              onBlur={() => handleBlur("fm_referrfalFees")}
               error={touched.fm_referrfalFees && errors.fm_referrfalFees}
             />
             {formData.fm_model === "FBA" ? (
@@ -144,29 +153,33 @@ const BasicTab: React.FC<BasicTabProps> = ({
                   label="Fulfillment Cost"
                   required
                   prefix="$"
-                  value={formData.fm_fbaFulfillmentFees}
+                   value={formData.fm_fbaFulfillmentFees}
                   onChange={(val) => handleFieldChange("fm_fbaFulfillmentFees", val)}
+                  onBlur={() => handleBlur("fm_fbaFulfillmentFees")}
                   error={touched.fm_fbaFulfillmentFees && errors.fm_fbaFulfillmentFees}
                 />
                 <CalculatorField
                   label="Storage Cost"
                   required
                   prefix="$"
-                  value={formData.fm_monthlyStorageFees}
+                   value={formData.fm_monthlyStorageFees}
                   onChange={(val) => handleFieldChange("fm_monthlyStorageFees", val)}
+                  onBlur={() => handleBlur("fm_monthlyStorageFees")}
                   error={touched.fm_monthlyStorageFees && errors.fm_monthlyStorageFees}
                 />
                 <CalculatorField
                   label="Inbounding Cost"
                   prefix="$"
-                  value={formData.fm_longTermStorageFees}
+                   value={formData.fm_longTermStorageFees}
                   onChange={(val) => handleFieldChange("fm_longTermStorageFees", val)}
+                  onBlur={() => handleBlur("fm_longTermStorageFees")}
                 />
                 <CalculatorField
                   label="Other FBA Costs"
                   prefix="$"
-                  value={formData.fm_inboundShippingCost}
+                   value={formData.fm_inboundShippingCost}
                   onChange={(val) => handleFieldChange("fm_inboundShippingCost", val)}
+                  onBlur={() => handleBlur("fm_inboundShippingCost")}
                 />
               </>
             ) : (
@@ -174,26 +187,30 @@ const BasicTab: React.FC<BasicTabProps> = ({
                 <CalculatorField
                   label="Shipping/Delivery"
                   prefix="$"
-                  value={formData.fm_shippingFees}
+                   value={formData.fm_shippingFees}
                   onChange={(val) => handleFieldChange("fm_shippingFees", val)}
+                  onBlur={() => handleBlur("fm_shippingFees")}
                 />
                 <CalculatorField
                   label="Handling Cost"
                   prefix="$"
-                  value={formData.fm_handlingCost}
+                   value={formData.fm_handlingCost}
                   onChange={(val) => handleFieldChange("fm_handlingCost", val)}
+                  onBlur={() => handleBlur("fm_handlingCost")}
                 />
                 <CalculatorField
                   label="Storage Cost"
                   prefix="$"
-                  value={formData.fm_storageCost}
+                   value={formData.fm_storageCost}
                   onChange={(val) => handleFieldChange("fm_storageCost", val)}
+                  onBlur={() => handleBlur("fm_storageCost")}
                 />
                 <CalculatorField
                   label="Other FBM Cost"
                   prefix="$"
-                  value={formData.fm_miscCost}
+                   value={formData.fm_miscCost}
                   onChange={(val) => handleFieldChange("fm_miscCost", val)}
+                  onBlur={() => handleBlur("fm_miscCost")}
                 />
               </>
             )}
@@ -212,8 +229,9 @@ const BasicTab: React.FC<BasicTabProps> = ({
                 type="range"
                 min="0"
                 max="100"
-                value={formData.fm_returnsRate}
+                 value={formData.fm_returnsRate}
                 onChange={(e) => handleFieldChange("fm_returnsRate", e.target.value)}
+                onBlur={() => handleBlur("fm_returnsRate")}
                 className="w-full h-1.5 bg-brand-bg dark:bg-[#FFFFFF0D] rounded-lg appearance-none cursor-pointer accent-blue-500"
               />
               {touched.fm_returnsRate && errors.fm_returnsRate && (

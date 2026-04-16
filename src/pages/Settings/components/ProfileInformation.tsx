@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { User } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import InputField from "../../../components/common/input/InputField";
@@ -7,6 +7,9 @@ import { countries } from "../../../utils/Country";
 import { useAuth } from "../../../context/AuthContext";
 import { updateUserProfile } from "../../../api/auth";
 import { useToast } from "../../../components/common/Toast/ToastContext";
+
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 interface ProfileFormData {
   firstName: string;
@@ -50,43 +53,55 @@ const PHONE_LENGTH_MAP: Record<string, number> = {
   ye: 9, zm: 9, zw: 9,
 };
 
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
+});
+
 const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = true }) => {
   const { currentUser, fetchUserDetails } = useAuth();
   const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileFormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    country: "",
-    contactNumber: "",
+
+  const formik = useFormik<ProfileFormData>({
+    initialValues: {
+      firstName: currentUser.firstName || "",
+      lastName: currentUser.lastName || "",
+      email: currentUser.email || "",
+      country: currentUser.country || "",
+      contactNumber: currentUser.phone || "",
+    },
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        setIsSaving(true);
+        await updateUserProfile({
+          first_name: values.firstName,
+          last_name: values.lastName,
+          phone: values.contactNumber,
+          country: values.country,
+        });
+
+        // Refresh user details globally
+        await fetchUserDetails();
+
+        toast.success("Profile updated successfully!");
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || "Failed to update profile. Please try again.");
+      } finally {
+        setIsSaving(false);
+      }
+    },
   });
 
-  // Sync with current user data when it loads or changes
-  useEffect(() => {
-    if (currentUser.email) {
-      setProfileData({
-        firstName: currentUser.firstName || "",
-        lastName: currentUser.lastName || "",
-        email: currentUser.email || "",
-        country: currentUser.country || "",
-        contactNumber: currentUser.phone || "",
-      });
-    }
-  }, [currentUser]);
-
   // Resolve selected country and its phone digit limit
-  const selectedCountryData = countries.find((c) => c.name === profileData.country);
+  const selectedCountryData = countries.find((c) => c.name === formik.values.country);
   const phoneMaxLength = selectedCountryData
     ? (PHONE_LENGTH_MAP[selectedCountryData.code] ?? 15)
     : 15;
 
-  const handleChange = (field: keyof ProfileFormData, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
-  };
-
   // ── Name validation ──────────────────────────────────────────────────────────
-  // Allows: letters (a-z, A-Z), spaces, hyphens, apostrophes
   const handleNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const controlKeys = [
       "Backspace", "Delete", "Tab", "Enter",
@@ -104,11 +119,10 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
   ) => {
     e.preventDefault();
     const cleaned = e.clipboardData.getData("text").replace(/[^a-zA-Z\s'\-]/g, "");
-    handleChange(field, profileData[field] + cleaned);
+    formik.setFieldValue(field, formik.values[field] + cleaned);
   };
 
   // ── Phone validation ─────────────────────────────────────────────────────────
-  // Allows: digits only, up to country-specific max length
   const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const controlKeys = [
       "Backspace", "Delete", "Tab", "Enter",
@@ -123,28 +137,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
   const handlePhonePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const digits = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, phoneMaxLength);
-    handleChange("contactNumber", digits);
-  };
-
-  const handleSave = async () => {
-    try {
-      setIsSaving(true);
-      await updateUserProfile({
-        first_name: profileData.firstName,
-        last_name: profileData.lastName,
-        phone: profileData.contactNumber,
-        country: profileData.country,
-      });
-
-      // Refresh user details globally
-      await fetchUserDetails();
-
-      toast.success("Profile updated successfully!");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to update profile. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
+    formik.setFieldValue("contactNumber", digits);
   };
 
   return (
@@ -154,35 +147,39 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
       defaultOpen={defaultOpen}
       icon={<User size={24} className="text-brand-primary dark:text-white" />}
     >
-      <div className="flex flex-col gap-6">
+      <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
         {/* Top Row: First Name, Last Name, Email */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <InputField
             id="firstName"
             label="First Name"
             placeholder="Enter first name"
-            value={profileData.firstName}
-            onChange={(e) => handleChange("firstName", e.target.value)}
+            required
+            value={formik.values.firstName}
+            onChange={formik.handleChange}
             onKeyDown={handleNameKeyDown}
             onPaste={(e) => handleNamePaste(e, "firstName")}
+            error={formik.touched.firstName ? formik.errors.firstName : undefined}
           />
           <InputField
             id="lastName"
             label="Last Name"
+            required
             placeholder="Enter last name"
-            value={profileData.lastName}
-            onChange={(e) => handleChange("lastName", e.target.value)}
+            value={formik.values.lastName}
+            onChange={formik.handleChange}
             onKeyDown={handleNameKeyDown}
             onPaste={(e) => handleNamePaste(e, "lastName")}
+            error={formik.touched.lastName ? formik.errors.lastName : undefined}
           />
           <InputField
             id="email"
             type="email"
             label="Email"
             placeholder="Enter email"
-            value={profileData.email}
+            value={formik.values.email}
             readOnly={true}
-            onChange={() => { }} // Read-only but required by InputFieldProps
+            onChange={() => { }}
           />
         </div>
 
@@ -191,7 +188,8 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
           <SelectField
             id="country"
             label="Country"
-            value={profileData.country}
+            required
+            value={formik.values.country}
             options={countries.map((c) => ({
               label: (
                 <div className="flex items-center gap-2">
@@ -206,9 +204,8 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
               value: c.name,
             }))}
             onChange={(val) => {
-              handleChange("country", val);
-              // Clear phone when country changes so old digits don't exceed the new limit
-              handleChange("contactNumber", "");
+              formik.setFieldValue("country", val);
+              formik.setFieldValue("contactNumber", "");
             }}
             direction="down"
           />
@@ -218,10 +215,10 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             label="Contact Number"
             placeholder={"x".repeat(phoneMaxLength)}
             prefix={selectedCountryData?.dialCode}
-            value={profileData.contactNumber}
+            value={formik.values.contactNumber}
             onChange={(e) => {
               const digits = e.target.value.replace(/\D/g, "").slice(0, phoneMaxLength);
-              handleChange("contactNumber", digits);
+              formik.setFieldValue("contactNumber", digits);
             }}
             onKeyDown={handlePhoneKeyDown}
             onPaste={handlePhonePaste}
@@ -232,8 +229,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
 
         <div className="flex justify-end mt-4">
           <button
-            type="button"
-            onClick={handleSave}
+            type="submit"
             disabled={isSaving}
             className={`bg-brand-gradient text-white px-10 py-2 sm:py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${isSaving ? "opacity-70 cursor-not-allowed" : ""
               }`}
@@ -241,7 +237,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
             {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
-      </div>
+      </form>
     </CollapsibleCard>
   );
 };

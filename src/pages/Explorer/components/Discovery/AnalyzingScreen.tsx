@@ -1,14 +1,19 @@
 import React from "react";
 import badgeImg from "../../../../assets/images/Badge.png";
 import explorerLoading from "../../../../assets/images/ExplorerLoading.png";
-import starImg from "../../../../assets/images/star.png";
-import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
+// import starImg from "../../../../assets/images/star.png";
+// import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
+import LoadingPage from "../../../Testing/LoadingPage";
 
 interface AnalyzingScreenProps {
   isDetailed?: boolean;
+  isLoading?: boolean;
 }
 
-const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ isDetailed = false }) => {
+const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ 
+  isDetailed = false,
+  isLoading = true 
+}) => {
   return (
     <div className="absolute inset-0 z-[50] flex flex-col items-center justify-center overflow-hidden rounded-[32px] animate-in fade-in duration-700 bg-brand-card-alt">
       {/* Background Image Layer */}
@@ -35,19 +40,21 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ isDetailed = false })
         ) : (
           /* New Detailed Progress Loader */
           <div className="w-full">
-            <DetailedSkeletonLoader isLoading={true} />
+            {/* <DetailedSkeletonLoader isLoading={true} /> */}
+            <LoadingPage isLoading={isLoading} />
           </div>
         )}
 
+
         {/* Scanning Trends Pill */}
-        <div
+        {/* <div
           className="w-fit bg-brand-inputBg text-brand-textPrimary px-8 py-3 !rounded-full text-xs font-semibold shadow-xl transition-all tracking-[0.2em] relative flex items-center gap-2 active:scale-95 figma-pill-border"
         >
           <img src={starImg} alt="" className="w-5 h-5 object-contain" />
           <span className="text-[14px] font-medium tracking-wide">
             Scanning trends....
           </span>
-        </div>
+        </div> */}
       </div>
     </div>
   );

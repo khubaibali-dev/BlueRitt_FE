@@ -290,7 +290,7 @@ const AmazonTrends: React.FC = () => {
 
   // Inline Filters Section
   const inlineFilters = (
-    <div className="bg-brand-card backdrop-blur-md border border-brand-border rounded-2xl p-6  animate-in fade-in slide-in-from-top-2 duration-500">
+    <div className="bg-brand-card backdrop-blur-md border border-brand-inputBorder rounded-2xl p-6  animate-in fade-in slide-in-from-top-2 duration-500">
       {activeTab === "product" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <SelectField

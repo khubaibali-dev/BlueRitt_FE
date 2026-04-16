@@ -1,176 +1,301 @@
-import { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Check } from "lucide-react";
 
-const LAYERS = [
-  { a: 24, lf: 4, hf: 13, spd: 0.55, col: [30, 70, 215] as const, op: 0.72, lw: 1.5 },
-  { a: 20, lf: 5, hf: 11, spd: -0.42, col: [55, 105, 240] as const, op: 0.58, lw: 1.2 },
-  { a: 30, lf: 3, hf: 14, spd: 0.32, col: [25, 55, 200] as const, op: 0.65, lw: 1.8 },
-  { a: 15, lf: 6, hf: 16, spd: -0.65, col: [80, 140, 255] as const, op: 0.42, lw: 0.9 },
-  { a: 22, lf: 4, hf: 10, spd: 0.72, col: [60, 115, 245] as const, op: 0.48, lw: 1.1 },
-  { a: 12, lf: 7, hf: 12, spd: -0.38, col: [100, 165, 255] as const, op: 0.32, lw: 0.7 },
-  { a: 26, lf: 3, hf: 15, spd: -0.28, col: [20, 50, 190] as const, op: 0.60, lw: 2.0 },
-  { a: 18, lf: 5, hf: 9, spd: 0.85, col: [70, 130, 250] as const, op: 0.38, lw: 0.8 },
-];
+/* ─── Wave ring math ─────────────────────────────────── */
+const SIZE = 360;
+const CX = SIZE / 2;
+const CY = SIZE / 2;
+const BASE_R = 120;   // further reduced radius for embedding
 
-interface PlasmaLoaderProps {
-  line1?: string;
-  line2?: string;
-  size?: number;
+interface LoadingPageProps {
+  isLoading?: boolean;
 }
 
-export default function PlasmaLoader({
-  line1 = "Learning how",
-  line2 = "to make tax returns...",
-  size = 480,
-}: PlasmaLoaderProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const LoadingPage: React.FC<LoadingPageProps> = ({ isLoading = true }) => {
+  const [percentage, setPercentage] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startProgressTimer = useCallback(() => {
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setPercentage((prev) => {
+          if (prev >= 100) return 100; // Cap at 100%
+          if (prev >= 90) return prev + 5;
+          return prev + 10;
+        });
+      }, 2000); // every 5 seconds as requested
+    }
+  }, []);
+
+  const stopProgressTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
-    const cx = size / 2, cy = size / 2;
-    const SR = size * 0.308;
-    const RR = size * 0.385;
-    const brightRad = (200 / 180) * Math.PI;
-    let t = 0, prog = 0, rafId: number;
-
-    function drawSphere() {
-      for (let i = 0; i < 5; i++) {
-        const r = SR + 30 - i * 4;
-        const g = ctx.createRadialGradient(cx, cy, SR - 10, cx, cy, r);
-        g.addColorStop(0, "rgba(20,40,180,0)");
-        g.addColorStop(1, `rgba(30,60,220,${0.06 - i * 0.01})`);
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = g; ctx.fill();
-      }
-      const sg = ctx.createRadialGradient(cx - 20, cy - 20, 0, cx, cy, SR);
-      sg.addColorStop(0, "#07073c"); sg.addColorStop(0.40, "#09094e");
-      sg.addColorStop(0.68, "#0c0c80"); sg.addColorStop(0.82, "#1010b8");
-      sg.addColorStop(0.91, "#1520d8"); sg.addColorStop(0.97, "#1a2aea");
-      sg.addColorStop(1, "#0d1cc0");
-      ctx.beginPath(); ctx.arc(cx, cy, SR, 0, Math.PI * 2);
-      ctx.fillStyle = sg; ctx.fill();
-
-      const pa = -Math.PI / 2 + (prog / 100) * Math.PI * 2;
-      ctx.save(); ctx.beginPath(); ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, SR, pa, Math.PI * 1.5); ctx.closePath();
-      ctx.fillStyle = "rgba(0,0,20,0.38)"; ctx.fill(); ctx.restore();
-
-      ctx.beginPath(); ctx.arc(cx, cy, SR, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(40,80,255,0.75)"; ctx.lineWidth = 3;
-      ctx.shadowBlur = 22; ctx.shadowColor = "rgba(50,90,255,0.9)";
-      ctx.stroke(); ctx.shadowBlur = 0;
+    if (isLoading) {
+      startProgressTimer();
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      // API call finished: complete to 100% immediately
+      setPercentage(100);
+      const timeout = setTimeout(() => {
+        setIsComplete(true);
+      }, 600);
+      return () => clearTimeout(timeout);
     }
 
-    function drawRing() {
-      const startIdx = Math.floor((prog / 100) * 720);
-      LAYERS.forEach((w) => {
-        ctx.beginPath();
-        for (let i = startIdx; i <= 720; i++) {
-          const a = (i / 720) * Math.PI * 2 - Math.PI / 2;
-          const bf = 0.5 + 0.5 * Math.cos(a - brightRad + Math.PI);
-          const df = 0.25 + 0.75 * bf;
-          const noise =
-            w.a * df * Math.sin(w.lf * a + t * w.spd) +
-            w.a * 0.3 * df * Math.sin(w.hf * a - t * w.spd * 1.7 + 1.2);
-          const r = RR + noise;
-          const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
-          i === startIdx ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        const [r, g, b] = w.col;
-        ctx.strokeStyle = `rgba(${r},${g},${b},${w.op})`;
-        ctx.lineWidth = w.lw;
-        ctx.shadowBlur = 6; ctx.shadowColor = `rgba(${r},${g},${b},0.7)`;
-        ctx.stroke(); ctx.shadowBlur = 0;
-      });
-    }
+    return () => {
+      stopProgressTimer(); // Cleanup on unmount
+    };
+  }, [isLoading, startProgressTimer, stopProgressTimer]);
 
-    /** Glowing arc that grows clockwise from top as progress increases */
-    function drawProgressArc() {
-      if (prog <= 0) return;
-      const startAngle = -Math.PI / 2;
-      const endAngle = startAngle + (prog / 100) * Math.PI * 2;
+  const progress = percentage / 100;
+  const CIRCUMFERENCE = 2 * Math.PI * BASE_R;
+  const dashOffset = CIRCUMFERENCE * (1 - progress);
 
-      // Outer glow
-      ctx.beginPath(); ctx.arc(cx, cy, RR, startAngle, endAngle);
-      ctx.strokeStyle = "rgba(100,160,255,0.18)";
-      ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.stroke();
+  // End dot position follows the circle, not the wave
+  const endAngleDeg = progress * 360 - 90;
+  const endAngleRad = (endAngleDeg * Math.PI) / 180;
+  const endDotX = CX + BASE_R * Math.cos(endAngleRad);
+  const endDotY = CY + BASE_R * Math.sin(endAngleRad);
 
-      // Mid glow
-      ctx.beginPath(); ctx.arc(cx, cy, RR, startAngle, endAngle);
-      ctx.strokeStyle = "rgba(140,195,255,0.32)";
-      ctx.lineWidth = 7; ctx.lineCap = "round"; ctx.stroke();
-
-      // Core bright arc
-      ctx.beginPath(); ctx.arc(cx, cy, RR, startAngle, endAngle);
-      ctx.strokeStyle = "rgba(220,238,255,0.92)";
-      ctx.lineWidth = 2; ctx.lineCap = "round";
-      ctx.shadowBlur = 16; ctx.shadowColor = "rgba(160,210,255,1)";
-      ctx.stroke(); ctx.shadowBlur = 0;
-
-      // Moving tip glow
-      const tipX = cx + RR * Math.cos(endAngle);
-      const tipY = cy + RR * Math.sin(endAngle);
-      const tipG = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, 14);
-      tipG.addColorStop(0, "rgba(255,255,255,1)");
-      tipG.addColorStop(0.3, "rgba(180,220,255,0.75)");
-      tipG.addColorStop(1, "rgba(80,140,255,0)");
-      ctx.beginPath(); ctx.arc(tipX, tipY, 14, 0, Math.PI * 2);
-      ctx.fillStyle = tipG; ctx.fill();
-      ctx.beginPath(); ctx.arc(tipX, tipY, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = "#fff"; ctx.fill();
-    }
-
-    function drawDots() {
-      [-Math.PI / 2, Math.PI / 2].forEach((angle) => {
-        const dx = cx + RR * Math.cos(angle), dy = cy + RR * Math.sin(angle);
-        ctx.shadowBlur = 18; ctx.shadowColor = "rgba(200,220,255,0.9)";
-        const g = ctx.createRadialGradient(dx, dy, 0, dx, dy, 9);
-        g.addColorStop(0, "rgba(255,255,255,0.9)");
-        g.addColorStop(0.45, "rgba(180,210,255,0.55)");
-        g.addColorStop(1, "rgba(80,130,255,0)");
-        ctx.beginPath(); ctx.arc(dx, dy, 9, 0, Math.PI * 2);
-        ctx.fillStyle = g; ctx.fill();
-        ctx.beginPath(); ctx.arc(dx, dy, 2.8, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff"; ctx.fill();
-        ctx.shadowBlur = 0;
-      });
-    }
-
-    function drawText() {
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.font = `13.5px "Segoe UI", Arial, sans-serif`;
-      ctx.fillStyle = "rgba(185,212,255,0.82)";
-      ctx.shadowBlur = 4; ctx.shadowColor = "rgba(100,150,255,0.4)";
-      ctx.fillText(line1, cx, cy - 14);
-      ctx.fillText(line2, cx, cy + 4);
-      ctx.shadowBlur = 0;
-      ctx.font = `bold 44px "Segoe UI", Arial, sans-serif`;
-      ctx.fillStyle = "#ffffff";
-      ctx.shadowBlur = 20; ctx.shadowColor = "rgba(130,170,255,0.85)";
-      ctx.fillText(`${Math.round(prog)}%`, cx, cy + 46);
-      ctx.shadowBlur = 0;
-    }
-
-    function frame() {
-      ctx.clearRect(0, 0, size, size);
-      drawSphere();
-      drawRing();
-      drawProgressArc(); // ON TOP of wavy ring
-      drawDots();
-      drawText();
-      t += 0.016;
-      if (prog < 100) prog += 0.18;
-      rafId = requestAnimationFrame(frame);
-    }
-
-    frame();
-    return () => cancelAnimationFrame(rafId);
-  }, [size, line1, line2]);
+  const startDotX = CX;
+  const startDotY = CY - BASE_R;
 
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#050518", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <canvas ref={canvasRef} width={size} height={size} />
+    <div
+      className="flex flex-col items-center justify-center overflow-hidden w-full"
+    >
+      <style>{`
+        :root {
+          /* White Mode: Warm "Sunlight Glass" palette - ZERO BLUE */
+          --loader-orb-main: #ffffff;
+          --loader-orb-deep: #ffeadb;
+          --loader-orb-edge: #fdf2f0;
+          --loader-orb-highlight: rgba(255, 255, 255, 0.9);
+          --loader-orb-accent: rgba(255, 150, 120, 0.15);
+          --loader-text-primary: #334155;
+          --loader-text-secondary: #64748b;
+          --loader-glow: rgba(255, 180, 160, 0.15);
+          --loader-glow-intense: rgba(255, 150, 120, 0.25);
+          --loader-track: rgba(255, 150, 120, 0.1);
+          --loader-ring-core: #ff9e7d; /* Warm Peach/Coral Core */
+          --loader-dot: #ff9e7d;
+          --loader-orb-shadow: radial-gradient(ellipse at 80% 70%, rgba(200, 150, 120, 0.12) 0%, transparent 75%);
+          --loader-backdrop: blur(10px);
+        }
+
+        .dark :root, .dark {
+          /* Dark Mode: Premium deep blue/nebula palette */
+          --loader-orb-main: #0c15d4;
+          --loader-orb-deep: #060b8c;
+          --loader-orb-edge: #010217;
+          --loader-orb-highlight: rgba(60, 100, 255, 0.4);
+          --loader-orb-accent: rgba(120, 40, 255, 0.25);
+          --loader-text-primary: #e2e8f0;
+          --loader-text-secondary: rgba(160,190,255,0.6);
+          --loader-glow: rgba(100,160,255,0.2);
+          --loader-glow-intense: rgba(100,160,255,0.3);
+          --loader-track: rgba(40,60,180,0.15);
+          --loader-ring-core: #dcf2ff;
+          --loader-dot: #fff;
+          --loader-orb-shadow: radial-gradient(ellipse at 80% 70%, rgba(0,0,0,0.8) 0%, transparent 75%);
+          --loader-backdrop: none;
+        }
+
+        @keyframes orb-morph {
+          0%,100% { border-radius: 58% 42% 62% 38% / 52% 56% 44% 48%; }
+          25%      { border-radius: 44% 56% 48% 52% / 60% 42% 58% 40%; }
+          50%      { border-radius: 62% 38% 44% 56% / 44% 60% 40% 56%; }
+          75%      { border-radius: 48% 52% 58% 42% / 56% 44% 56% 44%; }
+        }
+        @keyframes breathe {
+          0%,100% { opacity: .65; }
+          50%      { opacity: 1;   }
+        }
+        @keyframes check-pop {
+          from { opacity: 0; transform: scale(.3); }
+          to   { opacity: 1; transform: scale(1);  }
+        }
+        @keyframes spin-wave-slow {
+           100% { transform: rotate(360deg); }
+        }
+         @keyframes spin-wave-fast {
+           100% { transform: rotate(-360deg); }
+        }
+
+        .dot-glow {
+            box-shadow: 0 0 10px 4px var(--loader-glow-intense);
+        }
+      `}</style>
+
+      {/* Header Section */}
+      <div className="text-center flex flex-col items-center w-full max-w-[600px] mb-8 animate-in fade-in duration-700">
+        <h3 className="text-brand-textPrimary text-xl font-bold mb-2 tracking-tight">
+          Analyzing Product, Discovering Verified Suppliers and Computing AI Match Score....
+        </h3>
+        <p className="dark:text-white italic text-sm">
+          The process may take up to 30-45 seconds. Please wait while we generate the results
+        </p>
+      </div>
+
+      <div style={{ position: "relative", width: SIZE, height: SIZE }}>
+
+        {/* ── Ambient background glow (Very subtle) ── */}
+        <div style={{
+          position: "absolute",
+          inset: -100,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, var(--loader-glow) 0%, transparent 60%)",
+          pointerEvents: "none",
+        }} />
+
+        {/* ── 3-D Orb ── */}
+        <div style={{
+          position: "absolute",
+          left: "50%", top: "50%",
+          width: isComplete ? 80 : 220,
+          height: isComplete ? 80 : 220,
+          transform: "translate(-50%,-50%)",
+          borderRadius: "50%",
+          transition: isComplete ? "width .8s ease, height .8s ease" : undefined,
+          animation: isComplete ? undefined : "orb-morph 12s ease-in-out infinite",
+          backdropFilter: "var(--loader-backdrop)",
+          WebkitBackdropFilter: "var(--loader-backdrop)",
+          background: `
+            radial-gradient(ellipse at 35% 25%, var(--loader-orb-highlight) 0%, transparent 55%),
+            radial-gradient(ellipse at 75% 80%, var(--loader-orb-accent) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, var(--loader-orb-main) 0%, var(--loader-orb-deep) 45%, var(--loader-orb-edge) 100%)
+          `,
+          boxShadow: `
+            0 0 80px var(--loader-glow),
+            0 0 150px var(--loader-glow),
+            inset 0 0 40px rgba(255, 255, 255, 0.1)
+          `,
+        }}>
+          {/* Intense dark shadow on one side to give deep 3D curve effect */}
+          <div style={{
+            position: "absolute", inset: 0, borderRadius: "inherit",
+            background: "var(--loader-orb-shadow)",
+          }} />
+          <div style={{
+            position: "absolute", inset: 0, borderRadius: "inherit",
+            background: "radial-gradient(ellipse at 10% 90%, rgba(0,0,0,0.1) 0%, transparent 50%)",
+          }} />
+        </div>
+
+        {/* ── SVG: Wave ring outline (Rotating) ── */}
+        <div style={{ position: "absolute", inset: 0, overflow: "visible", animation: "spin-wave-slow 35s linear infinite" }}>
+          <svg width={SIZE} height={SIZE} style={{ overflow: "visible" }}>
+            <defs>
+              <filter id="wave-outline-1" x="-30%" y="-30%" width="160%" height="160%">
+                <feTurbulence type="turbulence" baseFrequency="0.02 0.03" numOctaves="4" seed="1" result="turb" />
+                <feDisplacementMap in="SourceGraphic" in2="turb" scale="25" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+              </filter>
+            </defs>
+            <circle
+              cx={CX} cy={CY} r={BASE_R + 5}
+              fill="none"
+              stroke="var(--loader-glow-intense)"
+              strokeWidth={1}
+              filter="url(#wave-outline-1)"
+            />
+          </svg>
+        </div>
+
+        {/* ── SVG: Progress Ring ── */}
+        <svg
+          width={SIZE} height={SIZE}
+          style={{ position: "absolute", inset: 0, overflow: "visible" }}
+        >
+          <defs>
+            <filter id="glow-progress" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="5" result="blur1" />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Track */}
+          <circle
+            cx={CX} cy={CY} r={BASE_R}
+            fill="none"
+            stroke="var(--loader-track)"
+            strokeWidth={1}
+          />
+
+          {/* Progress Bloom */}
+          <circle
+            cx={CX} cy={CY} r={BASE_R}
+            fill="none"
+            stroke="var(--loader-glow-intense)"
+            strokeWidth={4}
+            strokeLinecap="round"
+            strokeDasharray={CIRCUMFERENCE}
+            strokeDashoffset={dashOffset}
+            transform={`rotate(-90 ${CX} ${CY})`}
+            filter="url(#glow-progress)"
+            style={{ transition: "stroke-dashoffset 0.1s linear" }}
+          />
+          {/* Core Line */}
+          <circle
+            cx={CX} cy={CY} r={BASE_R}
+            fill="none"
+            stroke="var(--loader-ring-core)"
+            strokeWidth={1.2}
+            strokeLinecap="round"
+            strokeDasharray={CIRCUMFERENCE}
+            strokeDashoffset={dashOffset}
+            transform={`rotate(-90 ${CX} ${CY})`}
+            style={{ transition: "stroke-dashoffset 0.1s linear" }}
+          />
+
+          {/* Dots */}
+          {percentage > 0 && (
+            <circle cx={startDotX} cy={startDotY} r={3} fill="var(--loader-dot)" className="dot-glow" />
+          )}
+
+          {percentage > 2 && percentage <= 100 && (
+            <circle cx={endDotX} cy={endDotY} r={3} fill="var(--loader-dot)" className="dot-glow" style={{ transition: "cx 0.1s linear, cy 0.1s linear" }} />
+          )}
+        </svg>
+
+        {/* ── Texts ── */}
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          textAlign: "center", zIndex: 10,
+        }}>
+          {!isComplete ? (
+            <div>
+              <p style={{
+                color: "var(--loader-text-primary)", fontSize: 48, fontWeight: 300,
+                letterSpacing: "-0.02em", lineHeight: 1,
+                fontFamily: "Inter, sans-serif",
+              }}>
+                {percentage}%
+              </p>
+            </div>
+          ) : (
+            <div style={{ animation: "check-pop 0.5s ease-out 0.7s both" }}>
+              <Check
+                size={50} color="var(--loader-ring-core)" strokeWidth={2.5}
+                style={{ filter: "drop-shadow(0 0 10px var(--loader-glow-intense))" }}
+              />
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   );
-}
+};
+
+export default LoadingPage;

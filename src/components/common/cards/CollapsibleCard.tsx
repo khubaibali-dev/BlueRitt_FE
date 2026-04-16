@@ -27,10 +27,12 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
   const [height, setHeight] = useState<number | undefined>(isOpen ? undefined : 0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = () => {
     const nextState = !isOpen;
+    setIsAnimating(true);
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(nextState);
     }
@@ -105,8 +107,10 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
 
       {/* Collapsible Content */}
       <div
-        className="transition-[height] duration-300 ease-in-out overflow-hidden"
-        style={{ height: isOpen && height === undefined ? 'auto' : height }}
+        className={`${isAnimating ? "transition-[height] duration-300 ease-in-out" : ""
+          } overflow-hidden`}
+        style={{ height: isOpen ? (isAnimating ? height : 'auto') : 0 }}
+        onTransitionEnd={() => setIsAnimating(false)}
       >
         <div aria-hidden={!isOpen} ref={contentRef}>
           <hr className="border-brand-border dark:border-slate-700 mx-6 sm:mx-8" />

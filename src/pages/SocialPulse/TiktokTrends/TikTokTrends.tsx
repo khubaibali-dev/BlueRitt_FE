@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import TrendsPageTemplate from "../shared/TrendsPageTemplate";
 import TrendsEmptyState from "../shared/components/TrendsEmptyState";
 import TrendProductCard from "./components/TrendProductCard";
-import TrendHashtagCard from "./components/TrendHashtagCard";
 import TrendSkeleton from "./components/TrendSkeleton";
 import TrendsProductDetailsDrawer from "./components/TrendsProductDetailsDrawer";
 import TrendsFilterDrawer from "./components/TrendsFilterDrawer";
@@ -14,7 +13,13 @@ import SupplierSourceLink from "../../Explorer/components/SourceLink/SupplierSou
 import SourceLinkProfitCalculator from "../../Explorer/components/SourceLink/SourceLinkProfitCalculator";
 import AnalyzingScreen from "../../Explorer/components/Discovery/AnalyzingScreen";
 import { aliBabaProductMatcher } from "../../../api/product";
-import { Package, Hash, ChevronRight } from "lucide-react";
+import { Package, Hash, ChevronRight, TrendingUp, Info, Search, Sparkles } from "lucide-react";
+import {
+  countrySelectOptions,
+  hastagslection,
+  periodOption
+} from "../../../utils/tiktokFilterOptions";
+import SelectField from "../../../components/common/select/SelectField";
 import tiktokBanner from "../../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../../assets/images/SocialPulse-light.png";
 
@@ -26,6 +31,7 @@ const TikTokTrends: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSearch, setCurrentSearch] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [hasSearchedHashtags, setHasSearchedHashtags] = useState(false);
 
   // Filter States
   const [country, setCountry] = useState("US");
@@ -58,15 +64,62 @@ const TikTokTrends: React.FC = () => {
     isError: isProductError
   } = useQuery({
     queryKey: ["tiktokTrendingProducts", activeTab, appliedCountry, appliedPeriod, appliedCategory, appliedSortBy, currentSearch, fetchTrigger],
-    queryFn: () => getTikTokTrendingProducts({
-      keyword: currentSearch,
-      country: appliedCountry,
-      last: appliedPeriod,
-      category: appliedCategory,
-      order_by: appliedSortBy,
-      order_type: appliedSortOrder,
-      limit: 50
-    }),
+    queryFn: async () => {
+      console.log('🚀 Starting 2-Step Sequential Fetch...');
+      
+      // Step 1: Database Fetch
+      const databaseResponse = await getTikTokTrendingProducts({
+        keyword: currentSearch,
+        country: appliedCountry,
+        last: appliedPeriod,
+        category: appliedCategory,
+        order_by: appliedSortBy,
+        order_type: appliedSortOrder,
+        limit: 50
+      });
+      
+      console.log('📊 Step 1: DB Data received:', databaseResponse?.data?.products?.length || 0);
+
+      const fetchCCPage = async (pageNum: number) => {
+        try {
+          console.log(`⏳ Fetching Creative Center Page ${pageNum}...`);
+          const ccResponse = await getTikTokCreativeCenterProducts({
+            keyword: currentSearch,
+            country: appliedCountry,
+            last: appliedPeriod,
+            category: appliedCategory,
+            order_by: appliedSortBy,
+            order_type: appliedSortOrder,
+            limit: 20,
+            page: pageNum
+          });
+          return ccResponse?.products || [];
+        } catch (error) {
+          console.error(`⚠️ CC Page ${pageNum} failed:`, error);
+          return [];
+        }
+      };
+
+      // Step 2: Sequential Creative Center Fetch (3 pages)
+      const page1 = await fetchCCPage(1);
+      await new Promise(r => setTimeout(r, 1000));
+      const page2 = await fetchCCPage(2);
+      await new Promise(r => setTimeout(r, 1000));
+      const page3 = await fetchCCPage(3);
+
+      const allCCProducts = [...page1, ...page2, ...page3];
+      console.log('✅ Step 2: CC Data received:', allCCProducts.length);
+
+      // Merge results
+      return {
+        ...databaseResponse,
+        data: {
+          products: databaseResponse?.data?.products || [],
+          list: allCCProducts,
+          total: Math.max(databaseResponse?.data?.products?.length || 0, allCCProducts.length)
+        }
+      };
+    },
     enabled: hasSearched && activeTab === "product"
   });
 
@@ -81,10 +134,12 @@ const TikTokTrends: React.FC = () => {
       country: appliedCountry,
       period: appliedPeriod,
       industry_id: appliedCategory,
-      limit: 50
+      limit: 50,
+      page: 1
     }),
-    enabled: hasSearched && activeTab === "hashtag"
+    enabled: hasSearchedHashtags
   });
+
 
   const handleSearch = () => {
     setCurrentSearch(searchQuery);
@@ -94,6 +149,16 @@ const TikTokTrends: React.FC = () => {
     setAppliedCategory(category);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
+    setFetchTrigger(prev => prev + 1);
+    setSelectedProductForDiscovery(null);
+    setDiscoverySuppliers([]);
+  };
+  const handleSearchhastag = () => {
+    setCurrentSearch(searchQuery);
+    setHasSearchedHashtags(true);
+    setAppliedCountry(country);
+    setAppliedPeriod(period);
+    setAppliedCategory(category);
     setFetchTrigger(prev => prev + 1);
     setSelectedProductForDiscovery(null);
     setDiscoverySuppliers([]);
@@ -194,6 +259,7 @@ const TikTokTrends: React.FC = () => {
           lightBannerImage={socialpulseLight}
           title="TikTok Trends"
           subtitle="Discover viral products and trending hashtags"
+          showProductTrendsHeader={true}
           activeTab={activeTab}
           onTabChange={(tab) => {
             setActiveTab(tab);
@@ -207,7 +273,6 @@ const TikTokTrends: React.FC = () => {
           hasSearched={hasSearched}
           tabs={[
             { label: "Product Trends", value: "product", icon: "Package" },
-            { label: "Hashtag Trends", value: "hashtag", icon: "Hash", showUpgradeBadge: true },
           ]}
           metrics={[
             {
@@ -281,10 +346,167 @@ const TikTokTrends: React.FC = () => {
               }}
             />
           )}
+          rightSidebar={(
+            <>
+              {/* Hashtag Header Section */}
+              <div className="flex  items-center gap-2 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="w-10 h-10 rounded-xl 
+  bg-gradient-to-b from-black/10 to-[#6b96f3] 
+  border border-brand-inpuBorder dark:border-none
+  flex items-center justify-center 
+  text-brand-primary shadow-2xl shadow-brand-primary/10 
+  text-brand-textSecondary dark:text-[#FFFFFFB2]">
+
+                  <Hash size={22} className="text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="text-[16px] font-medium dark:text-white tracking-tight  leading-none mb-1">Hashtag Trends</h3>
+                  <p className="text-[12px] dark:text-[#FFFFFF99] font-medium tracking-tight">Discover viral tags</p>
+                </div>
+              </div>
+
+              {/* Sidebar Metric Card - Modern & Compact */}
+              <div className="bg-brand-card border border-brand-inputBorder rounded-2xl p-4 mt-0 relative group overflow-hidden transition-all duration-500 hover:border-brand-primary/30 animate-in fade-in slide-in-from-right-6 duration-700">
+
+                {/* FLEX ROW */}
+                <div className="flex items-center gap-2">
+
+                  {/* ICON LEFT */}
+                  <div className="quick-action-icon-circle !h-[40px] !w-[40px] flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                    <TrendingUp size={22} className="text-white" />
+                  </div>
+
+                  {/* CONTENT RIGHT */}
+                  <div>
+
+                    {/* TITLE + INFO INLINE */}
+                    <div className="flex items-center gap-2">
+                      <p className="text-[12px] font-medium text-brand-textPrimary tracking-widest">
+                        TikTok Trend Searches
+                      </p>
+                      <Info
+                        size={16}
+                        className="dark:text-white hover:text-slate-300 cursor-pointer transition-colors"
+                      />
+                    </div>
+
+                    <h4 className="text-[24px] sm:text-[28px] font-bold dark:text-white leading-tight tracking-tight">
+                      {userDetails?.search_quota?.tiktok_hashtag_search?.toString() || "0"}
+                    </h4>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Sidebar Filter Selectors - Standard Style */}
+              <div className="space-y-6 pt-1 animate-in fade-in slide-in-from-right-8 duration-700">
+                <SelectField
+                  id="side-country"
+                  label="Country Selection"
+                  value={country}
+                  options={countrySelectOptions}
+                  onChange={setCountry}
+                  className="!rounded-[14px] !h-12 flex items-center"
+                />
+
+                <SelectField
+                  id="side-period"
+                  label="Period Selection"
+                  value={period}
+                  options={periodOption}
+                  onChange={setPeriod}
+                  className="!rounded-[14px] !h-12 flex items-center"
+                />
+
+                <SelectField
+                  id="side-category"
+                  label="Category Selection"
+                  value={category}
+                  options={hastagslection}
+                  onChange={setCategory}
+                  className="!rounded-[14px] !h-12 flex items-center"
+                />
+
+                <button
+                  onClick={handleSearchhastag}
+                  className="w-full mt-2 py-4 upgrade-gradient-btn text-white !rounded-[12px] font-black text-[14px] flex items-center justify-center gap-2 hover:opacity-95 transition-all shadow-xl shadow-red-500/20 active:scale-[0.98] tracking-wider"
+                >
+                  <Sparkles size={18} fill="currentColor" />
+                  {activeTab === "hashtag" ? "Discover Trending Hashtags" : "Discover Trending Products"}
+                </button>
+              </div>
+
+              {/* Hashtag Results Section */}
+              {hasSearchedHashtags && hashtagData?.data?.list && (
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-8 duration-700">
+                  {/* Summary Header */}
+                  <div className="px-1 text-[13px] font-medium text-slate-600 dark:text-white leading-relaxed">
+                    <span className="text-brand-primary font-bold">{hashtagData.data.list.length}</span> Hashtags from{" "}
+                    <span className="text-black dark:text-white font-semibold">
+                      {periodOption.find(p => p.value === appliedPeriod)?.label || "Last 120 Days"}
+                    </span>{" "}
+                    of{" "}
+                    <span className="text-black dark:text-white font-semibold">
+                      {countrySelectOptions.find(c => c.value === appliedCountry)?.label || "United States"}
+                    </span>
+                  </div>
+
+                  {/* Results List */}
+                  <div className="space-y-3 max-h-[280px] overflow-y-auto custom-scrollbar pr-1">
+                    {hashtagData.data.list.map((item: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="bg-brand-card border border-brand-inputBorder rounded-[16px] p-4 flex items-center justify-between group transition-all duration-300 hover:border-brand-primary/30"
+                      >
+                        <h4 className="text-[16px] font-medium dark:text-white transition-colors">
+                          #{item.hashtag_name || item.name || "hashtag"}
+                        </h4>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[12px] font-medium text-[#6291DE]">Rank:</span>
+                          <span className="text-[13px] font-bold text-[#6291DE]">#{item.rank || idx + 1}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Teaser Card */}
+              {!hasSearchedHashtags && (
+                <div className="mt-1 pb-2 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                  <div className="w-full min-h-[310px] bg-brand-card border border-brand-border rounded-[24px] flex flex-col items-center justify-center p-8 py-12 relative overflow-hidden group cursor-pointer hover:border-brand-primary/30 transition-all duration-700">
+                    {/* Background Glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-blue-500/5 blur-[80px] rounded-full group-hover:bg-blue-500/10 transition-colors duration-700 pointer-events-none" />
+
+                    {/* Icon with Gradient Circle */}
+                    <div className="relative mb-6">
+                      <div className="!w-[56px] !h-[56px] rounded-full quick-action-icon-circle p-[1px] flex items-center justify-center">
+                        <div className="w-full h-full rounded-full flex items-center justify-center">
+                          <Search className="group-hover:scale-110 transition-transform duration-500" size={24} strokeWidth={2.5} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Text Content */}
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <h2 className="trends-empty-title !text-[17px] !mb-0">
+                        Discover Trending Hashtags
+                      </h2>
+                      <p className="trends-empty-desc !text-[13px] !leading-relaxed">
+                        Explore viral tags & audience insights effortlessly.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           renderContent={(tab, searched, openDetails, setProduct) => {
             const isLoading = tab === "product" ? isProductLoading : isHashtagLoading;
             const isError = tab === "product" ? isProductError : isHashtagError;
-            const data = tab === "product" ? productData?.data?.products : hashtagData?.data?.list;
+            const data = tab === "product" 
+              ? ((productData?.data?.list?.length ?? 0) > 0 ? productData?.data?.list : productData?.data?.products)
+              : hashtagData?.data?.list;
 
             if (isLoading) {
               return <TrendSkeleton type={tab as "product" | "hashtag"} count={6} />;
@@ -392,21 +614,8 @@ const TikTokTrends: React.FC = () => {
                     ))}
                   </div>
                 ) : tab === "hashtag" && searched ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-2 px-1">
-                      <span className="text-[17px] font-bold text-orange-500">{data.length}</span>
-                      <span className="text-[15px] font-medium text-slate-300">Hashtags found for your selection</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {data.map((item: any, index: number) => (
-                        <TrendHashtagCard
-                          key={index}
-                          hashtag={item.hashtag_name || item.hashtag}
-                          rank={index + 1}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  <>
+                  </>
                 ) : tab === "product" ? (
                   <TrendsEmptyState
                     title="Discover Trending Products"

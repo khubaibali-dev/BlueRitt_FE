@@ -20,6 +20,7 @@ interface AdvancedTabProps {
   totalTaxes: string;
   errors: any;
   touched: any;
+  handleBlur: (field: string) => void;
   disabled?: boolean;
 }
 
@@ -38,6 +39,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
   totalTaxes,
   errors,
   touched,
+  handleBlur,
   disabled = false,
 }) => {
   const handleRegionChange = (val: string) => {
@@ -59,33 +61,42 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             label="Pay-per-Click (PPC)"
             required
             prefix="$"
-            value={formData.marc_marketingCost}
+             value={formData.marc_marketingCost}
             onChange={(val) => handleFieldChange("marc_marketingCost", val)}
+            onBlur={() => handleBlur("marc_marketingCost")}
             error={touched.marc_marketingCost && errors.marc_marketingCost}
           />
           <CalculatorField
             label="Attribution Links"
             prefix="$"
-            value={formData.marc_attributionCost}
+             value={formData.marc_attributionCost}
             onChange={(val) => handleFieldChange("marc_attributionCost", val)}
+            onBlur={() => handleBlur("marc_attributionCost")}
+            error={touched.marc_attributionCost && errors.marc_attributionCost}
           />
           <CalculatorField
             label="Influencer/Giveaway"
             prefix="$"
-            value={formData.marc_influencerCost}
+             value={formData.marc_influencerCost}
             onChange={(val) => handleFieldChange("marc_influencerCost", val)}
+            onBlur={() => handleBlur("marc_influencerCost")}
+            error={touched.marc_influencerCost && errors.marc_influencerCost}
           />
           <CalculatorField
             label="Marketing VAT"
             prefix="$"
-            value={formData.marc_marketingVATCost}
+             value={formData.marc_marketingVATCost}
             onChange={(val) => handleFieldChange("marc_marketingVATCost", val)}
+            onBlur={() => handleBlur("marc_marketingVATCost")}
+            error={touched.marc_marketingVATCost && errors.marc_marketingVATCost}
           />
           <CalculatorField
             label="Misc Marketing Cost"
             prefix="$"
-            value={formData.marc_miscCost}
+             value={formData.marc_miscCost}
             onChange={(val) => handleFieldChange("marc_miscCost", val)}
+            onBlur={() => handleBlur("marc_miscCost")}
+            error={touched.marc_miscCost && errors.marc_miscCost}
           />
           <div className="hidden sm:block" />
           <CalculatorField label="Marketing Cost/Unit" required prefix="$" value={marketingCostUnit} readOnly />
@@ -100,33 +111,42 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             label="Imaging & Photography"
             required
             prefix="$"
-            value={formData.gc_imagingAndPhotographyCost}
+             value={formData.gc_imagingAndPhotographyCost}
             onChange={(val) => handleFieldChange("gc_imagingAndPhotographyCost", val)}
+            onBlur={() => handleBlur("gc_imagingAndPhotographyCost")}
             error={touched.gc_imagingAndPhotographyCost && errors.gc_imagingAndPhotographyCost}
           />
           <CalculatorField
             label="Videography"
             prefix="$"
-            value={formData.gc_videographyCost}
+             value={formData.gc_videographyCost}
             onChange={(val) => handleFieldChange("gc_videographyCost", val)}
+            onBlur={() => handleBlur("gc_videographyCost")}
+            error={touched.gc_videographyCost && errors.gc_videographyCost}
           />
           <CalculatorField
             label="Product Packaging"
             prefix="$"
-            value={formData.gc_productPackingCost}
+             value={formData.gc_productPackingCost}
             onChange={(val) => handleFieldChange("gc_productPackingCost", val)}
+            onBlur={() => handleBlur("gc_productPackingCost")}
+            error={touched.gc_productPackingCost && errors.gc_productPackingCost}
           />
           <CalculatorField
             label="3D Animation"
             prefix="$"
-            value={formData.gc_3dAnimationCost}
+             value={formData.gc_3dAnimationCost}
             onChange={(val) => handleFieldChange("gc_3dAnimationCost", val)}
+            onBlur={() => handleBlur("gc_3dAnimationCost")}
+            error={touched.gc_3dAnimationCost && errors.gc_3dAnimationCost}
           />
           <CalculatorField
             label="Misc Graphics Cost"
             prefix="$"
-            value={formData.gc_miscCost}
+             value={formData.gc_miscCost}
             onChange={(val) => handleFieldChange("gc_miscCost", val)}
+            onBlur={() => handleBlur("gc_miscCost")}
+            error={touched.gc_miscCost && errors.gc_miscCost}
           />
           <div className="hidden sm:block" />
           <CalculatorField label="Graphics Cost/Unit" required prefix="$" value={graphicsCostUnit} readOnly />
@@ -140,14 +160,18 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           <CalculatorField
             label="Vine Program"
             prefix="$"
-            value={formData.pfc_vineProgramCost}
+             value={formData.pfc_vineProgramCost}
             onChange={(val) => handleFieldChange("pfc_vineProgramCost", val)}
+            onBlur={() => handleBlur("pfc_vineProgramCost")}
+            error={touched.pfc_vineProgramCost && errors.pfc_vineProgramCost}
           />
           <CalculatorField
             label="Misc Feedback Cost"
             prefix="$"
-            value={formData.pfc_miscCost}
+             value={formData.pfc_miscCost}
             onChange={(val) => handleFieldChange("pfc_miscCost", val)}
+            onBlur={() => handleBlur("pfc_miscCost")}
+            error={touched.pfc_miscCost && errors.pfc_miscCost}
           />
           <CalculatorField label="Feedback Cost/Unit" required prefix="$" value={reviewerCostUnit} readOnly />
           <CalculatorField label="Total Feedback Cost" required prefix="$" value={totalReviewerCost} readOnly />
@@ -160,26 +184,34 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           <CalculatorField
             label="Pre-launch Samples"
             prefix="$"
-            value={formData.oc_preLaunchSamples}
+             value={formData.oc_preLaunchSamples}
             onChange={(val) => handleFieldChange("oc_preLaunchSamples", val)}
+            onBlur={() => handleBlur("oc_preLaunchSamples")}
+            error={touched.oc_preLaunchSamples && errors.oc_preLaunchSamples}
           />
           <CalculatorField
             label="Competitor Samples"
             prefix="$"
-            value={formData.oc_competitorProductSamples}
+             value={formData.oc_competitorProductSamples}
             onChange={(val) => handleFieldChange("oc_competitorProductSamples", val)}
+            onBlur={() => handleBlur("oc_competitorProductSamples")}
+            error={touched.oc_competitorProductSamples && errors.oc_competitorProductSamples}
           />
           <CalculatorField
             label="Employees Cost"
             prefix="$"
-            value={formData.oc_employeesCost}
+             value={formData.oc_employeesCost}
             onChange={(val) => handleFieldChange("oc_employeesCost", val)}
+            onBlur={() => handleBlur("oc_employeesCost")}
+            error={touched.oc_employeesCost && errors.oc_employeesCost}
           />
           <CalculatorField
             label="Miscellaneous Cost"
             prefix="$"
-            value={formData.oc_anyOtherCost}
+             value={formData.oc_anyOtherCost}
             onChange={(val) => handleFieldChange("oc_anyOtherCost", val)}
+            onBlur={() => handleBlur("oc_anyOtherCost")}
+            error={touched.oc_anyOtherCost && errors.oc_anyOtherCost}
           />
           <CalculatorField label="Other Cost/Unit" required prefix="$" value={additionalCostUnit} readOnly />
           <CalculatorField label="Total Other Cost" required prefix="$" value={totalAdditionalCost} readOnly />
