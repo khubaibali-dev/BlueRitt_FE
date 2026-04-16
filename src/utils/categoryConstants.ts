@@ -1,11 +1,11 @@
-import homeKitchen from "../assets/images/categories/home_kitchen.png";
-import beautyPersonal from "../assets/images/categories/beauty_personal.png";
-import sportsFitness from "../assets/images/categories/sports_fitness.png";
-import clothingAccessories from "../assets/images/categories/clothing_accessories.png";
-import babyKids from "../assets/images/categories/baby_kids.png";
-import trendingNow from "../assets/images/categories/trending_now.png";
-import potentialWinners from "../assets/images/categories/potential_winners.png";
-import readyLaunch from "../assets/images/categories/ready_launch.png";
+import homeKitchen from "../assets/images/Categories/home_kitchen.png";
+import beautyPersonal from "../assets/images/Categories/beauty_personal.png";
+import sportsFitness from "../assets/images/Categories/sports_fitness.png";
+import clothingAccessories from "../assets/images/Categories/clothing_accessories.png";
+import babyKids from "../assets/images/Categories/baby.png";
+import trendingNow from "../assets/images/Categories/trending_now.png";
+import potentialWinners from "../assets/images/Categories/potential_winners.png";
+import readyLaunch from "../assets/images/Categories/ready_launch.png";
 
 export const FIXED_CATEGORIES = [
   {
