@@ -5,7 +5,7 @@ import clothingAccessories from "../assets/images/Categories/clothing_accessorie
 import babyKids from "../assets/images/Categories/baby.png";
 import trendingNow from "../assets/images/Categories/trending_now.png";
 import potentialWinners from "../assets/images/Categories/potential_winners.png";
-import readyLaunch from "../assets/images/Categories/ready_launch.png";
+import readyLaunch from "../assets/images/Categories/ready_Launch.png";
 
 export const FIXED_CATEGORIES = [
   {
