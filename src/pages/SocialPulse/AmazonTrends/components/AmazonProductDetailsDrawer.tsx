@@ -64,7 +64,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
   const AccordionSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
     const isExpanded = expandedSections.includes(title);
     return (
-      <div className="border border-brand-border rounded-[20px] bg-brand-card-alt overflow-hidden">
+      <div className="border border-brand-inputBorder rounded-[20px] bg-brand-card-alt overflow-hidden">
         <button
           onClick={() => toggleSection(title)}
           className="w-full flex items-center justify-between p-6 text-brand-textPrimary hover:bg-brand-card transition-all text-left"
@@ -94,7 +94,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
       {/* Drawer Panel */}
       <div className={`fixed top-0 right-0 h-full z-[110] flex flex-col transition-transform duration-300 ease-in-out w-full sm:!w-[650px] bg-brand-card border-l border-brand-border ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         {/* Header */}
-        <div className="p-6 sm:p-8 pb-4">
+        <div className="p-6 sm:p-8 pb-1">
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-1">
               <h2 className="text-[22px] font-bold text-brand-textPrimary tracking-tight">Product Details</h2>
@@ -107,14 +107,14 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
               <X size={20} />
             </button>
           </div>
-          <div className="mt-6 border-b border-brand-border" />
+          <div className="mt-0 border-b border-brand-border" />
         </div>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 pt-0 space-y-6">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 pt-0 sm:pt-0 space-y-6">
 
           {/* Top Product Snippet Card */}
-          <div className="flex gap-5 p-1">
+          <div className="flex gap-3 p-1">
             <div className="w-24 h-24 rounded-[12px] bg-white overflow-hidden shrink-0 border border-brand-inputBorder p-1">
               <img src={product.image} alt={product.title} className="w-full h-full object-contain" />
             </div>

@@ -1,94 +1,133 @@
 import React from "react";
-import { Activity, TrendingUp } from "lucide-react";
+import { Activity, TrendingUp, Lock, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductProfitGaugesProps {
   grossProfitAmount: string;
   netProfitAmount: string;
   grossProfitMargin: string;
   netProfitMargin: string;
+  hasGrossAccess?: boolean;
+  hasNetAccess?: boolean;
 }
+
+const LockedOverlay: React.FC<{ type: "Gross" | "Net" }> = ({ type }) => {
+  const navigate = useNavigate();
+  return (
+    <div className="absolute inset-0 z-50 flex items-center justify-center rounded-[12px] overflow-hidden p-6">
+      <div className="absolute inset-0 bg-white/30 dark:bg-black/40 backdrop-blur-[2px] border border-brand-inputBorder dark:border-white/10 rounded-[12px]" />
+      <div className="relative z-10 text-center flex flex-col items-center">
+        <div className="w-10 h-10 rounded-xl bg-brand-primary/10 dark:bg-white/10 flex items-center justify-center mb-3 border border-brand-primary/20 dark:border-white/5">
+          <Lock size={20} className="text-brand-primary dark:text-white" />
+        </div>
+        <h4 className="text-[16px] font-bold text-brand-textPrimary dark:text-white mb-1.5 leading-tight">
+          Upgrade your package to access {type} Profit
+        </h4>
+        <p className="text-brand-textSecondary dark:text-white/60 text-[12px] mb-5 max-w-[210px] leading-relaxed">
+          Get access to detailed profit calculations and analytics
+
+        </p>
+        <button
+          onClick={() => navigate("/settings?tab=plan")}
+          className="bg-brand-primary hover:brightness-110 text-white px-6 py-2 rounded-full text-[12px] font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-brand-primary/20"
+        >
+          <ArrowRight size={14} />
+          Update Subscription
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
   grossProfitAmount,
   netProfitAmount,
   grossProfitMargin,
   netProfitMargin,
+  hasGrossAccess = true,
+  hasNetAccess = true,
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 sm:mb-10">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 sm:mb-10">
       {/* Gross Profit Card */}
-      <div className="analysis-card-box p-4 flex flex-col relative h-[320px] transition-all hover:border-blue-500/20 group">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-4">
-            <div className="quick-action-icon-circle !h-10 !w-10 text-white dark:text-white">
-              <Activity size={22} className="group-hover:scale-110 transition-transform" />
+      <div className="relative group overflow-hidden rounded-[12px]">
+        {!hasGrossAccess && <LockedOverlay type="Gross" />}
+        <div className={`analysis-card-box p-4 flex flex-col relative h-[320px] transition-all border group ${!hasGrossAccess ? 'blur-[0.5px] opacity-95' : ''}`}>
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex items-center gap-4">
+              <div className={`quick-action-icon-circle !h-10 !w-10 text-white dark:text-white bg-blue-500 ${!hasGrossAccess ? 'opacity-50' : ''}`}>
+                <Activity size={22} className="group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="flex flex-col !gap-0">
+                <span className="analysis-metric-label">Gross Profit</span>
+                <span className="analysis-metric-value">${hasGrossAccess ? (grossProfitAmount || "0.00") : "0.00"}</span>
+              </div>
             </div>
-            <div className="flex flex-col !gap-0">
-              <span className="analysis-metric-label">Gross Profit</span>
-              <span className="analysis-metric-value">${grossProfitAmount || "0.00"}</span>
-            </div>
+            <span className={`text-[24px] font-black text-blue-500 ${!hasGrossAccess ? 'opacity-50' : ''}`}>{hasGrossAccess ? (grossProfitMargin || "0.00") : "0.00"}%</span>
           </div>
-          <span className="text-[24px] font-black text-blue-500">{grossProfitMargin || "0.00"}%</span>
-        </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <div className="relative w-44 h-44 flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-              <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-brand-border dark:text-white/5" strokeWidth="8" fill="none" />
-              <circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke="currentColor"
-                strokeWidth="8"
-                fill="none"
-                strokeDasharray="251.32"
-                strokeDashoffset={251.32 - (251.32 * (Math.max(0, parseFloat(grossProfitMargin) || 0)) / 100)}
-                strokeLinecap="round"
-                className="text-blue-500 transition-all duration-1000"
-              />
-            </svg>
-            <div className="absolute flex flex-col items-center">
-              <span className="text-[28px] font-black">{Math.round(Math.max(0, parseFloat(grossProfitMargin) || 0))}%</span>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="relative w-44 h-44 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-slate-100 dark:text-white/10" strokeWidth="8" fill="none" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeDasharray="251.32"
+                  strokeDashoffset={251.32 - (251.32 * (Math.max(0, parseFloat(grossProfitMargin) || 0)) / 100)}
+                  strokeLinecap="round"
+                  className={`text-blue-500 transition-all duration-1000 ${!hasGrossAccess ? 'opacity-30' : ''}`}
+                />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className={`text-[28px] font-black ${!hasGrossAccess ? 'opacity-30' : ''}`}>{hasGrossAccess ? Math.round(Math.max(0, parseFloat(grossProfitMargin) || 0)) : "0"}%</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Net Profit Card */}
-      <div className="analysis-card-box p-4 flex flex-col relative h-[320px] transition-all hover:border-purple-500/20 group">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-4">
-            <div className="quick-action-icon-circle !h-10 !w-10 text-white dark:text-white">
-              <TrendingUp size={22} className="group-hover:scale-110 transition-transform" />
+      <div className="relative group overflow-hidden rounded-[12px]">
+        {!hasNetAccess && <LockedOverlay type="Net" />}
+        <div className={`analysis-card-box p-4 flex flex-col relative h-[320px] transition-all hover:border-purple-500/20 group ${!hasNetAccess ? 'blur-[0.5px] opacity-95' : ''}`}>
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex items-center gap-4">
+              <div className={`quick-action-icon-circle !h-10 !w-10 text-white dark:text-white bg-purple-600 ${!hasNetAccess ? 'opacity-50' : ''}`}>
+                <TrendingUp size={22} className="group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="flex flex-col !gap-0">
+                <span className="analysis-metric-label">Net Profit</span>
+                <span className="analysis-metric-value">${hasNetAccess ? (netProfitAmount || "0.00") : "0.00"}</span>
+              </div>
             </div>
-            <div className="flex flex-col !gap-0">
-              <span className="analysis-metric-label">Net Profit</span>
-              <span className="analysis-metric-value">${netProfitAmount || "0.00"}</span>
-            </div>
+            <span className={`text-[24px] font-black text-blue-500/80 ${!hasNetAccess ? 'opacity-50' : ''}`}>{hasNetAccess ? (netProfitMargin || "0.00") : "0.00"}%</span>
           </div>
-          <span className="text-[24px] font-black text-blue-500/80">{netProfitMargin || "0.00"}%</span>
-        </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <div className="relative w-44 h-44 flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-              <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-brand-border dark:text-white/5" strokeWidth="8" fill="none" />
-              <circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke="currentColor"
-                strokeWidth="8"
-                fill="none"
-                strokeDasharray="251.32"
-                strokeDashoffset={251.32 - (251.32 * (Math.max(0, parseFloat(netProfitMargin) || 0)) / 100)}
-                strokeLinecap="round"
-                className="text-blue-600 transition-all duration-1000"
-              />
-            </svg>
-            <div className="absolute flex flex-col items-center">
-              <span className="text-[28px] font-black">{Math.round(Math.max(0, parseFloat(netProfitMargin) || 0))}%</span>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="relative w-44 h-44 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-slate-100 dark:text-white/10" strokeWidth="8" fill="none" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeDasharray="251.32"
+                  strokeDashoffset={251.32 - (251.32 * (Math.max(0, parseFloat(netProfitMargin) || 0)) / 100)}
+                  strokeLinecap="round"
+                  className={`text-blue-600 transition-all duration-1000 ${!hasNetAccess ? 'opacity-30' : ''}`}
+                />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className={`text-[28px] font-black ${!hasNetAccess ? 'opacity-30' : ''}`}>{hasNetAccess ? Math.round(Math.max(0, parseFloat(netProfitMargin) || 0)) : "0"}%</span>
+              </div>
             </div>
           </div>
         </div>

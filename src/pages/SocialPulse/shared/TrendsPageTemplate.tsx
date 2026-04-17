@@ -58,6 +58,7 @@ interface TrendsPageTemplateProps {
   metricsAction?: React.ReactNode;
   showSearchForm?: boolean;
   rightSidebar?: React.ReactNode;
+  searchDisabled?: boolean;
 }
 
 const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
@@ -88,6 +89,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   metricsAction,
   showSearchForm = true,
   rightSidebar,
+  searchDisabled = false,
 }) => {
   const [internalActiveTab, setInternalActiveTab] = useState(tabs[0].value);
   const [internalSearchQuery, setInternalSearchQuery] = useState("");
@@ -210,7 +212,11 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                    <button type="submit" className="upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[48px] w-full sm:w-auto">
+                    <button
+                      type="submit"
+                      disabled={searchDisabled}
+                      className={`upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[48px] w-full sm:w-auto transition-all ${searchDisabled ? 'opacity-70 cursor-not-allowed' : 'hover:brightness-110'}`}
+                    >
                       <Sparkles size={16} />
                       {searchBtnText[activeTab] || "Search"}
                     </button>

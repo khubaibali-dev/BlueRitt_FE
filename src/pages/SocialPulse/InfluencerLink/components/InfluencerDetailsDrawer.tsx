@@ -54,7 +54,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
       {/* Drawer Panel */}
       <div className={`filter-drawer-panel z-[110] w-full sm:!w-[680px] ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         {/* 1. Header */}
-        <div className="p-6 border-b border-[#1C263C]">
+        <div className="p-6 border-b border-brand-inputBorder dark:border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-bold text-brand-textPrimary dark:text-white tracking-tight">Influencer Endorsed Products</h2>
@@ -88,7 +88,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
 
                 <div className="flex flex-col">
                   <h3 className="text-[17px] font-bold text-brand-textPrimary dark:text-white tracking-tight">{influencer.name}</h3>
-                  <span className="text-[13px] text-brand-textSecondary dark:text-white">{influencer.followers} followers</span>
+                  <span className="metric-label">{influencer.followers} followers</span>
                 </div>
               </div>
 
@@ -107,32 +107,32 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
           {/* 3. Stats Icons Bar */}
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col items-center gap-3">
-              <div className="quick-action-icon-circle !w-11 !h-11 shadow-lg border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
+              <div className="quick-action-icon-circle !w-11 !h-11  border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
                 <Users size={20} className="text-brand-textPrimary dark:text-white" />
               </div>
               <div className="flex flex-col items-center">
                 <span className="metric-label">Followers</span>
-                <span className="text-[14px] font-bold text-brand-textPrimary dark:text-white">{influencer.followers}</span>
+                <span className="metric-label">{influencer.followers}</span>
               </div>
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <div className="quick-action-icon-circle !w-11 !h-11 shadow-lg border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
+              <div className="quick-action-icon-circle !w-11 !h-11 border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
                 <TrendingUp size={20} className="text-brand-textPrimary dark:text-white" />
               </div>
               <div className="flex flex-col items-center">
                 <span className="metric-label">Engagement</span>
-                <span className="text-[14px] font-bold text-brand-textPrimary dark:text-white">{influencer.engagementRate}</span>
+                <span className="metric-label">{influencer.engagementRate}</span>
               </div>
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <div className="quick-action-icon-circle !w-11 !h-11 shadow-lg border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
+              <div className="quick-action-icon-circle !w-11 !h-11 border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
                 <Eye size={20} className="text-brand-textPrimary dark:text-white" />
               </div>
               <div className="flex flex-col items-center">
                 <span className="metric-label">Posts</span>
-                <span className="text-[14px] font-bold text-brand-textPrimary dark:text-white">{influencer.posts}</span>
+                <span className="metric-label">{influencer.posts}</span>
               </div>
             </div>
           </div>
@@ -144,7 +144,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
               [...Array(5)].map((_, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[16px] animate-pulse"
+                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-inputBorder dark:border-brand-inputBorder rounded-[16px] animate-pulse"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-[56px] h-[56px] rounded-[12px] bg-white/5" />
@@ -160,7 +160,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
               posts.map((post, idx) => (
                 <div
                   key={post.post_id || idx}
-                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[16px] hover:border-brand-primary dark:hover:border-blue-500/20 transition-all group/item "
+                  className="flex items-center justify-between p-3.5 bg-white dark:bg-[#04132B] border border-brand-inputBorder dark:border-brand-border rounded-[16px]  dark:hover:border-blue-500/20 transition-all group/item "
                 >
                   <div className="flex items-center gap-4 flex-1 overflow-hidden">
                     <div className="w-[56px] h-[56px] rounded-[12px] overflow-hidden border border-white/5 shrink-0">

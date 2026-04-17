@@ -27,7 +27,7 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
   const numericRating = parseFloat(rating) || 0;
 
   return (
-    <div className="bg-brand-card border border-brand-border rounded-[24px] overflow-hidden flex flex-col group transition-all duration-300">
+    <div className="bg-brand-card border border-brand-inputBorder rounded-[24px] overflow-hidden flex flex-col group transition-all duration-300">
       {/* Image Area */}
       <div className="relative aspect-[1/1.1] overflow-hidden">
         <img

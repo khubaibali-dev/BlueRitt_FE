@@ -1,108 +1,114 @@
 import React from "react";
-import { Box, CheckCircle2, ShieldCheck, Award, Star, Zap, Truck, TrendingUp, Info } from "lucide-react";
+import { Box, CheckCircle, ShieldCheck, Award, Star, Zap, Truck, TrendingUp, Info, Calendar } from "lucide-react";
 
 interface VaultAlibabaCardProps {
   supplier: any;
 }
 
-/**
- * Standardized Supplier Card for the Product Vault.
- * Features:
- * - Glassmorphism UI (backdrop-blur, semi-transparent background)
- * - Premium badges for verification, trade assurance, and gold membership
- * - Grid-based metrics including MANUFACTURING COST, MOQ, and Store details
- */
 const VaultAlibabaCard: React.FC<VaultAlibabaCardProps> = ({ supplier }) => {
   if (!supplier) return null;
 
-  return (
-    <div className="bg-white dark:bg-[#04132B] border border-brand-inputBorder dark:border-white/10 rounded-[24px] overflow-hidden shadow-md dark:shadow-2xl relative p-6 h-full transition-all duration-500 dark:hover:border-blue-500/30">
-      {/* Label Section */}
-      <div className="flex items-center gap-2 mb-6">
-        <Box size={14} className="text-orange-500" />
-        <span className="text-[11px] text-orange-500 font-black tracking-[0.15em] uppercase">Selected Supplier</span>
-      </div>
+  const {
+    image,
+    name,
+    isVerified,
+    TradeAssurance: tradeAssurance,
+    isGoldMember: isGold,
+    rating,
+    storeAge,
+    storeName,
+    contact,
+    price,
+    id,
+    minOrder,
+    country
+  } = supplier;
 
-      {/* Main Info Section */}
-      <div className="flex flex-col sm:flex-row gap-6 mb-8">
-        <div className="w-24 h-24 rounded-2xl overflow-hidden bg-brand-hover bg-white border border-brand-inputBorder dark:border-white/5 shadow-sm dark:shadow-2xl shrink-0">
-          <img src={supplier.image} alt="" className="w-full h-full object-cover p-2" />
-        </div>
-        <div className="flex-1 flex flex-col justify-center">
-          <h3 className="text-[16px] text-brand-textPrimary dark:text-white font-bold mb-4 leading-tight">
-            {supplier.name || "Alibaba Sourcing Partner"}
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {supplier.isVerified && (
-              <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold tracking-widest text-[9px] uppercase flex items-center gap-1.5">
-                <CheckCircle2 size={10} /> Verified
+  return (
+    <div className="discovery-card-list flex-col !p-0 isolate overflow-hidden relative h-full">
+      <div className="px-5 py-4 border-b border-brand-inputBorder flex items-center gap-2 w-full">
+        <Box size={14} className="text-[#FF5900]" />
+        <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected Supplier</span>
+      </div>
+      <div className="p-4 sm:p-2 w-full text-brand-textPrimary h-full flex flex-col">
+        <div className="flex flex-col sm:flex-row gap-5 mb-6">
+          <div className="product-img-wrapper-list !w-24 !h-24 mx-auto sm:mx-0 shrink-0 bg-white shadow-sm border border-brand-inputBorder">
+            <img src={image} alt={name} className="w-full h-full object-cover p-2" />
+          </div>
+          <div className="flex-1 flex flex-col justify-center">
+            <h3 className="product-card-title mb-4 lg:max-w-[450px] leading-tight text-[16px] font-semibold" title={name}>
+              {name || "Alibaba Sourcing Partner"}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {isVerified && (
+                <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
+                  <CheckCircle size={10} /> Verified
+                </div>
+              )}
+              {tradeAssurance && (
+                <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
+                  <ShieldCheck size={10} /> Trade Assurance
+                </div>
+              )}
+              {isGold && (
+                <div className="brand-tag text-brand-textPrimary dark:text-[#FFFFFF] border-[#8B5CF64D] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase bg-[#0826560D] dark:bg-gradient-to-r dark:from-[rgba(255,89,0,0.2)] dark:to-[rgba(255,0,230,0.2)]">
+                  <Award size={10} /> Gold
+                </div>
+              )}
+              <div className="brand-tag brand-tag-default !px-3 !py-1 flex items-center gap-1.5 font-bold text-[10px]">
+                <Star size={10} fill="#FFC107" className="text-[#FFC107]" /> {rating}
               </div>
-            )}
-            {supplier.TradeAssurance && (
-              <div className="px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 font-bold tracking-widest text-[9px] uppercase flex items-center gap-1.5">
-                <ShieldCheck size={10} /> Trade Assurance
-              </div>
-            )}
-            {supplier.isGoldMember && (
-              <div className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold tracking-widest text-[9px] uppercase flex items-center gap-1.5">
-                <Award size={10} /> Gold
-              </div>
-            )}
-            <div className="px-3 py-1 rounded-full bg-brand-hover dark:bg-white/5 border border-brand-border dark:border-white/10 text-brand-textPrimary dark:text-white font-bold text-[10px] flex items-center gap-1.5">
-              <Star size={10} fill="#FFC107" className="text-[#FFC107]" /> {supplier.rating}
+              {storeAge && (
+                <div className="brand-tag brand-tag-default !px-3 !py-1 flex items-center gap-1.5 font-bold text-[10px]">
+                  <Calendar size={10} /> Store Age: {storeAge}
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Detailed Metrics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8 mt-1 pt-8 border-t border-brand-border dark:border-white/5">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <Zap size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="metric-label">STORE</span>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-2 mt-4 pt-6 border-t border-brand-inputBorder px-2">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <Zap size={14} className="text-brand-textSecondary shrink-0" />
+              <span className="metric-label ">STORE</span>
+            </div>
+            <span className="metric-value">{storeName}</span>
           </div>
-          <span className="metric-value">{supplier.storeName}</span>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="metric-label">CONTACT</span>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <CheckCircle size={14} className="text-brand-textSecondary shrink-0" />
+              <span className="metric-label ">CONTACT</span>
+            </div>
+            <span className="metric-value">{contact}</span>
           </div>
-          <span className="metric-value">{supplier.contact}</span>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <Truck size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="metric-label">MANUFACTURING COST</span>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <Truck size={14} className="text-[#FF5900] shrink-0" />
+              <span className="metric-label ">MANUFACTURING COST</span>
+            </div>
+            <span className="metric-value">{price && !String(price).startsWith('$') ? `$${price}` : price}</span>
           </div>
-          <span className="metric-value">${supplier.price}</span>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <Box size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="metric-label">ITEM ID</span>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <Box size={14} className="text-brand-textSecondary shrink-0" />
+              <span className="metric-label ">ITEM ID</span>
+            </div>
+            <span className="metric-value">{id}</span>
           </div>
-          <span className="metric-value">{supplier.id}</span>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="metric-label">MOQ</span>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <TrendingUp size={14} className="text-brand-textSecondary shrink-0" />
+              <span className="metric-label ">MIN. ORDER QTY</span>
+            </div>
+            <span className="metric-value">{minOrder}</span>
           </div>
-          <span className="metric-value">{supplier.minOrder}</span>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <Info size={14} className="text-brand-textSecondary dark:text-slate-400 shrink-0" />
-            <span className="metric-label">COUNTRY</span>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <Info size={14} className="text-brand-textSecondary shrink-0" />
+              <span className="metric-label ">COUNTRY</span>
+            </div>
+            <span className="metric-value">{country}</span>
           </div>
-          <span className="metric-value">{supplier.country}</span>
         </div>
       </div>
     </div>

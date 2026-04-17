@@ -170,14 +170,14 @@ const ProductVault: React.FC = () => {
           <div className="animate-in fade-in duration-500">
             <div className="mb-10">
               <h1 className="banner-heading-text !text-left !mb-1 text-brand-textPrimary dark:text-white !text-[24px]">Product Vault</h1>
-              <p className="page-header-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary ">Analyze and manage your saved product research</p>
+              <p className="page-header-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary ">Manage your saved product searches and categories</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {isLoadingTotal ? (
                 // Loading Skeletons
                 Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="vault-card h-[280px] animate-pulse bg-brand-hover dark:bg-white/5 rounded-2xl" />
+                  <div key={i} className="vault-card min-h-[230px] animate-pulse bg-brand-hover dark:bg-white/5 rounded-2xl" />
                 ))
               ) : (
                 allCategoriesMerged.map((col: any, idx: number) => (
@@ -199,7 +199,7 @@ const ProductVault: React.FC = () => {
               {/* Add New Collection Card */}
               <div
                 onClick={() => setIsCreateModalOpen(true)}
-                className="group vault-card flex flex-col items-center justify-center gap-3 !min-h-[240px] cursor-pointer bg-brand-card dark:bg-[#04132B] !border-brand-inputBorder shadow-xl shadow-black/5 dark:shadow-none"
+                className="group vault-card flex flex-col items-center justify-center gap-3 !min-h-[230px] cursor-pointer bg-brand-card dark:bg-[#04132B] !border-brand-inputBorder shadow-xl shadow-black/5 dark:shadow-none"
               >
                 <div className="p-4 rounded-full bg-slate-200 dark:bg-white/5 text-brand-primary dark:text-white transition-all group-hover:scale-110 mb-4">
                   <Plus size={34} />

@@ -183,7 +183,7 @@ const ResearchRow = React.memo<{
       </div>
 
       {/* Side-by-Side Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-2">
         <div className="flex flex-col gap-3">
           {isTikTok && normalizedTikTok ? (
             <TrendProductCard
@@ -203,7 +203,7 @@ const ResearchRow = React.memo<{
             />
           )}
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <VaultAlibabaCard
             supplier={normalizedAlibaba}
           />

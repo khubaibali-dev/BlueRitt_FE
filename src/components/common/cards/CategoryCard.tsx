@@ -53,7 +53,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   if (isAllProducts) {
     return (
       <div
-        className="group relative vault-card flex flex-col overflow-hidden !h-auto min-h-[240px] !border-none transition-all duration-300 shadow-md"
+        className="group relative vault-card flex flex-col overflow-hidden min-h-[230px] !border-none transition-all duration-300 shadow-md"
       >
         <div className="grid grid-cols-2 grid-rows-2 flex-1 gap-[2px] bg-brand-bg dark:bg-white/5 p-[2px]">
           {/* Top Left: ALL Badge + Image 1 */}
@@ -82,7 +82,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           <div className="relative overflow-hidden rounded-br-[14px]">
             <img src={FIXED_CATEGORIES[2].image} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-brand-gradient opacity-90 flex items-center justify-center">
-              <span className="text-white text-[22px] font-bold">{productCount || 0}</span>
+              <span className="text-white text-[22px] font-bold">+{productCount || 0}</span>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative vault-card cursor-pointer !h-auto flex flex-col border border-brand-inputBorder rounded-[14px] overflow-hidden`}
+      className={`group relative vault-card cursor-pointer min-h-[230px] flex flex-col border border-brand-inputBorder rounded-[14px] overflow-hidden`}
     >
       {/* Image Section */}
       <div className={`vault-image-box !h-[150px] bg-brand-hover dark:bg-white overflow-hidden ${isFixed ? '' : 'p-4'}`}>
@@ -104,8 +104,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             className={`h-full w-full transition-transform duration-500 group-hover:scale-110 ${isFixed ? 'object-cover' : 'object-contain'}`}
           />
         ) : (
-          <div className="w-12 h-12 bg-brand-hover rounded-full flex items-center justify-center">
-            <Search size={24} className="text-brand-primary/40" />
+          <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-white/5 text-brand-textSecondary opacity-30 group-hover:scale-110 transition-transform duration-500">
+            <Search size={48} />
           </div>
         )}
 
@@ -152,8 +152,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         </div>
       </div>
 
-      <div className="p-4 flex flex-col gap-1 flex-1 bg-brand-card dark:bg-[#04132B]">
-        <h3 className="product-card-title text-[14px] mb-0 text-brand-textPrimary dark:text-white group-hover:text-brand-primary dark:group-hover:text-blue-400 transition-colors uppercase tracking-wider font-bold leading-tight line-clamp-1">
+      <div className="p-4 flex flex-col gap-1 bg-brand-card dark:bg-[#04132B]">
+        <h3 className="product-card-title text-[14px] mb-0 text-brand-textPrimary dark:text-white transition-colors  tracking-wider font-bold leading-tight line-clamp-1">
           {name}
         </h3>
         <span className="text-[13px] font-medium text-brand-textSecondary dark:text-white/70">{productCount || 0} Products</span>

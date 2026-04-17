@@ -90,9 +90,8 @@
   }
 
   /* Explorer Discovery Product Cards */
-  /* Explorer Discovery Product Cards */
   .discovery-card-list {
-    @apply bg-brand-card rounded-[24px] overflow-hidden border border-brand-border flex flex-col sm:flex-row  transition-all shadow-md p-4 sm:p-4 gap-4 sm:items-center border-brand-inputBorder
+    @apply bg-brand-card rounded-[12px] overflow-hidden border border-brand-inputBorder flex flex-col sm:flex-row  transition-all shadow-md p-4 sm:p-4 gap-4 sm:items-center 
   }
 
   .discovery-card-grid {
@@ -157,7 +156,7 @@
   }
 
   .product-old-price-primary {
-    @apply text-brand-textSecondary line-through font-medium opacity-60;
+    @apply metric-label line-through font-medium opacity-60;
   }
 
   .trending-badge-standard {
@@ -190,7 +189,7 @@
   }
 
   .analysis-card-box {
-    @apply bg-brand-card dark:bg-[#04132B] backdrop-blur-xl border border-brand-border dark:border-white/5 rounded-[12px] overflow-hidden;
+    @apply bg-brand-card dark:bg-[#04132B] backdrop-blur-sm border border-brand-inputBorder dark:border-white/5 rounded-[12px] overflow-hidden;
   }
 
   .btn-analysis-view {
@@ -1067,12 +1066,12 @@
 
   .trend-tab-active {
     background: linear-gradient(90.17deg, #101B2B 0%, #101B2B 5%, #4871c7 100%);
-    @apply text-white border-none !important;
+    @apply text-white border border-brand-inputBorder !important;
   }
 
   :root:not(.dark) .trend-tab-active {
     background: #FFFFFF !important;
-    @apply !text-brand-textPrimary shadow-md border border-brand-border !important;
+    @apply !text-brand-textPrimary border border-brand-inputBorder !important;
   }
 
   .upgrade-badge {
@@ -2303,7 +2302,7 @@
 
 /* Main Vault Card (Collection Card & Analysis Info Cards) */
 .vault-card {
-  @apply bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[14px] overflow-hidden transition-all duration-300 shadow-md dark:shadow-none;
+  @apply bg-brand-card dark:bg-[#04132B] border border-brand-inputBorder dark:border-brand-inputBorder rounded-[14px] overflow-hidden transition-all duration-300 shadow-sm dark:shadow-none;
 }
 .vault-card:hover {
   @apply shadow-md transform -translate-y-1 bg-brand-hover dark:bg-[#081421];
@@ -2727,7 +2726,7 @@
 
 /* Product Vault Research Entries */
 .vault-research-entry {
-  @apply relative p-6 sm:p-8 rounded-[24px] transition-all duration-300 bg-brand-card dark:bg-[#04132B] shadow-sm;
+  @apply relative p-6 sm:p-4 rounded-[24px] transition-all duration-300 bg-brand-card dark:bg-[#04132B] shadow-sm;
   backdrop-filter: blur(20px);
 }
 

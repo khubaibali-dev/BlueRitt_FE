@@ -25,11 +25,12 @@ import socialpulseLight from "../../../assets/images/SocialPulse-light.png";
 
 const TikTokTrends: React.FC = () => {
   const navigate = useNavigate();
-  const { data: userDetails } = useUserDetails();
+  const { data: userDetails, refetch: refetchUserDetails } = useUserDetails();
 
   const [activeTab, setActiveTab] = useState("product");
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentSearch, setCurrentSearch] = useState("");
+  const [currentProductSearch, setCurrentProductSearch] = useState("");
+  const [currentHashtagSearch, setCurrentHashtagSearch] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [hasSearchedHashtags, setHasSearchedHashtags] = useState(false);
 
@@ -46,7 +47,8 @@ const TikTokTrends: React.FC = () => {
   const [appliedSortBy, setAppliedSortBy] = useState("post");
   const [sortOrder, setSortOrder] = useState("desc");
   const [appliedSortOrder, setAppliedSortOrder] = useState("desc");
-  const [fetchTrigger, setFetchTrigger] = useState(0);
+  const [productFetchTrigger, setProductFetchTrigger] = useState(0);
+  const [hashtagFetchTrigger, setHashtagFetchTrigger] = useState(0);
 
   // Discovery View States
   const [view, setView] = useState<"list" | "discovery">("list");
@@ -63,13 +65,13 @@ const TikTokTrends: React.FC = () => {
     isLoading: isProductLoading,
     isError: isProductError
   } = useQuery({
-    queryKey: ["tiktokTrendingProducts", activeTab, appliedCountry, appliedPeriod, appliedCategory, appliedSortBy, currentSearch, fetchTrigger],
+    queryKey: ["tiktokTrendingProducts", activeTab, appliedCountry, appliedPeriod, appliedCategory, appliedSortBy, currentProductSearch, productFetchTrigger],
     queryFn: async () => {
       console.log('🚀 Starting 2-Step Sequential Fetch...');
-      
+
       // Step 1: Database Fetch
       const databaseResponse = await getTikTokTrendingProducts({
-        keyword: currentSearch,
+        keyword: currentProductSearch,
         country: appliedCountry,
         last: appliedPeriod,
         category: appliedCategory,
@@ -77,14 +79,14 @@ const TikTokTrends: React.FC = () => {
         order_type: appliedSortOrder,
         limit: 50
       });
-      
+
       console.log('📊 Step 1: DB Data received:', databaseResponse?.data?.products?.length || 0);
 
       const fetchCCPage = async (pageNum: number) => {
         try {
           console.log(`⏳ Fetching Creative Center Page ${pageNum}...`);
           const ccResponse = await getTikTokCreativeCenterProducts({
-            keyword: currentSearch,
+            keyword: currentProductSearch,
             country: appliedCountry,
             last: appliedPeriod,
             category: appliedCategory,
@@ -111,7 +113,7 @@ const TikTokTrends: React.FC = () => {
       console.log('✅ Step 2: CC Data received:', allCCProducts.length);
 
       // Merge results
-      return {
+      const totalResult = {
         ...databaseResponse,
         data: {
           products: databaseResponse?.data?.products || [],
@@ -119,6 +121,11 @@ const TikTokTrends: React.FC = () => {
           total: Math.max(databaseResponse?.data?.products?.length || 0, allCCProducts.length)
         }
       };
+
+      // Refetch user details to update search quotas
+      refetchUserDetails();
+
+      return totalResult;
     },
     enabled: hasSearched && activeTab === "product"
   });
@@ -129,37 +136,51 @@ const TikTokTrends: React.FC = () => {
     isLoading: isHashtagLoading,
     isError: isHashtagError
   } = useQuery({
-    queryKey: ["tiktokTrendingHashtags", appliedCountry, appliedPeriod, appliedCategory, currentSearch, fetchTrigger],
-    queryFn: () => getTikTokTrendingHashtags({
-      country: appliedCountry,
-      period: appliedPeriod,
-      industry_id: appliedCategory,
-      limit: 50,
-      page: 1
-    }),
+    queryKey: ["tiktokTrendingHashtags", appliedCountry, appliedPeriod, appliedCategory, currentHashtagSearch, hashtagFetchTrigger],
+    queryFn: async () => {
+      const response = await getTikTokTrendingHashtags({
+        country: appliedCountry,
+        period: appliedPeriod,
+        industry_id: appliedCategory,
+        keyword: currentHashtagSearch,
+        limit: 50,
+        page: 1
+      });
+
+      // Refetch user details to update search quotas
+      refetchUserDetails();
+
+      return response;
+    },
     enabled: hasSearchedHashtags
   });
 
+  // Refetch user details when search data changes to update metrics
+  React.useEffect(() => {
+    if ((productData?.data?.products || hashtagData?.data?.list)) {
+      refetchUserDetails();
+    }
+  }, [productData, hashtagData, refetchUserDetails]);
 
   const handleSearch = () => {
-    setCurrentSearch(searchQuery);
+    setCurrentProductSearch(searchQuery);
     setHasSearched(true);
     setAppliedCountry(country);
     setAppliedPeriod(period);
     setAppliedCategory(category);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
-    setFetchTrigger(prev => prev + 1);
+    setProductFetchTrigger(prev => prev + 1);
     setSelectedProductForDiscovery(null);
     setDiscoverySuppliers([]);
   };
   const handleSearchhastag = () => {
-    setCurrentSearch(searchQuery);
+    setCurrentHashtagSearch(searchQuery);
     setHasSearchedHashtags(true);
     setAppliedCountry(country);
     setAppliedPeriod(period);
     setAppliedCategory(category);
-    setFetchTrigger(prev => prev + 1);
+    setHashtagFetchTrigger(prev => prev + 1);
     setSelectedProductForDiscovery(null);
     setDiscoverySuppliers([]);
   };
@@ -170,7 +191,8 @@ const TikTokTrends: React.FC = () => {
     setAppliedCategory(category);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
-    setFetchTrigger(prev => prev + 1);
+    setProductFetchTrigger(prev => prev + 1);
+    setHashtagFetchTrigger(prev => prev + 1);
   };
 
   const handleClearFilters = () => {
@@ -184,7 +206,8 @@ const TikTokTrends: React.FC = () => {
     setAppliedCategory("");
     setAppliedSortBy("post");
     setAppliedSortOrder("desc");
-    setFetchTrigger(prev => prev + 1);
+    setProductFetchTrigger(prev => prev + 1);
+    setHashtagFetchTrigger(prev => prev + 1);
   };
 
   const handleDiscoverSupplier = async (product: any) => {
@@ -225,6 +248,7 @@ const TikTokTrends: React.FC = () => {
       const suppliers = response.data?.data?.suppliers || response.data?.suppliers || [];
       setDiscoverySuppliers(suppliers);
       setView("discovery");
+      refetchUserDetails();
     } catch (error) {
       console.error("Discovery error:", error);
     } finally {
@@ -232,6 +256,7 @@ const TikTokTrends: React.FC = () => {
       setIsDetailedLoading(false);
     }
   };
+
 
   return (
     <div className={`bg-brand-card-alt rounded-[32px] relative transition-all duration-500 ${isAnalyzing ? 'h-[600px] overflow-hidden' : 'min-h-[600px] overflow-visible'}`}>
@@ -264,20 +289,22 @@ const TikTokTrends: React.FC = () => {
           onTabChange={(tab) => {
             setActiveTab(tab);
             setSearchQuery("");
-            setCurrentSearch("");
+            setCurrentProductSearch("");
+            setCurrentHashtagSearch("");
             setHasSearched(false);
           }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSearch={handleSearch}
           hasSearched={hasSearched}
+          searchDisabled={searchQuery.trim().length < 3}
           tabs={[
             { label: "Product Trends", value: "product", icon: "Package" },
           ]}
           metrics={[
             {
-              label: activeTab === "hashtag" ? "Hashtag Trend Searches" : "TikTok Trend Searches",
-              value: userDetails?.search_quota.tiktok_searches?.toString() || "0",
+              label: activeTab === "product" ? "TikTok Trend Searches" : "Hashtag Trend Searches",
+              value: (activeTab === "product" ? userDetails?.search_quota?.tiktok_searches : userDetails?.search_quota?.tiktok_hashtag_search)?.toString() || "0",
               icon: "TrendingUp",
               progress: 100
             },
@@ -382,7 +409,7 @@ const TikTokTrends: React.FC = () => {
                     {/* TITLE + INFO INLINE */}
                     <div className="flex items-center gap-2">
                       <p className="text-[12px] font-medium text-brand-textPrimary tracking-widest">
-                        TikTok Trend Searches
+                        TikTok Hashtags Searches
                       </p>
                       <Info
                         size={16}
@@ -429,44 +456,65 @@ const TikTokTrends: React.FC = () => {
 
                 <button
                   onClick={handleSearchhastag}
-                  className="w-full mt-2 py-4 upgrade-gradient-btn text-white !rounded-[12px] font-black text-[14px] flex items-center justify-center gap-2 hover:opacity-95 transition-all shadow-xl shadow-red-500/20 active:scale-[0.98] tracking-wider"
+                  disabled={!category}
+                  className={`w-full mt-2 py-4 upgrade-gradient-btn text-white !rounded-[12px] font-black text-[14px] flex items-center justify-center gap-2 transition-all shadow-xl active:scale-[0.98] tracking-wider ${!category ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-95 shadow-red-500/20'}`}
                 >
-                  <Sparkles size={18} fill="currentColor" />
-                  {activeTab === "hashtag" ? "Discover Trending Hashtags" : "Discover Trending Products"}
+                  <Sparkles size={18} /> Discover Trending Hashtags
                 </button>
               </div>
 
               {/* Hashtag Results Section */}
-              {hasSearchedHashtags && hashtagData?.data?.list && (
+              {(isHashtagLoading || hasSearchedHashtags) && (
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-right-8 duration-700">
                   {/* Summary Header */}
-                  <div className="px-1 text-[13px] font-medium text-slate-600 dark:text-white leading-relaxed">
-                    <span className="text-brand-primary font-bold">{hashtagData.data.list.length}</span> Hashtags from{" "}
-                    <span className="text-black dark:text-white font-semibold">
-                      {periodOption.find(p => p.value === appliedPeriod)?.label || "Last 120 Days"}
-                    </span>{" "}
-                    of{" "}
-                    <span className="text-black dark:text-white font-semibold">
-                      {countrySelectOptions.find(c => c.value === appliedCountry)?.label || "United States"}
-                    </span>
-                  </div>
+                  {hasSearchedHashtags && !isHashtagLoading && hashtagData?.data?.list && (
+                    <div className="px-1 text-[13px] font-medium text-slate-600 dark:text-white leading-relaxed">
+                      <span className="text-brand-primary font-bold">{hashtagData.data.list.length}</span> Hashtags from{" "}
+                      <span className="text-black dark:text-white font-semibold">
+                        {periodOption.find(p => p.value === appliedPeriod)?.label || "Last 120 Days"}
+                      </span>{" "}
+                      of{" "}
+                      <span className="text-black dark:text-white font-semibold">
+                        {countrySelectOptions.find(c => c.value === appliedCountry)?.label || "United States"}
+                      </span>
+                    </div>
+                  )}
 
-                  {/* Results List */}
-                  <div className="space-y-3 max-h-[280px] overflow-y-auto custom-scrollbar pr-1">
-                    {hashtagData.data.list.map((item: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="bg-brand-card border border-brand-inputBorder rounded-[16px] p-4 flex items-center justify-between group transition-all duration-300 hover:border-brand-primary/30"
-                      >
-                        <h4 className="text-[16px] font-medium dark:text-white transition-colors">
-                          #{item.hashtag_name || item.name || "hashtag"}
-                        </h4>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[12px] font-medium text-[#6291DE]">Rank:</span>
-                          <span className="text-[13px] font-bold text-[#6291DE]">#{item.rank || idx + 1}</span>
+                  {/* Results List or Skeleton */}
+                  <div className="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar pr-1">
+                    {isHashtagLoading ? (
+                      Array.from({ length: 5 }).map((_, idx) => (
+                        <div key={idx} className="bg-brand-card border border-brand-inputBorder rounded-[16px] p-4 skeleton-pulse">
+                          <div className="h-5 bg-brand-primary/10 rounded-md w-3/4 mb-2" />
+                          <div className="h-3 bg-brand-primary/5 rounded w-1/2" />
                         </div>
+                      ))
+                    ) : hashtagData?.data?.list?.length > 0 ? (
+                      hashtagData.data.list.map((item: any, idx: number) => (
+                        <div
+                          key={idx}
+                          className="bg-brand-card border border-brand-inputBorder rounded-[16px] p-4 flex items-center justify-between group transition-all duration-300 hover:border-brand-primary/30"
+                        >
+                          <h4 className="text-[16px] font-medium dark:text-white transition-colors">
+                            #{item.hashtag_name || item.name || "hashtag"}
+                          </h4>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[12px] font-medium text-[#6291DE]">Rank:</span>
+                            <span className="text-[13px] font-bold text-[#6291DE]">#{item.rank || idx + 1}</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-10 px-4 bg-brand-card/30 rounded-2xl border border-dashed border-brand-inputBorder animate-in fade-in zoom-in-95 duration-500">
+                        <div className="w-12 h-12 rounded-full bg-brand-primary/5 flex items-center justify-center mb-3">
+                          <Hash className="text-brand-primary/40" size={24} />
+                        </div>
+                        <h5 className="text-[15px] font-semibold text-brand-textPrimary mb-1 text-center leading-tight">No Trending Hashtags Found</h5>
+                        <p className="text-[12px] text-brand-textSecondary text-center max-w-[200px]">
+                          We couldn't find tags for this search. Try another keyword.
+                        </p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}
@@ -474,7 +522,7 @@ const TikTokTrends: React.FC = () => {
               {/* Bottom Teaser Card */}
               {!hasSearchedHashtags && (
                 <div className="mt-1 pb-2 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  <div className="w-full min-h-[310px] bg-brand-card border border-brand-border rounded-[24px] flex flex-col items-center justify-center p-8 py-12 relative overflow-hidden group cursor-pointer hover:border-brand-primary/30 transition-all duration-700">
+                  <div className="w-full min-h-[310px] bg-brand-card border border-brand-inputBorder rounded-[24px] flex flex-col items-center justify-center p-8 py-12 relative overflow-hidden group cursor-pointer hover:border-brand-primary/30 transition-all duration-700">
                     {/* Background Glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-blue-500/5 blur-[80px] rounded-full group-hover:bg-blue-500/10 transition-colors duration-700 pointer-events-none" />
 
@@ -504,7 +552,7 @@ const TikTokTrends: React.FC = () => {
           renderContent={(tab, searched, openDetails, setProduct) => {
             const isLoading = tab === "product" ? isProductLoading : isHashtagLoading;
             const isError = tab === "product" ? isProductError : isHashtagError;
-            const data = tab === "product" 
+            const data = tab === "product"
               ? ((productData?.data?.list?.length ?? 0) > 0 ? productData?.data?.list : productData?.data?.products)
               : hashtagData?.data?.list;
 

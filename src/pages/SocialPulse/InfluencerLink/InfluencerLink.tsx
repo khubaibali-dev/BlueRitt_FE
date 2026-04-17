@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Search, Info, Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Crown } from "lucide-react";
 import InfluencerHeader from "./components/InfluencerHeader";
-import InfluencerCard from "./components/InfluencerCard";
+import InfluencerCard from "../../../components/common/SpkCards/InfluencerCard";
 import InfluencerDetailsDrawer from "./components/InfluencerDetailsDrawer";
 
 import influencerBanner from "../../../assets/images/tiktoktrends.png";

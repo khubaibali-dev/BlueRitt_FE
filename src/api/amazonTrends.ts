@@ -109,11 +109,23 @@ export interface AmazonDealsResponse {
 export const amazonTrendsSearch = async ({
   query,
   country = 'US',
-  is_prime,
+  page = 1,
+  sort_by = 'RELEVANCE',
+  product_condition = 'ALL',
+  is_prime = false,
+  deals_and_discounts = 'NONE',
+  min_star_rating = 0,
+  max_star_rating = 5,
+  min_reviews = 0,
+  max_reviews = 99999990,
   min_price,
   max_price,
   category,
- 
+  brand,
+  category_id,
+  seller_id,
+  four_stars_and_up = false,
+  language,
 }: {
   query: string;
   country?: string;
@@ -122,6 +134,10 @@ export const amazonTrendsSearch = async ({
   product_condition?: string;
   is_prime?: boolean;
   deals_and_discounts?: string;
+  min_star_rating?: number;
+  max_star_rating?: number;
+  min_reviews?: number;
+  max_reviews?: number;
   min_price?: number;
   max_price?: number;
   brand?: string;
@@ -133,14 +149,15 @@ export const amazonTrendsSearch = async ({
 }): Promise<AmazonTrendsSearchResponse> => {
   const params: any = {
     query,
-    sort_by: "RELEVANCE",
+    sort_by: sort_by || "RELEVANCE",
     country: country || "US",
-    product_condition: "ALL",
-    deals_and_discounts: "NONE",
-    min_star_rating: 0,
-    min_reviews: 0,
-    max_star_rating: 5,
-    max_reviews: 10000000,
+    product_condition: product_condition || "ALL",
+    deals_and_discounts: deals_and_discounts || "NONE",
+    min_star_rating: min_star_rating ?? 0,
+    max_star_rating: max_star_rating ?? 5,
+    min_reviews: min_reviews ?? 0,
+    max_reviews: max_reviews ?? 99999990,
+    page,
   };
 
   if (min_price && min_price > 0) params.min = min_price;
@@ -249,7 +266,13 @@ export const getAmazonTrendsProductsByCategory = async ({
   country = 'US',
   page = 1,
   sort_by = 'RELEVANCE',
+  product_condition = 'NEW',
   is_prime = false,
+  deals_and_discounts = 'NONE',
+  min_star_rating = 0,
+  max_star_rating = 5,
+  min_reviews = 0,
+  max_reviews = 99999990,
   min_price,
   max_price,
   brand,
@@ -262,6 +285,10 @@ export const getAmazonTrendsProductsByCategory = async ({
   product_condition?: string;
   is_prime?: boolean;
   deals_and_discounts?: string;
+  min_star_rating?: number;
+  max_star_rating?: number;
+  min_reviews?: number;
+  max_reviews?: number;
   min_price?: number;
   max_price?: number;
   brand?: string;
@@ -272,12 +299,12 @@ export const getAmazonTrendsProductsByCategory = async ({
     country: country || 'US',
     page,
     sort_by: sort_by || 'RELEVANCE',
-    product_condition: 'NEW',
-    deals_and_discounts: 'NONE',
-    min_star_rating: 0,
-    min_reviews: 0,
-    max_star_rating: 5,
-    max_reviews: 99999990,
+    product_condition: product_condition || 'NEW',
+    deals_and_discounts: deals_and_discounts || 'NONE',
+    min_star_rating: min_star_rating ?? 0,
+    min_reviews: min_reviews ?? 0,
+    max_star_rating: max_star_rating ?? 5,
+    max_reviews: max_reviews ?? 99999990,
     max: 99999990,
     is_prime: (is_prime ?? false).toString(),
     four_stars_and_up: (four_stars_and_up ?? false).toString(),

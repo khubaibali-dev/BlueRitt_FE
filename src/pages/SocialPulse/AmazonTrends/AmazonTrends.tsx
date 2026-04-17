@@ -7,7 +7,7 @@ import AmazonRankedCard from "./components/AmazonRankedCard";
 import AmazonProductDetailsDrawer from "./components/AmazonProductDetailsDrawer";
 import amazonBanner from "../../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../../assets/images/SocialPulse-light.png";
-import { Package, Hash, ChevronRight } from "lucide-react";
+import { Package, Hash, ChevronRight, Search, Sparkles } from "lucide-react";
 import {
   amazonCountryOptions,
   amazonTrendTypeOptions,
@@ -24,6 +24,7 @@ import {
 } from "../../../api/amazonTrends";
 import { getAmazonCategoriesandSubcategories, aliBabaProductMatcher } from "../../../api/product";
 import { useQuery } from "@tanstack/react-query";
+import { useUserDetails } from "../../../hooks/useUserDetails";
 import TrendSkeleton from "../TiktokTrends/components/TrendSkeleton";
 import SupplierSourceLink from "../../Explorer/components/SourceLink/SupplierSourceLink";
 import SourceLinkProfitCalculator from "../../Explorer/components/SourceLink/SourceLinkProfitCalculator";
@@ -31,6 +32,8 @@ import AnalyzingScreen from "../../Explorer/components/Discovery/AnalyzingScreen
 
 const AmazonTrends: React.FC = () => {
   const navigate = useNavigate();
+  const { data: userDetails, refetch: refetchUserDetails } = useUserDetails();
+
   // Filter States
   const [country, setCountry] = useState("US");
   const [marketplace, setMarketplace] = useState("US");
@@ -75,20 +78,33 @@ const AmazonTrends: React.FC = () => {
         results = await getAmazonTrendsBestSellers({
           country: activeCountry,
           category: effectiveCategory || 'amazon-devices', // Default to amazon-devices as requested
-          // Removed type as requested: type: activeTrendType.toUpperCase()
+          type: 'BEST_SELLERS'
         });
       } else if (activeSearchQuery) {
         results = await amazonTrendsSearch({
           query: activeSearchQuery,
           country: activeCountry,
           category: effectiveCategory,
-          sort_by: sortBy
+          sort_by: sortBy === 'default' ? 'RELEVANCE' : sortBy,
+          product_condition: 'ALL',
+          deals_and_discounts: 'NONE',
+          min_star_rating: 0,
+          max_star_rating: 5,
+          min_reviews: 0,
+          max_reviews: 99999990,
+          is_prime: false
         });
       } else if (effectiveCategory) {
         results = await getAmazonTrendsProductsByCategory({
           category_id: effectiveCategory,
           country: activeCountry,
-          sort_by: sortBy === 'default' ? 'RELEVANCE' : sortBy
+          sort_by: sortBy === 'default' ? 'RELEVANCE' : sortBy,
+          product_condition: 'NEW',
+          deals_and_discounts: 'NONE',
+          min_star_rating: 0,
+          min_reviews: 0,
+          max_star_rating: 5,
+          max_reviews: 99999990,
         });
       } else {
         if (activeTrendType === "trending") {
@@ -109,6 +125,9 @@ const AmazonTrends: React.FC = () => {
       const total = (results as any)?.data?.total || (results as any)?.total || 0;
       setTotalResults(total);
 
+      // Refetch user details to update search quotas
+      refetchUserDetails();
+
       // Return the products array
       const products = (results.data as any)?.products || (results.data as any)?.best_sellers || results.data || [];
       return Array.isArray(products) ? products : [];
@@ -117,6 +136,13 @@ const AmazonTrends: React.FC = () => {
   });
 
   const data = searchResponse || [];
+
+  // Refetch user details when search data changes to update metrics
+  React.useEffect(() => {
+    if (data.length > 0) {
+      refetchUserDetails();
+    }
+  }, [data, refetchUserDetails]);
 
   // Fetch Categories from API (Explorer standard)
   const { data: categoriesData } = useQuery({
@@ -173,6 +199,13 @@ const AmazonTrends: React.FC = () => {
   const handleTrendTypeChange = (val: string) => {
     setTrendType(val);
     setSearchQuery("");
+  };
+
+  const handleMarketplaceChange = (val: string) => {
+    setMarketplace(val);
+    if (activeTab === "keyword") {
+      setActiveCountry(val);
+    }
   };
 
   // Handle Search Trigger
@@ -235,6 +268,7 @@ const AmazonTrends: React.FC = () => {
       const suppliers = response.data?.data?.suppliers || response.data?.suppliers || [];
       setDiscoverySuppliers(suppliers);
       setView("discovery");
+      refetchUserDetails();
     } catch (error) {
       console.error("Discovery error:", error);
     } finally {
@@ -292,36 +326,48 @@ const AmazonTrends: React.FC = () => {
   const inlineFilters = (
     <div className="bg-brand-card backdrop-blur-md border border-brand-inputBorder rounded-2xl p-6  animate-in fade-in slide-in-from-top-2 duration-500">
       {activeTab === "product" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <SelectField
-            id="amazon-country"
-            label="Country"
-            value={country}
-            options={amazonCountryOptions}
-            onChange={handleCountryChange}
-          />
-          <SelectField
-            id="amazon-trend-type"
-            label="Trend Type"
-            value={trendType}
-            options={amazonTrendTypeOptions}
-            onChange={handleTrendTypeChange}
-          />
-          <SelectField
-            id="amazon-category"
-            label="Category"
-            value={category}
-            options={categoriesList}
-            onChange={handleCategoryChange}
-          />
-          <div className={category === 'all' ? 'opacity-50 pointer-events-none' : ''}>
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <SelectField
-              id="amazon-subcategory"
-              label="Sub Category"
-              value={subCategory}
-              options={subCategoriesList}
-              onChange={handleSubCategoryChange}
+              id="amazon-country"
+              label="Country"
+              value={country}
+              options={amazonCountryOptions}
+              onChange={handleCountryChange}
             />
+            <SelectField
+              id="amazon-trend-type"
+              label="Trend Type"
+              value={trendType}
+              options={amazonTrendTypeOptions}
+              onChange={handleTrendTypeChange}
+            />
+            <SelectField
+              id="amazon-category"
+              label="Category"
+              value={category}
+              options={categoriesList}
+              onChange={handleCategoryChange}
+            />
+            <div className={category === 'all' ? 'opacity-50 pointer-events-none' : ''}>
+              <SelectField
+                id="amazon-subcategory"
+                label="Sub Category"
+                value={subCategory}
+                options={subCategoriesList}
+                onChange={handleSubCategoryChange}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={handleSearch}
+              disabled={category === "all"}
+              className={`bg-brand-gradient px-6 py-2.5 rounded-xl text-white text-[13px] font-bold flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 ${category === "all" ? 'opacity-70 cursor-not-allowed' : 'hover:brightness-110 shadow-orange-500/20'}`}
+            >
+              <Package size={16} />
+              Discover Trending Products
+            </button>
           </div>
         </div>
       ) : (
@@ -331,7 +377,7 @@ const AmazonTrends: React.FC = () => {
             label="Marketplace"
             value={marketplace}
             options={COUNTRY_OPTIONS.map(c => ({ label: `${c.flag} ${c.name}`, value: c.code }))}
-            onChange={setMarketplace}
+            onChange={handleMarketplaceChange}
           />
         </div>
       )}
@@ -369,6 +415,7 @@ const AmazonTrends: React.FC = () => {
             setActiveTab(tab);
             setSearchQuery("");
             if (tab === 'keyword') {
+              setActiveCountry(marketplace);
               setHasSearched(true); // Automatically trigger search for the second tab
             } else {
               setHasSearched(false);
@@ -380,6 +427,7 @@ const AmazonTrends: React.FC = () => {
           hasSearched={hasSearched}
           showSearchForm={activeTab === "product"}
           showFilterButton={false}
+          searchDisabled={searchQuery.trim().length < 3}
           inlineFilters={inlineFilters}
           sortBy={sortBy}
           onSortByChange={setSortBy}
@@ -389,8 +437,18 @@ const AmazonTrends: React.FC = () => {
             { label: "Turn Trends Profitable", value: "keyword", icon: "Hash", showUpgradeBadge: true },
           ]}
           metrics={[
-            { label: "Amazon Trend Searches", value: "154", icon: "TrendingUp", progress: 100 },
-            { label: "Supplier Discoveries", value: "423", icon: "Store", progress: 100 },
+            {
+              label: "Amazon Trend Searches",
+              value: userDetails?.search_quota.amazon_trends_search?.toString() || "0",
+              icon: "TrendingUp",
+              progress: 100
+            },
+            {
+              label: "Supplier Discoveries",
+              value: userDetails?.search_quota.supplier_discovery?.toString() || "0",
+              icon: "Store",
+              progress: 100
+            },
             { isAddon: true, label: "Add-ons", subtitle: "Purchase or Upgrade Plan", icon: "ShoppingCart", onClick: () => navigate("/addons") },
           ]}
           metricsAction={
@@ -408,8 +466,8 @@ const AmazonTrends: React.FC = () => {
             keyword: "Search for trending Amazon keywords...",
           }}
           searchBtnText={{
-            product: "Discover Trending Products",
-            keyword: "Discover Trending Keywords",
+            product: "Search",
+            keyword: "Search",
           }}
           detailsDrawer={(isOpen, onClose, product) => (
             <AmazonProductDetailsDrawer
@@ -472,7 +530,7 @@ const AmazonTrends: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {sortedData.map((product: any, index: number) => (
                         <AmazonProductCard
-                          key={product.asin || index}
+                          key={`${product.asin || 'no-asin'}-${index}`}
                           title={product.product_title || product.title}
                           image={product.product_photo || product.image}
                           category={product.category || category}
@@ -502,7 +560,7 @@ const AmazonTrends: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {sortedData.map((item: any, index: number) => (
                         <AmazonRankedCard
-                          key={item.asin || index}
+                          key={`${item.asin || 'no-asin'}-${index}`}
                           rank={item.rank || index + 1}
                           title={item.product_title || item.title}
                           price={item.product_price || item.price}

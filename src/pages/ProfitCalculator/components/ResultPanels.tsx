@@ -9,6 +9,8 @@ interface ResultPanelsProps {
   roiPerc: string;
   quantity: string;
   isAdvanced: boolean;
+  hasGrossAccess?: boolean;
+  hasNetAccess?: boolean;
 }
 
 const ResultPanels: React.FC<ResultPanelsProps> = ({
@@ -19,7 +21,9 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
   marginPerc,
   roiPerc,
   quantity,
-  isAdvanced
+  isAdvanced,
+  hasGrossAccess = true,
+  hasNetAccess = true,
 }) => {
   const gradientStyle = { background: "linear-gradient(289.91deg, #155DFC -15.81%, rgba(233, 52, 113, 0.7) 49.09%, #E94424 85.09%)" };
 
@@ -48,16 +52,30 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
         <h3 className="text-[16px] font-medium mb-2 tracking-wide opacity-90">
           {isAdvanced ? "Net Profit per Unit" : "Gross Profit per Unit"}
         </h3>
-        <div className="text-[30px] sm:text-[48px] font-bold tracking-tighter leading-none mb-2 drop-shadow-sm">
+
+        {/* Locked Overlay for Primary Panel */}
+        {((isAdvanced && !hasNetAccess) || (!isAdvanced && !hasGrossAccess)) && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center rounded-[24px] overflow-hidden">
+             <div className="absolute inset-0 bg-[#6462620D] backdrop-blur-[4.8px]"></div>
+             <span className="font-bold text-[18px] text-white tracking-wide relative z-30 drop-shadow-2xl">
+               Upgrade to view this data
+             </span>
+             <div className="absolute top-7 right-7 z-30 drop-shadow-lg">
+                <Lock size={32} stroke="url(#lockIconGradient)" strokeWidth={2.5} className="relative z-10" />
+             </div>
+          </div>
+        )}
+
+        <div className={`text-[30px] sm:text-[48px] font-bold tracking-tighter leading-none mb-2 drop-shadow-sm ${((isAdvanced && !hasNetAccess) || (!isAdvanced && !hasGrossAccess)) ? 'opacity-20 blur-[2px]' : ''}`}>
           ${isAdvanced ? netProfitUnit : grossProfitUnit}
         </div>
-        <div className="text-[13px] font-bold text-white mb-8 tracking-wide">
+        <div className={`text-[13px] font-bold text-white mb-8 tracking-wide ${((isAdvanced && !hasNetAccess) || (!isAdvanced && !hasGrossAccess)) ? 'opacity-20 blur-[2px]' : ''}`}>
           Total: ${isAdvanced ? totalNetProfit : totalGrossProfit} <span className="mx-1.5 opacity-60">•</span> {quantity} units
         </div>
 
         <div className="flex gap-4">
           {/* Margin Box */}
-          <div className="flex-1 bg-white/10 rounded-[18px] p-4 border border-white/20 backdrop-blur-md flex flex-col gap-1.5 items-start">
+          <div className={`flex-1 bg-white/10 rounded-[18px] p-4 border border-white/20 backdrop-blur-md flex flex-col gap-1.5 items-start ${((isAdvanced && !hasNetAccess) || (!isAdvanced && !hasGrossAccess)) ? 'opacity-20 blur-[1px]' : ''}`}>
             <div className="flex items-center gap-1.5 opacity-80">
               <Percent size={12} strokeWidth={2.5} />
               <span className="text-[10px] uppercase tracking-[0.15em] font-bold">Margin</span>
@@ -65,7 +83,7 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
             <span className="text-[22px] font-bold tracking-tight leading-none">{marginPerc}%</span>
           </div>
           {/* ROI Box */}
-          <div className="flex-1 bg-white/10 rounded-[18px] p-4 border border-white/20 backdrop-blur-md flex flex-col gap-1.5 items-start">
+          <div className={`flex-1 bg-white/10 rounded-[18px] p-4 border border-white/20 backdrop-blur-md flex flex-col gap-1.5 items-start ${((isAdvanced && !hasNetAccess) || (!isAdvanced && !hasGrossAccess)) ? 'opacity-20 blur-[1px]' : ''}`}>
             <div className="flex items-center gap-1.5 opacity-80">
               <TrendingUp size={12} strokeWidth={2.5} />
               <span className="text-[10px] uppercase tracking-[0.15em] font-bold">ROI</span>
@@ -93,8 +111,8 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
         className="w-full rounded-[24px] p-7 text-white relative overflow-hidden transition-all flex flex-col min-h-[220px]"
         style={gradientStyle}
       >
-        {/* Locked Overlay */}
-        {!isAdvanced && (
+        {/* Locked Overlay for Secondary Panel */}
+        {((isAdvanced && !hasGrossAccess) || (!isAdvanced && !hasNetAccess)) && (
           <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center rounded-[24px] overflow-hidden">
             <div
               className="absolute inset-0 transition-all opacity-100 rounded-[24px]"
@@ -106,17 +124,15 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
               Upgrade to view this data
             </span>
 
-            {/* Top Right Lock Icon (No BG, Gradient Color) */}
+            {/* Top Right Lock Icon */}
             <div className="absolute top-7 right-7 z-30 drop-shadow-lg">
               <Lock size={32} stroke="url(#lockIconGradient)" strokeWidth={2.5} className="relative z-10" />
-              {/* Subtle outer glow for the icon to pop on colorful background */}
-              <div className="absolute inset-0 blur-xl scale-125 opacity-30 bg-white invisible group-hover:visible"></div>
             </div>
           </div>
         )}
 
         {/* Content (Mirrors Primary Panel) */}
-        <div className={!isAdvanced ? "opacity-40 pointer-events-none" : ""}>
+        <div className={((isAdvanced && !hasGrossAccess) || (!isAdvanced && !hasNetAccess)) ? "opacity-20 blur-[2px] pointer-events-none" : ""}>
           <h3 className="text-[16px] font-medium mb-2 tracking-wide opacity-80">
             {isAdvanced ? "Gross Profit per Unit" : "Net Profit per Unit"}
           </h3>

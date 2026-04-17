@@ -27,7 +27,7 @@ const InfluencerCard: React.FC<InfluencerCardProps> = ({
   onViewDetails
 }) => {
   return (
-    <div className="bg-white dark:bg-[#04132B] border border-brand-border dark:border-brand-border rounded-[24px] p-4 flex flex-col gap-8 hover:border-brand-primary dark:hover:border-blue-500/30 transition-all duration-300 group shadow-md">
+    <div className="bg-white dark:bg-[#04132B] border border-brand-inputBorder dark:border-brand-inputBorder rounded-[24px] p-4 flex flex-col gap-8  transition-all duration-300 group ">
 
       {/* 1. Profile Section */}
       <div className="flex items-start justify-between">

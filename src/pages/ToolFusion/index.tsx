@@ -61,7 +61,7 @@ const ToolFusionPage: React.FC = () => {
         {/* Blueritt Tools Section */}
         <div className="tool-section">
           <div className="tool-section-header">
-            <h3 className="dashboard-card-title">Blueritt Tools</h3>
+            <h3 className="dashboard-card-title">BlueRitt Tools</h3>
             <span className="tool-section-count">{BLUERITT_TOOLS.length} tools currently in use</span>
           </div>
           <div className="tool-list">

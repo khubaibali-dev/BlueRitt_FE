@@ -19,6 +19,7 @@ import { searchAmazonExplorerProducts, getAmazonExplorerProductsByCategory, getA
 import { getAmazonSearchInsights, getAmazonCategoriesandSubcategories, aliBabaProductMatcher } from "../../../../api/product";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "../../../../components/common/Toast/ToastContext";
+import { useUserDetails } from "../../../../hooks/useUserDetails";
 
 interface DiscoveryResultsProps {
    onBack: () => void;
@@ -41,12 +42,13 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
    const location = useLocation();
    const navigate = useNavigate();
+   const { data: userDetails, refetch: refetchUserDetails } = useUserDetails();
    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
    // Mapping initial country code to name for CountrySelect component
    const initialCountryObj = countries.find(c => c.code.toUpperCase() === initialCountry?.toUpperCase()) || countries.find(c => c.code.toUpperCase() === "US") || countries[0];
    const [countryName, setCountryName] = useState(initialCountryObj.name);
-   const [activeCountryCode, setActiveCountryCode] = useState(initialCountryObj.code);
+   const [activeCountryCode, setActiveCountryCode] = useState(initialCountryObj.code.toUpperCase());
 
    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
    const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -195,13 +197,13 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       queryKey: ["amazon-product-insights", activeSearchQuery, activeCountryCode, filters, activeSearchType, activeCategoryId],
       queryFn: () => getAmazonSearchInsights({
          searchString: activeSearchQuery || "",
-         country: activeCountryCode || "US",
-         minPrice: filters.min_price || 0,
-         maxPrice: filters.max_price || 99999990,
-         minStarRating: filters.min_star_rating || 0,
-         maxStarRating: filters.max_star_rating || 5,
-         minNumOfRating: filters.min_reviews || 0,
-         maxNumOfRating: filters.max_reviews || 99999990,
+         country: activeCountryCode,
+         minPrice: filters.min_price,
+         maxPrice: filters.max_price,
+         minStarRating: filters.min_star_rating,
+         maxStarRating: filters.max_star_rating,
+         minNumOfRating: filters.min_reviews,
+         maxNumOfRating: filters.max_reviews,
          categoryId: activeSearchType === "category" ? (activeCategoryId || undefined) : undefined,
          isAmazonChoice: filters.is_amazon_choice,
       }),
@@ -213,6 +215,19 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       queryFn: () => getAmazonCategoriesandSubcategories(activeCountryCode || "US"),
       staleTime: 1000 * 60 * 60 * 24,
    });
+
+   // ✅ Refetch user quotas after search or discovery
+   useEffect(() => {
+      if (searchResponse?.data) {
+         refetchUserDetails();
+      }
+   }, [searchResponse?.data, refetchUserDetails]);
+
+   useEffect(() => {
+      if (showSourceLink) {
+         refetchUserDetails();
+      }
+   }, [showSourceLink, refetchUserDetails]);
 
    const categoriesList = useMemo(() => {
       if (!categoriesAndSubcategoriesData?.data?.res) return [];
@@ -390,6 +405,10 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
    const { currentUser } = useAuth();
 
+   // Use real-time quota data from useUserDetails if available
+   const currentQuota = userDetails?.search_quota || currentUser?.searchQuota;
+   // const currentFeatures = userDetails?.features || currentUser?.features;
+
    // Real Insights from API - now pre-formatted from backend
    const insights = insightsResponse?.data?.metrics;
 
@@ -432,8 +451,8 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    }
 
    const stats = [
-      { icon: Search, label: "Product Searches", value: (currentUser.searchQuota?.amazon_search || 0).toLocaleString() },
-      { icon: ShoppingBag, label: "Supplier Discoveries", value: (currentUser.searchQuota?.supplier_discovery || 0).toLocaleString() },
+      { icon: Search, label: "Product Searches", value: (currentQuota?.amazon_search || 0).toLocaleString() },
+      { icon: ShoppingBag, label: "Supplier Discoveries", value: (currentQuota?.supplier_discovery || 0).toLocaleString() },
       {
          icon: ShoppingCart,
          label: "Add-ons",
@@ -480,7 +499,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                      value={countryName}
                      onChange={(c) => {
                         setCountryName(c.name);
-                        setActiveCountryCode(c.code);
+                        setActiveCountryCode(c.code.toUpperCase());
                      }}
                   />
                </div>

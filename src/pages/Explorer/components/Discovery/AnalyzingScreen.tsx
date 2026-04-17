@@ -1,7 +1,7 @@
 import React from "react";
 import badgeImg from "../../../../assets/images/Badge.png";
 import explorerLoading from "../../../../assets/images/ExplorerLoading.png";
-// import starImg from "../../../../assets/images/star.png";
+import starImg from "../../../../assets/images/star.png";
 // import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
 import LoadingPage from "../../../Testing/LoadingPage";
 
@@ -10,9 +10,9 @@ interface AnalyzingScreenProps {
   isLoading?: boolean;
 }
 
-const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({ 
+const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({
   isDetailed = false,
-  isLoading = true 
+  isLoading = true
 }) => {
   return (
     <div className="absolute inset-0 z-[50] flex flex-col items-center justify-center overflow-hidden rounded-[32px] animate-in fade-in duration-700 bg-brand-card-alt">
@@ -32,10 +32,19 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({
 
       <div className="relative z-10 flex flex-col items-center text-center space-y-12 w-full max-w-2xl px-6">
         {!isDetailed ? (
-          <div className="space-y-4">
-            <h2 className="text-[28px] sm:text-[32px] text-brand-textPrimary tracking-tight font-semibold italic leading-snug">
+          <div className="space-y-4 flex flex-col items-center">
+            <h2 className="text-[28px] sm:text-[32px] text-brand-textPrimary tracking-tight font-normal italic leading-snug">
               Analyzing your search with AI...
             </h2>
+            {/* Scanning Trends Pill */}
+            <div
+              className="w-fit bg-brand-inputBg text-brand-textPrimary px-8 py-3 !rounded-full text-xs font-semibold transition-all tracking-[0.2em] relative flex items-center gap-2 active:scale-95 figma-pill-border"
+            >
+              <img src={starImg} alt="" className="w-5 h-5 object-contain" />
+              <span className="text-[14px] font-medium tracking-wide">
+                Scanning trends....
+              </span>
+            </div>
           </div>
         ) : (
           /* New Detailed Progress Loader */
@@ -46,15 +55,7 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({
         )}
 
 
-        {/* Scanning Trends Pill */}
-        {/* <div
-          className="w-fit bg-brand-inputBg text-brand-textPrimary px-8 py-3 !rounded-full text-xs font-semibold shadow-xl transition-all tracking-[0.2em] relative flex items-center gap-2 active:scale-95 figma-pill-border"
-        >
-          <img src={starImg} alt="" className="w-5 h-5 object-contain" />
-          <span className="text-[14px] font-medium tracking-wide">
-            Scanning trends....
-          </span>
-        </div> */}
+
       </div>
     </div>
   );

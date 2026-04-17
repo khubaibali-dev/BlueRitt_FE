@@ -179,7 +179,8 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
       case "cost_high":
         return sorted.sort((a, b) => parsePriceRange(b.price) - parsePriceRange(a.price));
       default:
-        return sorted;
+        // Default to sorting by AI Match Score descending
+        return sorted.sort((a, b) => (parseFloat(b.ai_match_score) || 0) - (parseFloat(a.ai_match_score) || 0));
     }
   }, [suppliers, sortBy]);
 

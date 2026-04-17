@@ -19,6 +19,7 @@ const AmazonTrendsPage = lazy(() => import("../pages/SocialPulse/AmazonTrends/Am
 const InfluencerLinkPage = lazy(() => import("../pages/SocialPulse/InfluencerLink/InfluencerLink"));
 const ForgotPasswordPage = lazy(() => import("../pages/UserAuth/ForgotPassword"));
 const ProductAnalysisPage = lazy(() => import("../pages/ProductVault/components/ProductAnalysis"));
+const ViewCalculationPage = lazy(() => import("../pages/Explorer/components/SourceLink/SourceLinkProfitCalculator"));
 const LoadingPage = lazy(() => import("../pages/Testing/LoadingPage"));
 
 type RouteType = {
@@ -135,6 +136,12 @@ const routes: RouteType[] = [
   {
     path: "/calculator/product/:id",
     element: ProductAnalysisPage,
+    layout: DashboardLayout,
+    isProtected: true,
+  },
+  {
+    path: "/calculator/calculations/:id",
+    element: ViewCalculationPage,
     layout: DashboardLayout,
     isProtected: true,
   },

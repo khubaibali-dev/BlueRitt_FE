@@ -47,7 +47,7 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
     : rev.review_comment;
 
   return (
-    <div className="bg-brand-card-alt border border-brand-border rounded-xl p-6">
+    <div className="bg-brand-card-alt border border-brand-inputBorder rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-brand-card flex items-center justify-center overflow-hidden border border-brand-border">
@@ -146,12 +146,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
     offer.seller && offer.seller.toLowerCase().includes("amazon")
   );
 
-  if (!displayProduct) return null;
-
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
-
   const tagsToDisplay = useMemo(() => {
     // Priority 1: Use tags from detailed API if available
     if (details) {
@@ -162,10 +156,17 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
       if (details.climate_pledge_friendly) tags.push("Climate Friendly");
       if (tags.length > 0) return tags;
     }
-    
+
     // Priority 2: Fallback to initial product tags
     return displayProduct?.tags || [];
   }, [details, displayProduct]);
+
+  if (!displayProduct) return null;
+
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
+
 
   return createPortal(
     <>
@@ -343,7 +344,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 </div>
                 <div className="space-y-3 mb-10">
                   {['About Product', 'Product Information', 'Product Details'].map((section) => (
-                    <div key={section} className="border border-brand-border rounded-xl overflow-hidden bg-brand-card-alt">
+                    <div key={section} className="border border-brand-inputBorder rounded-xl overflow-hidden bg-brand-card-alt">
                       <button
                         onClick={() => toggleSection(section)}
                         className="w-full flex items-center justify-between p-4 text-[14px] font-bold text-brand-textPrimary hover:bg-brand-hover transition-colors"
@@ -417,7 +418,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           {activeTab === 'Reviews' && (
             isReviewsLoading ? <ReviewsSkeleton /> : (
               <div className="space-y-6">
-                <div className="bg-brand-card-alt border border-brand-border rounded-2xl p-6">
+                <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-6">
                   <div className="flex justify-between items-end mb-6">
                     <div>
                       <h3 className="text-brand-textPrimary font-bold text-[18px] mb-1">Customer Reviews</h3>
@@ -500,8 +501,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           {activeTab === 'Offers' && (
             isDetailsLoading ? <OffersSkeleton /> : (
               <div className="space-y-6">
-                <div className="bg-brand-card-alt border border-brand-border rounded-2xl p-6">
-                  <div className="flex justify-between items-center">
+                <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-6">
+                  <div className="flex justify-between items-center ">
                     <div>
                       <h3 className="text-brand-textPrimary font-bold text-[18px] mb-1">Available Offers</h3>
                       <p className="text-brand-textSecondary text-[13px]">Compare prices from different sellers</p>
@@ -518,7 +519,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 <div className="space-y-4">
                   {offers.length > 0 ? (
                     offers.map((offer, idx) => (
-                      <div key={idx} className="bg-brand-card-alt border border-brand-border rounded-xl p-6">
+                      <div key={idx} className="bg-brand-card-alt border border-brand-inputBorder rounded-xl p-6">
                         <div className="grid grid-cols-2 gap-y-6 gap-x-12">
                           {/* Column 1 */}
                           <div className="flex flex-col gap-6">

@@ -13,7 +13,7 @@ interface SaveToVaultModalProps {
   onClose: () => void;
 }
 
-const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ calculatorData, onClose }) => {
+const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calculatorData, onClose }) => {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
@@ -24,44 +24,98 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ calculatorData, onC
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ type: "success" | "error"; title: string; message: string } | null>(null);
 
-  const FIXED_CATEGORIES = [
-    { id: "fixed-1", name: "Electronics", product_count: 12 },
-    { id: "fixed-2", name: "Clothing", product_count: 8 },
-    { id: "fixed-3", name: "Home", product_count: 5 },
-    { id: "fixed-4", name: "Beauty", product_count: 10 },
-    { id: "fixed-5", name: "Sports", product_count: 6 },
-  ];
-  const allCategories = [...FIXED_CATEGORIES, ...(categories || [])];
+
+  const allCategories = [...(categories || [])];
+
+  const fetchCategories = async () => {
+    try {
+      setIsLoading(true);
+      const categoryRes = await getCategory();
+      const categoriesWithCount = await Promise.all(
+        categoryRes.data.map(async (cat: any) => {
+          const res = await getSavedCategoriesDetail({ id: cat.id });
+          return {
+            ...cat,
+            productCount: res?.data?.products?.length || 0,
+          };
+        })
+      );
+      setCategories(categoriesWithCount);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-
-        const categoryRes = await getCategory();
-
-        const categoriesWithCount = await Promise.all(
-          categoryRes.data.map(async (cat: any) => {
-            const res = await getSavedCategoriesDetail({ id: cat.id });
-
-            return {
-              ...cat,
-              productCount: res?.data?.products?.length || 0,
-            };
-          })
-        );
-
-        setCategories(categoriesWithCount);
-
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchCategories();
   }, []);
+
+  const handleCreateCollection = async () => {
+    if (!collectionName.trim()) {
+      setToast({ type: "error", title: "Error", message: "Please enter a collection name." });
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const resp = await createCategory({ name: collectionName });
+      const newCategoryId = resp.data.id;
+
+      // Refresh categories list
+      await fetchCategories();
+
+      // Select the new category and go back to list view
+      setSelectedId(newCategoryId);
+      setIsAddingCollection(false);
+      setCollectionName("");
+
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: `Collection "${collectionName}" created. You can now save your product to it.`,
+      });
+    } catch (error) {
+      console.error("Create collection error:", error);
+      setToast({ type: "error", title: "Failed", message: "Could not create collection. Please try again." });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveToVault = async () => {
+    if (!selectedId) {
+      setToast({ type: "error", title: "Error", message: "Please select a collection." });
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const finalPayload = {
+        ...calculatorData,
+        category: selectedId,
+      };
+
+      await saveProducts(finalPayload);
+
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: "Product saved to ProductVault successfully.",
+      });
+
+      setTimeout(() => {
+        onClose();
+        navigate("/products");
+      }, 2000);
+    } catch (error) {
+      console.error("Save error:", error);
+      setToast({ type: "error", title: "Save Failed", message: "Something went wrong. Please try again." });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -88,7 +142,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ calculatorData, onC
             <X size={20} />
           </button>
         </div>
-        <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">Electric Portable Blender 500ml BPA Free</p>
+        <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">{productTitle}</p>
         <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 
         {/* Content Section */}
@@ -205,58 +259,14 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ calculatorData, onC
           </button>
           <button
             disabled={isSaving}
-            onClick={async () => {
-              try {
-                setIsSaving(true);
-                let categoryId = selectedId;
-
-                if (isAddingCollection) {
-                  if (!collectionName.trim()) {
-                    setToast({ type: "error", title: "Error", message: "Please enter a collection name." });
-                    return;
-                  }
-                  const resp = await createCategory({ name: collectionName });
-                  categoryId = resp.data.id;
-                }
-
-                if (!categoryId) {
-                  setToast({ type: "error", title: "Error", message: "Please select a collection." });
-                  return;
-                }
-
-                const finalPayload = {
-                  ...calculatorData,
-                  category: categoryId,
-                };
-
-                await saveProducts(finalPayload);
-
-                setToast({
-                  type: "success",
-                  title: "Success!",
-                  message: isAddingCollection
-                    ? `Collection "${collectionName}" created and product saved.`
-                    : "Product saved to ProductVault successfully.",
-                });
-
-                setTimeout(() => {
-                  onClose();
-                  navigate("/products");
-                }, 2000);
-              } catch (error) {
-                console.error("Save error:", error);
-                setToast({ type: "error", title: "Save Failed", message: "Something went wrong. Please try again." });
-              } finally {
-                setIsSaving(false);
-              }
-            }}
+            onClick={isAddingCollection ? handleCreateCollection : handleSaveToVault}
             className={`flex-1 py-2.5 px-6 rounded-full text-[13px] font-bold text-white transition-all shadow-xl active:scale-[0.98] flex items-center justify-center gap-2
               ${isAddingCollection
                 ? "bg-brand-gradient shadow-red-900/20"
                 : "bg-brand-gradient shadow-orange-500/20"} ${isSaving ? "opacity-70 cursor-not-allowed" : "hover:brightness-110"}`}
           >
             {isSaving && <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-            {isAddingCollection ? (isSaving ? "Creating..." : "Create & Save") : (isSaving ? "Saving..." : "Save to Collection")}
+            {isAddingCollection ? (isSaving ? "Creating..." : "Create Collection") : (isSaving ? "Saving..." : "Save to Collection")}
           </button>
         </div>
       </div>

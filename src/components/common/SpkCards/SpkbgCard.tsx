@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, TrendingUp, Box, DollarSign, BarChart3, ExternalLink, Truck } from "lucide-react";
+import { Star, TrendingUp, Box, DollarSign, BarChart3, ExternalLink, Truck, PercentIcon } from "lucide-react";
 
 export interface SpkbgCardData {
   title: string;
@@ -199,7 +199,7 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
   // Variant: SELECTED
   return (
     <div className="discovery-card-list flex-col !p-0 isolate">
-      <div className="px-5 py-4 border-b border-brand-border flex items-center gap-2 w-full">
+      <div className="px-5 py-4 border-b border-brand-inputBorder flex items-center gap-2 w-full">
         <Box size={14} className="text-[#FF5900]" />
         <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected Product</span>
       </div>
@@ -210,24 +210,24 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
           </div>
           <div className={`flex-1 w-full flex flex-col ${isCalculator ? 'gap-3' : 'gap-4'}`}>
             <div className="flex flex-col lg:flex-row justify-between items-start gap-2 mt-1">
-              <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[600px] text-center lg:text-left">{title}</h3>
+              <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[600px] text-center lg:text-left" title={title}>{title}</h3>
               <div className="flex items-baseline gap-2 shrink-0 self-center lg:self-auto">
                 <span className="product-old-price-primary text-[14px]">${oldPrice}</span>
                 <span className="product-price-primary text-[22px]">${price}</span>
               </div>
             </div>
             <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-start lg:justify-between">
-              <div className="product-metrics-row-list !mt-0 !gap-x-4 !gap-y-3 flex-wrap">
+              <div className="product-metrics-row-list !mt-0 !gap-x-4 !gap-y-2 flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-brand-primary dark:text-white" /></div>
-                  <div className="flex flex-col"><span className="metric-label mb-1">Asin</span><span className="metric-value">{asin}</span></div>
+                  <div className="flex flex-col"><span className="metric-label">Asin</span><span className="metric-value">{asin}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-brand-primary dark:text-white"><TrendingUp size={15} /></div>
-                  <div className="flex flex-col"><span className="metric-label mb-1">Monthly Sales Volume</span><span className="metric-value">{salesVol}</span></div>
+                  <div className="flex flex-col"><span className="metric-label">Monthly Sales Volume</span><span className="metric-value">{salesVol}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white font-bold text-[14px] leading-none">%</span></div>
+                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white"><PercentIcon size={15} /></span></div>
                   <div className="flex flex-col"><span className="metric-label leading-none mb-1">Offers</span><span className="metric-value leading-none">{offers}</span></div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -245,16 +245,19 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-end gap-2">
-                    <div className="flex items-end gap-0.5">
+                  <div className="flex items-end gap-1 ml-[60px]">
+                    <div className="flex items-center gap-0.5 bg-brand-card-alt px-2 py-1 rounded-full shrink-0 border border-brand-inputBorder">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} size={12} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
                       ))}
+                      <span className="text-[12px] font-bold text-brand-textPrimary leading-none">{rating}</span>
                     </div>
-                    <span className="text-[12px] font-bold text-brand-textPrimary leading-none">{rating}</span>
-                    <span className="text-[14px] text-brand-textSecondary font-bold">({numRatings})</span>
                   </div>
+
                 </div>
+                <span className="metric-label ">Rating Count <br />
+                  <span className="metric-value">({numRatings})</span>
+                </span>
               </div>
             </div>
           </div>

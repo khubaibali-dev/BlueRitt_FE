@@ -351,12 +351,14 @@ export const getTikTokTrendingHashtags = async ({
   industry_id = '',
   limit = 20,
   page = 1,
+  keyword = '',
 }: {
   country?: string;
   period?: string;
   industry_id?: string;
   limit?: number;
   page?: number;
+  keyword?: string;
 } = {}): Promise<any> => {
   const params: any = {
     country,
@@ -366,6 +368,7 @@ export const getTikTokTrendingHashtags = async ({
     sort_by: 'popular',
   };
   if (industry_id) params.industry_id = industry_id;
+  if (keyword) params.keyword = keyword;
 
   const response = await api.get('/products/tiktok-trends/hashtags/', { params });
   return response.data;

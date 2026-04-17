@@ -30,55 +30,42 @@ const _mapQueryParams = ({
   searchString?: string;
   category?: string;
   categoryId?: string;
-  maxPrice: number;
-  minPrice: number;
-  maxStarRating: number;
-  minStarRating: number;
-  maxNumOfRating: number;
-  minNumOfRating: number;
+  maxPrice?: number;
+  minPrice?: number;
+  maxStarRating?: number;
+  minStarRating?: number;
+  maxNumOfRating?: number;
+  minNumOfRating?: number;
   isPrime?: boolean;
   country: string;
   isAmazonChoice?: boolean;
 }) => {
-  let params: any = {
+  const params: any = {
     sort_by: "RELEVANCE",
-    country: "US",
-
+    country: country || "US",
     product_condition: "ALL",
     deals_and_discounts: "NONE",
-
-    min_star_rating: 0,
-    min_reviews: 0,
-
-    max_star_rating: 5,
-    max_reviews: 99999990,
+    min_star_rating: minStarRating ?? 0,
+    max_star_rating: maxStarRating ?? 5,
+    min_reviews: minNumOfRating ?? 0,
+    max_reviews: maxNumOfRating ?? 99999990,
   };
-  if (categoryId) {
-    params.category_id = categoryId;
-  }
+
   if (searchString) {
     params.query = searchString;
   }
-  if (maxPrice && maxPrice !== Infinity) {
-    params.max = maxPrice;
+  
+  if (categoryId) {
+    params.category_id = categoryId;
+    // For category search, condition defaults to NEW in DiscoveryResults, 
+    // but here we align with what the search API sends.
   }
-  if (minPrice) {
+
+  if (minPrice !== undefined) {
     params.min = minPrice;
   }
-  if (country) {
-    params.country = country;
-  }
-  if (maxNumOfRating) {
-    params.max_reviews = maxNumOfRating;
-  }
-  if (minNumOfRating) {
-    params.min_reviews = minNumOfRating;
-  }
-  if (maxStarRating) {
-    params.max_star_rating = maxStarRating;
-  }
-  if (minStarRating) {
-    params.min_star_rating = minStarRating;
+  if (maxPrice !== undefined) {
+    params.max = maxPrice;
   }
   if (isAmazonChoice !== undefined) {
     params.is_amazon_choice = isAmazonChoice;
@@ -89,52 +76,10 @@ const _mapQueryParams = ({
   if (category) {
     params.category = category;
   }
-  
-  if (categoryId) {
-     params = {
-      category_id: categoryId,
-      sort_by: "RELEVANCE",
-      country: country,
-      product_condition: "ALL",
-      deals_and_discounts: "NONE",
-      min_star_rating: minStarRating,
-      min_reviews: minNumOfRating,
-      max_star_rating: maxStarRating,
-      max_reviews: 99999990,
-      is_amazon_choice: isAmazonChoice,
-    };
-  
-    if (maxPrice && maxPrice !== Infinity) {
-      params.max = maxPrice;
-    }
-    if (minPrice) {
-      params.min = minPrice;
-    }
-    if (country) {
-      params.country = country;
-    }
-    if (maxNumOfRating) {
-      params.max_reviews = maxNumOfRating;
-    }
-    if (minNumOfRating) {
-      params.min_reviews = minNumOfRating;
-    }
-    if (maxStarRating) {
-      params.max_star_rating = maxStarRating;
-    }
-    if (minStarRating) {
-      params.min_star_rating = minStarRating;
-    }
-    if (isAmazonChoice !== undefined) {
-      params.is_amazon_choice = isAmazonChoice;
-    }
-    if (isPrime !== undefined) {
-      params.is_prime = isPrime;
-    }
-    }
 
   return params;
 };
+
 
 const amazonProductSearch = ({
   searchString,
@@ -150,12 +95,12 @@ const amazonProductSearch = ({
   isAmazonChoice,
 }: {
   searchString: string;
-  maxPrice: number;
-  minPrice: number;
-  maxStarRating: number;
-  minStarRating: number;
-  maxNumOfRating: number;
-  minNumOfRating: number;
+  maxPrice?: number;
+  minPrice?: number;
+  maxStarRating?: number;
+  minStarRating?: number;
+  maxNumOfRating?: number;
+  minNumOfRating?: number;
   isPrime?: boolean;
   country: string;
   category?: string;
@@ -225,12 +170,12 @@ const amazonProductSearchByCategory = ({
   isAmazonChoice,
 }: {
   categoryId: string;
-  maxPrice: number;
-  minPrice: number;
-  maxStarRating: number;
-  minStarRating: number;
-  maxNumOfRating: number;
-  minNumOfRating: number;
+  maxPrice?: number;
+  minPrice?: number;
+  maxStarRating?: number;
+  minStarRating?: number;
+  maxNumOfRating?: number;
+  minNumOfRating?: number;
   isPrime?: boolean;
   country: string;
   isAmazonChoice?: boolean;
@@ -330,12 +275,12 @@ const getAmazonSearchInsights = async ({
   categoryId,
 }: {
   searchString: string;
-  maxPrice: number;
-  minPrice: number;
-  maxStarRating: number;
-  minStarRating: number;
-  maxNumOfRating: number;
-  minNumOfRating: number;
+  maxPrice?: number;
+  minPrice?: number;
+  maxStarRating?: number;
+  minStarRating?: number;
+  maxNumOfRating?: number;
+  minNumOfRating?: number;
   isPrime?: boolean;
   country: string;
   category?: string;

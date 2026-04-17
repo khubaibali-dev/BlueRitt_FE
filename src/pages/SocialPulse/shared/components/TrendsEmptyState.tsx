@@ -13,7 +13,7 @@ const TrendsEmptyState: React.FC<TrendsEmptyStateProps> = ({
   Icon = Search
 }) => {
   return (
-    <div className="w-full min-h-[440px] bg-brand-card border border-brand-border rounded-[24px] flex flex-col items-center justify-center p-12 relative overflow-hidden group">
+    <div className="w-full min-h-[440px] bg-brand-card border border-brand-inputBorder rounded-[24px] flex flex-col items-center justify-center p-12 relative overflow-hidden group">
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full group-hover:bg-blue-500/10 transition-colors duration-700 pointer-events-none" />
 

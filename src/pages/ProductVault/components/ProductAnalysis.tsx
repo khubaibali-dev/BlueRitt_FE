@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import bgAnalysis from "../../../assets/images/marginmax.png";
 import bgAnalysisLight from "../../../assets/images/SourceLink-lightbg.png";
 import {
-  Box, Activity, ArrowLeft
+  Box, Activity, ArrowLeft, Eye
 } from "lucide-react";
 import { getSavedProductsDetail } from "../../../api/savedProducts";
 import AnalysisSkeleton from "../../../components/common/Skeletons/AnalysisSkeleton";
@@ -12,6 +12,8 @@ import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProd
 import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import ProductProfitGauges from "./ProductProfitGauges";
 import VaultAlibabaCard from "./VaultAlibabaCard";
+import { useUserDetails } from "../../../hooks/useUserDetails";
+import { Lock } from "lucide-react";
 
 
 const ProductAnalysis: React.FC = () => {
@@ -24,6 +26,12 @@ const ProductAnalysis: React.FC = () => {
     queryFn: () => getSavedProductsDetail({ id: id! }),
     enabled: !!id,
   });
+
+  const { data: userDetails } = useUserDetails();
+  const features = userDetails?.features;
+
+  const hasGrossAccess = features?.access_to_gross_profit ?? true;
+  const hasNetAccess = features?.access_to_net_profit ?? true;
 
   const product = productResponse?.data;
   const amazonData = product?.amazon_product?.data || product?.amazon_product;
@@ -184,7 +192,7 @@ const ProductAnalysis: React.FC = () => {
         <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-brand-card-alt via-brand-card-alt/30 to-transparent" />
       </div>
 
-      <div className="relative z-10 p-6 sm:p-10 flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-[1400px] mx-auto">
+      <div className="relative z-10 p-6 sm:p-6 flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-[1400px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
           <div className="flex flex-col gap-1 w-full md:w-auto">
@@ -214,7 +222,7 @@ const ProductAnalysis: React.FC = () => {
         </div>
 
         {/* Product & Supplier Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 sm:mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8 sm:mb-10">
           <div className="h-full">
             {isTikTok && normalizedTikTok ? (
               <TrendProductCard
@@ -245,47 +253,67 @@ const ProductAnalysis: React.FC = () => {
           netProfitAmount={netProfitAmount}
           grossProfitMargin={grossProfitMargin}
           netProfitMargin={netProfitMargin}
+          hasGrossAccess={hasGrossAccess}
+          hasNetAccess={hasNetAccess}
         />
 
         {/* Calculation History Table */}
         <div className="analysis-card-box mb-6">
-          <div className="p-6 sm:p-6 flex items-center justify-between border-b border-brand-border dark:border-white/5">
+          <div className="p-6 flex items-center justify-between border-b border-brand-border dark:border-white/5 bg-brand-card dark:bg-[#081421]">
             <h2 className="text-[18px] font-black text-brand-textPrimary dark:text-white tracking-tight">Calculation History</h2>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto text-left">
+          <div className="invoice-table-wrapper !max-h-none !bg-transparent !mt-0 !border-none !rounded-none">
+            <table className="invoice-table">
               <thead>
                 <tr>
-                  <th className="analysis-table-th">Sr No.</th>
-                  <th className="analysis-table-th">Product Sourcing Cost</th>
-                  <th className="analysis-table-th">Product Revenue</th>
-                  <th className="analysis-table-th">Gross Profit</th>
-                  <th className="analysis-table-th">Net Profit</th>
-                  <th className="analysis-table-th">Modified At</th>
-                  <th className="analysis-table-th text-center">Action</th>
+                  <th className="invoice-table-th">Sr No.</th>
+                  <th className="invoice-table-th">Product Sourcing Cost</th>
+                  <th className="invoice-table-th">Product Revenue</th>
+                  <th className="invoice-table-th">Gross Profit</th>
+                  <th className="invoice-table-th">Net Profit</th>
+                  <th className="invoice-table-th">Modified At</th>
+                  <th className="invoice-table-th text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-border dark:divide-white/5">
                 {history.length > 0 ? history.map((calc: any, index: number) => (
-                  <tr key={calc.id || index} className="hover:bg-brand-hover dark:hover:bg-white/[0.02] transition-colors">
-                    <td className="analysis-table-td font-medium !text-brand-textSecondary">{index + 1}</td>
-                    <td className="analysis-table-td font-bold">${(calc.product_sourcing_cost || 0).toLocaleString()}</td>
-                    <td className="analysis-table-td font-bold">${(calc.product_revenue || 0).toLocaleString()}</td>
-                    <td className="analysis-table-td font-bold">${(calc.product_gross_profit || 0).toLocaleString()}</td>
-                    <td className="analysis-table-td font-bold">${(calc.product_net_profit || 0).toLocaleString()}</td>
-                    <td className="analysis-table-td font-medium !text-brand-textSecondary">
+                  <tr key={calc.id || index} className="hover:bg-white/5 transition-colors">
+                    <td className="invoice-table-td font-medium !text-brand-textSecondary">{index + 1}</td>
+                    <td className="invoice-table-td font-bold !text-brand-textPrimary dark:!text-white">${(calc.product_sourcing_cost || 0).toLocaleString()}</td>
+                    <td className="invoice-table-td font-bold !text-brand-textPrimary dark:!text-white">${(calc.product_revenue || 0).toLocaleString()}</td>
+                    <td className="invoice-table-td font-bold !text-brand-textPrimary dark:!text-white">
+                      {hasGrossAccess ? `$${(calc.product_gross_profit || 0).toLocaleString()}` : (
+                        <div className="flex items-center gap-1.5 text-slate-400 opacity-60">
+                           <Lock size={12} /> <span className="text-[12px]">Locked</span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="invoice-table-td font-bold !text-brand-textPrimary dark:!text-white">
+                      {hasNetAccess ? `$${(calc.product_net_profit || 0).toLocaleString()}` : (
+                        <div className="flex items-center gap-1.5 text-slate-400 opacity-60">
+                           <Lock size={12} /> <span className="text-[12px]">Locked</span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="invoice-table-td font-medium !text-brand-textSecondary">
                       {new Date(calc.modified_at || calc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="analysis-table-td text-right">
-                      <button className="btn-analysis-view">
-                        View Calculations
-                      </button>
+                    <td className="invoice-table-td text-right">
+                      <div className="flex items-center justify-end gap-2 text-slate-400">
+                        <button
+                          onClick={() => navigate(`/calculator/calculations/${calc.id}`)}
+                          className="px-4 py-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white rounded-full transition-all text-[12px] font-bold"
+                          title="View Details"
+                        >
+                          view Calculation
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={7} className="text-center py-16">
+                    <td colSpan={7} className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center gap-3 opacity-20">
                         <Activity size={40} className="text-brand-textPrimary dark:text-white" />
                         <span className="text-[14px] font-bold text-brand-textPrimary dark:text-white uppercase tracking-widest">No Historical Data</span>
