@@ -228,8 +228,8 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
               className="md:mt-12"
               width="320px"
             >
-              <div className="figma-pill-border w-[32px] h-[32px] md:w-[32px] md:h-[32px] cursor-help transition-all duration-300 hover:scale-110 flex items-center justify-center bg-black/5 dark:bg-transparent">
-                <span className="text-brand-textPrimary text-[18px] md:text-[22px] font-black italic font-serif select-none">
+              <div className="figma-pill-border w-[24px] h-[24px] md:w-[24px] md:h-[24px] cursor-help transition-all duration-300 hover:scale-110 flex items-center justify-center bg-black/5 dark:bg-transparent">
+                <span className="text-brand-textPrimary text-[16px] md:text-[16px] font-black italic font-serif select-none">
                   i
                 </span>
               </div>

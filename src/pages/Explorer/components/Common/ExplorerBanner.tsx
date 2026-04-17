@@ -117,12 +117,12 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
         <h1 className="banner-heading-text !mb-10">
           <span className="inline-flex items-center justify-center gap-2">
             Explore with IntelliScan
-            <Tooltip 
+            <Tooltip
               content="BlueRitt Explorer is your AI-driven flow: discover Amazon products (IntelliScan), match verified Alibaba suppliers with AI Scores (SourceLink), analyze profit (MarginMax), and save your work (ProductVault)."
               width="320px"
             >
-              <div className="flex items-center justify-center shrink-0 rounded-full w-[32px] h-[32px] bg-brand-inputBg backdrop-blur-[10px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
-                <span className="font-serif italic text-brand-textPrimary dark:text-white text-[20px] font-bold leading-none pr-[2px] select-none">i</span>
+              <div className="flex items-center justify-center shrink-0 rounded-full w-[24px] h-[24px] bg-brand-inputBg backdrop-blur-[10px] cursor-pointer hover:bg-brand-hover transition-all z-10 info-icon-border">
+                <span className="font-serif italic text-brand-textPrimary dark:text-white text-[16px] font-bold leading-none pr-[2px] select-none">i</span>
               </div>
             </Tooltip>
           </span>
