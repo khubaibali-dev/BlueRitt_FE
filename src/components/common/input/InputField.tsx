@@ -19,6 +19,7 @@ interface InputFieldProps {
   required?: boolean;
   error?: string;
   readOnly?: boolean;
+  preventScientific?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -39,7 +40,17 @@ const InputField: React.FC<InputFieldProps> = ({
   required = false,
   error = "",
   readOnly = false,
+  preventScientific = false,
 }) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (preventScientific && (e.key === "e" || e.key === "E" || e.key === "+" || e.key === "-")) {
+      e.preventDefault();
+    }
+    if (onKeyDown) {
+      onKeyDown(e);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[6px]">
       {(label || labelRight) && (
@@ -85,7 +96,7 @@ const InputField: React.FC<InputFieldProps> = ({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
-          onKeyDown={onKeyDown}
+          onKeyDown={handleKeyDown}
           onPaste={onPaste}
           autoComplete={autoComplete}
           readOnly={readOnly}

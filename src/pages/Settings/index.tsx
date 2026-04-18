@@ -36,10 +36,10 @@ const SettingsPage: React.FC = () => {
         <ProfileInformation defaultOpen={isProfileOpen} />
         <AdditionalInformation defaultOpen={isProfileOpen} />
         <ChangePassword defaultOpen={isSecurityOpen} />
-        <Subscription defaultOpen={isSubscriptionOpen} />
-        <Invoices defaultOpen={isBillingOpen} />
+        <Subscription defaultOpen={isSubscriptionOpen} scrollIntoViewOnOpen={isSubscriptionOpen} />
+        <Invoices defaultOpen={isBillingOpen} scrollIntoViewOnOpen={isBillingOpen} />
         <AddonsBalanceHistory defaultOpen={isBillingOpen} />
-        <Plans defaultOpen={isPlanOpen} />
+        <Plans defaultOpen={isPlanOpen} scrollIntoViewOnOpen={isPlanOpen} />
       </div>
     </div>
   );

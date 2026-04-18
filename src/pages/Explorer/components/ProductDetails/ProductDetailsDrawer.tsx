@@ -201,7 +201,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           </div>
         </div>
 
-        <div className="mt-4 border-b border-brand-border mx-6" />
+        <div className="mt-4 border-b border-brand-inputBorder mx-6" />
 
         <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
           {activeTab === 'Details' && (
@@ -216,13 +216,13 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                   </div>
                 )}
                 <div className="flex gap-4 mb-6">
-                  <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-border">
+                  <div className="w-28 h-28 rounded-[12px] overflow-hidden shrink-0 border border-brand-inputBorder p-6">
                     <img src={details?.product_photos?.[0] || displayProduct.image} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-col gap-1 mb-2">
                       <h3 className="product-card-title text-[18px] leading-tight line-clamp-2">{details?.product_title || displayProduct.title}</h3>
-                      {details?.category_path && (
+                      {/* {details?.category_path && (
                         <span className="text-[#6291DE] text-[12px] font-bold uppercase tracking-wider">
                           {typeof details.category_path === 'string'
                             ? details.category_path.split('>').pop()?.trim()
@@ -230,7 +230,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                               ? details.category_path[details.category_path.length - 1]?.name
                               : "Product"}
                         </span>
-                      )}
+                      )} */}
                     </div>
                     <div className="flex items-end justify-between">
                       <div>
@@ -243,9 +243,10 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <div className="flex items-center gap-3">
-                          <span className="text-brand-textSecondary text-[13px] dark:text-white/60 font-medium">
-                            {details?.product_num_ratings || displayProduct.ratings} ratings
-                          </span>
+                          <div className="flex flex-col text-brand-textSecondary text-[13px] dark:text-white/60 font-medium ">
+                            <span className="metric-label">Rating Count</span>
+                            <span>{details?.product_num_ratings || displayProduct.ratings}</span>
+                          </div>
                           <div className="bg-brand-card-alt rounded-full px-3 py-1 flex items-center gap-1 border border-brand-border">
                             <span className="text-brand-textPrimary text-[13px] font-bold">{details?.product_star_rating || displayProduct.rating}</span>
                             <Star size={12} fill="#FFC107" className="text-[#FFC107]" />

@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getPackages, createCheckout } from "../../../api/pricing";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../components/common/Toast/ToastContext";
+import ConfirmPlanModal from "../../../components/common/input/TourModels/ConfirmPlanModal";
+
 
 const PlansSkeleton: React.FC<{ isOneTime: boolean }> = ({ isOneTime }) => {
   const cols = isOneTime ? 3 : 4;
@@ -39,20 +41,31 @@ const PlansSkeleton: React.FC<{ isOneTime: boolean }> = ({ isOneTime }) => {
 
 interface PlansProps {
   defaultOpen?: boolean;
+  scrollIntoViewOnOpen?: boolean;
 }
 
-const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
+const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
   const { currentUser } = useAuth();
   const toast = useToast();
-  const [subscriptionType, setSubscriptionType] = useState<"subscription" | "one_time">("subscription");
+  const userPlanName = currentUser?.subscriptionStatus?.package?.name?.toLowerCase() || "";
+  const isPrepaidUser = userPlanName.includes("prepaid basic") || userPlanName.includes("prepaid advance");
+
+  const [subscriptionType, setSubscriptionType] = useState<"subscription" | "one_time">(
+    isPrepaidUser ? "one_time" : "subscription"
+  );
   const [billingCycle, setBillingCycle] = useState<"monthly" | "quarterly" | "annually">("monthly");
   const [updatingPlanId, setUpdatingPlanId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<any>(null);
 
   // Sync state with prop for URL-based navigation
   useEffect(() => {
     setIsOpen(defaultOpen);
-  }, [defaultOpen]);
+    if (isPrepaidUser) {
+      setSubscriptionType("one_time");
+    }
+  }, [defaultOpen, isPrepaidUser]);
 
   const { data: rawPackages, isLoading } = useQuery({
     queryKey: ['subscription', 'packages', subscriptionType],
@@ -79,11 +92,18 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
       .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
     : [];
 
-  const handleUpdatePlan = async (packageName: string) => {
+  const handleUpdatePlan = (pkg: any) => {
+    setPendingPlan(pkg);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmUpdate = async () => {
+    if (!pendingPlan) return;
+
     try {
-      setUpdatingPlanId(packageName);
+      setUpdatingPlanId(pendingPlan.slug);
       // Backend expects subscription_type: "regular" for these checkout sessions
-      const response = await createCheckout("regular", packageName, billingCycle);
+      const response = await createCheckout("regular", pendingPlan.slug, billingCycle);
 
       // Support both "url" and "checkout_url" from backend response
       const checkoutUrl = response.data?.url || response.data?.checkout_url;
@@ -94,9 +114,16 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
         toast.error("Failed to create checkout session. Please try again.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "An error occurred. Please try again.");
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        "An error occurred. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setUpdatingPlanId(null);
+      setIsConfirmModalOpen(false);
+      setPendingPlan(null);
     }
   };
 
@@ -111,7 +138,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
     isBold = false
   }: {
     label: string,
-    renderValue?: (pkg: any) => React.ReactNode,
+    renderValue?: (pkg: any, index: number) => React.ReactNode,
     isHeader?: boolean,
     noBg?: boolean,
     fieldKey?: string,
@@ -120,9 +147,9 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
     return (
       <div className={`${noBg ? "pricing-row-no-bg" : "pricing-row-standard"} ${gridClass}`}>
         <span className={isHeader ? "pricing-label-header" : `${isBold ? "!font-bold" : "pricing-label-standard"}`}>{label}</span>
-        {visiblePackages.map((pkg: any) => (
+        {visiblePackages.map((pkg: any, index: number) => (
           <div key={pkg.id} className={`pricing-value-cell ${isBold ? "!font-bold" : ""}`}>
-            {isHeader ? "" : renderValue ? renderValue(pkg) : (
+            {isHeader ? "" : renderValue ? renderValue(pkg, index) : (
               typeof pkg.features?.[fieldKey!] === 'boolean' ? (
                 pkg.features[fieldKey!] ? <Check size={16} className="text-green-500" /> : <X size={16} className="text-red-500" />
               ) : (
@@ -158,6 +185,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
       subtitle="Choose Your Plan"
       isOpen={isOpen}
       onToggle={setIsOpen}
+      scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<Box size={24} className="text-brand-primary dark:text-white" />}
       headerRight={
         <div className="relative w-full sm:w-auto figma-pill-border rounded-full p-[1px]">
@@ -166,7 +194,9 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
             onChange={(e) => setSubscriptionType(e.target.value as "subscription" | "one_time")}
             className="appearance-none bg-brand-inputBg dark:bg-[#041024] text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none transition-colors w-full border-none shadow-none"
           >
-            <option value="subscription">Recurring Subscription</option>
+            {!isPrepaidUser && (
+              <option value="subscription">Recurring Subscription</option>
+            )}
             <option value="one_time">One Time Prepaid</option>
           </select>
           <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-textSecondary dark:text-slate-400 pointer-events-none" />
@@ -216,7 +246,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
                           </span>
                         ) : (
                           <button
-                            onClick={() => handleUpdatePlan(pkg.slug)}
+                            onClick={() => handleUpdatePlan(pkg)}
                             disabled={updatingPlanId === pkg.slug}
                             className="figma-pill-border px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-black text-brand-textPrimary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5 transition-all whitespace-nowrap flex items-center"
                           >
@@ -244,7 +274,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
                 <FeatureRow
                   label="Marketplace Access"
                   fieldKey="marketplace_access"
-                  renderValue={(pkg) => pkg.features?.marketplace_access ? "All Marketplaces" : <X size={16} className="text-red-500" />}
+                  renderValue={(pkg) => pkg.features?.marketplace_access ? "All Amazon Marketplaces" : <X size={16} className="text-red-500" />}
                 />
 
                 {/* BlueRitt Explorer Section */}
@@ -263,6 +293,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
                 <FeatureRow
                   label="Product Offers"
                   fieldKey="product_offer_access"
+                  renderValue={(index) => index === 0 ? <X size={16} className="text-red-500" /> : "All Available Offers"}
                 />
                 <FeatureRow
                   label="Discover Suppliers (Limit)"
@@ -272,7 +303,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
                 <FeatureRow
                   label="Max Supplier Matches"
                   fieldKey="no_of_supplier_per_ai_match"
-                  renderValue={(pkg) => pkg.features?.no_of_supplier_per_ai_match === -1 ? "All Matched" : `${pkg.features?.no_of_supplier_per_ai_match || 0} Matches`}
+                  renderValue={(pkg) => pkg.features?.no_of_supplier_per_ai_match === -1 ? "All Matched Suppliers" : `${pkg.features?.no_of_supplier_per_ai_match || 0} Matches`}
                 />
                 <FeatureRow label="Gross Profit Calculation" fieldKey="access_to_gross_profit" />
                 <FeatureRow label="Net Profit Calculation" fieldKey="access_to_net_profit" />
@@ -288,39 +319,80 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false }) => {
                 <FeatureRow
                   label="Net Profit Calculation"
                   fieldKey="no_of_net_profit_calculations"
-                  renderValue={(pkg) => pkg.features?.no_of_net_profit_calculations === 0 ? <X size={16} className="text-red-500" /> : `${pkg.features?.no_of_net_profit_calculations || 0} ASINs`}
+                  renderValue={(pkg, index) => (index === 0 || pkg.features?.no_of_net_profit_calculations === 0) ? <X size={16} className="text-red-500" /> : `${pkg.features?.no_of_net_profit_calculations || 0} ASINs`}
                 />
 
                 {/* BlueRitt SocialPulse Section */}
                 <FeatureRow label="BlueRitt SocialPulse" isHeader />
                 <SubHeaderRow label="TikTok Trends" />
                 <FeatureRow
-                  label="TikTok Product Searches"
+                  label="TikTok Trending Product Searches"
                   fieldKey="tiktok_searches"
                   renderValue={(pkg) => `${pkg.features?.tiktok_searches || 0} Searches`}
+                />
+                <FeatureRow
+                  label="Discover Suppliers (X Times) - Shared Limit"
+                  fieldKey="supplier_discovery"
+                  renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
                 />
                 <FeatureRow
                   label="Fetch Trending Hashtags"
                   fieldKey="tiktok_hashtag_search"
                   renderValue={(pkg) => `${pkg.features?.tiktok_hashtag_search || 0} Fetches`}
                 />
+                <FeatureRow
+                  label="Product Shop Analysis"
+                  fieldKey="access_to_product_shop_analysis"
+                  renderValue={() => <Check size={16} className="text-green-500" />}
+                />
 
                 <SubHeaderRow label="Amazon Trends" />
                 <FeatureRow
-                  label="Amazon Product Searches"
+                  label="Amazon Trending Product Searches"
                   fieldKey="amazon_trends_search"
                   renderValue={(pkg) => `${pkg.features?.amazon_trends_search || 0} Searches`}
                 />
                 <FeatureRow
-                  label="Influencer Link (Included)"
-                  fieldKey="no_of_product_offer"
-                  renderValue={(pkg) => pkg.features?.no_of_product_offer === -1 ? "100+" : pkg.features?.no_of_product_offer || 0}
+                  label="Discover Suppliers (X Times)- Shared Limit"
+                  fieldKey="supplier_discovery"
+                  renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
                 />
+                <FeatureRow
+                  label="Amazon Trending Product Description"
+                  fieldKey="access_to_amazon_trending_description"
+                  renderValue={() => <Check size={16} className="text-green-500" />}
+                />
+
+                <SubHeaderRow label="Influencer link" />
+                <FeatureRow
+                  label="Influencers Included"
+                  fieldKey="no_of_product_offer"
+                  renderValue={(_, index) => index === 0 ? "25" : "50"}
+                />
+                <FeatureRow
+                  label="Influencer Posted Products"
+                  fieldKey="access_to_influencer_posted_products"
+                  renderValue={() => "All Posted Products"}
+                />
+
               </>
             )}
           </div>
         </div>
       </div>
+
+      <ConfirmPlanModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setPendingPlan(null);
+        }}
+        onConfirm={handleConfirmUpdate}
+        planName={pendingPlan?.name || ""}
+        billingCycle={isOneTime ? "one time" : billingCycle}
+        price={pendingPlan ? getPriceByCycle(pendingPlan) : ""}
+        isUpdating={!!updatingPlanId}
+      />
     </CollapsibleCard>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MoreVertical, Trash2, Eye, Search } from "lucide-react";
+import { MoreVertical, Trash2, Eye, Folder } from "lucide-react";
 import { FIXED_CATEGORIES } from "../../../utils/categoryConstants";
 
 interface CategoryCardProps {
@@ -104,8 +104,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             className={`h-full w-full transition-transform duration-500 group-hover:scale-110 ${isFixed ? 'object-cover' : 'object-contain'}`}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-white/5 text-brand-textSecondary opacity-30 group-hover:scale-110 transition-transform duration-500">
-            <Search size={48} />
+          <div className="w-full h-full flex items-center justify-center bg-white dark:bg-white/5 text-brand-textSecondary  group-hover:scale-110 transition-transform duration-500">
+            <Folder size={48} className="dark:text-black" />
           </div>
         )}
 

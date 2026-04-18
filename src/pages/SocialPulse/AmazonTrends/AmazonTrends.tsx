@@ -434,7 +434,12 @@ const AmazonTrends: React.FC = () => {
           sortOptions={amazonSortOptions}
           tabs={[
             { label: "Product Trends", value: "product", icon: "Package" },
-            { label: "Turn Trends Profitable", value: "keyword", icon: "Hash", showUpgradeBadge: true },
+            {
+              label: "Turn Trends Profitable",
+              value: "keyword",
+              icon: "Hash",
+              showUpgradeBadge: userDetails?.subscription_status?.package?.slug?.toLowerCase() !== "premium"
+            },
           ]}
           metrics={[
             {

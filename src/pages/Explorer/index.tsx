@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import ExplorerBanner from "./components/Common/ExplorerBanner";
 import UsageInsights from "./components/Common/UsageInsights";
 import ExplorerStats from "./components/Common/ExplorerStats";
-import ExplorerTourModal from "./components/Common/ExplorerTourModal";
+import ExplorerTourModal from "../../components/common/input/TourModels/ExplorerTourModal";
 import AnalyzingScreen from "./components/Discovery/AnalyzingScreen";
 import DiscoveryResults from "./components/Discovery/DiscoveryResults";
 

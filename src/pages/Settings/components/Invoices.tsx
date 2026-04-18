@@ -7,9 +7,10 @@ import { useToast } from "../../../components/common/Toast/ToastContext";
 
 interface InvoicesProps {
   defaultOpen?: boolean;
+  scrollIntoViewOnOpen?: boolean;
 }
 
-const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
+const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [sortField, setSortField] = useState<string | null>("invoiceDate");
@@ -111,6 +112,7 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
       subtitle="Track your billing history and payments"
       isOpen={isOpen}
       onToggle={setIsOpen}
+      scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<Receipt size={24} className="text-white" />}
     >
       <div className="flex flex-col gap-6">
@@ -190,7 +192,7 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
                           href={invoice.viewInvoicePdf}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all"
+                          className="p-1.5 hover:bg-white/10  rounded-lg transition-all"
                           title="View PDF"
                         >
                           <Eye size={16} />
@@ -199,12 +201,12 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
                           href={invoice.downloadInvoicePdf}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all"
+                          className="p-1.5 hover:bg-white/10  rounded-lg transition-all"
                           title="Download PDF"
                         >
                           <Download size={16} />
                         </a>
-                        <button
+                        {/* <button
                           onClick={() => handleEmailInvoice(invoice.id)}
                           disabled={emailingInvoiceIds.includes(invoice.id)}
                           className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all disabled:opacity-50"
@@ -215,7 +217,7 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false }) => {
                           ) : (
                             <Mail size={16} />
                           )}
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

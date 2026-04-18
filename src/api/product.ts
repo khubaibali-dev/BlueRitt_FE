@@ -57,15 +57,15 @@ const _mapQueryParams = ({
   
   if (categoryId) {
     params.category_id = categoryId;
-    // For category search, condition defaults to NEW in DiscoveryResults, 
-    // but here we align with what the search API sends.
-  }
-
-  if (minPrice !== undefined) {
-    params.min = minPrice;
-  }
-  if (maxPrice !== undefined) {
-    params.max = maxPrice;
+    params.product_condition = "NEW";
+    params.max = maxPrice ?? 99999990;
+  } else {
+    if (minPrice !== undefined) {
+      params.min = minPrice;
+    }
+    if (maxPrice !== undefined) {
+      params.max = maxPrice;
+    }
   }
   if (isAmazonChoice !== undefined) {
     params.is_amazon_choice = isAmazonChoice;

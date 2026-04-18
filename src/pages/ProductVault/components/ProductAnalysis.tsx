@@ -196,8 +196,8 @@ const ProductAnalysis: React.FC = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
           <div className="flex flex-col gap-1 w-full md:w-auto">
-            <h1 className="banner-heading-text !text-[30px] !text-left !ml-[-1px] !mb-0 font-black text-brand-textPrimary dark:text-white">
-              Analysis of <span className="text-blue-400 capitalize">{normalizedAmazon?.title.split(' ').slice(0, 3).join(' ') || normalizedTikTok?.title.split(' ').slice(0, 3).join(' ')}...</span>
+            <h1 className="banner-heading-text !text-[22px] !text-left !ml-[-1px] !mb-0 font-black text-brand-textPrimary dark:text-white mt-2">
+              Analysis of <span className="">{normalizedAmazon?.title || normalizedTikTok?.title}</span>
             </h1>
             <p className="auth-subtitle !text-left font-medium opacity-80 ml-2 text-brand-textSecondary dark:text-brand-textSecondary">Full performance breakdown and sourcing insights</p>
           </div>
@@ -214,7 +214,7 @@ const ProductAnalysis: React.FC = () => {
                   navigate("/products");
                 }
               }}
-              className="flex-1 sm:flex-none px-8 py-2.5 rounded-full figma-pill-border text-brand-textPrimary dark:text-white text-[13px] font-bold hover:bg-brand-hover dark:hover:bg-white/5 transition-all shadow-lg active:scale-95 uppercase tracking-[0.1em] flex items-center justify-center gap-2">
+              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full figma-pill-border text-brand-textPrimary dark:text-white text-[13px] font-bold hover:bg-brand-hover dark:hover:bg-white/5 transition-all  active:scale-95 uppercase tracking-[0.1em] flex items-center justify-center gap-2">
               <ArrowLeft size={16} />
               Back
             </button>
@@ -285,14 +285,14 @@ const ProductAnalysis: React.FC = () => {
                     <td className="invoice-table-td font-bold !text-brand-textPrimary dark:!text-white">
                       {hasGrossAccess ? `$${(calc.product_gross_profit || 0).toLocaleString()}` : (
                         <div className="flex items-center gap-1.5 text-slate-400 opacity-60">
-                           <Lock size={12} /> <span className="text-[12px]">Locked</span>
+                          <Lock size={12} /> <span className="text-[12px]">Locked</span>
                         </div>
                       )}
                     </td>
                     <td className="invoice-table-td font-bold !text-brand-textPrimary dark:!text-white">
                       {hasNetAccess ? `$${(calc.product_net_profit || 0).toLocaleString()}` : (
                         <div className="flex items-center gap-1.5 text-slate-400 opacity-60">
-                           <Lock size={12} /> <span className="text-[12px]">Locked</span>
+                          <Lock size={12} /> <span className="text-[12px]">Locked</span>
                         </div>
                       )}
                     </td>

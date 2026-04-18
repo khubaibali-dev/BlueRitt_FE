@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SlidersHorizontal, Search, Crown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../../../context/AuthContext";
 import explorerBg from "../../../../assets/images/explorer.png";
 import explorerBgLight from "../../../../assets/images/Explorer-light.png";
 import starImg from "../../../../assets/images/star.png";
@@ -20,6 +21,7 @@ interface ExplorerBannerProps {
 }
 
 const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
+  const { currentUser } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const [filterOpen, setFilterOpen] = useState(false);
@@ -76,6 +78,10 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
   };
 
   const handleCategorySearch = () => {
+    if (!selectedCategory) {
+      toast.error("Please select a category", { title: "Search Failed" });
+      return;
+    }
     if (!selectedSubcategory) {
       toast.error("Please select a subcategory", { title: "Search Failed" });
       return;
@@ -197,13 +203,15 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
       {/* Usage Insights Bottom Row */}
       <div className="w-full flex items-center justify-between mt-[135px] mb-[-80px] !px-0">
         <h2 className="dashboard-section-title !mb-0 px-4">Usage Insights</h2>
-        <button
-          className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6"
-          onClick={() => navigate("/settings?tab=plan")}
-        >
-          <Crown size={18} className="text-white" />
-          Upgrade Your Plan
-        </button>
+        {currentUser?.subscriptionStatus?.package?.slug?.toLowerCase() !== "premium" && (
+          <button
+            className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6"
+            onClick={() => navigate("/settings?tab=plan")}
+          >
+            <Crown size={18} className="text-white" />
+            Upgrade Your Plan
+          </button>
+        )}
       </div>
 
 

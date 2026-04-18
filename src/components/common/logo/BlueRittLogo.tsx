@@ -1,7 +1,7 @@
-import FullDark from "../../../assets/images/Logo/dark-mode-logo.png";
-import FullLight from "../../../assets/images/Logo/light-mode-logo.png";
-import MarkDark from "../../../assets/images/Logo/dark-mode-mark.png";
-import MarkLight from "../../../assets/images/Logo/light-mode-mark.png";
+import FullDark from "../../../assets/images/Blueritt_logo/logo.svg";
+import FullLight from "../../../assets/images/Blueritt_logo/logo.svg";
+import MarkDark from "../../../assets/images/Blueritt_logo/logomark.svg";
+import MarkLight from "../../../assets/images/Blueritt_logo/logomark.svg";
 import { useTheme } from "../../../context/ThemeContext";
 
 interface BlueRittLogoProps {
@@ -22,7 +22,7 @@ const BlueRittLogo: React.FC<BlueRittLogoProps> = ({ className = "", isCollapsed
       <img
         src={logoSrc}
         alt="BlueRitt Logo"
-        className={`object-contain block transition-all duration-300 ${isCollapsed ? "h-[32px] w-[32px]" : "h-[26px] w-auto"
+        className={`object-contain block transition-all duration-300 ${isCollapsed ? "h-[38px] w-[38px] scale-110" : "h-[26px] w-auto"
           }`}
       />
     </div>

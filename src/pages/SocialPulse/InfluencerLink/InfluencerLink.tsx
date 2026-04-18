@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Info, Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Crown } from "lucide-react";
 import InfluencerHeader from "./components/InfluencerHeader";
 import InfluencerCard from "../../../components/common/SpkCards/InfluencerCard";
@@ -7,12 +8,25 @@ import InfluencerDetailsDrawer from "./components/InfluencerDetailsDrawer";
 import influencerBanner from "../../../assets/images/tiktoktrends.png";
 import influencerBannerLight from "../../../assets/images/SocialPulse-light.png";
 import { MANUAL_INFLUENCERS } from "../../../utils/infuluencers";
+import { useUserDetails } from "../../../hooks/useUserDetails";
 
 const InfluencerLink: React.FC = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedInfluencer, setSelectedInfluencer] = useState<any>(null);
+  const { data: userDetails } = useUserDetails();
+
+  const userPlan = userDetails?.subscription_status?.package?.slug?.toLowerCase() || "trial";
+
+  const influencerLimit = useMemo(() => {
+    // Robust detection for prepaid/one-time tiers
+    if (userPlan.includes("premium")) return Infinity;
+    if (userPlan.includes("advance")) return 50;
+    if (userPlan.includes("basic")) return 10;
+    return 10; // Default to trial
+  }, [userPlan]);
 
   const influencersPerPage = 12;
   const listTopRef = useRef<HTMLDivElement>(null);
@@ -41,11 +55,14 @@ const InfluencerLink: React.FC = () => {
 
   // 2. Search Logic
   const filteredInfluencers = useMemo(() => {
-    if (!searchQuery.trim()) return mappedInfluencers;
-    const query = searchQuery.toLowerCase();
-    return mappedInfluencers.filter(
-      inf => inf.name.toLowerCase().includes(query) || inf.bio.toLowerCase().includes(query)
-    );
+    let result = mappedInfluencers;
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = mappedInfluencers.filter(
+        (inf) => inf.name.toLowerCase().includes(query) || inf.bio.toLowerCase().includes(query)
+      );
+    }
+    return result;
   }, [searchQuery, mappedInfluencers]);
 
   // 3. Pagination Logic
@@ -135,11 +152,14 @@ const InfluencerLink: React.FC = () => {
                 />
               </div>
 
-              {/* Action Buttons Row */}
               <div className="flex items-center gap-3 w-full lg:w-auto">
-                <button type="submit" className="upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[54px] w-full sm:w-auto flex items-center justify-center gap-2">
-                  <Search size={18} />
-                  Find Top Talent
+                <button
+                  type="button"
+                  onClick={() => navigate("/settings?tab=plan")}
+                  className="upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[54px] w-full sm:w-auto flex items-center justify-center gap-2"
+                >
+                  <Crown size={18} />
+                  Upgrade Plan
                 </button>
               </div>
             </form>
@@ -149,12 +169,19 @@ const InfluencerLink: React.FC = () => {
               <div className="flex items-center gap-2 text-[14px] text-brand-textSecondary dark:text-[#FFFFFF99]">
                 <Info size={24} className="text-brand-textPrimary dark:text-white" />
                 <span className="text-[14px] leading-none">
-                  You can view up to <span className="font-black text-[#FF5900]">50</span> influencers • All Posted Products
+                  You can view up to <span className="font-black text-[#FF5900]">{influencerLimit === Infinity ? "Unlimited" : influencerLimit}</span> influencers • All Posted Products
                 </span>
-                <span className="w-1 h-1 rounded-full bg-slate-700 hidden sm:block" />
-                <button className="text-[14px] text-[#FF5900] hover:text-orange-300 transition-all text-left underline">
-                  Upgrade to view more influencers
-                </button>
+                {userPlan !== "premium" && (
+                  <>
+                    <span className="w-1 h-1 rounded-full bg-slate-700 hidden sm:block" />
+                    <button
+                      onClick={() => navigate("/settings?tab=plan")}
+                      className="text-[14px] text-[#FF5900] hover:text-orange-300 transition-all text-left underline border-none bg-transparent cursor-pointer"
+                    >
+                      Upgrade to view more influencers
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -167,13 +194,18 @@ const InfluencerLink: React.FC = () => {
                   </h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {topPicks.map((influencer) => (
-                    <InfluencerCard
-                      key={`top-${influencer.name}`}
-                      {...influencer}
-                      onViewDetails={() => openDrawer(influencer)}
-                    />
-                  ))}
+                  {topPicks.map((influencer, index) => {
+                    const isLocked = index >= influencerLimit;
+                    return (
+                      <InfluencerCard
+                        key={`top-${influencer.name}`}
+                        {...influencer}
+                        isLocked={isLocked}
+                        onUpgrade={() => navigate("/settings?tab=plan")}
+                        onViewDetails={() => !isLocked && openDrawer(influencer)}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -194,13 +226,19 @@ const InfluencerLink: React.FC = () => {
 
           {currentPagedInfluencers.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
-              {currentPagedInfluencers.map((influencer) => (
-                <InfluencerCard
-                  key={`all-${influencer.name}`}
-                  {...influencer}
-                  onViewDetails={() => openDrawer(influencer)}
-                />
-              ))}
+              {currentPagedInfluencers.map((influencer, index) => {
+                const globalIndex = (currentPage - 1) * influencersPerPage + index;
+                const isLocked = globalIndex >= influencerLimit;
+                return (
+                  <InfluencerCard
+                    key={`all-${influencer.name}`}
+                    {...influencer}
+                    isLocked={isLocked}
+                    onUpgrade={() => navigate("/settings?tab=plan")}
+                    onViewDetails={() => !isLocked && openDrawer(influencer)}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-20 px-6 bg-brand-card-alt dark:bg-[#FFFFFF05] rounded-[24px] border border-brand-border dark:border-brand-border">
@@ -270,13 +308,18 @@ const InfluencerLink: React.FC = () => {
         )}
 
         {/* Upgrade Action Footer */}
-        <div className="flex flex-col items-center justify-center pt-2 gap-4">
-          <div className="w-full max-w-[200px] h-[1px] bg-gradient-to-r from-transparent via-[#082656] to-transparent" />
-          <button className="upgrade-gradient-btn !px-10 !h-[50px] !rounded-full shadow-2xl shadow-orange-500/10 hover:shadow-orange-500/20 transition-all">
-            <Crown size={18} />
-            Upgrade to see more
-          </button>
-        </div>
+        {userPlan !== "premium" && (
+          <div className="flex flex-col items-center justify-center pt-2 gap-4">
+            <div className="w-full max-w-[200px] h-[1px] bg-gradient-to-r from-transparent via-[#082656] to-transparent" />
+            <button
+              onClick={() => navigate("/settings?tab=plan")}
+              className="upgrade-gradient-btn !px-10 !h-[50px] !rounded-full shadow-2xl shadow-orange-500/10 hover:shadow-orange-500/20 transition-all"
+            >
+              <Crown size={18} />
+              Upgrade to see more
+            </button>
+          </div>
+        )}
 
       </div>
 

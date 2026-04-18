@@ -6,7 +6,7 @@ import { Formik, useFormikContext } from "formik";
 import shadowBg from "../../assets/images/marganmax.png";
 import shadowBgLight from "../../assets/images/Explorer-light.png";
 import ResultPanels from "./components/ResultPanels";
-import MarginMaxTourModal from "./components/MarginMaxTourModal";
+import MarginMaxTourModal from "../../components/common/input/TourModels/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
 import AdvancedTab from "./Advance/AdvancedTab";
 import FilterDropdown from "../../components/common/select/FilterDropdown";

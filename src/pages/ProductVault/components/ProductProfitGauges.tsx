@@ -15,7 +15,7 @@ const LockedOverlay: React.FC<{ type: "Gross" | "Net" }> = ({ type }) => {
   const navigate = useNavigate();
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center rounded-[12px] overflow-hidden p-6">
-      <div className="absolute inset-0 bg-white/30 dark:bg-black/40 backdrop-blur-[2px] border border-brand-inputBorder dark:border-white/10 rounded-[12px]" />
+      <div className="absolute inset-0 bg-white/30 dark:bg-black/40 backdrop-blur-[4px] border border-brand-inputBorder dark:border-white/10 rounded-[12px]" />
       <div className="relative z-10 text-center flex flex-col items-center">
         <div className="w-10 h-10 rounded-xl bg-brand-primary/10 dark:bg-white/10 flex items-center justify-center mb-3 border border-brand-primary/20 dark:border-white/5">
           <Lock size={20} className="text-brand-primary dark:text-white" />
@@ -29,7 +29,7 @@ const LockedOverlay: React.FC<{ type: "Gross" | "Net" }> = ({ type }) => {
         </p>
         <button
           onClick={() => navigate("/settings?tab=plan")}
-          className="bg-brand-primary hover:brightness-110 text-white px-6 py-2 rounded-full text-[12px] font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-brand-primary/20"
+          className="bg-brand-gradient hover:brightness-110 text-white px-6 py-2 rounded-full text-[12px] font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-brand-primary/20"
         >
           <ArrowRight size={14} />
           Update Subscription

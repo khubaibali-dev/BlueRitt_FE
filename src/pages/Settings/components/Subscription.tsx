@@ -10,9 +10,10 @@ import CancelSubscriptionModal from "./CancelSubscriptionModal";
 
 interface SubscriptionProps {
   defaultOpen?: boolean;
+  scrollIntoViewOnOpen?: boolean;
 }
 
-const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
+const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -37,6 +38,11 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
 
   const today = new Date();
   const dueDateStr = summary?.dueDate || "";
+  const currentPlanName = summary?.plan?.toLowerCase() || "";
+  const isOneTimePlan = currentPlanName.includes("one time") ||
+    currentPlanName.includes("prepaid") ||
+    currentPlanName.includes("one-time");
+
   // Handle "16 Apr 2026" or similar formats
   const dueDate = dueDateStr ? new Date(dueDateStr) : today;
   const isExpired = dueDate < today;
@@ -145,6 +151,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
         subtitle="Manage your subscription and billing"
         isOpen={isOpen}
         onToggle={setIsOpen}
+        scrollIntoViewOnOpen={scrollIntoViewOnOpen}
         icon={
           <div className="relative flex items-center justify-center">
             <Crown size={24} className="text-brand-primary dark:text-white relative z-10" />
@@ -247,10 +254,12 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false }) => {
                 <div className="flex items-center self-start sm:self-center">
                   <button
                     onClick={onToggleAutoRenew}
+                    disabled={isOneTimePlan}
                     className={`
                       relative w-[52px] h-[28px] rounded-full transition-all duration-300 outline-none
-                      ${summary?.autoRenew ? "bg-brand-accent shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "bg-brand-bg dark:bg-slate-700 border border-brand-border dark:border-transparent"}
+                      ${isOneTimePlan ? "opacity-40 cursor-not-allowed bg-slate-200 dark:bg-slate-800" : (summary?.autoRenew ? "bg-brand-accent shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "bg-brand-bg dark:bg-slate-700 border border-brand-border dark:border-transparent")}
                     `}
+                    title={isOneTimePlan ? "Auto-renewal is not available for one-time plans" : ""}
                   >
                     <div
                       className={`

@@ -11,6 +11,7 @@ interface CollapsibleCardProps {
   isOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
   children: React.ReactNode;
+  scrollIntoViewOnOpen?: boolean;
 }
 
 const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
@@ -22,7 +23,9 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   isOpen: controlledIsOpen,
   onToggle,
   children,
+  scrollIntoViewOnOpen = false,
 }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
@@ -69,8 +72,16 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen && scrollIntoViewOnOpen) {
+      setTimeout(() => {
+        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 500); // Wait for transition to start/finish
+    }
+  }, [isOpen, scrollIntoViewOnOpen]);
+
   return (
-    <div className="bg-brand-card dark:bg-[#04132B] rounded-[14px] transition-all duration-300 border border-brand-inputBorder dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none">
+    <div ref={cardRef} className="bg-brand-card dark:bg-[#04132B] rounded-[14px] transition-all duration-300 border border-brand-inputBorder dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none">
       {/* Header (Trigger) */}
       <div
         className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 cursor-pointer gap-y-4"
@@ -113,7 +124,7 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
         onTransitionEnd={() => setIsAnimating(false)}
       >
         <div aria-hidden={!isOpen} ref={contentRef}>
-          <hr className="border-brand-border dark:border-slate-700 mx-6 sm:mx-8" />
+          <hr className="border-brand-inputBorder dark:border-slate-700 mx-6 sm:mx-8" />
           {/* Inner padding for the content area with equalized top/bottom spacing */}
           <div className="px-6 py-4 sm:px-8 sm:py-5">
             {children}

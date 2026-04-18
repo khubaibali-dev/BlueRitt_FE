@@ -62,7 +62,11 @@ const ProductVault: React.FC = () => {
       new Map(categories.map((c: any) => [c.name.trim().toLowerCase(), c])).values()
     );
 
-    const list = [...uniqueCategories];
+    const list = [...uniqueCategories].sort((a: any, b: any) => {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateA - dateB;
+    });
 
     // sum counts from all fetched categories
     const totalCountFromCategories = categories.reduce((sum, cat) => sum + (cat.product_count || 0), 0);

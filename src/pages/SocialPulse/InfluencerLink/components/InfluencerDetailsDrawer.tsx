@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { X, ExternalLink, Users, TrendingUp, Eye } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { X, ExternalLink, Users, TrendingUp, Eye, Crown } from "lucide-react";
 import { getInfluencerPosts, InfluencerPost } from "../../../../api/amazonTrends";
+import { useUserDetails } from "../../../../hooks/useUserDetails";
 
 interface InfluencerDetailsDrawerProps {
   isOpen: boolean;
@@ -17,8 +19,20 @@ interface InfluencerDetailsDrawerProps {
 }
 
 const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpen, onClose, influencer }) => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<InfluencerPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { data: userDetails } = useUserDetails();
+
+  const userPlan = userDetails?.subscription_status?.package?.slug?.toLowerCase() || "trial";
+
+  const isTrial = useMemo(() => {
+    return !userPlan.includes("premium") && !userPlan.includes("advance") && !userPlan.includes("basic") && userPlan === "trial";
+  }, [userPlan]);
+
+  const postLimit = useMemo(() => {
+    return isTrial ? 5 : 100;
+  }, [isTrial]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -26,7 +40,10 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
 
       setIsLoading(true);
       try {
-        const response = await getInfluencerPosts({ influencer_name: influencer.name });
+        const response = await getInfluencerPosts({
+          influencer_name: influencer.name,
+          limit: postLimit
+        });
         if (response.status === "success" && response.data) {
           setPosts(response.data.posts || []);
         }
@@ -70,10 +87,10 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar space-y-8">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar space-y-5">
 
           {/* 2. Influencer Info Row */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4">
                 {/* Profile with Gradient Border */}
@@ -102,11 +119,11 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
             </p>
           </div>
 
-          <div className="h-[1px] bg-brand-border dark:bg-[#1C263C] w-full" />
+          <div className="h-[1px] bg-brand-border dark:bg-[#FFFFFF10] w-full" />
 
           {/* 3. Stats Icons Bar */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="flex flex-col items-center gap-3">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="flex flex-col items-center gap-0">
               <div className="quick-action-icon-circle !w-11 !h-11  border border-brand-border dark:border-white/5 bg-brand-hover dark:bg-transparent">
                 <Users size={20} className="text-brand-textPrimary dark:text-white" />
               </div>
@@ -188,6 +205,24 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
             ) : (
               <div className="text-center py-12">
                 <p className="text-brand-textSecondary/40 dark:text-white/40 italic">No products found for this influencer.</p>
+              </div>
+            )}
+
+            {isTrial && posts.length >= 5 && (
+              <div className="mt-8 p-6 rounded-[24px] bg-gradient-to-br from-[#FF590010] to-[#FF00FF05] border border-[#FF590020] flex flex-col items-center gap-4 text-center">
+                <Crown className="text-[#FF5900]" size={28} />
+                <div className="space-y-1">
+                  <h4 className="text-[16px] font-bold text-brand-textPrimary dark:text-white">Viewing Trial Limit</h4>
+                  <p className="text-[13px] text-brand-textSecondary dark:text-[#FFFFFF99] max-w-[300px]">
+                    You're seeing the first 5 products. Upgrade to a paid plan to unlock up to 100 endorsed products.
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate("/settings?tab=plan")}
+                  className="upgrade-gradient-btn px-8 h-[44px] rounded-full text-white text-[13px] font-black shadow-lg shadow-orange-500/10 active:scale-95 transition-all"
+                >
+                  Unlock 100+ Products
+                </button>
               </div>
             )}
           </div>

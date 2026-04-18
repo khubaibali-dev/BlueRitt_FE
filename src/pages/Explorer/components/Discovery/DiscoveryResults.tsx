@@ -8,6 +8,7 @@ import bgAnalysisLight from "../../../../assets/images/Explorer-light.png";
 import ProductDetailsDrawer from "../ProductDetails/ProductDetailsDrawer";
 import SupplierSourceLink from "../SourceLink/SupplierSourceLink";
 import MetricCard from "../Common/MetricCard";
+import MetricCardSkeleton from "../Common/MetricCardSkeleton";
 import CountrySelect, { countries } from "../../../../components/common/select/CountrySelect";
 import SelectField from "../../../../components/common/select/SelectField";
 import SourceLinkProfitCalculator from "../SourceLink/SourceLinkProfitCalculator";
@@ -74,7 +75,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    const [sortBy, setSortBy] = useState<string>("default");
 
    // Real Data Fetching using React Query
-   const { data: searchResponse, isLoading, error, refetch } = useQuery({
+   const { data: searchResponse, isLoading, isFetching: isSearchFetching, error, refetch } = useQuery({
       queryKey: ["amazon-search", activeSearchQuery, activeCountryCode, filters, activeSearchType, activeCategoryId],
       queryFn: async () => {
          if (activeSearchType === "category") {
@@ -87,6 +88,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                max_reviews: filters.max_reviews,
                min_price: filters.min_price,
                max_price: filters.max_price,
+
             });
          }
 
@@ -127,8 +129,8 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       enabled: activeSearchType === "category" ? !!activeCategoryId : !!activeSearchQuery,
    });
 
-   const products = searchResponse?.data?.products || [];
-   const totalResults = searchResponse?.data?.total || 0;
+   const products = error ? [] : (searchResponse?.data?.products || []);
+   const totalResults = error ? 0 : (searchResponse?.data?.total || 0);
 
    const SORT_OPTIONS = [
       { label: "Default", value: "default" },
@@ -193,7 +195,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
       }
    }, [error, toast]);
 
-   const { data: insightsResponse } = useQuery({
+   const { data: insightsResponse, isFetching: isInsightsFetching } = useQuery({
       queryKey: ["amazon-product-insights", activeSearchQuery, activeCountryCode, filters, activeSearchType, activeCategoryId],
       queryFn: () => getAmazonSearchInsights({
          searchString: activeSearchQuery || "",
@@ -273,10 +275,10 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
 
    // Notify parent about loading state - Automatically hide AnalyzingScreen when data arrives
    useEffect(() => {
-      if (onLoadingChange && !isLoading && !isManualLoading) {
+      if (onLoadingChange && !isLoading && !isSearchFetching && !isInsightsFetching && !isManualLoading) {
          onLoadingChange(false);
       }
-   }, [isLoading, onLoadingChange, isManualLoading]);
+   }, [isLoading, isSearchFetching, isInsightsFetching, onLoadingChange, isManualLoading]);
 
    useEffect(() => {
       if (location.state?.autoSourceLink && location.state?.product) {
@@ -290,30 +292,43 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    }, [location.state]);
 
    const handleSearch = () => {
-      // Map current country name to its code
-      const currentCountryObj = countries.find((c: any) => c.name === countryName);
-      const currentCountryCode = currentCountryObj?.code || "US";
-      setActiveCountryCode(currentCountryCode);
-      setActiveSearchType(searchType);
-      setHasViewedSourceLink(false); // Reset when new search starts
-
       if (searchType === "category") {
+         if (!selectedCategory) {
+            toast.error("Please select a category", { title: "Search Failed" });
+            return;
+         }
          if (!selectedSubcategory) {
             toast.error("Please select a subcategory", { title: "Subcategory Required" });
             return;
          }
+         // Map current country name to its code
+         const currentCountryObj = countries.find((c: any) => c.name === countryName);
+         const currentCountryCode = currentCountryObj?.code || "US";
+         setActiveCountryCode(currentCountryCode);
+         setActiveSearchType("category");
          setActiveCategoryId(selectedSubcategory);
          setActiveSearchQuery("");
          return;
       }
 
-      setActiveCategoryId("");
-
-      if (!searchQuery.trim()) {
-         toast.error("Please enter a search query", { title: "Input Required" });
+      // Prevent API call if search query is empty
+      if (!searchQuery?.trim()) {
+         if (searchType === "asin") {
+            toast.error("Please enter a ASIN before searching", { title: "Input Required" });
+         } else if (searchType === "product") {
+            toast.error("Please enter a keyword before searching", { title: "Input Required" });
+         }
          return;
       }
 
+      // Map current country name to its code
+      const currentCountryObj = countries.find((c: any) => c.name === countryName);
+      const currentCountryCode = currentCountryObj?.code || "US";
+
+      setActiveCountryCode(currentCountryCode);
+      setActiveSearchType(searchType);
+      setHasViewedSourceLink(false); // Reset when new search starts
+      setActiveCategoryId("");
       setActiveSearchQuery(searchQuery);
 
       if (searchQuery === activeSearchQuery && currentCountryCode === activeCountryCode) {
@@ -508,10 +523,10 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                      id="search-type"
                      value={searchType}
                      onChange={(v) => {
-                        setSearchType(v);
-                        if (v === "category") {
+                        if (v !== searchType) {
                            setSearchQuery("");
                         }
+                        setSearchType(v);
                      }}
                      options={PRODUCT_FILTER_OPTIONS}
                   />
@@ -583,15 +598,23 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
             </div>
          </div>
 
-         {/* Analytics Row */}
-         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-            {metrics.map((m, i) => (
-               <MetricCard key={i} {...m} />
-            ))}
-         </div>
+         {/* Analytics Row - Hidden in ASIN search immediately on selection */}
+         {searchType !== "asin" && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+               {searchType !== activeSearchType ? (
+                  // Show skeletons if user changed type but hasn't searched yet
+                  Array(6).fill(0).map((_, i) => <MetricCardSkeleton key={i} />)
+               ) : (
+                  metrics.map((m, i) => (
+                     <MetricCard key={i} {...m} />
+                  ))
+               )}
+            </div>
+         )}
 
          <div className="flex justify-end mb-10 px-2 mt-4">
-            <button className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-brand-textPrimary hover:bg-white/10 transition-all group">
+            <button className="bg-white/5 figma-pill-border rounded-full px-5 py-2 flex items-center gap-2 text-[12px] font-semibold text-brand-textPrimary hover:bg-white/10 transition-all group"
+               onClick={() => window.open(`https://trends.google.com/trends/explore?q=${searchQuery}`, '_blank')}>
                Search Volume <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
          </div>

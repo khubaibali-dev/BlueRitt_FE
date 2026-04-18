@@ -107,6 +107,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   placeholder="Min"
                   value={priceMin}
                   onChange={(e) => setPriceMin(e.target.value)}
+                  preventScientific={true}
                 />
               </div>
               <div className="filter-input-wrap">
@@ -116,6 +117,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   placeholder="Max"
                   value={priceMax}
                   onChange={(e) => setPriceMax(e.target.value)}
+                  preventScientific={true}
                 />
               </div>
             </div>
@@ -131,6 +133,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   placeholder="Min"
                   value={ratingMin}
                   onChange={(e) => setRatingMin(e.target.value)}
+                  preventScientific={true}
                 />
               </div>
               <div className="filter-input-wrap">
@@ -140,6 +143,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   placeholder="Max"
                   value={ratingMax}
                   onChange={(e) => setRatingMax(e.target.value)}
+                  preventScientific={true}
                 />
               </div>
             </div>
@@ -155,6 +159,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   placeholder="Min"
                   value={ratingCountMin}
                   onChange={(e) => setRatingCountMin(e.target.value)}
+                  preventScientific={true}
                 />
               </div>
               <div className="filter-input-wrap">
@@ -164,12 +169,13 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   placeholder="Max"
                   value={ratingCountMax}
                   onChange={(e) => setRatingCountMax(e.target.value)}
+                  preventScientific={true}
                 />
               </div>
             </div>
           </div>
 
-          <div className="filter-section">
+          {/* <div className="filter-section">
             <label className="filter-section-label">Product Category</label>
             {isCategoriesLoading ? (
               <div className="flex items-center gap-2 text-brand-textSecondary text-[13px] py-3 px-4 bg-brand-inputBg rounded-xl border border-brand-border">
@@ -189,7 +195,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                 />
               </div>
             )}
-          </div>
+          </div> */}
 
           <div className="filter-section border-t border-brand-border pt-6 space-y-6">
             <div className="space-y-4">

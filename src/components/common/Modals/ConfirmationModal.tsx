@@ -53,48 +53,51 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <div className="relative w-full max-w-[440px] animate-in zoom-in-95 fade-in duration-300">
         <div className="relative p-[1px] rounded-[24px] bg-gradient-to-b from-white/10 to-transparent shadow-2xl">
           <div className="bg-white dark:bg-[#04132B] rounded-[23px] overflow-hidden">
-            {/* Header / Close */}
-            <div className="flex justify-end p-4 pb-0">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/10">
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-xl ${type === 'danger' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                  {type === 'danger' ? <Trash2 size={22} /> : <AlertTriangle size={22} />}
+                </div>
+                <h2 className="text-[18px] font-bold text-[#04132B] dark:text-white tracking-tight">
+                  {title}
+                </h2>
+              </div>
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-white/5 text-slate-400  transition-all"
+                className="p-2 -mr-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-all cursor-pointer"
               >
-                <X size={20} />
+                <X size={22} />
               </button>
             </div>
 
-            {/* Content */}
-            <div className="px-8 pb-8 flex flex-col items-center text-center">
-              {/* Icon */}
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 
-                ${type === 'danger' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'}`}>
-                {type === 'danger' ? <Trash2 size={32} /> : <AlertTriangle size={32} />}
+            {/* Content Body */}
+            <div className="p-4 flex flex-col items-start text-left">
+
+              {/* Message Box with separate border */}
+              <div className="w-full p-4 rounded-[16px] border border-brand-inputBorder dark:border-white/5 bg-slate-50/30 dark:bg-white/[0.02] mb-8">
+                <p className="text-[14px] font-medium dark:text-slate-400 leading-relaxed">
+
+                  {message}
+                </p>
               </div>
-
-              <h2 className="text-[22px] font-bold dark:text-white mb-2 tracking-tight">
-                {title}
-              </h2>
-
-              <p className="text-[14px] dark:text-slate-400 leading-relaxed mb-8">
-                {message}
-              </p>
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3 w-full">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 rounded-full border border-slate-700 dark:text-white text-[14px] font-bold hover:bg-white/5 transition-all active:scale-95"
+                  className="flex-1 px-6 py-3 rounded-full border border-slate-200 dark:border-white/10 text-[#04132B] dark:text-white text-[14px] font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-all active:scale-95"
                 >
                   {cancelText}
                 </button>
                 <button
                   onClick={onConfirm}
                   disabled={isLoading}
-                  className={`flex-1 px-4 py-2 rounded-full text-white text-[14px] font-bold transition-all active:scale-95 shadow-lg
+                  className={`flex-1 px-6 py-3 rounded-full text-white text-[14px] font-bold transition-all active:scale-95 shadow-xl
                     ${type === 'danger'
-                      ? 'bg-gradient-to-r from-red-600 to-orange-600 shadow-red-500/20'
-                      : 'bg-brand-gradient shadow-orange-500/20'} 
-                    disabled:opacity-50 disabled:pointer-events-none`}
+                      ? 'bg-brand-gradient'
+                      : 'bg-brand-gradient'} 
+                    disabled:opacity-50 disabled:pointer-events-none hover:brightness-110`}
                 >
                   {isLoading ? "Processing..." : confirmText}
                 </button>
