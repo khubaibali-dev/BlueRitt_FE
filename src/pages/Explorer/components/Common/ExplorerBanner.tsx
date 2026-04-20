@@ -114,15 +114,16 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
       <div className="explorer-badge-wrapper">
         <div className="explorer-badge-pill">
           <img src={starImg} alt="" className="explorer-badge-icon" />
-          <span className="explorer-badge-text">Blueritt Explorer</span>
+          <span className="explorer-badge-text">BlueRitt Explorer</span>
         </div>
       </div>
 
       <div className="flex flex-col items-center w-full max-w-[900px] px-3 sm:px-4">
 
-        <h1 className="banner-heading-text !mb-10">
-          <span className="inline-flex items-center justify-center gap-2">
-            Explore with IntelliScan
+        <h1 className="banner-heading-text !mb-10 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3">
+          <span className="whitespace-nowrap">Explore with</span>
+          <span className="relative inline-flex items-center gap-3">
+            IntelliScan
             <Tooltip
               content="BlueRitt Explorer is your AI-driven flow: discover Amazon products (IntelliScan), match verified Alibaba suppliers with AI Scores (SourceLink), analyze profit (MarginMax), and save your work (ProductVault)."
               width="320px"
@@ -135,25 +136,25 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
         </h1>
 
         {/* Filter Row */}
-        <div className="dashboard-filter-row">
-          <div className="dashboard-filter-group">
+        <div className="dashboard-filter-row flex-col sm:flex-row">
+          <div className="dashboard-filter-group w-full sm:w-auto">
             <FilterDropdown
               value={filterType.value}
               options={PRODUCT_FILTER_OPTIONS}
               onChange={(opt) => setFilterType(opt)}
-              width="w-[140px]"
+              width="w-full sm:w-[140px]"
               dropdownWidth="w-[140px]"
             />
             <FilterDropdown
               value={selectedCountry.value}
               options={countryOptions}
               onChange={(opt) => setSelectedCountry(opt)}
-              width="w-[190px]"
+              width="w-full sm:w-[190px]"
               dropdownWidth="w-[200px]"
             />
           </div>
           <button
-            className="dashboard-filter-btn"
+            className="dashboard-filter-btn w-full sm:w-auto justify-center"
             onClick={() => setFilterOpen(true)}
           >
             Filters <SlidersHorizontal size={18} className="dark:text-white text-black" />
@@ -201,11 +202,11 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
 
       </div>
       {/* Usage Insights Bottom Row */}
-      <div className="w-full flex items-center justify-between mt-[135px] mb-[-80px] !px-0">
+      <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-16 sm:mt-[135px] mb-[-40px] sm:mb-[-80px] px-0">
         <h2 className="dashboard-section-title !mb-0 px-4">Usage Insights</h2>
         {currentUser?.subscriptionStatus?.package?.slug?.toLowerCase() !== "premium" && (
           <button
-            className="upgrade-plan-btn !py-2 !px-4 !text-[12px] mr-6"
+            className="upgrade-plan-btn !py-2 !px-4 !text-[12px] sm:mr-6 w-full sm:w-auto flex items-center justify-center"
             onClick={() => navigate("/settings?tab=plan")}
           >
             <Crown size={18} className="text-white" />

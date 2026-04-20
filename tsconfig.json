@@ -26,7 +26,7 @@
   },
   "include": [
     "src",
-    "src/components/common/input/TourModels/MarginMaxTourModal.tsx"
+    "src/components/common/TourModels/MarginMaxTourModal.tsx"
   ],
   "references": [
     {

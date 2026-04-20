@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import React, { lazy } from "react";
 import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/Layout";
 
@@ -20,7 +20,11 @@ const InfluencerLinkPage = lazy(() => import("../pages/SocialPulse/InfluencerLin
 const ForgotPasswordPage = lazy(() => import("../pages/UserAuth/ForgotPassword"));
 const ProductAnalysisPage = lazy(() => import("../pages/ProductVault/components/ProductAnalysis"));
 const ViewCalculationPage = lazy(() => import("../pages/Explorer/components/SourceLink/SourceLinkProfitCalculator"));
-const LoadingPage = lazy(() => import("../pages/Testing/LoadingPage"));
+const LoadingPage = lazy(() => import("../components/common/ApiLoader/LoadingPage"));
+
+import AnalysisSkeleton from "../components/common/Skeletons/AnalysisSkeleton";
+import ResearchRowSkeleton from "../components/common/Skeletons/ResearchRowSkeleton";
+import CalculatorSkeleton from "../components/common/Skeletons/CalculatorSkeleton";
 
 type RouteType = {
   path: string;
@@ -28,6 +32,7 @@ type RouteType = {
   layout?: React.ComponentType<{ children: React.ReactNode }>;
   isProtected?: boolean;
   children?: RouteType[];
+  fallback?: React.ReactNode;
 };
 
 const routes: RouteType[] = [
@@ -114,6 +119,7 @@ const routes: RouteType[] = [
     element: ProductVaultPage,
     layout: DashboardLayout,
     isProtected: true,
+    fallback: <ResearchRowSkeleton />
   },
   {
     path: "/tiktok-trends",
@@ -138,12 +144,14 @@ const routes: RouteType[] = [
     element: ProductAnalysisPage,
     layout: DashboardLayout,
     isProtected: true,
+    fallback: <AnalysisSkeleton />
   },
   {
     path: "/calculator/calculations/:id",
     element: ViewCalculationPage,
     layout: DashboardLayout,
     isProtected: true,
+    fallback: <CalculatorSkeleton />
   },
   {
     path: "/loading",

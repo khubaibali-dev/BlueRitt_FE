@@ -50,7 +50,7 @@ const HelpSupportPage: React.FC = () => {
       <div className="relative z-10 flex flex-col w-full flex-1">
         {/* Header Section with its own padding */}
         <section className="relative min-h-[400px] flex flex-col pt-16 pb-4 px-6 sm:px-4">
-          <h1 className="help-title !font-semibold !text-[32px]">Need Assistance? Reach Out Here</h1>
+          <h1 className="page-header-title !mb-0 !font-normal !text-[24px]">Need Assistance? Reach Out Here</h1>
           <p className="help-subtitle mt-1">
             Fill out the form below, and our support team will get back to you within 24 hours. For faster resolution,
             include details like error messages, account ID, or steps to reproduce the issue.

@@ -52,7 +52,7 @@ const ConfirmPlanModal: React.FC<ConfirmPlanModalProps> = ({
                 <div className="flex items-center justify-end gap-3 pt-6 mt-2">
                     <button
                         className="px-6 py-2.5 rounded-full font-bold text-[14px] text-brand-textSecondary 
-                        border border-brand-inputBorder dark:text-white hover:bg-brand-hover dark:hover:bg-white/5 transition-all"
+                        figma-pill-border dark:text-white hover:bg-brand-hover dark:hover:bg-white/5 transition-all"
                         onClick={onClose}
                         disabled={isUpdating}
                     >

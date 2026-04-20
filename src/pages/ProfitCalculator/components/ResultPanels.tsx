@@ -1,4 +1,5 @@
 import { Info, Lock, Percent, TrendingUp } from 'lucide-react';
+import Tooltip from '../../../components/common/Tooltip/Tooltip';
 
 interface ResultPanelsProps {
   grossProfitUnit: string;
@@ -42,12 +43,25 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Primary Result Panel (Vibrant Gradient) */}
       <div
-        className="w-full rounded-[24px] p-7 text-white relative overflow-hidden transition-all hover:scale-[1.01] min-h-[220px] flex flex-col"
+        className="w-full rounded-[24px] p-7 text-white relative transition-all hover:scale-[1.01] min-h-[220px] flex flex-col"
         style={gradientStyle}
       >
-        <button className="absolute top-6 right-6 text-white hover:text-white/80 transition-opacity">
-          <Info size={24} strokeWidth={2.5} />
-        </button>
+        <div className="absolute top-6 right-4">
+          <Tooltip
+            content={
+              <div className="space-y-1.5">
+                <p className="font-bold text-[12px] text-brand-primary">Input Costs & Prices — Let MarginMax Do the Rest</p>
+                <p className="text-[11px] leading-relaxed opacity-90">Please input cost and price details so MarginMax can automatically calculate your profit at every step. Simulate pricing easily—know your profit, we will do the math!</p>
+              </div>
+            }
+            width="300px"
+            tooltipClassName="!left-auto !right-0 !translate-x-0"
+          >
+            <button className="text-white hover:text-white/80 transition-opacity">
+              <Info size={24} strokeWidth={2.5} />
+            </button>
+          </Tooltip>
+        </div>
 
         <h3 className="text-[16px] font-medium mb-2 tracking-wide opacity-90">
           {isAdvanced ? "Net Profit per Unit" : "Gross Profit per Unit"}
@@ -56,13 +70,13 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
         {/* Locked Overlay for Primary Panel */}
         {((isAdvanced && !hasNetAccess) || (!isAdvanced && !hasGrossAccess)) && (
           <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center rounded-[24px] overflow-hidden">
-             <div className="absolute inset-0 bg-[#6462620D] backdrop-blur-[4.8px]"></div>
-             <span className="font-bold text-[18px] text-white tracking-wide relative z-30 drop-shadow-2xl">
-               Upgrade to view this data
-             </span>
-             <div className="absolute top-7 right-7 z-30 drop-shadow-lg">
-                <Lock size={32} stroke="url(#lockIconGradient)" strokeWidth={2.5} className="relative z-10" />
-             </div>
+            <div className="absolute inset-0 bg-[#6462620D] backdrop-blur-[4.8px]"></div>
+            <span className="font-bold text-[18px] text-white tracking-wide relative z-30 drop-shadow-2xl">
+              Upgrade to view this data
+            </span>
+            <div className="absolute top-7 right-7 z-30 drop-shadow-lg">
+              <Lock size={32} stroke="url(#lockIconGradient)" strokeWidth={2.5} className="relative z-10" />
+            </div>
           </div>
         )}
 
@@ -95,9 +109,19 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Formula Description (Primary) */}
       <div className="flex items-start gap-3 px-2 mb-2">
-        <div className="mt-0.5 shrink-0 text-brand-textSecondary">
-          <Info size={16} />
-        </div>
+        <Tooltip
+          content={
+            <div className="space-y-1.5">
+              <p className="font-bold text-[12px] text-brand-primary text-left">Input Costs & Prices — Let MarginMax Do the Rest</p>
+              <p className="text-[11px] leading-relaxed opacity-90 text-left">Please input cost and price details so MarginMax can automatically calculate your profit at every step. Simulate pricing easily—know your profit, we will do the math!</p>
+            </div>
+          }
+          width="280px"
+        >
+          <div className="mt-0.5 shrink-0 text-brand-textSecondary cursor-help">
+            <Info size={16} />
+          </div>
+        </Tooltip>
         <p className="text-[11px] text-brand-textSecondary leading-relaxed font-medium">
           {isAdvanced
             ? "Net Profit = GP – Marketing, Graphics, Reviews, Additional costs, and Taxes."
@@ -108,7 +132,7 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Secondary Result Panel (Dimmable/Locked) */}
       <div
-        className="w-full rounded-[24px] p-7 text-white relative overflow-hidden transition-all flex flex-col min-h-[220px]"
+        className="w-full rounded-[24px] p-7 text-white relative transition-all flex flex-col min-h-[220px]"
         style={gradientStyle}
       >
         {/* Locked Overlay for Secondary Panel */}
@@ -170,9 +194,19 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
 
       {/* Formula Description (Secondary) */}
       <div className="flex items-start gap-3 px-2">
-        <div className="mt-0.5 shrink-0 text-brand-textSecondary">
-          <Info size={16} />
-        </div>
+        <Tooltip
+          content={
+            <div className="space-y-1.5">
+              <p className="font-bold text-[12px] text-brand-primary text-left">Input Costs & Prices — Let MarginMax Do the Rest</p>
+              <p className="text-[11px] leading-relaxed opacity-90 text-left">Please input cost and price details so MarginMax can automatically calculate your profit at every step. Simulate pricing easily—know your profit, we will do the math!</p>
+            </div>
+          }
+          width="280px"
+        >
+          <div className="mt-0.5 shrink-0 text-brand-textSecondary cursor-help">
+            <Info size={16} />
+          </div>
+        </Tooltip>
         <p className="text-[11px] text-brand-textSecondary leading-relaxed font-medium">
           {!isAdvanced
             ? "Net Profit = GP – Marketing, Graphics, Reviews, Additional costs, and Taxes."

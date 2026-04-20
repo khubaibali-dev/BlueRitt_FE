@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import bgAnalysis from "../../../assets/images/marginmax.png";
 import bgAnalysisLight from "../../../assets/images/SourceLink-lightbg.png";
 import {
-  Box, Activity, ArrowLeft, Eye
+  Box, Activity, ArrowLeft,
 } from "lucide-react";
 import { getSavedProductsDetail } from "../../../api/savedProducts";
 import AnalysisSkeleton from "../../../components/common/Skeletons/AnalysisSkeleton";
 import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProductCard";
 import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import ProductProfitGauges from "./ProductProfitGauges";
-import VaultAlibabaCard from "./VaultAlibabaCard";
+import SpkbgSupplierCard from "../../../components/common/SpkCards/SpkbgSupplierCard";
 import { useUserDetails } from "../../../hooks/useUserDetails";
 import { Lock } from "lucide-react";
 
@@ -152,8 +152,8 @@ const ProductAnalysis: React.FC = () => {
       minOrder: moqValue,
       country: countryValue,
       isVerified: isVerifiedValue,
-      TradeAssurance: tradeAssuranceValue,
-      isGoldMember: isGoldValue
+      tradeAssurance: tradeAssuranceValue,
+      isGold: isGoldValue
     };
   }, [supplierInfo, alibabaData]);
 
@@ -197,7 +197,7 @@ const ProductAnalysis: React.FC = () => {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 sm:mb-10">
           <div className="flex flex-col gap-1 w-full md:w-auto">
             <h1 className="banner-heading-text !text-[22px] !text-left !ml-[-1px] !mb-0 font-black text-brand-textPrimary dark:text-white mt-2">
-              Analysis of <span className="">{normalizedAmazon?.title || normalizedTikTok?.title}</span>
+              {/* Analysis of <span className="">{normalizedAmazon?.title || normalizedTikTok?.title}</span> */}
             </h1>
             <p className="auth-subtitle !text-left font-medium opacity-80 ml-2 text-brand-textSecondary dark:text-brand-textSecondary">Full performance breakdown and sourcing insights</p>
           </div>
@@ -243,7 +243,12 @@ const ProductAnalysis: React.FC = () => {
             )}
           </div>
           <div className="h-full">
-            <VaultAlibabaCard supplier={normalizedAlibaba} />
+            {normalizedAlibaba && (
+              <SpkbgSupplierCard
+                data={normalizedAlibaba}
+                variant="selected"
+              />
+            )}
           </div>
         </div>
 
@@ -273,7 +278,7 @@ const ProductAnalysis: React.FC = () => {
                   <th className="invoice-table-th">Gross Profit</th>
                   <th className="invoice-table-th">Net Profit</th>
                   <th className="invoice-table-th">Modified At</th>
-                  <th className="invoice-table-th text-right">Actions</th>
+                  <th className="invoice-table-th">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-border dark:divide-white/5">
@@ -299,11 +304,11 @@ const ProductAnalysis: React.FC = () => {
                     <td className="invoice-table-td font-medium !text-brand-textSecondary">
                       {new Date(calc.modified_at || calc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="invoice-table-td text-right">
-                      <div className="flex items-center justify-end gap-2 text-slate-400">
+                    <td className="invoice-table-td">
+                      <div className="flex items-center justify-start gap-2 text-slate-400">
                         <button
                           onClick={() => navigate(`/calculator/calculations/${calc.id}`)}
-                          className="px-4 py-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white rounded-full transition-all text-[12px] font-bold"
+                          className="px-4 py-1.5  !py-2 !px-4 text-brand-textPrimary dark:text-white bg-brand-gradient text-brand-primary hover:text-white rounded-full transition-all text-[12px] font-bold"
                           title="View Details"
                         >
                           view Calculation

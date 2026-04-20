@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MoreVertical, Trash2, Eye, Folder } from "lucide-react";
+import { MoreVertical, Trash2, Eye, FolderPlus } from "lucide-react";
 import { FIXED_CATEGORIES } from "../../../utils/categoryConstants";
 
 interface CategoryCardProps {
@@ -96,7 +96,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       className={`group relative vault-card cursor-pointer min-h-[230px] flex flex-col border border-brand-inputBorder rounded-[14px] overflow-hidden`}
     >
       {/* Image Section */}
-      <div className={`vault-image-box !h-[150px] bg-brand-hover dark:bg-white overflow-hidden ${isFixed ? '' : 'p-4'}`}>
+      <div className={`vault-image-box !h-[150px] overflow-hidden ${image ? 'bg-white dark:bg-white p-4' : 'bg-brand-card dark:bg-[#030F23]'} ${isFixed && image ? '!p-0' : ''}`}>
         {image ? (
           <img
             src={image}
@@ -104,8 +104,10 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
             className={`h-full w-full transition-transform duration-500 group-hover:scale-110 ${isFixed ? 'object-cover' : 'object-contain'}`}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-white dark:bg-white/5 text-brand-textSecondary  group-hover:scale-110 transition-transform duration-500">
-            <Folder size={48} className="dark:text-black" />
+          <div className="w-full h-full flex items-center justify-center bg-brand-card dark:bg-[#030F23] transition-transform duration-500 group-hover:scale-110">
+            <div className="standard-icon-circle w-20 h-20 flex items-center justify-center">
+              <FolderPlus size={24} className="text-white relative z-10" />
+            </div>
           </div>
         )}
 

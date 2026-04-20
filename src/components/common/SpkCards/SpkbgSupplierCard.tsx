@@ -138,29 +138,29 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
             <img src={image} alt={name} className="w-full h-full object-cover p-2" />
           </div>
           <div className="flex-1 flex flex-col justify-center">
-            <h3 className="product-card-title mb-4 lg:max-w-[450px] leading-tight">
+            <h3 className="product-card-title mb-4 leading-tight">
               {name}
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex items-center flex-nowrap gap-2">
               {isVerified && (
-                <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
+                <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1.5 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
                   <CheckCircle size={10} /> Verified
                 </div>
               )}
               {tradeAssurance && (
-                <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
+                <div className="brand-tag brand-tag-default border-[#00D1FF33] !px-3 !py-1.5 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase">
                   <ShieldCheck size={10} /> Trade Assurance
                 </div>
               )}
               {isGold && (
-                <div className="brand-tag text-brand-textPrimary dark:text-[#FFFFFF] border-[#8B5CF64D] !px-3 !py-1 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase bg-[#0826560D] dark:bg-gradient-to-r dark:from-[rgba(255,89,0,0.2)] dark:to-[rgba(255,0,230,0.2)]">
+                <div className="brand-tag text-brand-textPrimary dark:text-[#FFFFFF] border-[#8B5CF64D] !px-3 !py-1.5 flex items-center gap-1.5 font-bold tracking-widest text-[9px] uppercase bg-[#0826560D] dark:bg-gradient-to-r dark:from-[rgba(255,89,0,0.2)] dark:to-[rgba(255,0,230,0.2)]">
                   <Award size={10} /> Gold
                 </div>
               )}
-              <div className="brand-tag brand-tag-default !px-3 !py-1 flex items-center gap-1.5 font-bold text-[10px]">
+              <div className="brand-tag brand-tag-default !px-3 !py-1.5 flex items-center gap-1.5 font-bold text-[10px]">
                 <Star size={10} fill="#FFC107" className="text-[#FFC107]" /> {rating}
               </div>
-              <div className="brand-tag brand-tag-default !px-3 !py-1 flex items-center gap-1.5 font-bold text-[10px]">
+              <div className="brand-tag brand-tag-default !px-3 !py-1.5 flex items-center gap-1.5 font-bold text-[10px]">
                 <Calendar size={10} /> Store Age: {storeAge}
               </div>
             </div>

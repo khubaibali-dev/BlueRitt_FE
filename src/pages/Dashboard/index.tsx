@@ -6,7 +6,7 @@ import SubscriptionSnapshot from "./components/SubscriptionSnapshot";
 import AccountSettings from "./components/AccountSettings";
 import RecentSearches from "./components/RecentSearches";
 // import TikTokHashtags from "./components/TikTokHashtags";
-import OnboardingModal from "../../components/common/input/TourModels/OnboardingModal";
+import OnboardingModal from "../../components/common/TourModels/OnboardingModal";
 import { useState, useEffect } from "react";
 
 const DashboardPage: React.FC = () => {

@@ -8,7 +8,6 @@ import {
   CircleHelp,
   LogOut,
   Package,
-  X,
   ChevronDown,
   Hash,
   ShoppingBag,
@@ -179,12 +178,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         className={`sidebar-wrapper ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} ${isCollapsed ? "sidebar-collapsed" : ""}`}
       >
         {/* Fixed Logo and Close Button Header */}
-        <div className={`shrink-0 flex px-4 ${isCollapsed ? "lg:justify-center" : "justify-between"} items-center mb-6`}>
+        <div className={`shrink-0 flex h-[75px] px-4 ${isCollapsed ? "lg:justify-center" : "justify-between"} items-center mb-2`}>
           <BlueRittLogo isCollapsed={isCollapsed} className="hidden lg:flex" />
           <BlueRittLogo isCollapsed={false} className="lg:hidden" />
-          <button onClick={toggleSidebar} className="lg:hidden text-brand-textPrimary pl-2">
+          {/* <button onClick={toggleSidebar} className="lg:hidden text-brand-textPrimary pl-2">
             <X size={28} />
-          </button>
+          </button> */}
         </div>
 
         {/* Scrollable Navigation Area */}
@@ -218,8 +217,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
           </nav>
 
           {/* Bottom Nav */}
-          <div className="pt-3 space-y-1 px-3 mb-2">
-            <div className="mt-auto mb-4" />
+          <div className="pt-3 space-y-1 px-3 mb-0">
+            <div className="mt-auto mb-2" />
             <NavItem icon={TrendingUp} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem icon={CircleHelp} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />

@@ -2,12 +2,12 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import TrendsPageTemplate from "../shared/TrendsPageTemplate";
 import TrendsEmptyState from "../shared/components/TrendsEmptyState";
-import AmazonProductCard from "./components/AmazonProductCard";
+import SpkbgCard from "../../../components/common/SpkCards/SpkbgCard";
 import AmazonRankedCard from "./components/AmazonRankedCard";
 import AmazonProductDetailsDrawer from "./components/AmazonProductDetailsDrawer";
 import amazonBanner from "../../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../../assets/images/SocialPulse-light.png";
-import { Package, Hash, ChevronRight, Search, Sparkles } from "lucide-react";
+import { Package, Hash, ChevronRight, } from "lucide-react";
 import {
   amazonCountryOptions,
   amazonTrendTypeOptions,
@@ -446,13 +446,15 @@ const AmazonTrends: React.FC = () => {
               label: "Amazon Trend Searches",
               value: userDetails?.search_quota.amazon_trends_search?.toString() || "0",
               icon: "TrendingUp",
-              progress: 100
+              progress: 100,
+              tooltipContent: "Smart Search Credit Saver: Repeat the same search within 7 days - no credit used. In other cases, a search credit will apply. 7-day window ensures fresh results from BlueRitt"
             },
             {
               label: "Supplier Discoveries",
               value: userDetails?.search_quota.supplier_discovery?.toString() || "0",
               icon: "Store",
-              progress: 100
+              progress: 100,
+              tooltipContent: "Discover Smart - Save Your Credit Search: With Suppliers for the same product again within 7 days no credits deducted. After 7 days, one Discover Supplier credit applies per new search. Matches are refreshed regularly to keep results timely and relevant"
             },
             { isAddon: true, label: "Add-ons", subtitle: "Purchase or Upgrade Plan", icon: "ShoppingCart", onClick: () => navigate("/addons") },
           ]}
@@ -534,15 +536,20 @@ const AmazonTrends: React.FC = () => {
                   tab === "product" ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                       {sortedData.map((product: any, index: number) => (
-                        <AmazonProductCard
+                        <SpkbgCard
                           key={`${product.asin || 'no-asin'}-${index}`}
-                          title={product.product_title || product.title}
-                          image={product.product_photo || product.image}
-                          category={product.category || category}
-                          price={product.product_price || product.price}
-                          oldPrice={product.product_original_price}
-                          rating={product.product_star_rating}
-                          views={product.product_num_ratings ? `${product.product_num_ratings} Ratings` : "N/A"}
+                          variant="grid"
+                          data={{
+                            title: product.product_title || product.title,
+                            image: product.product_photo || product.image,
+                            price: product.product_price || product.price,
+                            oldPrice: product.product_original_price || "0.00",
+                            asin: product.asin,
+                            rating: product.product_star_rating,
+                            numRatings: product.product_num_ratings,
+                            salesVol: product.sales_volume || "N/A",
+                            offers: product.num_offers || "1"
+                          }}
                           onDetailsClick={() => {
                             setSelectedProduct({
                               asin: product.asin,
@@ -557,7 +564,20 @@ const AmazonTrends: React.FC = () => {
                             });
                             openDetails();
                           }}
-                          onDiscoverSupplier={() => handleDiscoverSupplier(product)}
+                          onDiscoverSuppliers={() => {
+                            setSelectedProduct({
+                              asin: product.asin,
+                              title: product.product_title || product.title,
+                              image: product.product_photo || product.image,
+                              category: product.category || category,
+                              price: product.product_price || product.price,
+                              oldPrice: product.product_original_price,
+                              rating: product.product_star_rating,
+                              views: product.product_num_ratings ? `${product.product_num_ratings} Ratings` : "N/A",
+                              country: activeCountry
+                            });
+                            handleDiscoverSupplier(product);
+                          }}
                         />
                       ))}
                     </div>

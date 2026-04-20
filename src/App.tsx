@@ -2,9 +2,13 @@ import React from "react";
 import AppRoutes from "./routing/AppRoutes";
 import { useAuth } from "./context/AuthContext";
 import GlobalGradients from "./components/common/GlobalGradients";
+import { useInactivityTimeout } from "./hooks/useInactivityTimeout";
 
 const App: React.FC = () => {
   const { loading } = useAuth();
+  
+  // Initialize inactivity monitor
+  useInactivityTimeout();
 
   if (loading) {
     return (

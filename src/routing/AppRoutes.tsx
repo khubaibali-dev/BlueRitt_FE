@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { routes, type RouteType } from "./routes";
+import { Routes, Route } from "react-router-dom";
+import { routes, type RouteType } from "./routes.tsx";
 import ProtectedRoute from "./ProtectedRoute";
 
 const renderRoutes = (
@@ -28,10 +28,14 @@ const renderRoutes = (
 
     const RouteElement = route.isProtected ? (
       <ProtectedRoute>
-        <route.element />
+        <Suspense fallback={route.fallback || <div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
+          <route.element />
+        </Suspense>
       </ProtectedRoute>
     ) : (
-      <route.element />
+      <Suspense fallback={route.fallback || <div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
+        <route.element />
+      </Suspense>
     );
 
     const LayoutElement = route.layout ? (
@@ -50,11 +54,9 @@ const renderRoutes = (
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
-      <Suspense fallback={<div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
-        <Routes>{renderRoutes(routes, "")}</Routes>
-      </Suspense>
-    </BrowserRouter>
+    <Suspense fallback={<div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
+      <Routes>{renderRoutes(routes, "")}</Routes>
+    </Suspense>
   );
 };
 

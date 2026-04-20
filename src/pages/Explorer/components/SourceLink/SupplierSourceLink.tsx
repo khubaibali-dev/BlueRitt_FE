@@ -187,8 +187,8 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
   if (!normalizedProduct) return null;
 
   return (
-    <div className="discovery-results px-6 sm:px-4 py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-brand-card rounded-[24px] isolate min-h-screen overflow-hidden">
-      {/* Background Image Layer with Bottom Fade - Perfectly Blended like Product Analysis */}
+    <div className="discovery-results px-0 sm:px-4 py-10 animate-in fade-in slide-in-from-right-full duration-500 w-full relative bg-brand-card rounded-[24px] isolate min-h-screen overflow-hidden">
+
       <div className="absolute -inset-x-6 sm:-inset-x-10 -top-6 sm:-top-10 h-[750px] z-[-1] pointer-events-none overflow-hidden rounded-t-[32px]">
         <img src={bgAnalysis} alt="" className="dashboard-banner-image object-top !opacity-100 mix-blend-screen hidden dark:block" style={{ transform: 'scale(1.2)', objectPosition: 'left top' }} />
         <img src={bgAnalysisLight} alt="" className="dashboard-banner-image dark:hidden" />
@@ -224,7 +224,7 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
 
             {/* Info Icon */}
             <Tooltip
-              content="BlueRitt’s AI matches your product with verified, high-rated suppliers and assigns a fit score."
+              content="BlueRitt’s AI engine matches your selected Product with Verified, Trade-assured, Gold and High-rated Suppliers, then generates an AI Match Score — the higher the score, the better the supplier fit."
               className="md:mt-12"
               width="320px"
             >

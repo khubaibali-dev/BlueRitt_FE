@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPackages, createCheckout } from "../../../api/pricing";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../components/common/Toast/ToastContext";
-import ConfirmPlanModal from "../../../components/common/input/TourModels/ConfirmPlanModal";
+import ConfirmPlanModal from "../../../components/common/TourModels/ConfirmPlanModal";
 
 
 const PlansSkeleton: React.FC<{ isOneTime: boolean }> = ({ isOneTime }) => {

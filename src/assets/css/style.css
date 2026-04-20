@@ -693,23 +693,33 @@
 }
 
 .calculator-toggle-container {
-  @apply bg-[#F1F5F9]/40 sm:bg-[#F1F5F9]/10 sm:backdrop-blur-xl flex items-center figma-pill-border overflow-hidden rounded-full px-2 py-1.5;
+  @apply bg-[#F1F5F9]/40 sm:bg-[#F1F5F9]/10 sm:backdrop-blur-xl flex items-center figma-pill-border overflow-hidden rounded-full p-1.5 relative isolate;
 }
 
 .dark .calculator-toggle-container {
-  @apply bg-[#030B1C]/5;
+  @apply bg-[#030B1C]/20;
 }
 
 .calculator-toggle-btn {
-  @apply px-8 py-2  rounded-full text-[13px] font-bold transition-all;
+  @apply relative z-10 px-10 py-2.5 rounded-full text-[14px] font-bold transition-colors duration-300 flex items-center justify-center gap-2 min-w-[150px];
 }
 
 .calculator-toggle-btn-active {
-  @apply bg-brand-gradient text-white shadow-lg shadow-orange-500/20;
+  @apply text-white;
 }
 
 .calculator-toggle-btn-inactive {
-  @apply text-brand-textSecondary dark:text-white hover:text-brand-textPrimary dark:hover:text-white/80;
+  @apply text-brand-textSecondary dark:text-white/60 hover:text-brand-textPrimary dark:hover:text-white;
+}
+
+.calculator-toggle-slider {
+  @apply absolute top-1.5 bottom-1.5 left-1.5 bg-brand-gradient rounded-full transition-all duration-300 ease-in-out shadow-lg shadow-orange-500/20 z-0;
+  width: calc(50% - 3px);
+}
+
+.active-advanced .calculator-toggle-slider {
+  transform: translateX(100%);
+  left: 1.5px;
 }
 
 .otp-footer {
@@ -1031,7 +1041,7 @@
   }
 
   .trend-card-glow {
-    @apply bg-[#04132B]  rounded-[12px] p-4 shadow-2xl relative overflow-hidden  transition-all hover:border-white/10;
+    @apply bg-[#04132B] rounded-[12px] p-4 shadow-2xl relative transition-all hover:border-white/10;
   }
 
   :root:not(.dark) .trend-card-glow {
@@ -1385,19 +1395,19 @@
   /* border-r border-brand-border-ui */
   /* Sidebar Styles */
   .sidebar-wrapper {
-    @apply h-screen bg-brand-bg  flex-col py-6 shrink-0 fixed lg:relative lg:flex z-40 transform transition-all duration-300 overflow-hidden;
+    @apply h-screen bg-brand-bg  flex-col pb-6 shrink-0 fixed lg:relative lg:flex z-40 transform transition-all duration-300 overflow-hidden;
     width: 240px;
   }
   
   @media (min-width: 1024px) {
     .sidebar-collapsed {
       width: 80px !important;
-      padding-left: 0.75rem !important;
-      padding-right: 0.75rem !important;
+      padding-left: 0.65rem !important;
+      padding-right: 0.65rem !important;
     }
     
     .sidebar-collapsed .sidebar-item {
-      @apply justify-center px-0 mx-0;
+      @apply justify-center px-0 mx-auto py-0 h-[38px] w-[38px] flex items-center rounded-xl mb-2 !important;
     }
   
     .sidebar-collapsed .sidebar-item span,
@@ -1412,23 +1422,28 @@
     .sidebar-collapsed .sidebar-item div {
       @apply gap-0;
     }
+
+    .sidebar-collapsed .sidebar-item.sidebar-item-active,
+    .sidebar-collapsed .sidebar-item.socialpulse-active {
+      @apply mx-auto !important;
+    }
   }
   
   .sidebar-item {
-    @apply flex items-center justify-between px-3 py-2.5 mx-2 rounded-xl transition-all duration-200 hover:text-brand-textPrimary hover:bg-white/5;
+    @apply flex items-center justify-between px-3 py-2.5 mx-2 rounded-xl transition-all duration-200 hover:text-brand-textPrimary hover:bg-white/5 border border-transparent;
     color: var(--brand-sidebar-text);
   }
   
   .sidebar-item-active {
-    @apply text-white shadow-sm font-bold mx-2;
+    @apply text-white shadow-sm font-semibold mx-2;
     background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
-    border: none !important;
+    border: 1px solid transparent !important;
   }
 
   .socialpulse-active {
-    @apply text-white shadow-sm font-bold mx-2;
+    @apply text-white shadow-sm font-semibold mx-2;
     background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
-    border: none !important;
+    border: 1px solid transparent !important;
   }
   
   .sidebar-badge {
@@ -1754,7 +1769,7 @@
 }
 
 .tool-fusion-wrapper {
-  @apply p-5 sm:p-8 lg:p-12;
+  @apply p-4 sm:p-6 lg:p-8;
 }
 
 .tool-fusion-header {
@@ -1779,7 +1794,7 @@
 }
 
 .tool-section-title {
-  @apply text-[16px] font-semibold text-white tracking-widest uppercase;
+  @apply text-[16px] font-semibold text-white tracking-widest;
 }
 
 .tool-section-count {
@@ -1788,7 +1803,7 @@
 }
 
 .tool-list {
-  @apply bg-brand-card rounded-[20px] border border-brand-border overflow-hidden;
+  @apply bg-brand-card rounded-[24px] border border-brand-inputBorder overflow-hidden;
 }
 
 .tool-card {
@@ -1845,7 +1860,7 @@
 }
 :root:not(.dark) .tool-list {
   background: var(--brand-card);
-  border-color: var(--brand-border);
+  border-color: var(--brand-input-border) !important;
 }
 :root:not(.dark) .tool-section-title {
   color: var(--brand-text-primary);

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { X, CreditCard, Loader2 } from "lucide-react";
-import InputField from "../../components/common/input/InputField";
-import { chargeCard } from "../../api/pricing";
-import { useToast } from "../../components/common/Toast/ToastContext";
+import InputField from "../../common/input/InputField";
+import { chargeCard } from "../../../api/pricing";
+import { useToast } from "../Toast/ToastContext";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface AddBalanceModalProps {
@@ -26,13 +26,13 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
     try {
       setIsSubmitting(true);
       await chargeCard(Number(amount));
-      
+
       toast.success(`Successfully added $${Number(amount).toFixed(2)} to your balance!`);
-      
+
       // Invalidate both wallet and summary queries to update UI everywhere
       queryClient.invalidateQueries({ queryKey: ["wallet", "balance"] });
       queryClient.invalidateQueries({ queryKey: ["subscription", "account_summary"] });
-      
+
       onClose();
       setAmount("");
     } catch (error: any) {
@@ -76,12 +76,13 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
             onChange={(e) => setAmount(e.target.value)}
             prefix="$"
           />
-          <p className="text-[12px] text-brand-textSecondary dark:text-[#FFFFFFB0] mt-[-8px]">Specify the amount you wish to credit to your account</p>
+          <p className="text-[12px] text-brand-textSecondary dark:text-[#FFFFFFB0] mt-[-8px]">Write the amount you want to fill ($)</p>
         </div>
 
-        <div className="purchase-action-row pt-6 border-t border-brand-border dark:border-white/5">
+        <div className="purchase-action-row  border-t border-brand-border dark:border-white/5">
           <button
-            className="purchase-cancel-btn !py-2 !text-brand-textSecondary dark:text-[#FFFFFFB0] hover:text-brand-textPrimary dark:hover:text-white font-semibold transition-colors disabled:opacity-50"
+            className="purchase-cancel-btn !py-2 !text-brand-textSecondary dark:text-white hover:text-brand-textPrimary 
+            !border !border-brand-border dark:border-white/5hover:text-white font-semibold transition-colors disabled:opacity-50"
             onClick={onClose}
             disabled={isSubmitting}
           >

@@ -1,6 +1,8 @@
 import React from "react";
 import { Wallet, ShoppingCart, ShieldCheck, Search, Users, Calculator, TrendingUp, Zap, HelpCircle } from "lucide-react";
-import PurchaseModal from "./PurchaseModal";
+import PurchaseModal from "../../components/common/Modals/PurchaseModal";
+import AddBalanceModal from "../../components/common/Modals/AddBalanceModal";
+
 import { useQuery } from "@tanstack/react-query";
 import { getActiveAddons, Addon } from "../../api/addons";
 import { fetchAccountSummary } from "../../api/pricing";
@@ -53,7 +55,6 @@ const SECTION_ORDER = [
   "Amazon Product Searches",
 ];
 
-import AddBalanceModal from "./AddBalanceModal";
 
 const AddOns: React.FC = () => {
   const [selectedAddon, setSelectedAddon] = React.useState<Addon | null>(null);
@@ -135,7 +136,7 @@ const AddOns: React.FC = () => {
     <div className="addons-page-container">
       <div className="addons-header-section">
         <h1 className="addons-title">Purchase Add-ons</h1>
-        <p className="addons-subtitle">Extend your limits with additional credits</p>
+        <p className="tool-fusion-subtitle">Extend your limits with additional credits</p>
       </div>
 
       <div className="addons-balance-grid">
@@ -148,10 +149,10 @@ const AddOns: React.FC = () => {
         </div>
 
         <div
-          className="addon-balance-card addon-balance-card cursor-pointer hover:bg-brand-hover dark:hover:bg-white/10 transition-colors"
+          className="addon-balance-card addon-balance-card cursor-pointer  transition-colors"
           onClick={() => setIsBalanceModalOpen(true)}
         >
-          <div className="addon-add-balance-icon">
+          <div className="">
             <ShoppingCart size={28} />
           </div>
           <div className="addon-add-balance-content">

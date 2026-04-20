@@ -13,7 +13,7 @@ interface BasicTabProps {
   totalFulfillmentCost: string;
   errors: any;
   touched: any;
-  handleBlur: (field: string) => void;
+  handleBlur: any;
 }
 
 const BasicTab: React.FC<BasicTabProps> = ({
@@ -39,7 +39,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
             prefix="$"
              value={formData.pi_sellingPrice}
             onChange={(val) => handleFieldChange("pi_sellingPrice", val)}
-            onBlur={() => handleBlur("pi_sellingPrice")}
+            onBlur={handleBlur("pi_sellingPrice")}
             error={touched.pi_sellingPrice && errors.pi_sellingPrice}
           />
           <CalculatorField
@@ -47,7 +47,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
             required
              value={formData.pi_quantity}
             onChange={(val) => handleFieldChange("pi_quantity", val)}
-            onBlur={() => handleBlur("pi_quantity")}
+            onBlur={handleBlur("pi_quantity")}
             error={touched.pi_quantity && errors.pi_quantity}
           />
           <CalculatorField label="Revenue/Unit" prefix="$" value={formData.pi_sellingPrice} readOnly />
@@ -64,7 +64,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
             prefix="$"
              value={formData.psc_manufacturingCost}
             onChange={(val) => handleFieldChange("psc_manufacturingCost", val)}
-            onBlur={() => handleBlur("psc_manufacturingCost")}
+            onBlur={handleBlur("psc_manufacturingCost")}
             error={touched.psc_manufacturingCost && errors.psc_manufacturingCost}
           />
           <CalculatorField
@@ -73,7 +73,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
             prefix="$"
              value={formData.psc_shippingCost}
             onChange={(val) => handleFieldChange("psc_shippingCost", val)}
-            onBlur={() => handleBlur("psc_shippingCost")}
+            onBlur={handleBlur("psc_shippingCost")}
             error={touched.psc_shippingCost && errors.psc_shippingCost}
           />
           <CalculatorField
@@ -81,7 +81,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
             prefix="$"
              value={formData.psc_miscCost}
             onChange={(val) => handleFieldChange("psc_miscCost", val)}
-            onBlur={() => handleBlur("psc_miscCost")}
+            onBlur={handleBlur("psc_miscCost")}
             error={touched.psc_miscCost && errors.psc_miscCost}
           />
           <CalculatorField
@@ -89,7 +89,7 @@ const BasicTab: React.FC<BasicTabProps> = ({
             required
              value={formData.psc_orderQuantity}
             onChange={(val) => handleFieldChange("psc_orderQuantity", val)}
-            onBlur={() => handleBlur("psc_orderQuantity")}
+            onBlur={handleBlur("psc_orderQuantity")}
             error={touched.psc_orderQuantity && errors.psc_orderQuantity}
           />
           <CalculatorField label="Sourcing Cost/Unit" prefix="$" value={sourcingCostUnit} readOnly />

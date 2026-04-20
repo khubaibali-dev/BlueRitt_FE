@@ -8,6 +8,8 @@ import { ToastProvider } from './components/common/Toast/ToastContext'
 import { SignupProvider } from './context/SignupContext'
 import './assets/css/style.css'
 
+import { BrowserRouter } from 'react-router-dom'
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -26,7 +28,9 @@ ReactDOM.createRoot(rootElement).render(
         <AuthProvider>
           <ToastProvider>
             <SignupProvider>
-              <App />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </SignupProvider>
           </ToastProvider>
         </AuthProvider>

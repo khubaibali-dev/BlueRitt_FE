@@ -26,7 +26,7 @@ const SettingsPage: React.FC = () => {
       {/* Header Section */}
       <div className="max-w-[1200px] w-full mx-auto mb-4 text-left">
         <h1 className="page-header-title !mb-0 !font-normal !text-[24px] mt-8">Settings</h1>
-        <p className="page-subtitle mt-0 !text-[14px]">
+        <p className="tool-fusion-subtitle ">
           Manage your account, preferences, and subscription
         </p>
       </div>

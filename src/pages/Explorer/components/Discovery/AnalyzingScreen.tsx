@@ -3,7 +3,7 @@ import badgeImg from "../../../../assets/images/Badge.png";
 import explorerLoading from "../../../../assets/images/ExplorerLoading.png";
 import starImg from "../../../../assets/images/star.png";
 // import DetailedSkeletonLoader from "./DetailedSkeletonLoader";
-import LoadingPage from "../../../Testing/LoadingPage";
+import LoadingPage from "../../../../components/common/ApiLoader/LoadingPage";
 
 interface AnalyzingScreenProps {
   isDetailed?: boolean;

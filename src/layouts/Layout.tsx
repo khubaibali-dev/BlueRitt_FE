@@ -36,13 +36,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <DashboardHeader toggleSidebar={toggleSidebar} />
 
         {/* Scrollable Content */}
-        <main className="flex-1 overflow-y-auto p-6 pb-2 custom-scrollbar flex flex-col">
+        <main className="flex-1 overflow-y-auto p-3 pb-2 custom-scrollbar flex flex-col">
           <div className="flex-1">
             {children}
           </div>
-          <Footer 
-            showVersion={false} 
-            className="mt-4 pt-4 shrink-0 border-t border-brand-border/40 dark:border-white/5" 
+          <Footer
+            showVersion={false}
+            className="mt-4 pt-4 shrink-0 border-t border-brand-border/40 dark:border-white/5"
           />
         </main>
       </div>

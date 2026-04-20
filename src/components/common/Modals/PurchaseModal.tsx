@@ -1,8 +1,8 @@
 import React from "react";
 import { Wallet, X, Calculator, Search, Users, TrendingUp, Zap, HelpCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postPurchaseAddon, Addon } from "../../api/addons";
-import { useToast } from "../../components/common/Toast/ToastContext";
+import { postPurchaseAddon, Addon } from "../../../api/addons";
+import { useToast } from "../../../components/common/Toast/ToastContext";
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -24,7 +24,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
 const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, currentBalance }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
-  
+
   const purchaseMutation = useMutation({
     mutationFn: (id: string) => postPurchaseAddon({ id }),
     onSuccess: () => {
@@ -33,7 +33,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, c
       queryClient.invalidateQueries({ queryKey: ["active-addons"] });
       queryClient.invalidateQueries({ queryKey: ["subscription", "account_summary"] });
       queryClient.invalidateQueries({ queryKey: ["wallet", "balance"] });
-      
+
       onClose();
     },
     onError: (err: any) => {
@@ -92,7 +92,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, c
           </div>
         </div>
 
-        <div className="purchase-info-box">
+        <div className="purchase-info-box !border !border-brand-inputBorder">
           <div className="purchase-info-icon-container">
             <Wallet size={28} />
           </div>
@@ -107,24 +107,24 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, c
         </div>
 
         <label className="purchase-checkbox-label">
-          <input type="checkbox" className="mt-1 accent-brand-primary" defaultChecked />
-          <span>I agree to the purchase of {numAmount} credits for ${addon.cost} and confirm that all sales are final.</span>
+          <input type="checkbox" className="mt-1 accent-brand-primary h-[24px] w-[24px]" defaultChecked />
+          <span className="text-[13px] ml-[2px]">I agree to the purchase of {numAmount} credits for ${addon.cost} and confirm that all sales are final.</span>
         </label>
 
         <div className="purchase-action-row">
-          <button 
-            className="purchase-cancel-btn" 
+          <button
+            className="purchase-cancel-btn"
             onClick={onClose}
             disabled={purchaseMutation.isPending}
           >
             Cancel
           </button>
-          <button 
-            className="purchase-submit-btn" 
+          <button
+            className="purchase-submit-btn"
             onClick={() => purchaseMutation.mutate(addon.id)}
             disabled={purchaseMutation.isPending}
           >
-            {purchaseMutation.isPending ? "Processing..." : "Complete Purchase"}
+            {purchaseMutation.isPending ? "Processing..." : "Confirm Purchase"}
           </button>
         </div>
       </div>

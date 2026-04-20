@@ -306,13 +306,15 @@ const TikTokTrends: React.FC = () => {
               label: activeTab === "product" ? "TikTok Trend Searches" : "Hashtag Trend Searches",
               value: (activeTab === "product" ? userDetails?.search_quota?.tiktok_searches : userDetails?.search_quota?.tiktok_hashtag_search)?.toString() || "0",
               icon: "TrendingUp",
-              progress: 100
+              progress: 100,
+              tooltipContent: "Smart Search Credit Saver: Repeat the same search within 7 days - no credit used. In other cases, a search credit will apply. 7-day window ensures fresh results from BlueRitt"
             },
             {
               label: "Supplier Discoveries",
               value: userDetails?.search_quota.supplier_discovery?.toString() || "0",
               icon: "Store",
-              progress: 100
+              progress: 100,
+              tooltipContent: "Discover Smart - Save Your Credit Search: With Suppliers for the same product again within 7 days no credits deducted. After 7 days, one Discover Supplier credit applies per new search. Matches are refreshed regularly to keep results timely and relevant"
             },
             {
               isAddon: true,

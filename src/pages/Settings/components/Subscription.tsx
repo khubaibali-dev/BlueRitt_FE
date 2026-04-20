@@ -5,7 +5,7 @@ import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchAccountSummary, toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
 import { useToast } from "../../../components/common/Toast/ToastContext";
-import AddBalanceModal from "../../AddOns/AddBalanceModal";
+import AddBalanceModal from "../../../components/common/Modals/AddBalanceModal";
 import CancelSubscriptionModal from "./CancelSubscriptionModal";
 
 interface SubscriptionProps {

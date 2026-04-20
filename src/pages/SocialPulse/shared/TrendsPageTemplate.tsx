@@ -18,6 +18,7 @@ interface MetricData {
   subtitle?: string;
   isAddon?: boolean;
   onClick?: () => void;
+  tooltipContent?: string;
 }
 
 interface TrendsPageTemplateProps {

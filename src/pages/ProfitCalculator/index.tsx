@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Search, Info, Globe, Lock } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import * as Yup from "yup";
 import { Formik, useFormikContext } from "formik";
 import shadowBg from "../../assets/images/marganmax.png";
 import shadowBgLight from "../../assets/images/Explorer-light.png";
 import ResultPanels from "./components/ResultPanels";
-import MarginMaxTourModal from "../../components/common/input/TourModels/MarginMaxTourModal";
+import MarginMaxTourModal from "../../components/common/TourModels/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
 import AdvancedTab from "./Advance/AdvancedTab";
 import FilterDropdown from "../../components/common/select/FilterDropdown";
@@ -19,20 +18,8 @@ import AmazonProductCard from "../Explorer/components/Common/Cards/AmazonProduct
 import { useToast } from "../../components/common/Toast/ToastContext";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { calculatorValidationSchema as validationSchema } from "../../utils/calculatorSchema";
 
-const validationSchema = Yup.object({
-  pi_sellingPrice: Yup.number().required("Selling Price is required.").typeError("Must be a number."),
-  pi_quantity: Yup.number().required("Units Sold is required.").typeError("Must be a number."),
-  psc_manufacturingCost: Yup.number().required("Product Manufacturing is required.").typeError("Must be a number."),
-  psc_shippingCost: Yup.number().required("Shipping Cost is required.").typeError("Must be a number."),
-  psc_orderQuantity: Yup.number().required("Order Quantity is required.").typeError("Must be a number."),
-  fm_referrfalFees: Yup.number().required("Amazon Fees is required.").typeError("Must be a number."),
-  fm_fbaFulfillmentFees: Yup.number().required("Fulfillment Cost is required.").typeError("Must be a number."),
-  fm_monthlyStorageFees: Yup.number().required("Storage Cost is required.").typeError("Must be a number."),
-  fm_returnsRate: Yup.number().required("Returns Rate is required.").typeError("Must be a number."),
-  gc_imagingAndPhotographyCost: Yup.number().required("Imaging and Photography Cost is required.").typeError("Must be a number."),
-  marc_marketingCost: Yup.number().required("Marketing Cost is required.").typeError("Must be a number."),
-});
 
 const initialValues = {
   pi_sellingPrice: "0",
@@ -438,11 +425,12 @@ const ProfitCalculatorContent: React.FC<any> = ({
             </div>
 
             <div className="calculator-toggle-wrapper">
-              <div className="calculator-toggle-container gap-1">
+              <div className={`calculator-toggle-container ${activeTab === 'Advanced' ? 'active-advanced' : ''}`}>
+                <div className="calculator-toggle-slider" />
                 <button
                   type="button"
                   onClick={() => setActiveTab("Basic")}
-                  className={`calculator-toggle-btn flex items-center justify-center gap-2 ${activeTab === 'Basic' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
+                  className={`calculator-toggle-btn ${activeTab === 'Basic' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
                 >
                   {!hasGrossAccess && <Lock size={12} className="opacity-70" />}
                   Basic
@@ -450,7 +438,7 @@ const ProfitCalculatorContent: React.FC<any> = ({
                 <button
                   type="button"
                   onClick={() => setActiveTab("Advanced")}
-                  className={`calculator-toggle-btn flex items-center justify-center gap-2 ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
+                  className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
                 >
                   {!hasNetAccess && <Lock size={12} className="opacity-70" />}
                   Advanced

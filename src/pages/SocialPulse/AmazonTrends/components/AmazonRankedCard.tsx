@@ -45,7 +45,7 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
 
         {/* Star Rating Badge - Top Right */}
         <div className="absolute top-4 right-4 z-10">
-          <div className="bg-brand-card/80 !px-3 !py-1.5 flex items-center gap-1.5 !rounded-full shadow-lg backdrop-blur-md border border-brand-border text-brand-textPrimary font-bold text-[11px]">
+          <div className="bg-brand-card/80 !px-3 !py-1.5 flex items-center gap-1.5 !rounded-full shadow-lg backdrop-blur-md border border-brand-inputBorder text-brand-textPrimary font-bold text-[11px]">
             <div className="flex items-center">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
@@ -56,7 +56,7 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
                 />
               ))}
             </div>
-            <span>{rating}</span>
+            <span className="text-black text-[12px] font-medium">{rating}</span>
           </div>
         </div>
       </div>
@@ -71,9 +71,12 @@ const AmazonRankedCard: React.FC<AmazonRankedCardProps> = ({
           <span className="product-price-primary text-[18px]">
             {price}
           </span>
-          <span className="text-brand-textSecondary text-[12px] font-medium">
-            ({ratingCount.replace(' ratings', '')})
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="metric-label text-right">Rating Count
+              <br />
+              <span className="metric-value">({ratingCount.replace(' ratings', '')})</span>
+            </span>
+          </div>
         </div>
 
         <button

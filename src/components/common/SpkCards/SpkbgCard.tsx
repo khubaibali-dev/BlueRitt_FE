@@ -123,7 +123,7 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
             </div>
             <div className="flex items-center gap-3">
               {growth && <div className="trending-badge-standard"><TrendingUp size={12} /> {growth}</div>}
-              <span className="rating-text-standard">{numRatings} ratings</span>
+              <span className="rating-text-standard">{numRatings} Ratting Count</span>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 mt-4 sm:mt-2 w-full">
@@ -209,56 +209,115 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
             <img src={image} alt={title} className="w-full h-full object-cover" />
           </div>
           <div className={`flex-1 w-full flex flex-col ${isCalculator ? 'gap-3' : 'gap-4'}`}>
-            <div className="flex flex-col lg:flex-row justify-between items-start gap-2 mt-1">
-              <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[600px] text-center lg:text-left" title={title}>{title}</h3>
-              <div className="flex items-baseline gap-2 shrink-0 self-center lg:self-auto">
-                <span className="product-old-price-primary text-[14px]">${oldPrice}</span>
-                <span className="product-price-primary text-[22px]">${price}</span>
-              </div>
-            </div>
-            <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-start lg:justify-between">
-              <div className="product-metrics-row-list !mt-0 !gap-x-4 !gap-y-2 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-brand-primary dark:text-white" /></div>
-                  <div className="flex flex-col"><span className="metric-label">Asin</span><span className="metric-value">{asin}</span></div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-brand-primary dark:text-white"><TrendingUp size={15} /></div>
-                  <div className="flex flex-col"><span className="metric-label">Monthly Sales Volume</span><span className="metric-value">{salesVol}</span></div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white"><PercentIcon size={15} /></span></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">Offers</span><span className="metric-value leading-none">{offers}</span></div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Truck size={15} className="text-brand-primary dark:text-white" /></div>
-                  <div className="flex flex-col"><span className="metric-label leading-none mb-1">Delivery</span><span className="metric-value leading-none">Free</span></div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 overflow-hidden">
-                    {tags.slice(0, 2).map((tag, i) => (
-                      <span key={i} className={`brand-tag ${tag.toLowerCase().includes("amazon choice") || tag.toLowerCase().includes("best seller") ? "brand-tag-amazon" :
-                        tag.toLowerCase().includes("prime") ? "brand-tag-prime" :
-                          tag.toLowerCase().includes("climate") ? "brand-tag-climate" :
-                            "brand-tag-default"} px-2.5 py-0.5 text-[10px] whitespace-nowrap uppercase tracking-wider font-bold`}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-end gap-1 ml-[60px]">
-                    <div className="flex items-center gap-0.5 bg-brand-card-alt px-2 py-1 rounded-full shrink-0 border border-brand-inputBorder">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={12} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
-                      ))}
-                      <span className="text-[12px] font-bold text-brand-textPrimary leading-none">{rating}</span>
+            <div className="flex flex-col gap-6 mt-1">
+              {isCalculator ? (
+                /* 1. ORIGINAL CALCULATOR LAYOUT (RESORED) */
+                <>
+                  <div className="flex flex-col lg:flex-row justify-between items-start gap-2">
+                    <h3 className="product-card-title text-[14px] sm:text-[15px] lg:max-w-[450px]" title={title}>{title}</h3>
+                    <div className="flex items-baseline gap-2 shrink-0 self-center lg:self-auto">
+                      <span className="product-old-price-primary text-[14px]">${oldPrice}</span>
+                      <span className="product-price-primary text-[20px] sm:text-[22px]">${price}</span>
                     </div>
                   </div>
+                  <div className="product-metrics-row-list !mt-0 !gap-x-4 sm:!gap-x-6 !gap-y-4 items-center grid grid-cols-2 sm:flex sm:flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-brand-primary dark:text-white" /></div>
+                      <div className="flex flex-col"><span className="metric-label">Asin</span><span className="metric-value">{asin}</span></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-brand-primary dark:text-white"><TrendingUp size={15} /></div>
+                      <div className="flex flex-col"><span className="metric-label">Monthly Sales Volume</span><span className="metric-value">{salesVol}</span></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white"><PercentIcon size={15} /></span></div>
+                      <div className="flex flex-col"><span className="metric-label leading-none mb-1">Offers</span><span className="metric-value leading-none">{offers}</span></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Truck size={15} className="text-brand-primary dark:text-white" /></div>
+                      <div className="flex flex-col"><span className="metric-label leading-none mb-1">Delivery</span><span className="metric-value leading-none">Free</span></div>
+                    </div>
 
-                </div>
-                <span className="metric-label ">Rating Count <br />
-                  <span className="metric-value">({numRatings})</span>
-                </span>
-              </div>
+                    {/* Badges and Ratings moved inside the same flow */}
+                    <div className="flex items-center gap-2">
+                      {tags.slice(0, 1).map((tag, i) => (
+                        <span key={i} className={`brand-tag ${tag.toLowerCase().includes("amazon choice") || tag.toLowerCase().includes("best seller") ? "brand-tag-amazon" :
+                          tag.toLowerCase().includes("prime") ? "brand-tag-prime" :
+                            "brand-tag-default"} px-2.5 py-1 text-[10px] whitespace-nowrap uppercase tracking-wider font-bold`}>
+                          {tag}
+                        </span>
+                      ))}
+                      <div className="flex items-center gap-1.5 bg-brand-card-alt px-2 py-1 rounded-full border border-brand-inputBorder shrink-0">
+                        <div className="flex items-center gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} size={11} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
+                          ))}
+                        </div>
+                        <span className="text-[11px] font-bold text-brand-textPrimary leading-none">{rating}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="metric-label text-[11px]">Rating Count</span>
+                      <span className="metric-value text-[11px]">{numRatings}</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* 2. NEW SOURCELINK LAYOUT */
+                <>
+                  <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                    <h3 className="product-card-title text-[15px] sm:text-[16px] lg:max-w-[800px] text-center lg:text-left" title={title}>{title}</h3>
+                    <div className="flex items-baseline gap-2 shrink-0 self-center lg:self-auto">
+                      <span className="product-old-price-primary text-[14px]">${oldPrice}</span>
+                      <span className="product-price-primary text-[22px]">${price}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+                    <div className="product-metrics-row-list !mt-0 !gap-x-4 sm:!gap-x-6 !gap-y-4 items-center flex-1 grid grid-cols-2 sm:flex sm:flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Box size={15} className="text-brand-primary dark:text-white" /></div>
+                        <div className="flex flex-col"><span className="metric-label">Asin</span><span className="metric-value">{asin}</span></div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-brand-primary dark:text-white"><TrendingUp size={15} /></div>
+                        <div className="flex flex-col"><span className="metric-label">Monthly Sales Volume</span><span className="metric-value">{salesVol}</span></div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><span className="text-brand-primary dark:text-white"><PercentIcon size={15} /></span></div>
+                        <div className="flex flex-col"><span className="metric-label leading-none mb-1">Offers</span><span className="metric-value leading-none">{offers}</span></div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0"><Truck size={15} className="text-brand-primary dark:text-white" /></div>
+                        <div className="flex flex-col"><span className="metric-label leading-none mb-1">Delivery</span><span className="metric-value leading-none">Free</span></div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center lg:items-end gap-1.5 shrink-0">
+                      <div className="flex items-center gap-2">
+                        {tags.slice(0, 2).map((tag, i) => (
+                          <span key={i} className={`brand-tag ${tag.toLowerCase().includes("amazon choice") || tag.toLowerCase().includes("best seller") ? "brand-tag-amazon" :
+                            tag.toLowerCase().includes("prime") ? "brand-tag-prime" :
+                              tag.toLowerCase().includes("climate") ? "brand-tag-climate" :
+                                "brand-tag-default"} px-2.5 py-1 text-[10px] whitespace-nowrap uppercase tracking-wider font-bold`}>
+                            {tag}
+                          </span>
+                        ))}
+                        <div className="flex items-center gap-2 bg-brand-card-alt px-2.5 py-1 rounded-full border border-brand-inputBorder shrink-0">
+                          <div className="flex items-center gap-0.5">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} size={12} fill={i < Math.floor(rating) ? "#FFC107" : "transparent"} className={i < Math.floor(rating) ? "text-[#FFC107]" : "text-brand-textSecondary"} />
+                            ))}
+                          </div>
+                          <span className="text-[12px] font-bold text-brand-textPrimary leading-none">{rating}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="metric-label leading-none">Rating Count</span>
+                        <span className="metric-value leading-none">{numRatings}</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

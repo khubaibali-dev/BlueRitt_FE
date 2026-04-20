@@ -10,7 +10,7 @@ import { useToast } from "../../../components/common/Toast/ToastContext";
 import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProductCard";
 import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import ResearchRowSkeleton from "../../../components/common/Skeletons/ResearchRowSkeleton";
-import VaultAlibabaCard from "./VaultAlibabaCard";
+import SpkbgSupplierCard from "../../../components/common/SpkCards/SpkbgSupplierCard";
 
 
 interface CollectionDetailsProps {
@@ -160,8 +160,8 @@ const ResearchRow = React.memo<{
       minOrder: moqValue,
       country: countryValue,
       isVerified: isVerifiedValue,
-      TradeAssurance: tradeAssuranceValue,
-      isGoldMember: isGoldValue
+      tradeAssurance: tradeAssuranceValue,
+      isGold: isGoldValue
     };
   }, [supplierInfo, alibabaData]);
 
@@ -204,9 +204,12 @@ const ResearchRow = React.memo<{
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <VaultAlibabaCard
-            supplier={normalizedAlibaba}
-          />
+          {normalizedAlibaba && (
+            <SpkbgSupplierCard
+              data={normalizedAlibaba}
+              variant="selected"
+            />
+          )}
         </div>
       </div>
 
@@ -310,7 +313,8 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
       <div className="mb-12">
         <div className="mb-6 pl-1">
           <h2 className="text-[20px] font-bold text-brand-textPrimary dark:text-white tracking-tight">{title}</h2>
-          <p className="text-[14px] text-brand-textSecondary dark:text-slate-400 mt-1 max-w-[800px] leading-relaxed">
+          <p className="text-[14px] text-brand-t
+          extSecondary dark:text-slate-400 mt-1 max-w-[800px] leading-relaxed">
             {description}
           </p>
         </div>
@@ -346,17 +350,18 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
         type="danger"
       />
       {/* Detail Header */}
-      <div className="flex flex-col sm:flex-row items-baseline justify-between gap-4 mb-10">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 !mt-0">
         <div className="flex flex-col gap-1">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-brand-textPrimary dark:text-white hover:text-brand-primary dark:hover:text-blue-300 text-[14px] font-bold mb-2 transition-colors w-fit group"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Vault
-          </button>
           <h1 className="banner-heading-text !mb-1 !text-left text-brand-textPrimary dark:text-white">{collectionName}</h1>
           <p className="auth-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary">Analyze {products.length} research entries in this collection</p>
         </div>
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 text-brand-textPrimary dark:text-white 
+          figma-pill-border !py-2 !px-4 text-[14px] font-bold transition-colors w-fit group shrink-0"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
+        </button>
       </div>
 
       <div className="flex flex-col gap-8">
