@@ -5,7 +5,7 @@ import TrendsEmptyState from "../shared/components/TrendsEmptyState";
 import TrendProductCard from "./components/TrendProductCard";
 import TrendSkeleton from "./components/TrendSkeleton";
 import TrendsProductDetailsDrawer from "./components/TrendsProductDetailsDrawer";
-import TrendsFilterDrawer from "./components/TrendsFilterDrawer";
+// import TrendsFilterDrawer from "./components/TrendsFilterDrawer";
 import { useQuery } from "@tanstack/react-query";
 import { getTikTokTrendingProducts, getTikTokCreativeCenterProducts, getTikTokTrendingHashtags, formatNumber } from "../../../api/tiktokTrends";
 import { useUserDetails } from "../../../hooks/useUserDetails";
@@ -13,21 +13,28 @@ import SupplierSourceLink from "../../Explorer/components/SourceLink/SupplierSou
 import SourceLinkProfitCalculator from "../../Explorer/components/SourceLink/SourceLinkProfitCalculator";
 import AnalyzingScreen from "../../Explorer/components/Discovery/AnalyzingScreen";
 import { aliBabaProductMatcher } from "../../../api/product";
-import { Package, Hash, ChevronRight, TrendingUp, Info, Search, Sparkles } from "lucide-react";
+import { Package, Hash, ChevronRight, ChevronLeft, ChevronsLeft, ChevronsRight, TrendingUp, Info, Search, Sparkles } from "lucide-react";
 import {
   countrySelectOptions,
   hastagslection,
-  periodOption
+  periodOption,
+  categorySelectOptions,
+  periodSelectOptions,
+  sortSelectOptions,
+  sortOrderSelectOptions
 } from "../../../utils/tiktokFilterOptions";
 import SelectField from "../../../components/common/select/SelectField";
 import tiktokBanner from "../../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../../assets/images/SocialPulse-light.png";
+import { checkForBlockedKeywords, getBlockedContentMessage } from "../../../utils/keywordFilter";
+import { useToast } from "../../../components/common/Toast/ToastContext";
+
 
 const TikTokTrends: React.FC = () => {
   const navigate = useNavigate();
   const { data: userDetails, refetch: refetchUserDetails } = useUserDetails();
+  const toast = useToast();
 
-  const [activeTab, setActiveTab] = useState("product");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentProductSearch, setCurrentProductSearch] = useState("");
   const [currentHashtagSearch, setCurrentHashtagSearch] = useState("");
@@ -47,6 +54,7 @@ const TikTokTrends: React.FC = () => {
   const [appliedSortBy, setAppliedSortBy] = useState("post");
   const [sortOrder, setSortOrder] = useState("desc");
   const [appliedSortOrder, setAppliedSortOrder] = useState("desc");
+  const [page, setPage] = useState(1);
   const [productFetchTrigger, setProductFetchTrigger] = useState(0);
   const [hashtagFetchTrigger, setHashtagFetchTrigger] = useState(0);
 
@@ -59,13 +67,26 @@ const TikTokTrends: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isDetailedLoading, setIsDetailedLoading] = useState(false);
 
+  const validateSearch = (query: string) => {
+    console.log("🔍 Validating search query:", query);
+    if (!query.trim()) return true;
+    const check = checkForBlockedKeywords(query);
+    console.log("🛡️ Filter check result:", check);
+    if (check.isBlocked) {
+      toast.error(`Keyword blocked: ${getBlockedContentMessage(check.category)}`);
+      return false;
+    }
+    return true;
+  };
+
+
   // Product Trends Query
   const {
     data: productData,
     isLoading: isProductLoading,
     isError: isProductError
   } = useQuery({
-    queryKey: ["tiktokTrendingProducts", activeTab, appliedCountry, appliedPeriod, appliedCategory, appliedSortBy, currentProductSearch, productFetchTrigger],
+    queryKey: ["tiktokTrendingProducts", appliedCountry, appliedPeriod, appliedCategory, appliedSortBy, currentProductSearch, productFetchTrigger, page],
     queryFn: async () => {
       console.log('🚀 Starting 2-Step Sequential Fetch...');
 
@@ -77,7 +98,8 @@ const TikTokTrends: React.FC = () => {
         category: appliedCategory,
         order_by: appliedSortBy,
         order_type: appliedSortOrder,
-        limit: 50
+        limit: 20,
+        page: page
       });
 
       console.log('📊 Step 1: DB Data received:', databaseResponse?.data?.products?.length || 0);
@@ -116,9 +138,10 @@ const TikTokTrends: React.FC = () => {
       const totalResult = {
         ...databaseResponse,
         data: {
+          ...databaseResponse?.data,
           products: databaseResponse?.data?.products || [],
           list: allCCProducts,
-          total: Math.max(databaseResponse?.data?.products?.length || 0, allCCProducts.length)
+          total: databaseResponse?.data?.total || allCCProducts.length
         }
       };
 
@@ -127,7 +150,7 @@ const TikTokTrends: React.FC = () => {
 
       return totalResult;
     },
-    enabled: hasSearched && activeTab === "product"
+    enabled: hasSearched
   });
 
   // Hashtag Trends Query
@@ -143,8 +166,8 @@ const TikTokTrends: React.FC = () => {
         period: appliedPeriod,
         industry_id: appliedCategory,
         keyword: currentHashtagSearch,
-        limit: 50,
-        page: 1
+        limit: 20,
+        page: page
       });
 
       // Refetch user details to update search quotas
@@ -163,52 +186,69 @@ const TikTokTrends: React.FC = () => {
   }, [productData, hashtagData, refetchUserDetails]);
 
   const handleSearch = () => {
+    if (!validateSearch(searchQuery)) return;
     setCurrentProductSearch(searchQuery);
+
     setHasSearched(true);
     setAppliedCountry(country);
     setAppliedPeriod(period);
     setAppliedCategory(category);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
+    setPage(1);
     setProductFetchTrigger(prev => prev + 1);
     setSelectedProductForDiscovery(null);
     setDiscoverySuppliers([]);
   };
   const handleSearchhastag = () => {
+    if (!validateSearch(searchQuery)) return;
     setCurrentHashtagSearch(searchQuery);
+
     setHasSearchedHashtags(true);
     setAppliedCountry(country);
     setAppliedPeriod(period);
     setAppliedCategory(category);
+    setPage(1);
     setHashtagFetchTrigger(prev => prev + 1);
     setSelectedProductForDiscovery(null);
     setDiscoverySuppliers([]);
   };
 
   const handleApplyFilters = () => {
+    if (!validateSearch(searchQuery)) return;
     setAppliedCountry(country);
+
     setAppliedPeriod(period);
     setAppliedCategory(category);
     setAppliedSortBy(sortBy);
     setAppliedSortOrder(sortOrder);
+    setPage(1);
+
+    // Set current search states to trigger the query
+    setCurrentProductSearch(searchQuery);
+    setCurrentHashtagSearch(searchQuery);
+    setHasSearched(true);
+    setHasSearchedHashtags(true);
+
     setProductFetchTrigger(prev => prev + 1);
     setHashtagFetchTrigger(prev => prev + 1);
   };
 
-  const handleClearFilters = () => {
-    setCountry("US");
-    setPeriod("30");
-    setCategory("");
-    setSortBy("post");
-    setSortOrder("desc");
-    setAppliedCountry("US");
-    setAppliedPeriod("30");
-    setAppliedCategory("");
-    setAppliedSortBy("post");
-    setAppliedSortOrder("desc");
-    setProductFetchTrigger(prev => prev + 1);
-    setHashtagFetchTrigger(prev => prev + 1);
-  };
+  // const handleClearFilters = () => {
+  //   setCountry("US");
+  //   setPeriod("30");
+  //   setCategory("");
+  //   setSortBy("post");
+  //   setSortOrder("desc");
+  //   setAppliedCountry("US");
+  //   setAppliedPeriod("30");
+  //   setAppliedCategory("");
+  //   setAppliedSortBy("post");
+  //   setAppliedSortOrder("desc");
+  //   setPage(1);
+  //   setProductFetchTrigger(prev => prev + 1);
+  //   setHashtagFetchTrigger(prev => prev + 1);
+  // };
 
   const handleDiscoverSupplier = async (product: any) => {
     setIsAnalyzing(true);
@@ -285,26 +325,20 @@ const TikTokTrends: React.FC = () => {
           title="TikTok Trends"
           subtitle="Discover viral products and trending hashtags"
           showProductTrendsHeader={true}
-          activeTab={activeTab}
-          onTabChange={(tab) => {
-            setActiveTab(tab);
-            setSearchQuery("");
-            setCurrentProductSearch("");
-            setCurrentHashtagSearch("");
-            setHasSearched(false);
-          }}
+          activeTab="product"
+          onTabChange={() => { }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSearch={handleSearch}
           hasSearched={hasSearched}
-          searchDisabled={searchQuery.trim().length < 3}
+          searchDisabled={false}
           tabs={[
             { label: "Product Trends", value: "product", icon: "Package" },
           ]}
           metrics={[
             {
-              label: activeTab === "product" ? "TikTok Trend Searches" : "Hashtag Trend Searches",
-              value: (activeTab === "product" ? userDetails?.search_quota?.tiktok_searches : userDetails?.search_quota?.tiktok_hashtag_search)?.toString() || "0",
+              label: "TikTok Trend Searches",
+              value: userDetails?.search_quota?.tiktok_searches?.toString() || "0",
               icon: "TrendingUp",
               progress: 100,
               tooltipContent: "Smart Search Credit Saver: Repeat the same search within 7 days - no credit used. In other cases, a search credit will apply. 7-day window ensures fresh results from BlueRitt"
@@ -334,13 +368,12 @@ const TikTokTrends: React.FC = () => {
               </button>
             ) : undefined
           }
+          showSearchForm={false}
           searchPlaceholder={{
-            product: "Search for trending products...",
-            hashtag: "Search for trending hashtags...",
+            product: "Search Keyword (Optional)...",
           }}
           searchBtnText={{
-            product: "Discover Trending Products",
-            hashtag: "Discover Trending Hashtags",
+            product: "Search",
           }}
           detailsDrawer={(isOpen, onClose, product) => (
             <TrendsProductDetailsDrawer
@@ -351,30 +384,86 @@ const TikTokTrends: React.FC = () => {
               onDiscoverSupplier={() => handleDiscoverSupplier(product)}
             />
           )}
-          filterDrawer={(isOpen, onClose) => (
-            <TrendsFilterDrawer
-              isOpen={isOpen}
-              onClose={onClose}
-              country={country}
-              onCountryChange={setCountry}
-              period={period}
-              onPeriodChange={setPeriod}
-              category={category}
-              onCategoryChange={setCategory}
-              sortBy={sortBy}
-              onSortByChange={setSortBy}
-              sortOrder={sortOrder}
-              onSortOrderChange={setSortOrder}
-              onApply={() => {
-                handleApplyFilters();
-                onClose();
-              }}
-              onClear={() => {
-                handleClearFilters();
-                onClose();
-              }}
-            />
+          showFilterButton={false}
+          inlineFilters={(
+            <div className="bg-brand-card rounded-[12px] p-6 sm:p-4 border border-brand-inputBorder  mt-2 animate-in fade-in slide-in-from-top-4 duration-700">
+              {/* Unified Search Input INSIDE the filter box */}
+              <div className="flex flex-col lg:flex-row items-center gap-3 mb-6">
+                <div className="flex-1 w-full figma-rect-border !rounded-[12px] group overflow-hidden bg-[#E5E3E333] dark:bg-[#04132B]/50 relative transition-all">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-brand-textPrimary dark:group-focus-within:text-white transition-colors">
+                    <Search size={20} />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search Keyword (Optional)..."
+                    className="w-full bg-transparent py-2.5 pl-14 pr-6 text-brand-textPrimary dark:text-white text-[15px] placeholder-[#08265675] dark:placeholder-slate-500 outline-none transition-all"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                </div>
+                <button
+                  onClick={handleSearch}
+                  className="upgrade-gradient-btn !px-8 !rounded-[12px] whitespace-nowrap h-[44px] w-full lg:w-auto font-bold flex items-center justify-center gap-2"
+                >
+                  <Sparkles size={18} /> Discover Trending Products
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 mb-4">
+                {/* Country Filter */}
+                <SelectField
+                  id="inline-country"
+                  label="Country"
+                  value={country}
+                  options={countrySelectOptions}
+                  onChange={setCountry}
+                  className="!h-[44px] !rounded-[12px]"
+                />
+
+                {/* Time Range Filter */}
+                <SelectField
+                  id="inline-period"
+                  label="Time Range"
+                  value={period}
+                  options={periodSelectOptions}
+                  onChange={setPeriod}
+                  className="!h-[44px] !rounded-[12px]"
+                />
+
+                {/* Category Filter */}
+                <SelectField
+                  id="inline-category"
+                  label="Category"
+                  value={category}
+                  options={categorySelectOptions}
+                  onChange={setCategory}
+                  className="!h-[44px] !rounded-[12px]"
+                />
+
+                {/* Sort By Filter */}
+                <SelectField
+                  id="inline-sort-by"
+                  label="Sort By"
+                  value={sortBy}
+                  options={sortSelectOptions}
+                  onChange={setSortBy}
+                  className="!h-[44px] !rounded-[12px]"
+                />
+
+                {/* Sort Order Filter */}
+                <SelectField
+                  id="inline-sort-order"
+                  label="Sort Order"
+                  value={sortOrder}
+                  options={sortOrderSelectOptions}
+                  onChange={setSortOrder}
+                  className="!h-[44px] !rounded-[12px]"
+                />
+              </div>
+            </div>
           )}
+          filterDrawer={undefined}
           rightSidebar={(
             <>
               {/* Hashtag Header Section */}
@@ -459,7 +548,7 @@ const TikTokTrends: React.FC = () => {
                 <button
                   onClick={handleSearchhastag}
                   disabled={!category}
-                  className={`w-full mt-2 py-4 upgrade-gradient-btn text-white !rounded-[12px] font-black text-[14px] flex items-center justify-center gap-2 transition-all shadow-xl active:scale-[0.98] tracking-wider ${!category ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-95 shadow-red-500/20'}`}
+                  className={`w-full mt-2 py-4 upgrade-gradient-btn text-white !rounded-[12px] font-black text-[14px] flex !h-[44px] items-center justify-center gap-2 transition-all shadow-xl active:scale-[0.98] tracking-wider ${!category ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-95 shadow-red-500/20'}`}
                 >
                   <Sparkles size={18} /> Discover Trending Hashtags
                 </button>
@@ -551,15 +640,13 @@ const TikTokTrends: React.FC = () => {
               )}
             </>
           )}
-          renderContent={(tab, searched, openDetails, setProduct) => {
-            const isLoading = tab === "product" ? isProductLoading : isHashtagLoading;
-            const isError = tab === "product" ? isProductError : isHashtagError;
-            const data = tab === "product"
-              ? ((productData?.data?.list?.length ?? 0) > 0 ? productData?.data?.list : productData?.data?.products)
-              : hashtagData?.data?.list;
+          renderContent={(_, searched, openDetails, setProduct) => {
+            const isLoading = isProductLoading;
+            const isError = isProductError;
+            const data = (productData?.data?.list?.length ?? 0) > 0 ? productData?.data?.list : productData?.data?.products;
 
             if (isLoading) {
-              return <TrendSkeleton type={tab as "product" | "hashtag"} count={6} />;
+              return <TrendSkeleton type="product" count={6} />;
             }
 
             if (isError) {
@@ -576,107 +663,211 @@ const TikTokTrends: React.FC = () => {
                 <TrendsEmptyState
                   title="No Results Found"
                   description="We couldn't find any trends matching your criteria. Try adjusting your filters or search terms."
-                  Icon={tab === "product" ? Package : Hash}
+                  Icon={Package}
                 />
               );
             }
 
             return (
               <>
-                {tab === "product" && searched ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {data.map((product: any, index: number) => (
-                      <TrendProductCard
-                        key={product.id || index}
-                        title={product.title}
-                        image={product.image_url || product.cover_url}
-                        category={product.category || product.first_ecom_category?.value || "Trending"}
-                        metrics={{
-                          ctr: product.ctr || "0.00",
-                          cvr: product.cvr || "0.00",
-                          cpa: product.cpa || "$0.00",
-                          impressions: product.views_count ? formatNumber(product.views_count) : "0",
-                          post_count: product.post_count || 0,
-                          like_count: product.likes_count || product.like_count || 0,
-                          share_count: product.shares_count || product.share_count || 0,
-                          comment_count: product.comments_count || product.comment_count || 0,
-                          category: product.first_ecom_category?.value || "Trending",
-                          subcategory1: product.second_ecom_category?.value || "N/A",
-                          subcategory2: product.third_ecom_category?.value || "N/A",
-                          e_com_type: product.ecom_type ? product.ecom_type.toUpperCase() : "N/A"
-                        }}
-                        price={product.price || product.current_price || "N/A"}
-                        onDetailsClick={() => {
-                          const normalizedProduct = {
-                            id: product.product_id || product.id || String(index),
-                            title: product.title || product.name,
-                            image: product.image_url || product.cover_url || product.image,
-                            category: product.category || product.first_ecom_category?.value || "Trending",
-                            price: product.price || product.current_price || "N/A",
-                            metrics: {
-                              ctr: product.ctr || "0.00",
-                              cvr: product.cvr || "0.00",
-                              cpa: product.cpa || "$0.00",
-                              impressions: product.views_count ? formatNumber(product.views_count) : "0",
-                              post_count: product.post_count || 0,
-                              like_count: product.likes_count || product.like_count || 0,
-                              share_count: product.shares_count || product.share_count || 0,
-                              comment_count: product.comments_count || product.comment_count || 0,
-                              category: product.first_ecom_category?.value || "Trending",
-                              subcategory1: product.second_ecom_category?.value || "N/A",
-                              subcategory2: product.third_ecom_category?.value || "N/A",
-                              e_com_type: product.ecom_type ? product.ecom_type.toUpperCase() : "N/A"
-                            },
-                            post_count: product.post_count || 0,
-                            review_count: product.review_count || product.reviews_count || 0,
-                            comment_count: product.comments_count || 0,
-                            like_count: product.likes_count || 0,
-                            share_count: product.shares_count || 0,
-                            view_count: product.views_count || 0
-                          };
-                          setProduct(normalizedProduct);
-                          openDetails();
-                        }}
-                        onDiscoverSupplier={() => {
-                          handleDiscoverSupplier({
-                            id: product.product_id || product.id || String(index),
-                            title: product.title || product.name,
-                            image: product.image_url || product.cover_url || product.image,
-                            category: product.category || product.first_ecom_category?.value || "Trending",
-                            price: product.price || product.current_price || "N/A",
-                            metrics: {
-                              ctr: product.ctr || "0.00",
-                              cvr: product.cvr || "0.00",
-                              cpa: product.cpa || "$0.00",
-                              impressions: product.views_count ? formatNumber(product.views_count) : "0",
-                              post_count: product.post_count || 0,
-                              like_count: product.likes_count || product.like_count || 0,
-                              share_count: product.shares_count || product.share_count || 0,
-                              comment_count: product.comments_count || product.comment_count || 0,
-                              category: product.first_ecom_category?.value || "Trending",
-                              subcategory1: product.second_ecom_category?.value || "N/A",
-                              subcategory2: product.third_ecom_category?.value || "N/A",
-                              e_com_type: product.ecom_type ? product.ecom_type.toUpperCase() : "N/A"
-                            }
-                          });
-                        }}
-                      />
-                    ))}
-                  </div>
-                ) : tab === "hashtag" && searched ? (
+                {searched ? (
                   <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {data?.map((product: any, index: number) => (
+                        <TrendProductCard
+                          key={product.id || index}
+                          title={product.title || product.url_title || "Trending Product"}
+                          image={product.image_url || product.cover_url}
+                          category={product.category || product.first_ecom_category?.value || "Trending"}
+                          metrics={{
+                            ctr: product.ctr || "0.00",
+                            cvr: product.cvr || "0.00",
+                            cpa: product.cpa || "$0.00",
+                            impressions: (product.views_count || product.impression) ? formatNumber(product.views_count || product.impression) : "0",
+                            post_count: product.post_count || product.post || 0,
+                            like_count: product.likes_count || product.like || 0,
+                            share_count: product.shares_count || product.share || 0,
+                            comment_count: product.comments_count || product.comment || 0,
+                            category: product.first_ecom_category?.value || "Trending",
+                            subcategory1: product.second_ecom_category?.value || "N/A",
+                            subcategory2: product.third_ecom_category?.value || "N/A",
+                            e_com_type: product.ecom_type ? product.ecom_type.toUpperCase() : "N/A"
+                          }}
+                          price={product.price || product.current_price || "N/A"}
+                          onDetailsClick={() => {
+                            const normalizedProduct = {
+                              id: product.product_id || product.id || String(index),
+                              title: product.title || product.url_title || product.name,
+                              image: product.image_url || product.cover_url || product.image,
+                              category: product.category || product.first_ecom_category?.value || "Trending",
+                              price: product.price || product.current_price || "N/A",
+                              metrics: {
+                                ctr: product.ctr || "0.00",
+                                cvr: product.cvr || "0.00",
+                                cpa: product.cpa || "$0.00",
+                                impressions: (product.views_count || product.impression) ? formatNumber(product.views_count || product.impression) : "0",
+                                post_count: product.post_count || product.post || 0,
+                                like_count: product.likes_count || product.like || 0,
+                                share_count: product.shares_count || product.share || 0,
+                                comment_count: product.comments_count || product.comment || 0,
+                                category: product.first_ecom_category?.value || "Trending",
+                                subcategory1: product.second_ecom_category?.value || "N/A",
+                                subcategory2: product.third_ecom_category?.value || "N/A",
+                                e_com_type: product.ecom_type ? product.ecom_type.toUpperCase() : "N/A"
+                              },
+                              post_count: product.post_count || product.post || 0,
+                              review_count: product.review_count || product.reviews_count || 0,
+                              comment_count: product.comments_count || product.comment || 0,
+                              like_count: product.likes_count || product.like || 0,
+                              share_count: product.shares_count || product.share || 0,
+                              view_count: product.views_count || product.impression || 0
+                            };
+                            setProduct(normalizedProduct);
+                            openDetails();
+                          }}
+                          onDiscoverSupplier={() => {
+                            handleDiscoverSupplier({
+                              id: product.product_id || product.id || String(index),
+                              title: product.title || product.url_title || product.name,
+                              image: product.image_url || product.cover_url || product.image,
+                              category: product.category || product.first_ecom_category?.value || "Trending",
+                              price: product.price || product.current_price || "N/A",
+                              metrics: {
+                                ctr: product.ctr || "0.00",
+                                cvr: product.cvr || "0.00",
+                                cpa: product.cpa || "$0.00",
+                                impressions: (product.views_count || product.impression) ? formatNumber(product.views_count || product.impression) : "0",
+                                post_count: product.post_count || product.post || 0,
+                                like_count: product.likes_count || product.like || 0,
+                                share_count: product.shares_count || product.share || 0,
+                                comment_count: product.comments_count || product.comment || 0,
+                                category: product.first_ecom_category?.value || "Trending",
+                                subcategory1: product.second_ecom_category?.value || "N/A",
+                                subcategory2: product.third_ecom_category?.value || "N/A",
+                                e_com_type: product.ecom_type ? product.ecom_type.toUpperCase() : "N/A"
+                              }
+                            });
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Pagination Section */}
+                    {productData?.data && (
+                      <div className="mt-12 mb-8 flex flex-col items-center gap-6">
+                        <div className="flex items-center gap-2">
+                          {/* First Page */}
+                          <button
+                            onClick={() => setPage(1)}
+                            disabled={page === 1}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all ${page === 1
+                              ? 'bg-[#050C17]/50 border-[#1A2B44]/30 text-slate-600 cursor-not-allowed'
+                              : 'bg-[#050C17] border-[#1A2B44] text-slate-300 hover:border-[#FF5C35]/50 hover:text-white'
+                              }`}
+                          >
+                            <ChevronsLeft size={16} />
+                          </button>
+
+                          {/* Previous Page */}
+                          <button
+                            onClick={() => setPage(prev => Math.max(1, prev - 1))}
+                            disabled={page === 1}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all ${page === 1
+                              ? 'bg-[#050C17]/50 border-[#1A2B44]/30 text-slate-600 cursor-not-allowed'
+                              : 'bg-[#050C17] border-[#1A2B44] text-slate-300 hover:border-[#FF5C35]/50 hover:text-white'
+                              }`}
+                          >
+                            <ChevronLeft size={16} />
+                          </button>
+
+                          {/* Page Numbers */}
+                          <div className="flex items-center gap-2 mx-1">
+                            {(() => {
+                              const totalPages = Math.ceil((productData?.data?.total || 0) / 20);
+                              const pages = [];
+                              let startPage = Math.max(1, page - 2);
+                              let endPage = Math.min(totalPages, startPage + 4);
+
+                              if (endPage - startPage < 4) {
+                                startPage = Math.max(1, endPage - 4);
+                              }
+
+                              for (let i = startPage; i <= endPage; i++) {
+                                pages.push(
+                                  <button
+                                    key={i}
+                                    onClick={() => setPage(i)}
+                                    className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all font-bold text-[16px] ${page === i
+                                      ? 'bg-[#FF5C35] border-[#FF5C35] text-white shadow-[0_0_20px_rgba(255,92,53,0.3)]'
+                                      : 'bg-[#050C17] border-[#1A2B44] text-slate-300 hover:border-[#FF5C35]/50 hover:text-white'
+                                      }`}
+                                  >
+                                    {i}
+                                  </button>
+                                );
+                              }
+
+                              if (endPage < totalPages) {
+                                if (endPage < totalPages - 1) {
+                                  pages.push(<span key="ellipsis" className="text-slate-500 px-1 font-bold">...</span>);
+                                }
+                                pages.push(
+                                  <button
+                                    key={totalPages}
+                                    onClick={() => setPage(totalPages)}
+                                    className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all font-bold text-[16px] ${page === totalPages
+                                      ? 'bg-[#FF5C35] border-[#FF5C35] text-white'
+                                      : 'bg-[#050C17] border-[#1A2B44] text-slate-300 hover:border-[#FF5C35]/50 hover:text-white'
+                                      }`}
+                                  >
+                                    {totalPages}
+                                  </button>
+                                );
+                              }
+
+                              return pages;
+                            })()}
+                          </div>
+
+                          {/* Next Page */}
+                          <button
+                            onClick={() => setPage(prev => prev + 1)}
+                            disabled={!productData?.data?.has_more}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all ${!productData?.data?.has_more
+                              ? 'bg-[#050C17]/50 border-[#1A2B44]/30 text-slate-600 cursor-not-allowed'
+                              : 'bg-[#050C17] border-[#1A2B44] text-slate-300 hover:border-[#FF5C35]/50 hover:text-white'
+                              }`}
+                          >
+                            <ChevronRight size={16} />
+                          </button>
+
+                          {/* Last Page */}
+                          <button
+                            onClick={() => {
+                              const totalPages = Math.ceil((productData?.data?.total || 0) / 20);
+                              setPage(totalPages);
+                            }}
+                            disabled={!productData?.data?.has_more}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all ${!productData?.data?.has_more
+                              ? 'bg-[#050C17]/50 border-[#1A2B44]/30 text-slate-600 cursor-not-allowed'
+                              : 'bg-[#050C17] border-[#1A2B44] text-slate-300 hover:border-[#FF5C35]/50 hover:text-white'
+                              }`}
+                          >
+                            <ChevronsRight size={16} />
+                          </button>
+                        </div>
+
+                        <div className="text-[14px] font-medium text-slate-400">
+                          Page <span className="text-white font-bold">{page}</span> of <span className="text-white font-bold">{Math.ceil((productData?.data?.total || 0) / 20)}</span> ({productData?.data?.total || 0} products)
+                        </div>
+                      </div>
+                    )}
                   </>
-                ) : tab === "product" ? (
+                ) : (
                   <TrendsEmptyState
                     title="Discover Trending Products"
                     description="Search for products to see real-time TikTok engagement metrics and viral trends"
                     Icon={Package}
-                  />
-                ) : (
-                  <TrendsEmptyState
-                    title="Discover Trending Hashtags"
-                    description="Unlock deep insights into booming TikTok tags, audience demographics, and high-engagement content."
-                    Icon={Hash}
                   />
                 )}
               </>

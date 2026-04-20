@@ -199,7 +199,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
             <div className="space-y-6">
               {showSearchForm && (
                 <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-center gap-3">
-                  <div className="flex-1 w-full figma-rect-border group overflow-hidden bg-[#E5E3E333] dark:bg-[#04132B]/50 relative transition-all">
+                  <div className="flex-1 w-full figma-rect-border !rounded-[12px] group overflow-hidden bg-[#E5E3E333] dark:bg-[#04132B]/50 relative transition-all">
                     <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-brand-textPrimary dark:group-focus-within:text-white transition-colors">
                       <Search size={20} />
                     </div>
@@ -208,19 +208,21 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
                       value={searchQuery}
                       onChange={(e) => handleSearchChange(e.target.value)}
                       placeholder={searchPlaceholder[activeTab] || "Search..."}
-                      className="w-full bg-transparent py-4 pl-14 pr-6 text-brand-textPrimary dark:text-white text-[15px] placeholder-[#08265675] dark:placeholder-slate-500 outline-none transition-all"
+                      className="w-full bg-transparent py-3 pl-14 pr-6 text-brand-textPrimary dark:text-white text-[15px] placeholder-[#08265675] dark:placeholder-slate-500 rounded-[12px] outline-none transition-all"
                     />
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                    <button
-                      type="submit"
-                      disabled={searchDisabled}
-                      className={`upgrade-gradient-btn !px-6 !rounded-[14px] whitespace-nowrap h-[48px] w-full sm:w-auto transition-all ${searchDisabled ? 'opacity-70 cursor-not-allowed' : 'hover:brightness-110'}`}
-                    >
-                      <Sparkles size={16} />
-                      {searchBtnText[activeTab] || "Search"}
-                    </button>
+                    {searchBtnText[activeTab] && (
+                      <button
+                        type="submit"
+                        disabled={searchDisabled}
+                        className={`upgrade-gradient-btn !px-6 !rounded-[12px] whitespace-nowrap h-[44px] w-full sm:w-auto transition-all ${searchDisabled ? 'opacity-70 cursor-not-allowed' : 'hover:brightness-110'}`}
+                      >
+                        <Sparkles size={16} />
+                        {searchBtnText[activeTab]}
+                      </button>
+                    )}
 
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                       {onSortByChange && sortOptions && (
@@ -231,7 +233,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
                             options={sortOptions}
                             onChange={onSortByChange}
                             placeholder="Sort By"
-                            className="!rounded-[14px] !bg-brand-card/50 !py-3"
+                            className="!rounded-[12px] !bg-brand-card/50 !h-[44px] flex items-center"
                           />
                         </div>
                       )}

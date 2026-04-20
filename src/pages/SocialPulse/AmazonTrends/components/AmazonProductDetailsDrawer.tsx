@@ -47,6 +47,21 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
 
   const detailedData = detailsResponse?.data || null;
 
+  const formatNumber = (numStr: string | undefined) => {
+    if (!numStr) return "0";
+    const cleanNum = numStr.replace(/[^0-9.]/g, "");
+    const num = parseFloat(cleanNum);
+    if (isNaN(num)) return numStr;
+
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return num.toString();
+  };
+
   if (!product) return null;
 
   const toggleSection = (section: string) => {
@@ -139,13 +154,15 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
                   )}
                 </div>
 
-                <div className="flex flex-col items-end gap-1.5">
-                  <div className="flex items-center gap-0.5">
+                <div className="flex flex-col items-end gap-1.5 ">
+                  <div className="flex items-center gap-0.5 px-2.5 py-1 bg-brand-card-alt border border-brand-border rounded-full">
                     <Star size={12} fill="#FFD700" className="text-[#FFD700]" />
                     <span className="text-[13.5px] font-bold text-brand-textPrimary">{product.rating || "0.0"}</span>
                   </div>
-                  <div className="px-2.5 py-1 bg-brand-card-alt border border-brand-border rounded-full">
-                    <span className="text-[10px] font-bold text-brand-textSecondary tracking-wide">{product.views || "0 Views"}</span>
+                  <div className="">
+                    <span className="metric-label">
+                      {formatNumber(detailedData?.product_num_ratings?.toString() || product.views)} Ratings
+                    </span>
                   </div>
                 </div>
               </div>
@@ -162,7 +179,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-[13.5px] text-brand-textSecondary leading-relaxed">
+                  <p className="text-[13.5px] text-brand-textPrimary dark:text-white leading-relaxed">
                     {(() => {
                       const description = detailedData?.product_description || "No description available for this product.";
                       if (!isDescriptionExpanded && description.length > 250) {
@@ -215,7 +232,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
                       .map((feature: string, idx: number) => (
                         <li key={idx} className="flex gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-brand-primary shrink-0 mt-1.5 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                          <span className="text-[13.5px] text-brand-textSecondary leading-relaxed">{feature}</span>
+                          <span className="text-[13.5px] text-brand-textPrimary dark:text-white leading-relaxed">{feature}</span>
                         </li>
                       ))}
                   </ul>
@@ -248,7 +265,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
                       .slice(0, isSpecsExpanded ? undefined : 5)
                       .map(([key, value]: [string, any], idx) => (
                         <div key={idx} className="flex items-center justify-between py-3 border-b border-brand-border last:border-0 group hover:bg-brand-card-alt -mx-2 px-2 transition-colors rounded-lg">
-                          <span className="text-[13px] text-brand-textSecondary font-medium">{key}</span>
+                          <span className="text-[13px] text-dim font-medium">{key}</span>
                           <span className="text-[13px] text-brand-textPrimary font-semibold text-right max-w-[60%] line-clamp-2">{String(value)}</span>
                         </div>
                       ))}

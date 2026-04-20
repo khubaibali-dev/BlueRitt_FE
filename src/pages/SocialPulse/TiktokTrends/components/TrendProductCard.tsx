@@ -198,7 +198,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-7">
+      <div className="p-4">
         <div className="flex items-start justify-between gap-3 mb-5">
           <h3 className="product-card-title flex-1 !text-[18px]">
             {title}
@@ -229,16 +229,16 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pt-1">
+        <div className="flex flex-col gap-2 pt-1">
           <button
             onClick={() => onDetailsClick?.()}
-            className="btn-product-details w-full sm:flex-1 !rounded-full !font-normal !px-2.5 !py-2.5"
+            className="btn-product-details w-full !rounded-full !font-semibold !px-4 !py-2.5 flex items-center justify-center gap-2"
           >
-            Product Details <ExternalLink size={14} className="" />
+            Product Details <ExternalLink size={14} />
           </button>
           <button
             onClick={handleDiscoverSupplier}
-            className="btn-discover-supplier w-full sm:flex-1 !font-normal !rounded-full !px-2.5 !py-2.5"
+            className="btn-discover-supplier w-full !font-semibold !rounded-full !px-4 !py-2.5 flex items-center justify-center gap-2"
           >
             Discover Supplier
           </button>
