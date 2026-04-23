@@ -4,8 +4,11 @@ import InputField from "../../components/common/input/InputField";
 import SelectField from "../../components/common/select/SelectField";
 import tiktokBanner from "../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../assets/images/SocialPulse-light.png";
+import { useUserDetails } from "../../hooks/useUserDetails";
+import { useEffect } from "react";
 
 const HelpSupportPage: React.FC = () => {
+  const { data: userDetails } = useUserDetails();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,6 +16,17 @@ const HelpSupportPage: React.FC = () => {
     category: "",
     message: "",
   });
+
+  // Pre-fill user details when available
+  useEffect(() => {
+    if (userDetails) {
+      setFormData(prev => ({
+        ...prev,
+        name: userDetails.profile.full_name || "",
+        email: userDetails.email || ""
+      }));
+    }
+  }, [userDetails]);
 
   const [fileName, setFileName] = useState<string | null>(null);
 

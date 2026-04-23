@@ -11,6 +11,8 @@ import AmazonProductCard from "../../Explorer/components/Common/Cards/AmazonProd
 import TrendProductCard from "../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import ResearchRowSkeleton from "../../../components/common/Skeletons/ResearchRowSkeleton";
 import SpkbgSupplierCard from "../../../components/common/SpkCards/SpkbgSupplierCard";
+import { checkIsTikTokProduct, normalizeAmazonProduct, normalizeTikTokProduct, normalizeAlibabaSupplier } from "../../../utils/cardDataNormalizers";
+
 
 
 interface CollectionDetailsProps {
@@ -34,136 +36,10 @@ const ResearchRow = React.memo<{
     navigate(`/calculator/product/${product.id}/`);
   };
 
-  const isTikTok = useMemo(() => {
-    const amazonProduct = product.amazon_product;
-    const source = amazonProduct?.source;
-    return source === 'tiktok_trends' || (amazonProduct && (
-      amazonProduct.cpa !== undefined ||
-      amazonProduct.ctr !== undefined ||
-      amazonProduct.cvr !== undefined ||
-      amazonProduct.impression !== undefined ||
-      amazonProduct.data?.cpa !== undefined
-    ));
-  }, [product]);
-
-  const normalizedAmazon = useMemo(() => {
-    if (!amazonData || isTikTok) return null;
-    const tags: string[] = [];
-    if (amazonData.is_best_seller) tags.push("Best Seller");
-    if (amazonData.is_amazon_choice) tags.push("Amazon Choice");
-    if (amazonData.is_prime) tags.push("Prime");
-
-    // Price logic: prioritize amazonData.product_price over product.selling_price if it's 0.00
-    const amazonPrice = amazonData.product_price?.toString().replace("$", "") || "";
-    const finalPrice = product.selling_price && product.selling_price !== "0.00"
-      ? product.selling_price
-      : (amazonPrice || "0.00");
-
-    return {
-      title: amazonData.product_title || amazonData.title || product.name || "Product",
-      image: amazonData.product_photo || amazonData.image || "",
-      price: finalPrice,
-      oldPrice: amazonData.product_original_price?.toString().replace("$", "") || finalPrice,
-      asin: amazonData.asin || "N/A",
-      salesVol: amazonData.sales_volume || "N/A",
-      offers: amazonData.product_num_offers?.toString() || "1",
-      seller: amazonData.product_seller_name || "Amazon.com",
-      shipsFrom: amazonData.ships_from || "Amazon",
-      country: amazonData.seller_country || "US",
-      rating: parseFloat(amazonData.product_star_rating || "4.5"),
-      numRatings: amazonData.product_num_ratings || "0",
-      dimensions: amazonData.product_information?.["Product Dimensions"] || "N/A",
-      weight: amazonData.product_information?.["Item Weight"] || "N/A",
-      tags: tags.length > 0 ? tags : (amazonData.tags || [])
-    };
-  }, [amazonData, product, isTikTok]);
-
-  const normalizedTikTok = useMemo(() => {
-    if (!isTikTok || !amazonData) return null;
-
-    // In many API responses, data is nested in the 'data' field or is top-level
-    const data = amazonData.data || amazonData;
-
-    return {
-      title: data.shop_product_title || data.url_title || product.name || "TikTok Product",
-      image: data.cover_url || data.product_photo || "",
-      category: data.third_ecom_category?.value || data.first_ecom_category?.value || data.category || "Trending",
-      price: (data.shop_price || data.cost || product.selling_price || "0.00").toLocaleString(),
-      metrics: {
-        ctr: data.ctr ? (String(data.ctr).includes('%') ? data.ctr : data.ctr + "%") : "0%",
-        cvr: data.cvr ? (String(data.cvr).includes('%') ? data.cvr : data.cvr + "%") : "0%",
-        cpa: data.cpa ? (typeof data.cpa === "number" ? `$${data.cpa.toFixed(2)}` : data.cpa) : "$0.00",
-        impressions: (data.impression || data.impressions || 0).toLocaleString(),
-        post_count: data.post || 0,
-        like_count: data.like || 0,
-        share_count: data.share || 0,
-        comment_count: data.comment || 0,
-        total_ad_spent: data.cost ? `$${data.cost.toLocaleString()}` : "$0",
-        subcategory1: data.second_ecom_category?.value || "",
-        subcategory2: data.third_ecom_category?.value || "",
-        post_change: data.post_change ? `${data.post_change}%` : "",
-        play_rate_6s: data.play_six_rate ? `${data.play_six_rate}%` : "",
-        e_com_type: data.ecom_type || "L3",
-        category: data.first_ecom_category?.value || "Trending"
-      }
-    };
-  }, [amazonData, isTikTok, product.selling_price, product.name]);
-
-  const normalizedAlibaba = useMemo(() => {
-    // Priority: supplier_info (if available), then TikTok supplier sub-object, then nested alibaba_product.item, then alibaba_product root
-    const data = supplierInfo || alibabaData?.supplier || alibabaData?.item || alibabaData;
-    if (!data) return null;
-
-    // Company/Store details
-    const storeAgeValue = data.years_in_business || data.seller_store?.storeAge || data.storeAge || data.age || "N/A";
-    const storeNameValue = data.supplier_name || data.company?.companyName || data.storeName || data.name || "N/A";
-    const contactName = data.company?.companyContact?.name || data.contact || "Verified Supplier";
-
-    // Pricing and MOQ logic
-    const skuModule = data.sku?.def;
-    const priceValue = data.price_per_unit || data.estimated_price ||
-      skuModule?.priceModule?.priceFormatted ||
-      skuModule?.priceModule?.priceList?.[0]?.priceFormatted ||
-      data.price || data.cost || "0.00";
-
-    const moqValue = data.min_order_quantity ||
-      skuModule?.quantityModule?.minOrder?.quantityFormatted ||
-      skuModule?.quantityModule?.minOrder?.quantity ||
-      data.moq || data.minOrder || "N/A";
-
-    const ratingValue = data.rating || data.seller_store?.storeEvaluates?.[0]?.score || "4.5";
-    const countryValue = data.location || data.company_details?.companyAddress?.country || data.country || "China";
-
-    // Badges/Status
-    const status = data.company_details?.status || data;
-
-    // Explicitly determine verified and gold status with safe fallbacks
-    const isVerifiedValue = (status.verified ?? status.isVerified ?? status.verified_supplier) ?? true;
-    const isGoldValue = (status.gold ?? status.isGoldMember) ?? (status.verification_badge ? status.verification_badge === "Gold Supplier" : true);
-    const tradeAssuranceValue = (status.tradeAssurance === "1" || status.TradeAssurance === true || status.trade_assurance === "1");
-
-    // Image logic: prioritize supplier_product_image (TikTok) and ensure https prefix
-    let imageSrc = data.supplier_product_image || (data.images && data.images[0]) || data.image || "";
-    if (typeof imageSrc === 'string' && imageSrc.startsWith('//')) {
-      imageSrc = `https:${imageSrc}`;
-    }
-
-    return {
-      id: data.itemId || data.id || "N/A",
-      name: data.title || data.name || "Alibaba Sourcing Partner",
-      image: imageSrc,
-      rating: ratingValue,
-      storeAge: storeAgeValue,
-      storeName: storeNameValue,
-      contact: contactName,
-      price: priceValue.toString().replace("$", ""),
-      minOrder: moqValue,
-      country: countryValue,
-      isVerified: isVerifiedValue,
-      tradeAssurance: tradeAssuranceValue,
-      isGold: isGoldValue
-    };
-  }, [supplierInfo, alibabaData]);
+  const isTikTok = useMemo(() => checkIsTikTokProduct(product), [product]);
+  const normalizedAmazon = useMemo(() => normalizeAmazonProduct(amazonData, product, isTikTok), [amazonData, product, isTikTok]);
+  const normalizedTikTok = useMemo(() => normalizeTikTokProduct(amazonData, product, isTikTok), [amazonData, product, isTikTok]);
+  const normalizedAlibaba = useMemo(() => normalizeAlibabaSupplier(supplierInfo, alibabaData), [supplierInfo, alibabaData]);
 
   return (
     <div
@@ -284,14 +160,13 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
 
     products.forEach((product: any) => {
       const amazonProduct = product.amazon_product;
-      const source = amazonProduct?.source;
+      const source = product.source || amazonProduct?.source;
 
-      const isTikTok = source === 'tiktok_trends' || (amazonProduct && (
+      const isTikTok = source === 'tiktok_trends' || source === 'tiktok' || (amazonProduct && (
+        amazonProduct.data?.metrics?.cpa !== undefined ||
+        amazonProduct.data?.metrics?.ctr !== undefined ||
         amazonProduct.cpa !== undefined ||
-        amazonProduct.ctr !== undefined ||
-        amazonProduct.cvr !== undefined ||
-        amazonProduct.impression !== undefined ||
-        amazonProduct.data?.cpa !== undefined
+        amazonProduct.ctr !== undefined
       ));
 
       if (isTikTok) {
@@ -350,21 +225,25 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
         type="danger"
       />
       {/* Detail Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 !mt-0">
+      <div className="flex items-start justify-between gap-4 mb-8 !mt-0 px-4 pt-4">
         <div className="flex flex-col gap-1">
-          <h1 className="banner-heading-text !mb-1 !text-left text-brand-textPrimary dark:text-white">{collectionName}</h1>
-          <p className="auth-subtitle !text-left ml-4 text-brand-textSecondary dark:text-brand-textSecondary">Analyze {products.length} research entries in this collection</p>
+          <h1 className="!text-[20px] !text-left text-brand-textPrimary font-black dark:text-white mb-0 tracking-tight">
+            Search Results for “{collectionName}”
+          </h1>
+          <p className="auth-subtitle !mb-0 !text-left text-brand-textSecondary dark:text-brand-textSecondary">
+            Analyze {products.length} research entries in this collection
+          </p>
         </div>
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-brand-textPrimary dark:text-white 
-          figma-pill-border !py-2 !px-4 text-[14px] font-bold transition-colors w-fit group shrink-0"
+          figma-pill-border !py-2.5 !px-5 text-[14px] font-bold transition-colors w-fit group shrink-0 mt-1"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
         </button>
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 px-4">
         {isLoading ? (
           <div className="animate-in fade-in duration-500">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -392,9 +271,9 @@ const CollectionDetails: React.FC<CollectionDetailsProps> = ({ collectionId, col
             )}
           </div>
         ) : (
-          <div className="col-span-full py-20 flex flex-col items-center gap-4 bg-brand-hover dark:bg-white/5 border border-dashed border-brand-border dark:border-white/10 rounded-3xl">
+          <div className="col-span-full py-20 flex flex-col items-center gap-4 bg-brand-hover dark:bg-white/5 border border-dashed border-brand-inputBorder dark:border-white/10 rounded-3xl">
             <div className="standard-icon-circle w-16 h-16 bg-brand-card dark:bg-white/5 text-brand-textSecondary dark:text-slate-500 shadow-sm dark:shadow-none">
-              <ShoppingBag size={24} />
+              <ShoppingBag size={24} className="text-white" />
             </div>
             <div className="text-center">
               <h3 className="text-xl font-bold text-brand-textPrimary dark:text-white mb-1">Collection is empty</h3>

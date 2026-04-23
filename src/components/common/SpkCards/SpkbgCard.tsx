@@ -188,8 +188,8 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 mt-4">
-            <button className="flex-1 btn-product-details" onClick={onDetailsClick}>Details <ExternalLink size={14} /></button>
-            <button className="flex-1 btn-discover-supplier" onClick={onDiscoverSuppliers}>Discover</button>
+            <button className="flex-1 btn-product-details" onClick={onDetailsClick}>Product Details <ExternalLink size={14} /></button>
+            <button className="flex-1 btn-discover-supplier" onClick={onDiscoverSuppliers}>Discover Supplier</button>
           </div>
         </div>
       </div>
@@ -204,7 +204,7 @@ const SpkbgCard: React.FC<SpkbgCardProps> = ({
         <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected Product</span>
       </div>
       <div className="p-4 sm:p-2 w-full text-brand-textPrimary">
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
+        <div className="flex flex-col lg:flex-row gap-2 items-start">
           <div className="product-img-wrapper-list !w-[100px] !h-[100px] shadow-sm mx-auto lg:mx-0 shrink-0  dark:bg-brand">
             <img src={image} alt={title} className="w-full h-full object-cover" />
           </div>

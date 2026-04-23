@@ -3,10 +3,11 @@ import { Activity, TrendingUp, Lock, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface ProductProfitGaugesProps {
-  grossProfitAmount: string;
-  netProfitAmount: string;
-  grossProfitMargin: string;
-  netProfitMargin: string;
+  grossProfitAmount: number | string;
+  total_revenue?: number;
+  netProfitAmount: number | string;
+  grossProfitMargin: number | string;
+  netProfitMargin: number | string;
   hasGrossAccess?: boolean;
   hasNetAccess?: boolean;
 }
@@ -47,6 +48,19 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
   hasGrossAccess = true,
   hasNetAccess = true,
 }) => {
+  // Margin % — drives the fill (same as ListingDetail: Gauge value = gross_profit %)
+  const grossMarginNum = parseFloat(grossProfitMargin.toString()) || 0;
+  const netMarginNum   = parseFloat(netProfitMargin.toString())   || 0;
+
+  const grossClamped = Math.min((grossMarginNum - 0) / (100 - 0), 1);
+  const netClamped = Math.min((netMarginNum - 0) / (100 - 0), 1);
+
+  const circumference = 251.32;
+
+  // strokeDashoffset = circumference * (1 - clampedPercentage)
+  const grossOffset = hasGrossAccess ? circumference * (1 - grossClamped) : circumference;
+  const netOffset = hasNetAccess ? circumference * (1 - netClamped) : circumference;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 sm:mb-10">
       {/* Gross Profit Card */}
@@ -60,10 +74,10 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
               </div>
               <div className="flex flex-col !gap-0">
                 <span className="analysis-metric-label">Gross Profit</span>
-                <span className="analysis-metric-value">${hasGrossAccess ? (grossProfitAmount || "0.00") : "0.00"}</span>
+                <span className="analysis-metric-value">${hasGrossAccess ? (typeof grossProfitAmount === 'number' ? grossProfitAmount.toFixed(2) : grossProfitAmount) : "0.00"}</span>
               </div>
             </div>
-            <span className={`text-[24px] font-black text-blue-500 ${!hasGrossAccess ? 'opacity-50' : ''}`}>{hasGrossAccess ? (grossProfitMargin || "0.00") : "0.00"}%</span>
+            <span className={`text-[24px] font-black text-blue-500 ${!hasGrossAccess ? 'opacity-50' : ''}`}>{hasGrossAccess ? grossMarginNum.toFixed(2) : "0.00"}%</span>
           </div>
 
           <div className="flex-1 flex items-center justify-center">
@@ -77,14 +91,14 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  strokeDasharray="251.32"
-                  strokeDashoffset={251.32 - (251.32 * (Math.max(0, parseFloat(grossProfitMargin) || 0)) / 100)}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={grossOffset}
                   strokeLinecap="round"
                   className={`text-blue-500 transition-all duration-1000 ${!hasGrossAccess ? 'opacity-30' : ''}`}
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                <span className={`text-[28px] font-black ${!hasGrossAccess ? 'opacity-30' : ''}`}>{hasGrossAccess ? Math.round(Math.max(0, parseFloat(grossProfitMargin) || 0)) : "0"}%</span>
+                <span className={`text-[28px] font-black ${!hasGrossAccess ? 'opacity-30' : ''}`}>{hasGrossAccess ? Math.round(grossMarginNum) : "0"}%</span>
               </div>
             </div>
           </div>
@@ -102,10 +116,10 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
               </div>
               <div className="flex flex-col !gap-0">
                 <span className="analysis-metric-label">Net Profit</span>
-                <span className="analysis-metric-value">${hasNetAccess ? (netProfitAmount || "0.00") : "0.00"}</span>
+                <span className="analysis-metric-value">${hasNetAccess ? (typeof netProfitAmount === 'number' ? netProfitAmount.toFixed(2) : netProfitAmount) : "0.00"}</span>
               </div>
             </div>
-            <span className={`text-[24px] font-black text-blue-500/80 ${!hasNetAccess ? 'opacity-50' : ''}`}>{hasNetAccess ? (netProfitMargin || "0.00") : "0.00"}%</span>
+            <span className={`text-[24px] font-black text-blue-500/80 ${!hasNetAccess ? 'opacity-50' : ''}`}>{hasNetAccess ? netMarginNum.toFixed(2) : "0.00"}%</span>
           </div>
 
           <div className="flex-1 flex items-center justify-center">
@@ -119,14 +133,14 @@ const ProductProfitGauges: React.FC<ProductProfitGaugesProps> = ({
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  strokeDasharray="251.32"
-                  strokeDashoffset={251.32 - (251.32 * (Math.max(0, parseFloat(netProfitMargin) || 0)) / 100)}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={netOffset}
                   strokeLinecap="round"
                   className={`text-blue-600 transition-all duration-1000 ${!hasNetAccess ? 'opacity-30' : ''}`}
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                <span className={`text-[28px] font-black ${!hasNetAccess ? 'opacity-30' : ''}`}>{hasNetAccess ? Math.round(Math.max(0, parseFloat(netProfitMargin) || 0)) : "0"}%</span>
+                <span className={`text-[28px] font-black ${!hasNetAccess ? 'opacity-30' : ''}`}>{hasNetAccess ? Math.round(netMarginNum) : "0"}%</span>
               </div>
             </div>
           </div>

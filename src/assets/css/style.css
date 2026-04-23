@@ -407,7 +407,6 @@
   /* Primary Login Button */
   .brand-login-btn {
     background: linear-gradient(135deg, #F05A2B 0%, #EF4444 100%);
-    box-shadow: 0 6px 28px rgba(240, 90, 43, 0.50);
   }
 
   /* Package Details Panel: card background */
@@ -523,7 +522,6 @@
   /* Package Select: option card gradient border */
   .pkg-option-border {
     position: relative;
-    border: 1px solid var(--brand-border);
     transition: all 0.2s ease;
   }
   .pkg-option-border::before {
@@ -565,7 +563,7 @@
     @apply w-full p-6 lg:p-8 flex flex-col relative z-0;
   }
   .pkg-details-header {
-    @apply mb-6 pb-6 border-b;
+    @apply mb-3 pb-3 border-b;
     border-color: rgba(209, 213, 219, 0.2);
   }
   .dark .pkg-details-header {
@@ -608,7 +606,7 @@
     @apply text-[13px] text-brand-textSecondary dark:text-[#FFFFFFB2];
   }
   .pkg-feature-value-highlighted {
-    @apply text-[#34C759] font-semibold;
+    @apply  text-[#34C75999] font-semibold px-2 py-0.5 rounded-[4px] text-[11px] ml-1 inline-flex items-center;
   }
   .pkg-current-plan-badge-custom {
     @apply absolute -top-[12px] text-white text-[10px] font-semibold px-4 py-1 rounded-full whitespace-nowrap z-10 shadow-lg;
@@ -887,6 +885,10 @@
   .quick-action-card:hover {
     border-color: rgba(59, 130, 246, 0.25);
     transform: translateY(-2px);
+  }
+
+  .product-img-badge {
+    @apply static shrink-0 rounded-full bg-[#155DFC14] border-[#155DFC33] text-[#155DFC] dark:text-blue-400;
   }
 
   /* Standard Gradient Icon Circle for Reusability */
@@ -1334,7 +1336,7 @@
     width: min(520px, 100vw);
   }
   .filter-drawer-header {
-    @apply flex items-center justify-between px-8 py-6 border-b border-brand-border;
+    @apply flex items-center justify-between px-8 py-6 border-b border-brand-inputBorder;
   }
   .filter-drawer-title {
     @apply text-[20px] font-semibold text-brand-textPrimary;
@@ -1351,7 +1353,7 @@
     gap: 32px;
   }
   .filter-drawer-footer {
-    @apply flex items-center justify-end gap-3 px-8 py-5 border-t border-brand-border;
+    @apply flex items-center justify-end gap-3 px-2 border-t border-brand-inputBorder pt-6;
   }
 
   .filter-section-label {
@@ -1475,9 +1477,9 @@
     @apply bg-brand-card border border-brand-inputBorder rounded-[24px] overflow-hidden transition-all duration-300 hover:translate-y-[-4px];
   }
 :root:not(.dark) .product-img-badge {
-  background: #155DFC14 !important;
-  border: 1px solid #155DFC33 !important;
-  @apply !text-brand-textPrimary rounded-full !bg-brand-inputBg !border-brand-border;
+  background: #155DFC14;
+  border: 1px solid #155DFC33;
+  @apply !text-brand-textPrimary rounded-full;
 }
 
   .product-img-badge {
@@ -2171,7 +2173,7 @@
 }
 
 .purchase-modal-card {
-  @apply w-full max-w-[500px] bg-brand-card dark:bg-[#04132B] rounded-[24px] border border-brand-border dark:border-brand-border shadow-2xl relative overflow-hidden flex flex-col p-5;
+  @apply w-full max-w-[500px] bg-brand-card dark:bg-[#04132B] rounded-[12px] border border-brand-border dark:border-brand-border shadow-2xl relative overflow-hidden flex flex-col p-5;
 }
 
 .purchase-modal-header {

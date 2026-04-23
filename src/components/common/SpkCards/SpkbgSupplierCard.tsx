@@ -89,7 +89,7 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
           <AIMatchScore score={aiScore} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-10 items-end mt-8 pt-6 border-t border-brand-border">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-10 items-end mt-4 pt-2 border-t border-brand-border">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2"><Zap size={14} className=" shrink-0" /><span className="metric-label ">STORE</span></div>
@@ -133,7 +133,7 @@ const SpkbgSupplierCard: React.FC<SpkbgSupplierCardProps> = ({
         <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected Supplier</span>
       </div>
       <div className="p-4 sm:p-2 w-full text-brand-textPrimary">
-        <div className="flex flex-col sm:flex-row gap-5 mb-6">
+        <div className="flex flex-col sm:flex-row gap-2 mb-6">
           <div className="product-img-wrapper-list !w-24 !h-24 mx-auto sm:mx-0 shrink-0 bg-white">
             <img src={image} alt={name} className="w-full h-full object-cover p-2" />
           </div>

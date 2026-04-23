@@ -55,12 +55,9 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
               <div className="pkg-feature-text">
                 <span>{feature.name}</span>
                 {feature.value && (
-                  <>
-                    <span className="mx-1 opacity-50">-</span>
-                    <span className={feature.highlightedValue ? "pkg-feature-value-highlighted" : ""}>
-                      {feature.value}
-                    </span>
-                  </>
+                  <span className={`ml-1 ${feature.highlightedValue ? "pkg-feature-value-highlighted" : "opacity-80 text-[13px]"}`}>
+                    {feature.value}
+                  </span>
                 )}
               </div>
             </li>
@@ -90,7 +87,7 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
                 : packageData.name
               }
             </h3>
-            <div className="pkg-details-price-wrapper mt-4 flex items-baseline">
+            <div className="pkg-details-price-wrapper mt-2 flex items-baseline">
               <span className="pkg-details-price text-[28px] font-bold text-brand-textPrimary dark:text-white">
                 ${price}.00
               </span>
@@ -98,13 +95,13 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
                 {cycleText}
               </span>
             </div>
-            <p className="pkg-details-description mt-4 text-[13px] text-brand-textSecondary dark:text-[#7A9ABF]/80 leading-relaxed">
+            <p className="pkg-details-description mt-2 text-[13px] text-brand-textSecondary dark:text-[#7A9ABF]/80 leading-relaxed">
               {packageData.description}
             </p>
           </div>
 
           {/* Feature Lists */}
-          <div className="pkg-features-container mt-8">
+          <div className="pkg-features-container mt-4">
             {isPrepaid && packageData.prepaidHighlights ? (
               <div className="pkg-feature-section">
                 <h4 className="pkg-feature-title">
@@ -135,7 +132,7 @@ const PackageDetailsPanel: React.FC<PackageDetailsPanelProps> = ({
         </div>
 
         <div className="mt-2 pt-1 px-10 py-2">
-          <div className="border-t border-brand-border py-2 opacity-30" />
+          <div className="border-t border-brand-inputBorder py-2 " />
           <p className="text-[14px] text-brand-textSecondary dark:text-[#7A9ABF]/60 leading-relaxed italic">
             {isPrepaid
               ? `Get started with the ${packageData.name} plan today and unlock all these amazing features.`

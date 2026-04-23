@@ -11,6 +11,7 @@ import SelectField from "../../../../components/common/select/SelectField";
 import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import Tooltip from "../../../../components/common/Tooltip/Tooltip";
 import { formatNumber } from "../../../../api/tiktokTrends";
+import { checkIsTikTokProduct, normalizeAmazonProduct, normalizeTikTokProduct } from "../../../../utils/cardDataNormalizers";
 
 interface SupplierSourceLinkProps {
   product: any;
@@ -29,6 +30,8 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
 }) => {
   const [copy, setCopy] = useState(false);
   const [sortBy, setSortBy] = useState<string>("default");
+
+
 
   const SORT_OPTIONS = [
     { label: "Default", value: "default" },
@@ -70,44 +73,11 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
   // Normalize the selected product data
   const normalizedProduct = React.useMemo(() => {
     if (!product) return null;
-
-    // Build tags dynamically
-    const tags: string[] = [];
-    if (product.is_best_seller) tags.push("Best Seller");
-    if (product.is_amazon_choice) tags.push("Amazon Choice");
-    if (product.is_prime) tags.push("Prime");
-    if (product.climate_pledge_friendly) tags.push("Climate Pledge");
-
-
-    console.log(product, "product")
-    return {
-      title: product.product_title || product.title || "Selected Product",
-      image: product.product_photo || product.image || product.image_url || "",
-      price: product.product_price?.toString().replace("$", "") || product.price?.toString().replace("$", "") || "0.00",
-      oldPrice: product.product_original_price?.toString().replace("$", "") || product.oldPrice?.toString().replace("$", "") || product.product_price?.toString().replace("$", "") || "0.00",
-      asin: product.asin || product.id || "N/A",
-      salesVol: product.sales_volume || product.salesVol || (product.sales_count ? formatNumber(product.sales_count) : "N/A"),
-      offers: product.product_num_offers?.toString() || product.offers?.toString() || "1",
-      seller: product.product_seller_name || product.seller || product.product_offers?.[0]?.seller || (sourceType === 'tiktok' ? "TikTok Shop" : "Amazon.com"),
-      shipsFrom: product.ships_from || product.shipsFrom || product.product_offers?.[0]?.ships_from || (sourceType === 'tiktok' ? "TikTok" : "Amazon"),
-      country: product.seller_country || product.country || "US",
-      rating: parseFloat(product.product_star_rating || product.rating || "4.5"),
-      numRatings: product.product_num_ratings || product.ratings || product.review_count || "0",
-      product_url: product.itemUrl || product.product_url || product.url || product.ad_url || "",
-      dimensions: product.product_information?.["Product Dimensions"] || product.dimensions || "N/A",
-      weight: product.product_information?.["Item Weight"] || product.weight || "N/A",
-      tags: tags.length > 0 ? tags : (product.tags || []),
-      metrics: product.metrics || {
-        ctr: "0.0%",
-        cvr: "0.0%",
-        cpa: "$0.00",
-        impressions: "0",
-        category: product.category_name || product.category || "",
-        subcategory1: "",
-        subcategory2: ""
-      }
-    };
-  }, [product]);
+    const isTikTok = checkIsTikTokProduct(product) || sourceType === 'tiktok';
+    return isTikTok
+      ? normalizeTikTokProduct(product, product, true)
+      : normalizeAmazonProduct(product, product, false);
+  }, [product, sourceType]);
 
   // Map incoming suppliers to the format expected by the UI
   const suppliers = React.useMemo(() => {
@@ -243,31 +213,31 @@ const SupplierSourceLink: React.FC<SupplierSourceLinkProps> = ({
         </div>
 
         {sourceType === 'tiktok' ? (
-          <TrendProductCard
-            title={normalizedProduct.title}
-            image={normalizedProduct.image}
-            category={product.category || "N/A"}
-            price={product.price || normalizedProduct.price}
-            metrics={normalizedProduct.metrics}
-            variant="selected"
-            onOpenProduct={() => {
-              const url = normalizedProduct.product_url || (suppliers.length > 0 ? suppliers[0].itemUrl : "");
-              if (url) window.open(url, '_blank');
-            }}
-            onCopyLink={() => {
-              const url = normalizedProduct.product_url || (suppliers.length > 0 ? suppliers[0].itemUrl : "");
-              if (url) handleCopy(url);
-            }}
-            isCopied={copy}
-          />
+          normalizedProduct && (
+            <TrendProductCard
+              {...normalizedProduct}
+              variant="selected"
+              onOpenProduct={() => {
+                const url = product.itemUrl || product.product_url || product.url || (suppliers.length > 0 ? suppliers[0].itemUrl : "");
+                if (url) window.open(url, '_blank');
+              }}
+              onCopyLink={() => {
+                const url = product.itemUrl || product.product_url || product.url || (suppliers.length > 0 ? suppliers[0].itemUrl : "");
+                if (url) handleCopy(url);
+              }}
+              isCopied={copy}
+            />
+          )
         ) : (
-          <AmazonProductCard
-            product={normalizedProduct}
-            variant="selected"
-            onCopyLink={() => handleCopy(normalizedProduct.product_url)}
-            onOpenProduct={() => window.open(normalizedProduct.product_url, '_blank')}
-            isCopied={copy}
-          />
+          normalizedProduct && (
+            <AmazonProductCard
+              product={normalizedProduct}
+              variant="selected"
+              onCopyLink={() => handleCopy(product.offer?.seller_link || product.itemUrl || product.product_url || product.url)}
+              onOpenProduct={() => window.open(product.offer?.seller_link || product.itemUrl || product.product_url || product.url, '_blank')}
+              isCopied={copy}
+            />
+          )
         )}
 
         {/* Suppliers Section Header */}

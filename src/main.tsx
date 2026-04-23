@@ -9,6 +9,10 @@ import { SignupProvider } from './context/SignupContext'
 import './assets/css/style.css'
 
 import { BrowserRouter } from 'react-router-dom'
+import { setupDynamicImportErrorHandlers } from './utils/errorHandlers'
+
+// Initialize global error handlers to detect and recover from chunk load failures
+setupDynamicImportErrorHandlers();
 
 const queryClient = new QueryClient({
   defaultOptions: {

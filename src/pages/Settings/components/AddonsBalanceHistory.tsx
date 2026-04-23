@@ -6,9 +6,10 @@ import { getBalanceHistory, fetchAccountSummary } from "../../../api/pricing";
 
 interface AddonsBalanceHistoryProps {
   defaultOpen?: boolean;
+  scrollIntoViewOnOpen?: boolean;
 }
 
-const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen = false }) => {
+const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [sortField, setSortField] = useState<string | null>("created_at");
@@ -95,6 +96,7 @@ const AddonsBalanceHistory: React.FC<AddonsBalanceHistoryProps> = ({ defaultOpen
       subtitle="Track your addon purchases and balance history"
       isOpen={isOpen}
       onToggle={setIsOpen}
+      scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<History size={24} className="text-white" />}
     >
       <div className="flex flex-col gap-6">

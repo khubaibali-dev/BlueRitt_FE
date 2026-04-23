@@ -138,7 +138,7 @@ const InfluencerCard: React.FC<InfluencerCardProps> = ({
 
             <button
               onClick={onUpgrade}
-              className="mt-4 px-8 h-[46px] bg-[#FF5900] hover:bg-[#FF4500] text-white rounded-full font-bold text-[14px] shadow-lg shadow-orange-500/20 transition-all active:scale-95"
+              className="mt-4 px-8 h-[46px] upgrade-gradient-btn text-white rounded-full font-bold text-[14px] shadow-lg shadow-orange-500/20 transition-all active:scale-95"
             >
               Upgrade Plan
             </button>

@@ -8,7 +8,7 @@ interface LoginFields {
   password: string;
 }
 
-type LoginErrors = Partial<Record<keyof LoginFields, string>>;
+type LoginErrors = Partial<Record<keyof LoginFields | "captcha", string>>;
 
 const validate = (fields: LoginFields): LoginErrors => {
   const errors: LoginErrors = {};
@@ -64,12 +64,13 @@ const useLoginForm = () => {
     setApiError("");
 
     const validationErrors = validate(fields);
+    
+    if (!captchaVerified) {
+      validationErrors.captcha = "Please complete the reCAPTCHA verification";
+    }
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return;
-    }
-    if (!captchaVerified) {
-      setApiError("Please verify you are not a robot.");
       return;
     }
 

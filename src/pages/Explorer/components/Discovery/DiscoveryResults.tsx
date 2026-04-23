@@ -21,6 +21,7 @@ import { getAmazonSearchInsights, getAmazonCategoriesandSubcategories, aliBabaPr
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "../../../../components/common/Toast/ToastContext";
 import { useUserDetails } from "../../../../hooks/useUserDetails";
+import { checkForBlockedKeywords, getBlockedContentMessage } from "../../../../utils/keywordFilter";
 
 interface DiscoveryResultsProps {
    onBack: () => void;
@@ -34,6 +35,7 @@ interface DiscoveryResultsProps {
 const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    const toast = useToast();
    const {
+      onBack,
       initialQuery = "",
       initialCountry = "US",
       initialSearchType = "product",
@@ -102,6 +104,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                   data: {
                      products: [{
                         ...res.data,
+                        offer: res.offer || res.data?.offer,
                         product_photo: res.data.product_photos?.[0] || "",
                         // Ensure flags are mapped correctly from detail API names if they differ
                         is_amazon_choice: res.data.is_amazon_choice,
@@ -127,6 +130,7 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          });
       },
       enabled: activeSearchType === "category" ? !!activeCategoryId : !!activeSearchQuery,
+      retry: false,
    });
 
    const products = error ? [] : (searchResponse?.data?.products || []);
@@ -192,8 +196,11 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
    useEffect(() => {
       if (error) {
          toast.error("An error occurred while fetching products. Please try again.");
+         // Reset loading and go back to banner
+         if (onLoadingChange) onLoadingChange(false);
+         onBack();
       }
-   }, [error, toast]);
+   }, [error, toast, onBack, onLoadingChange]);
 
    const { data: insightsResponse, isFetching: isInsightsFetching } = useQuery({
       queryKey: ["amazon-product-insights", activeSearchQuery, activeCountryCode, filters, activeSearchType, activeCategoryId],
@@ -321,6 +328,17 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          return;
       }
 
+      // Keyword Validation (Only for product/keyword search, skip for ASIN)
+      if (searchType === "product") {
+         const validation = checkForBlockedKeywords(searchQuery);
+         if (validation.isBlocked) {
+            toast.error(getBlockedContentMessage(validation.category), {
+               title: "Inappropriate Keyword"
+            });
+            return;
+         }
+      }
+
       // Map current country name to its code
       const currentCountryObj = countries.find((c: any) => c.name === countryName);
       const currentCountryCode = currentCountryObj?.code || "US";
@@ -361,7 +379,11 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
                country: currentCountryCode
             });
             if (detailsRes?.data) {
-               enrichedProduct = { ...product, ...detailsRes.data };
+               enrichedProduct = {
+                  ...product,
+                  ...detailsRes.data,
+                  offer: detailsRes.offer || detailsRes.data?.offer
+               };
             }
          } catch (detailsError) {
             console.warn("Could not fetch full product details for discovery:", detailsError);
@@ -623,9 +645,9 @@ const DiscoveryResults: React.FC<DiscoveryResultsProps> = (props) => {
          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-0 mb-8 px-2">
             <div className="flex flex-col">
                <div className="flex items-center gap-3">
-                  <h2 className="text-[24px] sm:text-[20px] text-brand-textPrimary tracking-tight leading-tight mb-1">Discovery Results</h2>
+                  <h2 className="text-[24px] sm:text-[20px] text-brand-textPrimary tracking-tight leading-tight mb-1">{totalResults > 0 ? totalResults : products.length} Amazon Products found</h2>
                </div>
-               <p className="text-[14px] sm:text-[15px] text-brand-textSecondary dark:text-white">{totalResults > 0 ? totalResults : products.length} products match your query</p>
+               <p className="text-[14px] sm:text-[15px] text-brand-textSecondary dark:text-white">* Sponsored products excluded for accurate, organic insights</p>
             </div>
             <div className="flex items-center gap-3">
                <div className="w-[200px] h-fit">

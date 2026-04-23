@@ -1,28 +1,17 @@
 import React from "react";
 import AppRoutes from "./routing/AppRoutes";
-import { useAuth } from "./context/AuthContext";
 import GlobalGradients from "./components/common/GlobalGradients";
+import ScrollToTop from "./components/common/ScrollToTop";
 import { useInactivityTimeout } from "./hooks/useInactivityTimeout";
 
 const App: React.FC = () => {
-  const { loading } = useAuth();
-  
+
   // Initialize inactivity monitor
   useInactivityTimeout();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm font-medium animate-pulse text-brand-textSecondary">Initializing session...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
+      <ScrollToTop />
       <GlobalGradients />
       <AppRoutes />
     </>

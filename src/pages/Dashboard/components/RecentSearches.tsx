@@ -19,7 +19,11 @@ const RecentSearches = () => {
             const detailRes = await getSavedCategoriesDetail({ id: cat.id });
             return {
               ...cat,
-              product_count: detailRes?.data?.products?.length || 0
+              product_count: detailRes?.data?.products?.length || 0,
+              preview_images: detailRes?.data?.products?.slice(0, 4).map((p: any) => {
+                const productData = p.amazon_product?.data || p.amazon_product || {};
+                return productData.image || productData.image_url || p.image_url || "";
+              }).filter((img: string) => img && img !== "")
             };
           } catch (err) {
             console.error(`Failed to fetch count for category ${cat.id}:`, err);
@@ -48,9 +52,9 @@ const RecentSearches = () => {
       new Map(categories.map((c: any) => [c.name.trim().toLowerCase(), c])).values()
     );
 
-    // Sort by created_at descending (newest first) so dynamic ones show up
+    // Sort by created_at ascending (newest last) so dynamic ones show up at the end
     return [...uniqueCategories].sort((a: any, b: any) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
   }, [categories]);
 
@@ -78,6 +82,7 @@ const RecentSearches = () => {
             name={col.name}
             image={col.image}
             productCount={col.product_count}
+            previewImages={col.preview_images || []}
             onClick={() => navigate(`/products?collectionId=${col.id}`)}
           />
         ))}

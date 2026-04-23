@@ -15,6 +15,7 @@ import { PRODUCT_FILTER_OPTIONS } from "../../../../utils/SearchOptions";
 import { getAmazonCategoriesandSubcategories } from "../../../../api/product";
 import { useToast } from "../../../../components/common/Toast/ToastContext";
 import Tooltip from "../../../../components/common/Tooltip/Tooltip";
+import { checkForBlockedKeywords, getBlockedContentMessage } from "../../../../utils/keywordFilter";
 
 interface ExplorerBannerProps {
   onSearch: (query: string, country: string, searchType: string) => void;
@@ -74,6 +75,16 @@ const ExplorerBanner: React.FC<ExplorerBannerProps> = ({ onSearch }) => {
       toast.error("Please enter keyword", { title: "Search Failed" });
       return;
     }
+
+    // Keyword Validation
+    const validation = checkForBlockedKeywords(query);
+    if (validation.isBlocked) {
+      toast.error(getBlockedContentMessage(validation.category), { 
+        title: "Inappropriate Keyword" 
+      });
+      return;
+    }
+
     onSearch(query, selectedCountry.value, filterType.value);
   };
 

@@ -3,21 +3,22 @@ import { useAccountSummary } from "../../../hooks/useAccountSummary";
 import SubscriptionSnapshotSkeleton from "../../../components/common/Skeletons/SubscriptionSnapshotSkeleton";
 
 const SubscriptionSnapshot = () => {
-  const { data: summary, isLoading, isError } = useAccountSummary();
+  const { data: summary, isLoading, } = useAccountSummary();
 
   if (isLoading) {
     return <SubscriptionSnapshotSkeleton />;
   }
 
-  if (isError || !summary) {
-    return (
-      <div className="snapshot-card">
-        <p className="text-red-400">Failed to load subscription data</p>
-      </div>
-    );
-  }
+  const summaryData = summary || {
+    plan: "Trial",
+    balance: 0,
+    dueDate: "N/A",
+    billingCycle: "Monthly",
+    activeSubscription: false,
+    package_price: 0,
+    lastPaymentDate: "N/A"
+  };
 
-  // Logic from provided API response
   const {
     plan = "Trial",
     balance = 0,
@@ -26,7 +27,7 @@ const SubscriptionSnapshot = () => {
     activeSubscription = false,
     package_price = 0,
     lastPaymentDate = "N/A"
-  } = summary;
+  } = summaryData;
 
   // Format date correctly
   const formatDate = (dateStr: string) => {
@@ -47,7 +48,6 @@ const SubscriptionSnapshot = () => {
     });
   };
 
-  const status = activeSubscription ? "Active" : "Inactive";
   const billing = billingCycle;
 
   const snapshotItems = [
@@ -56,6 +56,34 @@ const SubscriptionSnapshot = () => {
     { label: "Start Date", value: formatDate(lastPaymentDate) },
     { label: "End Date", value: plan === "Trial" ? "N/A" : formatDate(dueDate) },
   ];
+
+  const today = new Date();
+  const dueDatesubscription = new Date(dueDate);
+  const isExpired = dueDatesubscription < today;
+
+  const getStatus = () => {
+    if (plan === "Trial" && activeSubscription) return "Trial";
+    if (activeSubscription) return "Active";
+    if (!activeSubscription && !isExpired) return "Scheduled for Cancellation";
+    if (!activeSubscription && isExpired) return "Cancelled";
+    return "Inactive";
+  };
+
+  const status = getStatus();
+
+  const getStatusClass = () => {
+    switch (status) {
+      case "Trial":
+      case "Active":
+        return "active";
+      case "Scheduled for Cancellation":
+        return "scheduled text-yellow-400 border-yellow-400/20 bg-yellow-400/10";
+      case "Cancelled":
+        return "cancelled text-red-400 border-red-400/20 bg-red-400/10";
+      default:
+        return "inactive opacity-60";
+    }
+  };
 
   return (
     <div className="snapshot-card">
@@ -68,7 +96,7 @@ const SubscriptionSnapshot = () => {
             <span className="text-sm opacity-50 ml-1">{billing}</span>
           </p>
         </div>
-        <span className={`snapshot-status-badge ${activeSubscription ? "active" : ""}`}>
+        <span className={`snapshot-status-badge ${getStatusClass()}`}>
           <CircleCheck size={14} className="mr-1" /> {status}
         </span>
       </div>

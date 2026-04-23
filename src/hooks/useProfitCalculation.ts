@@ -120,7 +120,7 @@ export const useProfitCalculation = (initialState?: Partial<typeof defaultInitia
 
     let fulfillmentSum = 0;
     if (values.fm_model === "FBA") {
-      fulfillmentSum = fm_referrfalFees + fm_fbaFulfillmentFees + fm_monthlyStorageFees + fm_longTermStorageFees + fm_inboundShippingCost + fm_miscCost;
+      fulfillmentSum = fm_referrfalFees + fm_fbaFulfillmentFees + fm_monthlyStorageFees + fm_longTermStorageFees + fm_inboundShippingCost;
     } else {
       fulfillmentSum = fm_referrfalFees + fm_shippingFees + fm_handlingCost + fm_storageCost + fm_miscCost;
     }

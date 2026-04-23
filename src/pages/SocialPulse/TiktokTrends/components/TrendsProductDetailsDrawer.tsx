@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Layout, BarChart2, Share2, Heart, MessageCircle, Award, ChevronDown, ChevronUp, Star } from "lucide-react";
+import { X, Award, Heart, Share2, MessageCircle, BarChart2, Layout, ChevronDown, ChevronUp, Star, Loader2, Package } from "lucide-react";
+import { getProductImageWithFallback } from "../../../../utils/pexelsImageFallback";
 import { useQuery } from "@tanstack/react-query";
 import { getTikTokShopAnalysis, formatNumber, getTikTokCreativeCenterProductDetails, getTikTokCreativeCenterProducts } from "../../../../api/tiktokTrends";
 
@@ -20,6 +21,7 @@ interface TrendsProductDetailsDrawerProps {
       cpa: string;
       impressions: string;
       category?: string;
+      category_id?: string;
       subcategory1?: string;
       subcategory2?: string;
     };
@@ -34,6 +36,59 @@ interface TrendsProductDetailsDrawerProps {
   country?: string;
 }
 
+const ImageWithFallback: React.FC<{ src: string; title: string; className?: string }> = ({ src, title, className = "" }) => {
+  const [imgSrc, setImgSrc] = useState(src);
+  const [isFallbackLoading, setIsFallbackLoading] = useState(false);
+  const [fallbackAttempted, setFallbackAttempted] = useState(false);
+
+  const handleImageError = async () => {
+    if (fallbackAttempted) return;
+    setFallbackAttempted(true);
+    setIsFallbackLoading(true);
+
+    try {
+      const fallback = await getProductImageWithFallback({ title });
+      if (fallback) {
+        setImgSrc(fallback);
+      }
+    } catch (error) {
+      console.error("❌ Fallback image failed:", error);
+    } finally {
+      setIsFallbackLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setFallbackAttempted(false);
+    if (!src || src.includes('placeholder') || src === '') {
+      handleImageError();
+    } else {
+      setImgSrc(src);
+    }
+  }, [src, title]);
+
+  return (
+    <div className={`relative overflow-hidden bg-brand-card-alt ${className}`}>
+      {isFallbackLoading ? (
+        <div className="w-full h-full flex items-center justify-center">
+          <Loader2 className="w-5 h-5 text-brand-primary animate-spin" />
+        </div>
+      ) : imgSrc ? (
+        <img
+          src={imgSrc}
+          alt={title}
+          className="w-full h-full object-cover"
+          onError={handleImageError}
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-brand-textMuted">
+          <Package size={20} />
+        </div>
+      )}
+    </div>
+  );
+};
+
 const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({ isOpen, onClose, onDiscoverSupplier, product, country = "US" }) => {
   const [activeTab, setActiveTab] = useState<"Details" | "Analysis">("Details");
   const [isHashtagsExpanded, setIsHashtagsExpanded] = useState(true);
@@ -41,8 +96,8 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
 
   // Real-time Analysis Query
   const { data: analysisData, isLoading: isAnalysisLoading } = useQuery({
-    queryKey: ["tiktok-analysis", product?.title, country],
-    queryFn: () => getTikTokShopAnalysis(product?.title || "", country),
+    queryKey: ["tiktok-analysis", product?.title, "US", product?.metrics?.category_id],
+    queryFn: () => getTikTokShopAnalysis(product?.title || "", "US", product?.metrics?.category_id),
     enabled: isOpen && activeTab === "Analysis" && !!product?.title,
   });
 
@@ -130,14 +185,14 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
           </div>
 
           {/* Tabs - Synced with Explorer */}
-          <div className="flex gap-2 p-1 bg-brand-card-alt rounded-xl w-fit">
+          <div className="flex gap-2 p-1 bg-brand-card-alt rounded-xl w-fit border ">
             {(["Details", "Analysis"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex items-center gap-2 px-6 py-2 rounded-[10px] text-[13px] transition-all font-bold ${activeTab === tab
                   ? "text-white shadow-lg"
-                  : "text-brand-textSecondary hover:bg-brand-hover"
+                  : "text-black dark:text-white dark:hover:bg-brand-hover"
                   }`}
                 style={
                   activeTab === tab
@@ -153,38 +208,41 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
         </div>
 
         {/* Tab Separator */}
-        <div className="mt-4 border-b border-brand-border mx-6" />
+        <div className="mt-4 border-b border-brand-inputBorder mx-6" />
 
         {/* Scrollable Body - Synced Scrollbar */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 pb-10 space-y-8">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 sm:pt-4 pb-6 space-y-5">
 
           {/* Content sections below remain high-fidelity but adjusted for layout */}
           {activeTab === "Details" ? (
             <>
               {/* Top Info Section - Only visible in Details */}
-              <div className="flex gap-4 mb-8">
-                <div className="w-28 h-28 rounded-[22px] overflow-hidden shrink-0 border border-brand-inputBorder">
-                  <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mt-2 mb-1 pr-2">
-                    <h4 className="product-card-title pr-4 !text-[17px]">
+              <div className="flex gap-4 mb-2">
+                <ImageWithFallback
+                  src={product.image}
+                  title={product.title}
+                  className="w-28 h-28 rounded-[12px] shrink-0 border border-brand-inputBorder"
+                />
+                <div className="flex-1 min-w-0 flex justify-between">
+                  <div className="flex-1">
+                    <h4 className="product-card-title pr-4 !text-[18px] mb-2 mt-1">
                       {product.title}
                     </h4>
-                    <div className="product-img-badge !static shrink-0 !rounded-full">
+                    <span className="text-[24px] font-black text-brand-textPrimary">{product.price}</span>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2 mt-1">
+                    <div className="product-img-badge !static shrink-0 !rounded-full whitespace-nowrap">
                       {product.category}
                     </div>
-                  </div>
-                  <div className="flex items-baseline justify-between pt-1">
-                    <span className="text-[22px] font-black text-brand-textPrimary">{product.price}</span>
-                    <span className="product-img-badge !rounded-full">{formatNumber(product.view_count)} Views</span>
+                    <span className="product-img-badge !rounded-full whitespace-nowrap">{formatNumber(product.view_count)} Views</span>
                   </div>
                 </div>
               </div>
-              <div className="border border-brand-border" />
+              <div className="border-b border-brand-inputBorder" />
               {/* Engagement Stats */}
-              <div className="space-y-4">
-                <h5 className="text-[14px]  text-brand-textPrimary tracking-tight">TikTok Engagement</h5>
+              <div className="space-y-2">
+                <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">TikTok Engagement</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
                     { icon: Award, label: "Posts", value: formatNumber(product.post_count) },
@@ -207,17 +265,17 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
 
               {/* Metrics Grid */}
               <div className="space-y-4">
-                <h5 className="text-[14px]  text-brand-textPrimary tracking-tight">Additional Metrics</h5>
+                <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">Additional Metrics</h5>
                 <div className="grid grid-cols-4 gap-3">
                   {[
                     { label: "CTR", value: enrichedMetrics?.ctr || "0.00" },
                     { label: "CVR", value: enrichedMetrics?.cvr || "0.00" },
                     { label: "CPA", value: enrichedMetrics?.cpa || "$0.00" },
                     { label: "Impressions", value: enrichedMetrics?.impressions || "0K" },
-                    { label: "Category", value: enrichedMetrics?.category || product.category || "N/A" },
-                    { label: "Subcategory", value: enrichedMetrics?.subcategory1 || "N/A" }
+                    { label: "Category", value: enrichedMetrics?.category || product.category || "N/A", fullWidth: true },
+                    { label: "Subcategory", value: enrichedMetrics?.subcategory1 || "N/A", fullWidth: true }
                   ].map((metric, i) => (
-                    <div key={i} className={`product-metric-item ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
+                    <div key={i} className={`product-metric-item ${metric.fullWidth ? "col-span-2" : ""} ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
                       <span className="metric-label block mb-2">{metric.label}</span>
                       <span className="metric-value block !text-[13px]">{isEnrichedLoading ? "..." : metric.value}</span>
                     </div>
@@ -231,7 +289,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                   onClick={() => setIsHashtagsExpanded(!isHashtagsExpanded)}
                   className="flex items-center justify-between w-full mb-1 group"
                 >
-                  <h5 className="text-[14px] text-brand-textPrimary tracking-tight">Trending Hashtags</h5>
+                  <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">Trending Hashtags</h5>
                   <div className="p-1 rounded-full hover:bg-brand-hover transition-all">
                     {isHashtagsExpanded ? <ChevronUp size={20} className="text-brand-textPrimary" /> : <ChevronDown size={20} className="text-brand-textPrimary" />}
                   </div>
@@ -256,7 +314,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
               {/* Demographics */}
               <div className="space-y-4 pb-4">
                 <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">Audience Insights</h5>
-                <div className="bg-brand-card border border-brand-border rounded-[12px] p-5">
+                <div className="bg-brand-card border border-brand-inputBorder rounded-[12px] p-5">
                   <h6 className="text-[13px] font-medium text-brand-textSecondary mb-6">Age Demographics</h6>
 
                   <div className="space-y-4">
@@ -313,7 +371,7 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="border border-brand-border" />
+              <div className="border-b border-brand-inputBorder" />
 
               {/* Comparison Section */}
               <div className="space-y-6">
@@ -351,22 +409,26 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     analysisData.products.map((item: any, idx: number) => (
                       <div key={idx} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <div className="flex gap-4">
-                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-brand-inputBorder shrink-0">
-                            <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
-                          </div>
+                          <ImageWithFallback
+                            src={item.image_url}
+                            title={item.title}
+                            className="w-16 h-16 rounded-[12px] border border-brand-inputBorder shrink-0"
+                          />
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-4 mb-2">
+                            <div className="mb-2">
                               <h6 className="product-card-title !leading-tight truncate">{item.title}</h6>
-                              <div className="trending-badge-standard !px-2 !py-0.5">
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="product-price-primary !text-[16px]">
+                                ${item.price.toFixed(2)}
+                              </span>
+                              <div className="trending-badge-standard !px-2 !py-0.5  !static">
                                 BY {item.shop_name?.toUpperCase() || "TIKTOK SHOP"}
                               </div>
                             </div>
-                            <span className="product-price-primary !text-[16px]">
-                              ${item.price.toFixed(2)} <span className="text-[10px] text-dim font-normal ml-1 uppercase tracking-widest">{item.currency || "USD"}</span>
-                            </span>
                           </div>
                         </div>
-                        <div className="border border-brand-border" />
+                        <div className="border-b border-brand-inputBorder" />
                         <div className="grid grid-cols-4 gap-3">
                           {[
                             { label: "Sales", value: item.sales_count >= 1000 ? `${(item.sales_count / 1000).toFixed(1)}K` : item.sales_count },

@@ -74,7 +74,7 @@ const ProfitCalculator: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const calculationId = searchParams.get("calculationId");
-  const { data: userDetails } = useUserDetails();
+  const { data: userDetails, refetch: refetchUserDetails } = useUserDetails();
   const hasGrossAccess = userDetails?.features?.access_to_gross_profit ?? true;
   const hasNetAccess = userDetails?.features?.access_to_net_profit ?? true;
 
@@ -119,10 +119,8 @@ const ProfitCalculator: React.FC = () => {
         const price = product.product_price?.replace(/[$,]/g, "") || "0";
         formik.setFieldValue("pi_sellingPrice", price);
 
-        // Auto-fill Amazon Fees if possible
-        if (product.product_offers?.[0]) {
-          // We can add more logic here if backend provides more distinct fee data
-        }
+        // Refetch user details to update searches remaining
+        refetchUserDetails();
       }
     } catch (err: any) {
       console.error("ASIN Search error:", err);
@@ -352,7 +350,7 @@ const ProfitCalculatorContent: React.FC<any> = ({
     <div className="dashboard-container relative min-h-screen bg-brand-bg lg:p-1">
       <div className="bg-brand-card-alt rounded-[32px] overflow-hidden relative min-h-screen shadow-md">
         {/* Hero Banner Section */}
-        <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible min-h-[500px]">
+        <section className="dashboard-banner-container relative w-full pb-0 pt-12 sm:pt-16 lg:pt-20 rounded-t-[32px] flex flex-col items-center justify-start isolate !overflow-visible min-h-[400px]">
           <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
             <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
             <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
@@ -404,7 +402,7 @@ const ProfitCalculatorContent: React.FC<any> = ({
                 </button>
               </div>
 
-              <div className="mt-2 text-[11px] text-slate-400 text-left">
+              <div className="mt-2 text-[11px]  text-left">
                 <span className="font-semibold text-brand-textPrimary dark:text-white">Pro tip:</span> Enter any Amazon ASIN to automatically fetch product details, pricing, and fees
               </div>
             </div>
@@ -437,31 +435,30 @@ const ProfitCalculatorContent: React.FC<any> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab("Advanced")}
-                  className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
+                  onClick={() => hasNetAccess && setActiveTab("Advanced")}
+                  className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'} ${!hasNetAccess ? 'cursor-not-allowed' : ''}`}
                 >
                   {!hasNetAccess && <Lock size={12} className="opacity-70" />}
                   Advanced
                 </button>
               </div>
             </div>
-
-            {selectedProduct && (
-              <div className="w-full max-w-[1200px] mt-8 animate-in fade-in zoom-in-95 duration-500">
-                <AmazonProductCard
-                  product={selectedProduct}
-                  variant="selected"
-                  isCalculator={true}
-                />
-              </div>
-            )}
           </div>
         </section>
 
         {/* Main Content Layout */}
         <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-14 relative z-10 flex flex-col gap-8">
-          <div className="flex flex-col lg:flex-row gap-8 items-start pb-20 min-h-[800px]">
+          {selectedProduct && (
+            <div className="w-full animate-in fade-in slide-in-from-top-4 duration-500 -mt-10">
+              <AmazonProductCard
+                product={selectedProduct}
+                variant="selected"
+                isCalculator={true}
+              />
+            </div>
+          )}
 
+          <div className="flex flex-col lg:flex-row gap-8 items-start pb-20 min-h-[800px]">
             {/* Left Column: Form Accordions */}
             <div className="flex-1 w-full flex flex-col gap-4">
               <BasicTab

@@ -13,6 +13,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaError, setCaptchaError] = useState("");
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -25,10 +26,15 @@ const LoginForm: React.FC = () => {
       recaptchaToken: null as string | null,
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email address").required("Required"),
-      password: Yup.string().required("Required"),
+      email: Yup.string().email("Invalid email address").required("Email is required."),
+      password: Yup.string().required("Password is required."),
     }),
     onSubmit: async (values) => {
+      if (!values.recaptchaToken) {
+        setCaptchaError("Please complete the reCAPTCHA verification");
+        return;
+      }
+      setCaptchaError("");
       try {
         const encryptedPassword = await encryptPassword(values.password);
         loginMutation.mutate({
@@ -64,6 +70,7 @@ const LoginForm: React.FC = () => {
       <form id="login-form" onSubmit={formik.handleSubmit} className="space-y-4">
         <InputField
           id="email"
+          required
           label="Email Address"
           type="email"
           placeholder="Enter your email"
@@ -76,6 +83,7 @@ const LoginForm: React.FC = () => {
         <InputField
           id="password"
           label="Password"
+          required
           labelRight={
             <Link
               to="/forgot-password"
@@ -100,9 +108,19 @@ const LoginForm: React.FC = () => {
           }
         />
 
-        <ReCaptchaWidget
-          onVerify={(token: string) => formik.setFieldValue("recaptchaToken", token)}
-        />
+        <div className="space-y-1">
+          <ReCaptchaWidget
+            onVerify={(token: string) => {
+              formik.setFieldValue("recaptchaToken", token);
+              setCaptchaError("");
+            }}
+          />
+          {captchaError && (
+            <p className="text-xs text-red-400 mt-1 text-center" role="alert">
+              {captchaError}
+            </p>
+          )}
+        </div>
       </form>
 
 

@@ -46,6 +46,7 @@ export interface AmazonExplorerResponse {
 
 
 export interface ProductDetails {
+  offer: ProductOffer | undefined;
   asin: string;
   product_title: string;
   product_price?: string;
@@ -656,7 +657,7 @@ export const getAmazonExplorerProductDetails = async ({
   asin: string;
   country?: string;
   source?: string;
-}): Promise<{ data: ProductDetails; status: string; remaining_quota?: number }> => {
+}): Promise<{ data: ProductDetails; status: string; offer?: ProductOffer; remaining_quota?: number }> => {
   const response = await api.get(
     `/products/amazon-product-detail/${asin}/?country=${country}${source ? '&search_type=' + source : ''}`
   );

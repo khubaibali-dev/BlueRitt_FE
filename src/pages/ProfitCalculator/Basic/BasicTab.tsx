@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import CalculatorAccordion from "../components/CalculatorAccordion";
 import CalculatorField from "../components/CalculatorField";
 
@@ -28,6 +28,18 @@ const BasicTab: React.FC<BasicTabProps> = ({
   touched,
   handleBlur,
 }) => {
+  const fbaRateRef = useRef(formData.fm_model === "FBA" ? formData.fm_returnsRate : "0");
+  const fbmRateRef = useRef(formData.fm_model === "FBM" ? formData.fm_returnsRate : "0");
+
+  // Sync refs with model-specific rate changes
+  useEffect(() => {
+    if (formData.fm_model === "FBA") {
+      fbaRateRef.current = formData.fm_returnsRate;
+    } else {
+      fbmRateRef.current = formData.fm_returnsRate;
+    }
+  }, [formData.fm_returnsRate, formData.fm_model]);
+
   return (
     <>
       {/* Product Revenue */}
@@ -112,7 +124,10 @@ const BasicTab: React.FC<BasicTabProps> = ({
                     type="radio"
                     name="fm_model"
                     checked={formData.fm_model === "FBA"}
-                    onChange={() => handleFieldChange("fm_model", "FBA")}
+                    onChange={() => {
+                      handleFieldChange("fm_model", "FBA");
+                      handleFieldChange("fm_returnsRate", fbaRateRef.current);
+                    }}
                     className="peer appearance-none w-5 h-5 rounded-full border-2 border-slate-600 checked:border-blue-500 transition-all"
                   />
                   <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />
@@ -126,7 +141,10 @@ const BasicTab: React.FC<BasicTabProps> = ({
                     type="radio"
                     name="fm_model"
                     checked={formData.fm_model === "FBM"}
-                    onChange={() => handleFieldChange("fm_model", "FBM")}
+                    onChange={() => {
+                      handleFieldChange("fm_model", "FBM");
+                      handleFieldChange("fm_returnsRate", fbmRateRef.current);
+                    }}
                     className="peer appearance-none w-5 h-5 rounded-full border-2 border-slate-600 checked:border-blue-500 transition-all"
                   />
                   <div className="absolute w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />

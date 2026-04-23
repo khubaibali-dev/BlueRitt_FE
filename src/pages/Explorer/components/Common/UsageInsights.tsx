@@ -2,6 +2,7 @@ import React from "react";
 import { TrendingUp, Briefcase, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../../context/AuthContext";
+import { useUserDetails } from "../../../../hooks/useUserDetails";
 
 interface InsightCardProps {
   icon: React.ReactNode;
@@ -34,12 +35,17 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon, title, value, progress 
 
 const UsageInsights: React.FC = () => {
   const { currentUser } = useAuth();
+  const { data: userDetails } = useUserDetails();
 
-  const amazonQuota = currentUser.searchQuota?.amazon_search || 0;
-  const amazonLimit = currentUser.features?.amazon_search || 1;
+  // Prefer userDetails from hook as it's more likely to be fresh
+  const searchQuota = userDetails?.search_quota || currentUser.searchQuota;
+  const features = userDetails?.features || currentUser.features;
 
-  const supplierQuota = currentUser.searchQuota?.supplier_discovery || 0;
-  const supplierLimit = currentUser.features?.supplier_discovery || 1;
+  const amazonQuota = searchQuota?.amazon_search || 0;
+  const amazonLimit = features?.amazon_search || 1;
+
+  const supplierQuota = searchQuota?.supplier_discovery || 0;
+  const supplierLimit = features?.supplier_discovery || 1;
 
   const amazonProgress = (amazonQuota / amazonLimit) * 100;
   const supplierProgress = (supplierQuota / supplierLimit) * 100;

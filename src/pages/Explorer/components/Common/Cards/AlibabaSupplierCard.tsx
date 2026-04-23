@@ -1,5 +1,6 @@
 import React from 'react';
 import SpkbgSupplierCard, { SpkbgSupplierCardData } from '../../../../../components/common/SpkCards/SpkbgSupplierCard';
+import { normalizeAlibabaSupplier } from '../../../../../utils/cardDataNormalizers';
 
 interface AlibabaSupplierCardProps {
   supplier: any;
@@ -15,24 +16,7 @@ const AlibabaSupplierCard: React.FC<AlibabaSupplierCardProps> = ({
   onContactSeller
 }) => {
   const normalized: SpkbgSupplierCardData | null = React.useMemo(() => {
-    if (!supplier) return null;
-
-    return {
-      name: supplier.name || "Alibaba Sourcing Partner",
-      image: supplier.image || "",
-      isVerified: supplier.isVerified || false,
-      tradeAssurance: supplier.TradeAssurance || false,
-      isGold: true,
-      rating: supplier.rating || "4.5",
-      storeAge: supplier.storeAge || supplier.age || "1 year",
-      aiScore: supplier.ai_match_score || 0,
-      storeName: supplier.storeName || "N/A",
-      contact: supplier.contact || "N/A",
-      price: supplier.price || supplier.cost || "N/A",
-      id: supplier.id || "N/A",
-      minOrder: supplier.minOrder || "N/A",
-      country: supplier.country || "US"
-    };
+    return normalizeAlibabaSupplier(supplier);
   }, [supplier]);
 
   if (!normalized) return null;

@@ -12,6 +12,7 @@ import * as Yup from "yup";
 
 interface ChangePasswordProps {
   defaultOpen?: boolean;
+  scrollIntoViewOnOpen?: boolean;
 }
 
 const validationSchema = Yup.object().shape({
@@ -24,7 +25,7 @@ const validationSchema = Yup.object().shape({
     .required("Confirm password is required"),
 });
 
-const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) => {
+const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
   const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -71,6 +72,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false }) 
       title="Change Password"
       subtitle="Update your security credentials"
       defaultOpen={defaultOpen}
+      scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<Lock size={24} className="text-white" />}
     >
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { X, Star, Box, BarChart3, Truck, DollarSign, ChevronDown, ChevronUp, AlertTriangle, Zap, Check, Loader2, Store } from "lucide-react";
+import { X, Star, Box, BarChart3, Truck, DollarSign, ChevronDown, ChevronUp, AlertTriangle, Zap, Check, Loader2, Store, Search } from "lucide-react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { getAmazonExplorerProductDetails, getAmazonExplorerProductReviews, ProductReview } from "../../../../api/amazonExplorer";
+import { useUserDetails } from "../../../../hooks/useUserDetails";
 import DetailsSkeleton from "./skeletons/DetailsSkeleton";
 import ReviewsSkeleton from "./skeletons/ReviewsSkeleton";
 import OffersSkeleton from "./skeletons/OffersSkeleton";
@@ -97,10 +99,14 @@ const ReviewCard: React.FC<{ rev: ProductReview }> = ({ rev }) => {
 };
 
 const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onClose, onDiscoverSuppliers, product }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'Details' | 'Reviews' | 'Offers'>('Details');
   const [expandedSection, setExpandedSection] = useState<string | null>('About Product');
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [displayProduct, setDisplayProduct] = useState(product);
+
+  const { data: userDetails } = useUserDetails();
+  const isTrial = userDetails?.subscription_status?.on_trial || userDetails?.subscription_status?.package?.slug?.toLowerCase() === "trial" || !userDetails?.subscription_status?.package?.slug;
 
   useEffect(() => {
     if (product) {
@@ -134,7 +140,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
     }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.has_more_reviews ? (lastPage.page || 1) + 1 : undefined,
-    enabled: isOpen && !!displayProduct?.asin && activeTab === 'Reviews',
+    enabled: isOpen && !!displayProduct?.asin && activeTab === 'Reviews' && !isTrial,
   });
 
   const reviews = reviewsInfiniteData?.pages.flatMap(page => page.reviews) || [];
@@ -232,27 +238,30 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                         </span>
                       )} */}
                     </div>
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <div className="product-price-primary text-[22px]">
-                          {details?.product_price || `$${displayProduct.price}`}
-                        </div>
-                        {details?.product_original_price && (
-                          <div className="product-old-price-primary text-[14px] dark:text-white mt-1 line-through">{details.product_original_price}</div>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className="flex flex-col text-brand-textSecondary text-[13px] dark:text-white/60 font-medium ">
-                            <span className="metric-label">Rating Count</span>
-                            <span>{details?.product_num_ratings || displayProduct.ratings}</span>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="product-price-primary text-[22px]">
+                            {details?.product_price || `$${displayProduct.price}`}
                           </div>
-                          <div className="bg-brand-card-alt rounded-full px-3 py-1 flex items-center gap-1 border border-brand-border">
+                          {details?.product_original_price && (
+                            <div className="product-old-price-primary text-[14px] dark:text-white mt-1 line-through">{details.product_original_price}</div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex flex-col text-brand-textSecondary text-[13px] dark:text-white/60 font-medium items-end">
+                            <span className="metric-label leading-none mb-1">Rating Count</span>
+                            <span className="leading-tight">{details?.product_num_ratings || displayProduct.ratings}</span>
+                          </div>
+                          <div className="bg-brand-card-alt rounded-full px-3 py-1 flex items-center gap-1 border border-brand-inputBorder h-fit">
                             <span className="text-brand-textPrimary text-[13px] font-bold">{details?.product_star_rating || displayProduct.rating}</span>
                             <Star size={12} fill="#FFC107" className="text-[#FFC107]" />
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-1.5 justify-start">
+                      </div>
+
+                      {tagsToDisplay.length > 0 && (
+                        <div className="flex flex-row flex-wrap items-center justify-end gap-2">
                           {tagsToDisplay.map((tag, index) => (
                             <span
                               key={index}
@@ -266,7 +275,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             </span>
                           ))}
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -359,7 +368,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                         {expandedSection === section ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </button>
                       {expandedSection === section && (
-                        <div className="p-4 pt-0 border-t border-brand-border">
+                        <div className="p-4 pt-0 border-t border-brand-inputBorder">
                           <div className="text-[13px] text-brand-textSecondary leading-relaxed mt-4">
                             {section === 'About Product' && (
                               <ul className="space-y-3">
@@ -417,7 +426,17 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           )}
 
           {activeTab === 'Reviews' && (
-            isReviewsLoading ? <ReviewsSkeleton /> : (
+            isTrial ? (
+              <div className="flex flex-col items-center justify-center py-20 px-6 text-center bg-brand-card-alt border border-dashed border-brand-inputBorder rounded-2xl">
+                <div className="quick-action-icon-circle !w-12 !h-12 flex items-center justify-center mb-4">
+                  <Search size={24} className="dark:text-white text-brand-textSecondary" />
+                </div>
+                <h3 className="text-xl font-bold text-brand-textPrimary mb-2">Want to See Reviews?</h3>
+                <p className="text-brand-textSecondary max-w-sm">
+                  Unlock detailed Product insights with a <button onClick={() => navigate('/settings?tab=plan')} className="text-[#6291DE] font-bold underline">upgrade plan</button> subscription
+                </p>
+              </div>
+            ) : isReviewsLoading ? <ReviewsSkeleton /> : (
               <div className="space-y-6">
                 <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-6">
                   <div className="flex justify-between items-end mb-6">
@@ -500,7 +519,17 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
           )}
 
           {activeTab === 'Offers' && (
-            isDetailsLoading ? <OffersSkeleton /> : (
+            isTrial ? (
+              <div className="flex flex-col items-center justify-center py-20 px-6 text-center bg-brand-card-alt border border-dashed border-brand-inputBorder rounded-2xl">
+                <div className="quick-action-icon-circle !w-12 !h-12 flex items-center justify-center mb-4">
+                  <Search size={24} className="dark:text-white text-brand-textSecondary" />
+                </div>
+                <h3 className="text-xl font-bold text-brand-textPrimary mb-2">Want to See Offers?</h3>
+                <p className="text-brand-textSecondary max-w-sm">
+                  Unlock detailed Product insights with a <button onClick={() => navigate('/settings?tab=plan')} className="text-[#6291DE] font-bold underline">upgrade plan</button> subscription
+                </p>
+              </div>
+            ) : isDetailsLoading ? <OffersSkeleton /> : (
               <div className="space-y-6">
                 <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-6">
                   <div className="flex justify-between items-center ">
@@ -600,15 +629,16 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
             )
           )}
 
-          <div className="flex justify-end mt-12 pb-6">
-            <button
-              onClick={onDiscoverSuppliers}
-              className="px-8 py-3.5 rounded-[18px] text-white font-bold text-[16px] transition-all shadow-2xl hover:scale-[1.02] active:scale-[0.98] btn-discover-supplier"
-
-            >
-              Discover Suppliers
-            </button>
-          </div>
+          {!(isTrial && (activeTab === 'Reviews' || activeTab === 'Offers')) && (
+            <div className="flex justify-end mt-12 pb-6">
+              <button
+                onClick={onDiscoverSuppliers}
+                className="px-8 py-3.5 rounded-[18px] text-white font-bold text-[16px] transition-all shadow-2xl hover:scale-[1.02] active:scale-[0.98] btn-discover-supplier"
+              >
+                Discover Suppliers
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>,

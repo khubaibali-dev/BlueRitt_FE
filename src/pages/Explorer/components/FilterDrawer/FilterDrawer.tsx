@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import ReactDOM from "react-dom";
-import { X, Loader2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Loader2, X } from "lucide-react";
 import InputField from "../../../../components/common/input/InputField";
+import { useQuery } from "@tanstack/react-query";
 import SelectField, { SelectOption } from "../../../../components/common/select/SelectField";
 import { getAmazonCategoriesandSubcategories } from "../../../../api/product";
 
@@ -64,7 +64,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
     setRatingCountMax("");
     setCategory("");
     setAmazonChoice(null);
-    onApply({});
+    // onApply({});
   };
 
   const handleApply = () => {
@@ -98,11 +98,11 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
 
         <div className="filter-drawer-body custom-scrollbar">
           <div className="filter-section">
-            <label className="filter-section-label">Price Range ({country === "US" ? "$" : country})</label>
-            <div className="filter-input-row">
+            <div className="filter-input-row !items-end">
               <div className="filter-input-wrap">
                 <InputField
                   id="priceMin"
+                  label={`Price Range (${country === "US" ? "$" : country})`}
                   type="number"
                   placeholder="Min"
                   value={priceMin}
@@ -124,11 +124,11 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
           </div>
 
           <div className="filter-section">
-            <label className="filter-section-label">Star Ratings (0-5)</label>
-            <div className="filter-input-row">
+            <div className="filter-input-row !items-end">
               <div className="filter-input-wrap">
                 <InputField
                   id="ratingMin"
+                  label="Star Ratings (0-5)"
                   type="number"
                   placeholder="Min"
                   value={ratingMin}
@@ -150,11 +150,11 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
           </div>
 
           <div className="filter-section">
-            <label className="filter-section-label">Rating Count</label>
-            <div className="filter-input-row">
+            <div className="filter-input-row !items-end">
               <div className="filter-input-wrap">
                 <InputField
                   id="ratingCountMin"
+                  label="Rating Count"
                   type="number"
                   placeholder="Min"
                   value={ratingCountMin}
@@ -175,8 +175,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
             </div>
           </div>
 
-          {/* <div className="filter-section">
-            <label className="filter-section-label">Product Category</label>
+          <div className="filter-section">
             {isCategoriesLoading ? (
               <div className="flex items-center gap-2 text-brand-textSecondary text-[13px] py-3 px-4 bg-brand-inputBg rounded-xl border border-brand-border">
                 <Loader2 size={16} className="animate-spin text-brand-primary" />
@@ -186,18 +185,19 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
               <div className="space-y-4">
                 <SelectField
                   id="filter-category"
+                  label="Product Category"
                   value={category}
                   options={categoriesList}
                   onChange={(val) => {
                     setCategory(val);
                   }}
-                  placeholder="All Categories"
+                  placeholder="All Departments"
                 />
               </div>
             )}
-          </div> */}
+          </div>
 
-          <div className="filter-section border-t border-brand-border pt-6 space-y-6">
+          <div className="filter-section border-t border-brand-inputBorder pt-6 space-y-6">
             <div className="space-y-4">
               <label className="filter-section-label">Is Amazon Choice?</label>
               <div className="flex items-center gap-6">
@@ -225,16 +225,16 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
             </div>
 
           </div>
+          <div className="filter-drawer-footer">
+            <button onClick={handleClear} className="filter-clear-btn figma-pill-border">
+              Clear Filters
+            </button>
+            <button onClick={handleApply} className="filter-apply-btn bg-brand-gradient">
+              Apply Filters
+            </button>
+          </div>
         </div>
 
-        <div className="filter-drawer-footer">
-          <button onClick={handleClear} className="filter-clear-btn figma-pill-border">
-            Clear Filters
-          </button>
-          <button onClick={handleApply} className="filter-apply-btn bg-brand-gradient">
-            Apply Filters
-          </button>
-        </div>
       </div>
     </>
   );

@@ -6,6 +6,7 @@ import { useToast } from "../../../components/common/Toast/ToastContext";
 import PrimaryButton from "../../../components/common/button/PrimaryButton";
 import PackageSelectPanel from "./components/PackageSelectPanel";
 import PackageDetailsPanel from "./components/PackageDetailsPanel";
+import SelectPlanSkeleton from "./components/SelectPlanSkeleton";
 import { usePackages } from "../../../hooks/usePackages";
 import { PlanPackage } from "../../../utils/packages";
 import { useSignupData } from "../../../context/SignupContext";
@@ -107,10 +108,7 @@ const SelectPlanPage: React.FC = () => {
       {/* ── MAIN CONTENT (Split View) ── */}
       <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-4 items-start justify-center px-4">
         {isLoading ? (
-          <div className="w-full flex flex-col lg:flex-row gap-4 items-center justify-center py-20">
-            <div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-white/60 animate-pulse">Loading available plans...</p>
-          </div>
+          <SelectPlanSkeleton />
         ) : (
           <>
             {/* LEFT COMPONENT: Selection Config + Create Account Button */}

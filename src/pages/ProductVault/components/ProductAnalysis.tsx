@@ -14,6 +14,7 @@ import ProductProfitGauges from "./ProductProfitGauges";
 import SpkbgSupplierCard from "../../../components/common/SpkCards/SpkbgSupplierCard";
 import { useUserDetails } from "../../../hooks/useUserDetails";
 import { Lock } from "lucide-react";
+import { checkIsTikTokProduct, normalizeAlibabaSupplier, normalizeAmazonProduct, normalizeTikTokProduct } from "../../../utils/cardDataNormalizers";
 
 
 const ProductAnalysis: React.FC = () => {
@@ -38,124 +39,10 @@ const ProductAnalysis: React.FC = () => {
   const supplierInfo = product?.supplier_info;
   const alibabaData = product?.alibaba_product;
 
-  const isTikTok = useMemo(() => {
-    const source = product?.source || amazonData?.source;
-    return source === 'tiktok_trends' || (amazonData && (
-      amazonData.cpa !== undefined ||
-      amazonData.ctr !== undefined ||
-      amazonData.cvr !== undefined ||
-      amazonData.impression !== undefined ||
-      amazonData.data?.cpa !== undefined
-    ));
-  }, [product, amazonData]);
-
-  const normalizedAmazon = useMemo(() => {
-    if (!amazonData || isTikTok) return null;
-    const tags: string[] = [];
-    const data = amazonData.data || amazonData;
-    if (data.is_best_seller) tags.push("Best Seller");
-    if (data.is_amazon_choice) tags.push("Amazon Choice");
-    if (data.is_prime) tags.push("Prime");
-
-    const amazonPrice = data.product_price?.toString().replace("$", "") || "";
-    const finalPrice = product?.selling_price && product?.selling_price !== "0.00"
-      ? product.selling_price
-      : (amazonPrice || "0.00");
-
-    return {
-      title: data.product_title || data.title || product?.name || "Product",
-      image: data.product_photo || data.image || "",
-      price: finalPrice,
-      oldPrice: data.product_original_price?.toString().replace("$", "") || finalPrice,
-      asin: data.asin || "N/A",
-      salesVol: data.sales_volume || "",
-      offers: data.product_num_offers?.toString() || "",
-      seller: data.product_seller_name || "",
-      shipsFrom: data.ships_from || "",
-      country: data.seller_country || "",
-      rating: parseFloat(data.product_star_rating || "4.5"),
-      numRatings: data.product_num_ratings || "",
-      dimensions: data.product_information?.["Product Dimensions"] || "N/A",
-      weight: data.product_information?.["Item Weight"] || "0.06 Pounds",
-      tags: tags.length > 0 ? tags : (data.tags || [])
-    };
-  }, [amazonData, product, isTikTok]);
-
-  const normalizedTikTok = useMemo(() => {
-    if (!isTikTok || !amazonData) return null;
-    const data = amazonData.data || amazonData;
-
-    return {
-      title: data.shop_product_title || data.url_title || product?.name || "TikTok Product",
-      image: data.cover_url || data.product_photo || "",
-      category: data.third_ecom_category?.value || data.first_ecom_category?.value || data.category || "Trending",
-      price: (data.shop_price || data.cost || product?.selling_price || "0.00").toLocaleString(),
-      metrics: {
-        ctr: data.ctr ? (String(data.ctr).includes('%') ? data.ctr : data.ctr + "%") : "0%",
-        cvr: data.cvr ? (String(data.cvr).includes('%') ? data.cvr : data.cvr + "%") : "0%",
-        cpa: data.cpa ? (typeof data.cpa === "number" ? `$${data.cpa.toFixed(2)}` : data.cpa) : "$0.00",
-        impressions: (data.impression || data.impressions || 0).toLocaleString(),
-        post_count: data.post || 0,
-        like_count: data.like || 0,
-        share_count: data.share || 0,
-        comment_count: data.comment || 0,
-        total_ad_spent: data.cost ? `$${data.cost.toLocaleString()}` : "$0",
-        subcategory1: data.second_ecom_category?.value || "",
-        subcategory2: data.third_ecom_category?.value || "",
-        post_change: data.post_change ? `${data.post_change}%` : "",
-        play_rate_6s: data.play_six_rate ? `${data.play_six_rate}%` : "",
-        e_com_type: data.ecom_type || "L3",
-        category: data.first_ecom_category?.value || "Trending"
-      }
-    };
-  }, [amazonData, isTikTok, product]);
-
-  const normalizedAlibaba = useMemo(() => {
-    const data = supplierInfo || alibabaData?.supplier || alibabaData?.item || alibabaData;
-    if (!data) return null;
-
-    const storeAgeValue = data.years_in_business || data.seller_store?.storeAge || data.storeAge || "14";
-    const storeNameValue = data.supplier_name || data.company?.companyName || data.storeName || "Fujian Virtue Industry Co., Ltd.";
-    const contactName = data.company?.companyContact?.name || data.contact || "Rita Zou";
-
-    const skuModule = data.sku?.def || data.sku_listing?.def;
-    const priceValue = data.price_per_unit || data.estimated_price ||
-      skuModule?.priceModule?.priceFormatted ||
-      skuModule?.priceModule?.priceList?.[0]?.priceFormatted ||
-      data.price_per_unit || "1.79";
-
-    const moqValue = data.min_order_quantity ||
-      skuModule?.quantityModule?.minOrder?.quantityFormatted ||
-      skuModule?.quantityModule?.minOrder?.quantity ||
-      "500 pieces";
-
-    const ratingValue = data.rating || data.seller_store?.storeEvaluates?.[0]?.score || "5.0";
-    const countryValue = data.location || data.company_details?.companyAddress?.country || "China";
-    const status = data.company_details?.status || data;
-
-    const isVerifiedValue = (status.verified ?? status.isVerified ?? status.verified_supplier) ?? false;
-    const isGoldValue = (status.gold ?? status.isGoldMember) ?? true;
-    const tradeAssuranceValue = (status.tradeAssurance === "1" || status.TradeAssurance === true || status.trade_assurance === "1");
-
-    let imageSrc = data.supplier_product_image || (data.images && data.images[0]) || data.image || "";
-    if (typeof imageSrc === 'string' && imageSrc.startsWith('//')) imageSrc = `https:${imageSrc}`;
-
-    return {
-      id: data.itemId || data.id || "1601358669078",
-      name: data.title || data.name || "Alibaba Sourcing Partner",
-      image: imageSrc,
-      rating: ratingValue,
-      storeAge: storeAgeValue,
-      storeName: storeNameValue,
-      contact: contactName,
-      price: priceValue.toString().replace("$", ""),
-      minOrder: moqValue,
-      country: countryValue,
-      isVerified: isVerifiedValue,
-      tradeAssurance: tradeAssuranceValue,
-      isGold: isGoldValue
-    };
-  }, [supplierInfo, alibabaData]);
+  const isTikTok = useMemo(() => checkIsTikTokProduct(product), [product]);
+  const normalizedAmazon = useMemo(() => normalizeAmazonProduct(amazonData, product, isTikTok), [amazonData, product, isTikTok]);
+  const normalizedTikTok = useMemo(() => normalizeTikTokProduct(amazonData, product, isTikTok), [amazonData, product, isTikTok]);
+  const normalizedAlibaba = useMemo(() => normalizeAlibabaSupplier(supplierInfo, alibabaData), [supplierInfo, alibabaData]);
 
   const history = useMemo(() => {
     return product?.historical_data || [];
@@ -177,11 +64,22 @@ const ProductAnalysis: React.FC = () => {
     );
   }
 
-  // Use values from the product object if specifically provided, or look at history
-  const grossProfitAmount = product.gross_profit || history[0]?.product_gross_profit || "0.00";
-  const netProfitAmount = product.net_profit || history[0]?.product_net_profit || "0.00";
-  const grossProfitMargin = product.percentage_gross_profit || history[0]?.product_gross_profit_percentage || "0.0";
-  const netProfitMargin = product.percentage_net_profit || history[0]?.product_net_profit_percentage || "0.0";
+  // ── Same as ListingDetail ─────────────────────────────────────────────────
+  const getProfitValue = (profit: number, revenue: number) => (profit * revenue) / 100;
+
+  // Always use LAST history entry (product-level fields may be stale)
+  const lastHistory = history.length > 0 ? history[history.length - 1] : null;
+
+  // Revenue
+  const totalRevenue = parseFloat((lastHistory?.product_revenue ?? product.total_revenue ?? "0").toString()) || 0;
+
+  // Margin % — used for Gauge fill (same as ListingDetail Gauge value prop)
+  const grossProfitMargin = parseFloat((lastHistory?.product_gross_profit_percentage ?? product.gross_profit ?? "0").toString()) || 0;
+  const netProfitMargin = parseFloat((lastHistory?.product_net_profit_percentage ?? product.net_profit ?? "0").toString()) || 0;
+
+  // Dollar amounts — calculated via getProfitValue (same as ListingDetail label)
+  const grossProfitAmount = getProfitValue(grossProfitMargin, totalRevenue);
+  const netProfitAmount = hasNetAccess ? getProfitValue(netProfitMargin, totalRevenue) : 0;
 
   return (
     <div className="analysis-page-container">
@@ -255,6 +153,7 @@ const ProductAnalysis: React.FC = () => {
         {/* Metric Gauges */}
         <ProductProfitGauges
           grossProfitAmount={grossProfitAmount}
+          total_revenue={totalRevenue}
           netProfitAmount={netProfitAmount}
           grossProfitMargin={grossProfitMargin}
           netProfitMargin={netProfitMargin}
@@ -308,10 +207,9 @@ const ProductAnalysis: React.FC = () => {
                       <div className="flex items-center justify-start gap-2 text-slate-400">
                         <button
                           onClick={() => navigate(`/calculator/calculations/${calc.id}`)}
-                          className="px-4 py-1.5  !py-2 !px-4 text-brand-textPrimary dark:text-white bg-brand-gradient text-brand-primary hover:text-white rounded-full transition-all text-[12px] font-bold"
-                          title="View Details"
+                          className="px-4 py-1.5  !py-2 !px-4 text-white dark:text-white bg-brand-gradient  hover:text-white rounded-full transition-all text-[12px] font-bold"
                         >
-                          view Calculation
+                          View Calculation
                         </button>
                       </div>
                     </td>

@@ -13,7 +13,7 @@ interface SignupFields {
   termsAccepted: boolean;
 }
 
-type SignupErrors = Partial<Record<keyof SignupFields, string>>;
+type SignupErrors = Partial<Record<keyof SignupFields | "captcha", string>>;
 
 const validate = (fields: SignupFields): SignupErrors => {
   const errors: SignupErrors = {};
@@ -29,7 +29,9 @@ const validate = (fields: SignupFields): SignupErrors => {
   } else if (fields.password.length < 6) {
     errors.password = "Password must be at least 6 characters long.";
   }
-  if (fields.password !== fields.confirmPassword) {
+  if (!fields.confirmPassword) {
+    errors.confirmPassword = "Please confirm your password";
+  } else if (fields.password !== fields.confirmPassword) {
     errors.confirmPassword = "Passwords do not match.";
   }
   if (!fields.termsAccepted) {
@@ -70,20 +72,22 @@ const useSignupForm = (props?: SignupFormProps) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const validationErrors = validate(fields);
+    
+    const currentCaptchaToken = captchaToken;
+    if (!currentCaptchaToken) {
+      validationErrors.captcha = "Please complete the reCAPTCHA verification";
+    }
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return;
-    }
-    if (!captchaToken) {
-      showToastError("Please verify you are not a robot.");
       return;
     }
     setLoading(true);
     await new Promise((res) => setTimeout(res, 800));
     setLoading(false);
     
-    if (props?.onSuccess) {
-      props.onSuccess(fields, captchaToken);
+    if (props?.onSuccess && currentCaptchaToken) {
+      props.onSuccess(fields, currentCaptchaToken);
     }
   };
 

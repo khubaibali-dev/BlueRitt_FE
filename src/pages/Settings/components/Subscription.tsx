@@ -80,7 +80,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
           <button onClick={navigateToPlans} className="subscription-link-orange !text-[13px] underline">
             Subscribe Now
           </button>{" "}
-          to unlock full access.
+          to unlock full access to your selected plan
         </>
       );
     }

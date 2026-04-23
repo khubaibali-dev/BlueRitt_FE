@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ExternalLink, Package, Heart, Share2, MessageCircle } from "lucide-react";
+import { ExternalLink, Package, Heart, Share2, MessageCircle, Loader2 } from "lucide-react";
+import { getProductImageWithFallback } from "../../../../utils/pexelsImageFallback";
+import { formatNumber } from "../../../../api/tiktokTrends";
 
 interface TrendProductCardProps {
   title: string;
@@ -25,8 +27,8 @@ interface TrendProductCardProps {
     category?: string;
   };
   variant?: "grid" | "selected";
-  onDetailsClick?: () => void;
-  onDiscoverSupplier?: () => void;
+  onDetailsClick?: (img?: string) => void;
+  onDiscoverSupplier?: (img?: string) => void;
   onOpenProduct?: () => void;
   onCopyLink?: () => void;
   isCopied?: boolean;
@@ -38,7 +40,16 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
   image,
   category,
   price = "$00.00",
-  metrics,
+  metrics = {
+    ctr: "0%",
+    cvr: "0%",
+    cpa: "$0.00",
+    impressions: "0",
+    post_count: 0,
+    like_count: 0,
+    share_count: 0,
+    comment_count: 0,
+  },
   variant = "grid",
   onDetailsClick,
   onDiscoverSupplier,
@@ -48,18 +59,80 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
   isCalculator = false
 }) => {
   const navigate = useNavigate();
+  const [imgSrc, setImgSrc] = React.useState<string | undefined>(undefined);
+  const [isFallbackLoading, setIsFallbackLoading] = React.useState(true);
+  const [fallbackAttempted, setFallbackAttempted] = React.useState(false);
+
+  const handleImageError = async () => {
+    if (fallbackAttempted) {
+      setIsFallbackLoading(false);
+      return;
+    }
+    setFallbackAttempted(true);
+    setIsFallbackLoading(true);
+
+    try {
+      const { getProductImageWithFallback } = await import("../../../../utils/pexelsImageFallback");
+      const cleanTitle = title.split(' ').slice(0, 6).join(' ');
+      const fallback = await getProductImageWithFallback({
+        title: `${cleanTitle} product`,
+        category
+      });
+
+      if (fallback) {
+        setImgSrc(fallback);
+      }
+    } catch (error) {
+      console.error("❌ Fallback image failed:", error);
+    } finally {
+      setIsFallbackLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    const initImage = async () => {
+      if (!image || image === '' || image === 'null' || image === 'undefined' || image.includes('placeholder')) {
+        await handleImageError();
+      } else {
+        // Try to load the original image first
+        const img = new Image();
+        img.src = image;
+        img.onload = () => {
+          setImgSrc(image);
+          setIsFallbackLoading(false);
+        };
+        img.onerror = () => {
+          handleImageError();
+        };
+      }
+    };
+
+    setIsFallbackLoading(true);
+    initImage();
+  }, [image, title]);
 
   if (variant === "selected") {
     return (
       <div className="discovery-card-list flex-col !p-0 isolate bg-brand-card border border-brand-inputBorder rounded-[24px]">
-        <div className="px-5 py-4  flex items-center gap-2 w-full">
+        <div className="px-5 py-4  flex items-center gap-2 w-full border-b border-brand-inputBorder">
           <Package size={14} className="text-[#FF5900]" />
           <span className="text-[11px] text-[#FF5900] font-black tracking-widest uppercase">Selected TikTok Trend</span>
         </div>
         <div className="p-4 sm:p-2 w-full">
           <div className="flex flex-col lg:flex-row gap-5 items-start">
-            <div className="product-img-wrapper-list !w-[100px] !h-[100px]  mx-auto lg:mx-0 shrink-0 bg-brand-card-alt border border-brand-inputBorder">
-              <img src={image} alt={title} className="w-full h-full object-cover" />
+            <div className="product-img-wrapper-list !w-[100px] !h-[100px] mx-auto lg:mx-0 shrink-0 bg-brand-card-alt border border-brand-inputBorder relative overflow-hidden">
+              {isFallbackLoading ? (
+                <div className="w-full h-full flex items-center justify-center bg-brand-card-alt">
+                  <Loader2 className="w-6 h-6 text-brand-primary animate-spin" />
+                </div>
+              ) : (
+                <img
+                  src={imgSrc}
+                  alt={title}
+                  className="w-full h-full object-cover"
+                  onError={handleImageError}
+                />
+              )}
             </div>
             <div className="flex-1 w-full flex flex-col gap-4">
               <div className="flex flex-col lg:flex-row justify-between items-start gap-2 mt-1">
@@ -74,19 +147,19 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
                   <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Package size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Posts</span><span className="metric-value">{metrics.post_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Posts</span><span className="metric-value">{typeof metrics.post_count === 'string' ? metrics.post_count : formatNumber(Number(metrics.post_count || 0))}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Heart size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Likes</span><span className="metric-value">{metrics.like_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Likes</span><span className="metric-value">{typeof metrics.like_count === 'string' ? metrics.like_count : formatNumber(Number(metrics.like_count || 0))}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><Share2 size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Shares</span><span className="metric-value">{metrics.share_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Shares</span><span className="metric-value">{typeof metrics.share_count === 'string' ? metrics.share_count : formatNumber(Number(metrics.share_count || 0))}</span></div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="!w-8 !h-8 rounded-full quick-action-icon-circle flex items-center justify-center shrink-0 text-white bg-[#001D4D] dark:bg-white/10"><MessageCircle size={14} /></div>
-                      <div className="flex flex-col"><span className="metric-label">Comments</span><span className="metric-value">{metrics.comment_count || 0}</span></div>
+                      <div className="flex flex-col"><span className="metric-label">Comments</span><span className="metric-value">{typeof metrics.comment_count === 'string' ? metrics.comment_count : formatNumber(Number(metrics.comment_count || 0))}</span></div>
                     </div>
                   </div>
                 )}
@@ -102,7 +175,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
           {isCalculator ? (
             <div className="grid mt-4 pt-2 border-t border-brand-border grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 px-1 ">
               {[
-                { label: "Sub-Category", value: metrics.subcategory1 || "Makeup & Perfume" },
+                { label: "Category", value: metrics.subcategory1 || "Makeup & Perfume" },
                 { label: "Sub-Category", value: metrics.subcategory2 || "Perfume" },
                 { label: "Impressions", value: metrics.impressions },
                 { label: "Post Change", value: metrics.post_change || "-3.19%", isRed: String(metrics.post_change || "").includes('-') },
@@ -168,13 +241,13 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
 
   const handleDiscoverSupplier = () => {
     if (onDiscoverSupplier) {
-      onDiscoverSupplier();
+      onDiscoverSupplier(imgSrc);
     } else {
       navigate("/explorer", {
         state: {
           product: {
             title,
-            image,
+            image: imgSrc,
             category,
             price,
             metrics
@@ -189,21 +262,29 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
   return (
     <div className="trend-product-card group animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Image Section */}
-      <div className="relative aspect-[1/1.1] overflow-hidden">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+      <div className="relative aspect-[1/1.1] overflow-hidden bg-brand-card-alt">
+        {isFallbackLoading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <Loader2 className="w-10 h-10 text-brand-primary animate-spin" />
+          </div>
+        ) : (
+          <img
+            src={imgSrc}
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            onError={handleImageError}
+          />
+        )}
       </div>
 
       {/* Content Section */}
       <div className="p-4">
-        <div className="flex items-start justify-between gap-3 mb-5">
-          <h3 className="product-card-title flex-1 !text-[18px]">
+        <div className="flex flex-col items-start gap-3 mb-4">
+          <h3 className="product-card-title !text-[18px] line-clamp-2">
             {title}
           </h3>
-          <div className="product-img-badge !static shrink-0">
+
+          <div className="product-img-badge !static shrink-0 !rounded-full !bg-[#155DFC14] !border-[#155DFC33] !text-[#155DFC] dark:!text-blue-400">
             {category}
           </div>
         </div>
@@ -231,7 +312,7 @@ const TrendProductCard: React.FC<TrendProductCardProps> = ({
         {/* Action Buttons */}
         <div className="flex flex-col gap-2 pt-1">
           <button
-            onClick={() => onDetailsClick?.()}
+            onClick={() => onDetailsClick?.(imgSrc)}
             className="btn-product-details w-full !rounded-full !font-semibold !px-4 !py-2.5 flex items-center justify-center gap-2"
           >
             Product Details <ExternalLink size={14} />

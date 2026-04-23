@@ -21,6 +21,11 @@ const ForgotPasswordPage = lazy(() => import("../pages/UserAuth/ForgotPassword")
 const ProductAnalysisPage = lazy(() => import("../pages/ProductVault/components/ProductAnalysis"));
 const ViewCalculationPage = lazy(() => import("../pages/Explorer/components/SourceLink/SourceLinkProfitCalculator"));
 const LoadingPage = lazy(() => import("../components/common/ApiLoader/LoadingPage"));
+const VerifyEmailPage = lazy(() => import("../pages/UserAuth/VerifyEmail/VerifyEmailPage"));
+const SubscriptionSuccessPage = lazy(() => import("../pages/Subscription/SubscriptionSuccess"));
+const SubscriptionCancelPage = lazy(() => import("../pages/Subscription/SubscriptionCancel"));
+const TrialSuccessPage = lazy(() => import("../pages/Trial/TrialSuccessPage"));
+const TrialCancelPage = lazy(() => import("../pages/Trial/TrialCancelPage"));
 
 import AnalysisSkeleton from "../components/common/Skeletons/AnalysisSkeleton";
 import ResearchRowSkeleton from "../components/common/Skeletons/ResearchRowSkeleton";
@@ -156,6 +161,42 @@ const routes: RouteType[] = [
   {
     path: "/loading",
     element: LoadingPage,
+    isProtected: false,
+  },
+  {
+    path: "/verify-email",
+    element: VerifyEmailPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/subscription-redirect",
+    element: VerifyEmailPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/subscription/success",
+    element: SubscriptionSuccessPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/subscription/cancel",
+    element: SubscriptionCancelPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/trial/success",
+    element: TrialSuccessPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/trial/cancel",
+    element: TrialCancelPage,
+    layout: AuthLayout,
     isProtected: false,
   },
   {

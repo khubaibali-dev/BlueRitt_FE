@@ -82,16 +82,14 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
       <div className="border border-brand-inputBorder rounded-[20px] bg-brand-card-alt overflow-hidden">
         <button
           onClick={() => toggleSection(title)}
-          className="w-full flex items-center justify-between p-6 text-brand-textPrimary hover:bg-brand-card transition-all text-left"
+          className={`w-full flex items-center justify-between p-6 text-brand-textPrimary hover:bg-brand-card transition-all text-left ${isExpanded ? 'border-b border-brand-inputBorder' : ''}`}
         >
-          <span className="text-[15px] font-semibold tracking-tight">{title}</span>
+          <span className="text-[15px] font-semibold tracking-tight ">{title}</span>
           {isExpanded ? <ChevronUp size={20} className="text-brand-textSecondary" /> : <ChevronDown size={20} className="text-brand-textSecondary" />}
         </button>
         {isExpanded && (
-          <div className="px-6 pb-6 pt-0 animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="border-t border-brand-border pt-6">
-              {children}
-            </div>
+          <div className="p-6 animate-in fade-in slide-in-from-top-2 duration-300">
+            {children}
           </div>
         )}
       </div>
@@ -113,7 +111,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-1">
               <h2 className="text-[22px] font-bold text-brand-textPrimary tracking-tight">Product Details</h2>
-              <p className="text-[14px] text-brand-textSecondary font-medium tracking-tight">Your Selected Product</p>
+              <p className="text-[14px] dark:text-white text-brand-textSecondary font-medium tracking-tight">Your Selected Product</p>
             </div>
             <button
               onClick={onClose}
@@ -122,7 +120,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
               <X size={20} />
             </button>
           </div>
-          <div className="mt-0 border-b border-brand-border" />
+          <div className="mt-0 border-b border-brand-inputBorder" />
         </div>
 
         {/* Scrollable Body */}
@@ -181,7 +179,7 @@ const AmazonProductDetailsDrawer: React.FC<AmazonProductDetailsDrawerProps> = ({
                 <div className="space-y-3">
                   <p className="text-[13.5px] text-brand-textPrimary dark:text-white leading-relaxed">
                     {(() => {
-                      const description = detailedData?.product_description || "No description available for this product.";
+                      const description = detailedData?.product_description || product?.title || "No description available for this product.";
                       if (!isDescriptionExpanded && description.length > 250) {
                         return (
                           <>

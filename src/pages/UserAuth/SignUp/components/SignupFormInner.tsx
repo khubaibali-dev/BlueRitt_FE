@@ -64,6 +64,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
           id="firstName"
           label="First Name"
           placeholder="First Name"
+          required
           value={fields.firstName}
           onChange={handleChange("firstName")}
           icon={User}
@@ -72,6 +73,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
         <InputField
           id="lastName"
           label="Last Name"
+          required
           placeholder="Last Name"
           value={fields.lastName}
           onChange={handleChange("lastName")}
@@ -84,6 +86,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
       <InputField
         id="email"
         label="Email"
+        required
         type="email"
         placeholder="name@company.com"
         value={fields.email}
@@ -97,6 +100,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <SelectField
           id="country"
+          required
           label="Country"
           value={fields.country}
           options={countries.map(c => ({
@@ -129,6 +133,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
 
       <InputField
         id="password"
+        required
         label="Password"
         type={showPassword ? "text" : "password"}
         placeholder="Enter your password"
@@ -142,6 +147,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
 
       <InputField
         id="confirmPassword"
+        required
         label="Confirm Password"
         type={showConfirmPassword ? "text" : "password"}
         placeholder="Confirm your password"
@@ -154,7 +160,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
       />
 
       {/* ── RECAPTCHA ── */}
-      <ReCaptchaWidget onVerify={(val) => setCaptchaVerified(val)} />
+      <div className="space-y-1">
+        <ReCaptchaWidget onVerify={(val) => setCaptchaVerified(val)} />
+        {errors.captcha && (
+          <p className="text-xs text-red-400 mt-1 text-center" role="alert">
+            {errors.captcha}
+          </p>
+        )}
+      </div>
 
       {/* ── TERMS & CONDITIONS ── */}
       <div className="flex items-start gap-3 mt-4">

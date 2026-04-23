@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Info, Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Crown } from "lucide-react";
+import { Search, Info, Users, Crown } from "lucide-react";
 import InfluencerHeader from "./components/InfluencerHeader";
 import InfluencerCard from "../../../components/common/SpkCards/InfluencerCard";
 import InfluencerDetailsDrawer from "./components/InfluencerDetailsDrawer";
@@ -9,6 +9,8 @@ import influencerBanner from "../../../assets/images/tiktoktrends.png";
 import influencerBannerLight from "../../../assets/images/SocialPulse-light.png";
 import { MANUAL_INFLUENCERS } from "../../../utils/infuluencers";
 import { useUserDetails } from "../../../hooks/useUserDetails";
+
+import Pagination from "../../../components/common/Pagination/Pagination";
 
 const InfluencerLink: React.FC = () => {
   const navigate = useNavigate();
@@ -68,22 +70,6 @@ const InfluencerLink: React.FC = () => {
   // 3. Pagination Logic
   const totalPages = Math.ceil(filteredInfluencers.length / influencersPerPage);
 
-  const getPageNumbers = () => {
-    const pages = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 4) {
-        pages.push(1, 2, 3, 4, 5, "...", totalPages);
-      } else if (currentPage >= totalPages - 3) {
-        pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
-      }
-    }
-    return pages;
-  };
-
   const currentPagedInfluencers = useMemo(() => {
     const start = (currentPage - 1) * influencersPerPage;
     return filteredInfluencers.slice(start, start + influencersPerPage);
@@ -100,7 +86,21 @@ const InfluencerLink: React.FC = () => {
     listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const topPicks = useMemo(() => mappedInfluencers.slice(0, 3), [mappedInfluencers]);
+  const topPicks = useMemo(() => {
+    // Helper function to parse follower strings like '1.5M' or '500K' into numbers
+    const parseFollowers = (val: string | number) => {
+      if (typeof val === 'number') return val;
+      const str = String(val).toUpperCase();
+      const num = parseFloat(str.replace(/[^0-9.]/g, ''));
+      if (str.includes('M')) return num * 1000000;
+      if (str.includes('K')) return num * 1000;
+      return num;
+    };
+
+    return [...mappedInfluencers]
+      .sort((a, b) => parseFollowers(b.followers) - parseFollowers(a.followers))
+      .slice(0, 3);
+  }, [mappedInfluencers]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,10 +111,9 @@ const InfluencerLink: React.FC = () => {
     setIsDrawerOpen(true);
   };
 
-  const pageNumbers = getPageNumbers();
 
   return (
-    <div className="bg-brand-card-alt rounded-[32px] relative overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700 pb-4">
+    <div className="bg-brand-card-alt rounded-[32px] relative overflow-hidden flex flex-col w-full animate-in fade-in slide-in-from-bottom-2 duration-700">
 
       {/* 1. Header & Search Banner Area */}
       <section className="tiktok-banner-wrapper relative isolate min-h-[480px]">
@@ -126,7 +125,7 @@ const InfluencerLink: React.FC = () => {
           <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent pointer-events-none" />
         </div>
 
-        <div className="w-full max-w-[1240px] z-10 flex flex-col items-start px-6 sm:px-2">
+        <div className="w-full max-w-[1240px] z-10 flex flex-col items-start px-1 sm:px-0">
           {/* 1. Module Heading */}
           <InfluencerHeader
             title="Discover Influencers"
@@ -251,60 +250,11 @@ const InfluencerLink: React.FC = () => {
 
         {/* Pagination Section (Numerical style) */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 pt-8 pb-4">
-            {/* First Page */}
-            <button
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
-            >
-              <ChevronsLeft size={16} />
-            </button>
-
-            {/* Previous */}
-            <button
-              onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
-              disabled={currentPage === 1}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            {/* Page Numbers */}
-            {pageNumbers.map((page, idx) => (
-              <button
-                key={idx}
-                onClick={() => typeof page === "number" && handlePageChange(page)}
-                disabled={page === "..."}
-                className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[14px] font-bold transition-all
-                  ${page === currentPage
-                    ? "bg-brand-primary text-white border border-brand-primary shadow-[0_0_15px_rgba(240,90,43,0.3)]"
-                    : page === "..."
-                      ? "text-brand-textSecondary/40 dark:text-white/40 cursor-default"
-                      : "bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white"}`}
-              >
-                {page}
-              </button>
-            ))}
-
-            {/* Next */}
-            <button
-              onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
-            >
-              <ChevronRight size={16} />
-            </button>
-
-            {/* Last Page */}
-            <button
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages}
-              className="w-10 h-10 rounded-[10px] bg-brand-card dark:bg-[#04132B] border border-brand-border dark:border-brand-border flex items-center justify-center text-brand-textSecondary dark:text-white/70 hover:bg-brand-hover dark:hover:bg-[#082656] hover:text-brand-textPrimary dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
-            >
-              <ChevronsRight size={16} />
-            </button>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         )}
 
         {/* Upgrade Action Footer */}

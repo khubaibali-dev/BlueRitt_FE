@@ -38,7 +38,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-2">
             {(isSelectPlanPage || isVerifyOtpPage) && (
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(isSelectPlanPage ? "/signup" : "/login")}
                 className="flex items-center justify-center p-2 rounded-full hover:bg-brand-hover transition-colors text-brand-textPrimary"
                 aria-label="Go back"
               >

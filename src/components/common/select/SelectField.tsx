@@ -75,17 +75,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  // Lock body scroll when dropdown is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+
 
   return (
     <div className="flex flex-col gap-[6px]" ref={dropdownRef}>

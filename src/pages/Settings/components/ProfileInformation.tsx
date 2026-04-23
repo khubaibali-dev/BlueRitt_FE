@@ -21,6 +21,7 @@ interface ProfileFormData {
 
 interface ProfileInformationProps {
   defaultOpen?: boolean;
+  scrollIntoViewOnOpen?: boolean;
 }
 
 // Maps each country ISO code → standard local subscriber digit count
@@ -58,7 +59,7 @@ const validationSchema = Yup.object().shape({
   lastName: Yup.string().required("Last name is required"),
 });
 
-const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = true }) => {
+const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = true, scrollIntoViewOnOpen = false }) => {
   const { currentUser, fetchUserDetails } = useAuth();
   const toast = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -145,6 +146,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
       title="Profile Information"
       subtitle="Update your personal details"
       defaultOpen={defaultOpen}
+      scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<User size={24} className="text-brand-primary dark:text-white" />}
     >
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">

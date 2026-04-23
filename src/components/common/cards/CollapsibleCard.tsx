@@ -1,6 +1,7 @@
 // src/components/common/cards/CollapsibleCard.tsx
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CollapsibleCardProps {
   title: string;
@@ -29,62 +30,37 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
-  const [height, setHeight] = useState<number | undefined>(isOpen ? undefined : 0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-
   const handleToggle = () => {
     const nextState = !isOpen;
-    setIsAnimating(true);
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(nextState);
     }
     onToggle?.(nextState);
   };
 
-  // Sync internal state when defaultOpen changes (e.g. URL tab navigation while already on page)
+  // Sync internal state when defaultOpen changes
   useEffect(() => {
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(defaultOpen);
     }
-  }, [defaultOpen]);
+  }, [defaultOpen, controlledIsOpen]);
 
   useEffect(() => {
-    if (!isOpen) {
-      setHeight(0);
-      return;
-    }
-
-    if (!contentRef.current) return;
-
-    // Use ResizeObserver to handle dynamic content height changes (data loading, re-renders)
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        // Use scrollHeight to get the full height of the inner content
-        setHeight(entry.target.scrollHeight);
-      }
-    });
-
-    observer.observe(contentRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen && scrollIntoViewOnOpen) {
+    if (isOpen && scrollIntoViewOnOpen && cardRef.current) {
       setTimeout(() => {
-        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 500); // Wait for transition to start/finish
+        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
     }
   }, [isOpen, scrollIntoViewOnOpen]);
 
   return (
-    <div ref={cardRef} className="bg-brand-card dark:bg-[#04132B] rounded-[14px] transition-all duration-300 border border-brand-inputBorder dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none">
+    <div 
+      ref={cardRef} 
+      className="bg-brand-card dark:bg-[#04132B] rounded-[14px] border border-brand-inputBorder dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none"
+    >
       {/* Header (Trigger) */}
       <div
-        className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 cursor-pointer gap-y-4"
+        className="w-full flex flex-wrap sm:flex-nowrap items-center justify-between px-6 py-4 sm:px-8 sm:py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 cursor-pointer gap-y-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
         onClick={handleToggle}
       >
         <div className="flex items-center gap-4 sm:gap-3 flex-1 min-w-[200px]">
@@ -107,30 +83,33 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
               {headerRight}
             </div>
           )}
-          <div
-            className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
-              }`}
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="shrink-0"
           >
             <ChevronDown className="w-5 h-5 text-brand-textSecondary dark:text-slate-400" />
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Collapsible Content */}
-      <div
-        className={`${isAnimating ? "transition-[height] duration-300 ease-in-out" : ""
-          } overflow-hidden`}
-        style={{ height: isOpen ? (isAnimating ? height : 'auto') : 0 }}
-        onTransitionEnd={() => setIsAnimating(false)}
-      >
-        <div aria-hidden={!isOpen} ref={contentRef}>
-          <hr className="border-brand-inputBorder dark:border-slate-700 mx-6 sm:mx-8" />
-          {/* Inner padding for the content area with equalized top/bottom spacing */}
-          <div className="px-6 py-4 sm:px-8 sm:py-5">
-            {children}
-          </div>
-        </div>
-      </div>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <hr className="border-brand-inputBorder dark:border-slate-700 mx-6 sm:mx-8" />
+            <div className="px-6 py-4 sm:px-8 sm:py-5">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -113,8 +113,16 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
       if (!token) return;
 
       setIsRequestInProgress(true);
-      const response = await getUserDetails();
-      const userProfile = response.data;
+      
+      // Use queryClient.fetchQuery to deduplicate with useUserDetails hook
+      const userProfile = await queryClient.fetchQuery({
+        queryKey: ['user-details'],
+        queryFn: async () => {
+          const res = await getUserDetails();
+          return res.data;
+        },
+        staleTime: 5 * 60 * 1000,
+      });
 
       const updatedUser: TUser = {
         email: userProfile.email,
@@ -131,11 +139,6 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
       };
 
       setCurrentUser(updatedUser);
-
-      // Update React Query cache with fresh user data (non-blocking)
-      startTransition(() => {
-        queryClient.setQueryData(['user', 'subscription', 'search_quota'], userProfile);
-      });
 
       // Prefetch user quota data for future use (only when authenticated)
       prefetchUserQuotaData(queryClient).catch(error => {
@@ -233,11 +236,8 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
 
     /**
      * Handling the case where the app refreshed and only the new access token is retrieved via tha refreshToken API call.
-     * If the token changes and we dont have the details for the current user, we make the API call to /me endpoint.
+     * The initial fetch is now handled by the separate useEffect that depends on accessToken.
      */
-    if (accessToken && currentUser === initialUser && !isRequestInProgress) {
-      fetchUserDetails();
-    }
 
     return () => {
       api.interceptors.request.eject(authInterceptor);

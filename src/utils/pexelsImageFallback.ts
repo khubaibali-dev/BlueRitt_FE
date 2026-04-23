@@ -100,6 +100,18 @@ const categoryToSearchQuery: Record<string, string> = {
   // E-Commerce
   'E-Commerce (Non-app)': 'shopping',
 
+  // Beauty & Personal Care
+  'Lipstick Lip Gloss': 'lipstick makeup',
+  'Makeup Tools': 'makeup brushes cosmetics',
+  'Perfumes': 'luxury perfume bottle spray',
+  'Perfume': 'luxury perfume bottle spray',
+  'Fragrances': 'luxury fragrance bottle spray',
+
+  // Fashion
+  'Casual Dresses': 'fashion model dress',
+  'Clothing & Accessories': 'fashion clothing',
+  'cloth': 'clothing fashion style',
+
   // Default fallback
   'default': 'product'
 };

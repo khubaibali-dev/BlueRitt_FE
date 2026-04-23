@@ -87,7 +87,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar space-y-5">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-6 custom-scrollbar space-y-3">
 
           {/* 2. Influencer Info Row */}
           <div className="flex flex-col gap-3">

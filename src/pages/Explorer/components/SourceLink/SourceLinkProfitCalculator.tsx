@@ -2,6 +2,7 @@ import { ChevronLeft, Lock } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import AmazonProductCard from "../Common/Cards/AmazonProductCard";
+import { checkIsTikTokProduct, normalizeAmazonProduct, normalizeTikTokProduct, generateCalculatorPayload } from "../../../../utils/cardDataNormalizers";
 import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import bgAnalysis from "../../../../assets/images/explorer.png";
@@ -10,7 +11,7 @@ import BasicTab from "../../../ProfitCalculator/Basic/BasicTab";
 import AdvancedTab from "../../../ProfitCalculator/Advance/AdvancedTab";
 import ResultPanels from "../../../ProfitCalculator/components/ResultPanels";
 import { useProfitCalculation } from "../../../../hooks/useProfitCalculation";
-import SaveToVaultModal from "../Common/SaveToVaultModal";
+import SaveToVaultModal from "../../../../components/common/Modals/SaveToVaultModal";
 import { useQuery } from "@tanstack/react-query";
 import { getProfitProCalculations } from "../../../../api/savedProducts";
 import { useUserDetails } from "../../../../hooks/useUserDetails";
@@ -20,6 +21,9 @@ import React from "react";
 import { useFormikContext } from "formik";
 import CalculatorSkeleton from "../../../../components/common/Skeletons/CalculatorSkeleton";
 import { calculatorValidationSchema as validationSchema } from "../../../../utils/calculatorSchema";
+import { saveProducts, updateProducts } from "../../../../api/savedProducts";
+import AlertToast from "../../../../components/common/Toast/AlertToast";
+import { AnimatePresence } from "framer-motion";
 
 
 interface SourceLinkProfitCalculatorProps {
@@ -93,9 +97,6 @@ const FormikHandler: React.FC<{
         oc_anyOtherCost: other?.other_cost || "0",
       });
 
-      if (marketing?.marketing_and_advertising_cost !== "0") {
-        setActiveTab("Advanced");
-      }
       hasPopulated.current = true;
     }
   }, [savedCalcResponse, formik, setActiveTab]);
@@ -110,14 +111,27 @@ const FormikHandler: React.FC<{
 const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({ product: propProduct, supplier: propSupplier, sourceType = 'amazon', countryCode, onBack: propOnBack }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [currentSourceType, setCurrentSourceType] = useState<'amazon' | 'tiktok'>(sourceType);
   const [activeTab, setActiveTab] = useState<"Basic" | "Advanced">("Basic");
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(propProduct);
   const [selectedSupplier, setSelectedSupplier] = useState<any>(propSupplier);
+  const [isSaving, setIsSaving] = useState(false);
+  const [toast, setToast] = useState<{ type: "success" | "error"; title: string; message: string } | null>(null);
+  const [productId, setProductId] = useState<string | null>(null);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
 
   const { data: userDetails } = useUserDetails();
-  const hasGrossAccess = userDetails?.features?.access_to_gross_profit ?? true;
-  const hasNetAccess = userDetails?.features?.access_to_net_profit ?? true;
+  const hasGrossAccess = userDetails?.features?.access_to_gross_profit ?? false;
+  const hasNetAccess = userDetails?.features?.access_to_net_profit ?? false;
+
+  useEffect(() => {
+    if (hasGrossAccess && hasNetAccess) {
+      setActiveTab("Advanced");
+    } else {
+      setActiveTab("Basic");
+    }
+  }, [hasGrossAccess, hasNetAccess]);
 
   const { data: savedCalcResponse, isLoading: isLoadingSaved } = useQuery({
     queryKey: ["saved-calculation", id],
@@ -161,6 +175,12 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
 
       const tiktokData = actualPayload.product?.tiktok_product || findKeyAndUnwrap(actualPayload, ['tiktok_product', 'tiktokProduct']);
 
+      const isTikTok = checkIsTikTokProduct(actualPayload);
+
+      if (isTikTok) {
+        setCurrentSourceType('tiktok');
+      }
+
       const productMetadata = amazonInfo || tiktokData || actualPayload.product_data || (actualPayload.asin || actualPayload.product_title ? actualPayload : null);
       if (productMetadata) {
         setSelectedProduct(productMetadata.data || productMetadata);
@@ -170,10 +190,22 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
         setSelectedSupplier(alibabaInfo.data || alibabaInfo);
       }
 
+      if (actualPayload.product) {
+        const prod = actualPayload.product;
+        const pId = typeof prod === 'object' ? prod.id : prod;
+        setProductId(pId);
+
+        const cat = typeof prod === 'object' ? (prod.category || prod.category_id) : null;
+        if (cat) {
+          const catIdValue = typeof cat === 'object' ? cat.id : cat;
+          setCategoryId(catIdValue);
+        }
+      }
+
       const marketingData = actualPayload.marketing_and_advertising || actualPayload.marketing || actualPayload.product?.marketing || {};
       const advancedCost = marketingData.marketing_and_advertising_cost || marketingData.ppc_costs || marketingData.marketing_cost;
 
-      if (hasNetAccess && advancedCost && advancedCost !== "0") {
+      if (hasNetAccess) {
         setActiveTab("Advanced");
       } else {
         setActiveTab("Basic");
@@ -183,31 +215,10 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
 
   const normalizedProduct = React.useMemo(() => {
     if (!selectedProduct) return null;
-    const p = selectedProduct;
-    const tags: string[] = [];
-    if (p.is_best_seller || p.best_seller) tags.push("Best Seller");
-    if (p.is_amazon_choice || p.amazon_choice) tags.push("Amazon Choice");
-    if (p.is_prime || p.prime) tags.push("Prime");
-    if (p.climate_pledge_friendly || p.climate_pledge) tags.push("Climate Pledge");
-
-    return {
-      title: p.product_title || p.title || p.name || "Selected Product",
-      image: p.product_photo || p.image || p.image_url || p.thumbnail || "",
-      price: p.product_price?.toString().replace("$", "") || p.price?.toString().replace("$", "") || p.selling_price?.toString().replace("$", "") || "0.00",
-      oldPrice: p.product_original_price?.toString().replace("$", "") || p.oldPrice?.toString().replace("$", "") || p.original_price?.toString().replace("$", "") || p.product_price?.toString().replace("$", "") || "0.00",
-      asin: p.asin || p.product_id || "N/A",
-      salesVol: p.sales_volume || p.salesVol || p.monthly_sales || "N/A",
-      offers: p.product_num_offers?.toString() || p.offers?.toString() || p.num_offers?.toString() || "1",
-      seller: p.product_seller_name || p.seller || p.seller_name || p.product_offers?.[0]?.seller || "Amazon.com",
-      shipsFrom: p.ships_from || p.shipsFrom || p.product_offers?.[0]?.ships_from || p.delivery || "Amazon",
-      country: p.seller_country || p.country || p.marketplace || "US",
-      rating: parseFloat(p.product_star_rating || p.rating || p.star_rating || "4.5"),
-      numRatings: p.product_num_ratings || p.ratings || p.rating_count || "0",
-      dimensions: p.product_information?.["Product Dimensions"] || p.product_details?.["Product Dimensions"] || p.product_information?.["Package Dimensions"] || p.dimensions || "N/A",
-      weight: p.product_information?.["Item Weight"] || p.product_details?.["Item Weight"] || p.weight || "N/A",
-      tags: tags.length > 0 ? tags : (p.tags || [])
-    };
-  }, [selectedProduct]);
+    return sourceType === 'tiktok'
+      ? normalizeTikTokProduct(selectedProduct, selectedProduct, true)
+      : normalizeAmazonProduct(selectedProduct, selectedProduct, false);
+  }, [selectedProduct, sourceType]);
 
   const parseCost = (costStr: string) => {
     if (!costStr) return "0.00";
@@ -286,100 +297,89 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
   const roiPerc = parseFloat(sourcingCostUnit) > 0 ? ((parseFloat(displayProfitUnit) / parseFloat(sourcingCostUnit)) * 100).toFixed(1) : "0.0";
 
   const getCalculatorPayload = () => {
-    return {
-      name: normalizedProduct?.title || "",
-      description: "",
-      category: "",
-      saveNewCategory: "",
-      source: sourceType === 'tiktok' ? 'TikTok Trends' : sourceType === 'amazon' ? 'Amazon Trends' : 'Explorer',
-      alibaba_product: selectedSupplier,
-      amazon_product: { data: selectedProduct },
-      selling_price: formData.pi_sellingPrice,
-      quantity: parseInt(formData.pi_quantity) || 0,
-      total_revenue: totalRevenue,
-      sourcing_cost: {
-        manufacturing_cost: formData.psc_manufacturingCost,
-        shipping_cost: formData.psc_shippingCost,
-        logo_box_cost: formData.psc_productLogoCost,
-        order_quantity: parseInt(formData.psc_orderQuantity) || 0,
-      },
-      fulfillment: {
-        fulfillment_type: formData.fm_model,
-        referral_fees: formData.fm_referrfalFees,
-        fba_fulfillment_fees: formData.fm_fbaFulfillmentFees,
-        monthly_storage_fees: formData.fm_monthlyStorageFees,
-        long_term_storage_fees: formData.fm_longTermStorageFees,
-        inbound_shipping_cost: formData.fm_inboundShippingCost,
-        returns_rate: formData.fm_returnsRate,
-        per_unit_cost: fulfillmentCostUnit,
-        total_cost: totalFulfillmentCost,
-      },
-      marketing: {
-        ppc_costs: formData.marc_marketingCost,
-        attribution_costs: formData.marc_attributionCost,
-        influencer_promotion_costs: formData.marc_influencerCost,
-        marketing_vat: formData.marc_marketingVATCost,
-        misc_costs: formData.marc_miscCost,
-        per_unit_cost: marketingCostUnit,
-        total_cost: totalMarketingCost,
-      },
-      graphics: {
-        imaging_photography: formData.gc_imagingAndPhotographyCost,
-        videography_cost: formData.gc_videographyCost,
-        product_packaging_cost: formData.gc_productPackingCost,
-        animation_3d_cost: formData.gc_3dAnimationCost,
-        misc_costs: formData.gc_miscCost,
-        per_unit_cost: graphicsCostUnit,
-        total_cost: totalGraphicsCost,
-      },
-      vine_misc: {
-        vine_program: formData.pfc_vineProgramCost,
-        miscellaneous_cost: formData.pfc_miscCost,
-        cost_per_unit: reviewerCostUnit,
-        total: totalReviewerCost,
-      },
-      other_costs: {
-        pre_launch_samples: formData.oc_preLaunchSamples,
-        competitor_samples: formData.oc_competitorProductSamples,
-        employee_cost: formData.oc_employeesCost,
-        other_cost: formData.oc_anyOtherCost,
-        per_unit_cost: additionalCostUnit,
-        total_cost: totalAdditionalCost,
-      },
-      taxes: {
-        region: formData.tax_region,
-        vat: formData.tax_VAT,
-        gst: formData.tax_GST,
-        sales_tax: formData.tax_salesTax,
-        miscellaneous_cost: formData.tax_miscCost,
-        per_unit_cost: taxesUnit,
-        total_cost: totalTaxes,
-      },
-      profit_calculation: {
-        data: {
-          revenue_per_unit: formData.pi_sellingPrice,
-          total_revenue: totalRevenue,
-          productSourcing_cost_per_unit: sourcingCostUnit,
-          total_productSourcing_cost: totalSourcingCost,
-          fulfillment_cost_per_unit: fulfillmentCostUnit,
-          total_fulfillment_cost: totalFulfillmentCost,
-          marketing_cost_per_unit: marketingCostUnit,
-          total_marketing_cost: totalMarketingCost,
-          graphics_cost_per_unit: graphicsCostUnit,
-          total_graphics_cost: totalGraphicsCost,
-          reviewer_cost_per_unit: reviewerCostUnit,
-          total_reviewer_cost: totalReviewerCost,
-          other_cost_per_unit: additionalCostUnit,
-          total_other_cost: totalAdditionalCost,
-          taxes_per_unit: taxesUnit,
-          total_taxes: totalTaxes,
-          gross_profit_per_unit: grossProfitUnit,
-          total_gross_profit: totalGrossProfit,
-          net_profit_per_unit: netProfitUnit,
-          total_net_profit: totalNetProfit,
-        },
-      },
-    };
+    return generateCalculatorPayload({
+      normalizedProduct,
+      categoryId,
+      sourceType,
+      selectedSupplier,
+      selectedProduct,
+      formData,
+      calculations: {
+        totalRevenue,
+        sourcingCostUnit,
+        totalSourcingCost,
+        fulfillmentCostUnit,
+        totalFulfillmentCost,
+        marketingCostUnit,
+        totalMarketingCost,
+        graphicsCostUnit,
+        totalGraphicsCost,
+        reviewerCostUnit,
+        totalReviewerCost,
+        additionalCostUnit,
+        totalAdditionalCost,
+        taxesUnit,
+        totalTaxes,
+        grossProfitUnit,
+        totalGrossProfit,
+        netProfitUnit,
+        totalNetProfit,
+      }
+    });
+  };
+
+  const handleDirectSave = async () => {
+    // Use calculation ID (id from useParams) if available, otherwise fallback to productId
+    const saveID = id || productId;
+    if (!categoryId || !saveID) {
+      setToast({
+        type: "error",
+        title: "Error",
+        message: "Missing category or product information.",
+      });
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const payload = {
+        ...getCalculatorPayload(),
+        category: categoryId,
+      };
+
+      await updateProducts({ saveID, ...payload });
+
+      setToast({
+        type: "success",
+        title: "Success!",
+        message: "Calculation saved successfully.",
+      });
+
+      setTimeout(() => {
+        if (productId) {
+          navigate(`/calculator/product/${productId}`);
+        } else {
+          navigate("/products");
+        }
+      }, 2000);
+    } catch (error) {
+      console.error("Direct save error:", error);
+      setToast({
+        type: "error",
+        title: "Save Failed",
+        message: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (id && productId) {
+      navigate(`/calculator/product/${productId}`);
+    } else if (propOnBack) {
+      propOnBack();
+    }
   };
 
   if (!normalizedProduct && !id) {
@@ -399,7 +399,7 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
       <div className="discovery-results px-4 py-10 flex items-center justify-center min-h-[500px] text-brand-textPrimary dark:text-white">
         <div className="flex flex-col items-center gap-4">
           <p className="text-sm font-medium text-red-400">Unable to load historical calculation.</p>
-          <button onClick={onBack} className="text-xs text-brand-primary underline">Go back to vault</button>
+          <button onClick={handleBack} className="text-xs text-brand-primary underline">Go back to vault</button>
         </div>
       </div>
     );
@@ -416,9 +416,9 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
       <CalculatorMainContent
         savedCalcResponse={savedCalcResponse}
         setFormData={setFormData}
-        onBack={onBack}
+        onBack={handleBack}
         normalizedProduct={normalizedProduct}
-        sourceType={sourceType}
+        sourceType={currentSourceType}
         selectedProduct={selectedProduct}
         selectedSupplier={selectedSupplier}
         activeTab={activeTab}
@@ -450,6 +450,12 @@ const SourceLinkProfitCalculator: React.FC<SourceLinkProfitCalculatorProps> = ({
         roiPerc={roiPerc}
         getCalculatorPayload={getCalculatorPayload}
         navigate={navigate}
+        isSaving={isSaving}
+        toast={toast}
+        setToast={setToast}
+        handleDirectSave={handleDirectSave}
+        categoryId={categoryId}
+        calcId={id}
       />
     </Formik>
   );
@@ -491,7 +497,13 @@ const CalculatorMainContent: React.FC<any> = ({
   marginPerc,
   roiPerc,
   getCalculatorPayload,
-  navigate
+  navigate,
+  isSaving,
+  toast,
+  setToast,
+  handleDirectSave,
+  categoryId,
+  calcId
 }) => {
   const formik = useFormikContext<any>();
 
@@ -520,10 +532,18 @@ const CalculatorMainContent: React.FC<any> = ({
             </button>
 
             <button
-              onClick={() => setIsSaveModalOpen(true)}
-              className="bg-brand-gradient px-4 py-2.5 rounded-full text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all  shadow-orange-900/20 font-inter"
+              disabled={isSaving}
+              onClick={() => {
+                if (calcId && categoryId) {
+                  handleDirectSave();
+                } else {
+                  setIsSaveModalOpen(true);
+                }
+              }}
+              className="bg-brand-gradient px-4 py-2.5 rounded-full text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all  shadow-orange-900/20 font-inter disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Save to Product Vault
+              {isSaving && <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+              {isSaving ? "Saving..." : "Save to Product Vault"}
             </button>
           </div>
 
@@ -538,21 +558,21 @@ const CalculatorMainContent: React.FC<any> = ({
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
             {sourceType === 'tiktok' ? (
-              <TrendProductCard
-                title={normalizedProduct.title}
-                image={normalizedProduct.image}
-                category={selectedProduct?.category || "Trending"}
-                price={`$${normalizedProduct.price}`}
-                metrics={selectedProduct?.metrics || {}}
-                variant="selected"
-                isCalculator={true}
-              />
+              normalizedProduct && (
+                <TrendProductCard
+                  {...normalizedProduct}
+                  variant="selected"
+                  isCalculator={true}
+                />
+              )
             ) : (
-              <AmazonProductCard
-                product={normalizedProduct}
-                variant="selected"
-                isCalculator={true}
-              />
+              normalizedProduct && (
+                <AmazonProductCard
+                  product={normalizedProduct}
+                  variant="selected"
+                  isCalculator={true}
+                />
+              )
             )}
 
             <div className="mt-8 lg:mt-0">
@@ -575,8 +595,8 @@ const CalculatorMainContent: React.FC<any> = ({
                 Basic
               </button>
               <button
-                onClick={() => setActiveTab("Advanced")}
-                className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'}`}
+                onClick={() => hasNetAccess && setActiveTab("Advanced")}
+                className={`calculator-toggle-btn ${activeTab === 'Advanced' ? 'calculator-toggle-btn-active' : 'calculator-toggle-btn-inactive'} ${!hasNetAccess ? 'cursor-not-allowed' : ''}`}
               >
                 {!hasNetAccess && <Lock size={12} className="opacity-70" />}
                 Advanced
@@ -661,11 +681,22 @@ const CalculatorMainContent: React.FC<any> = ({
             </div>
           </div>
         </div>
-        {isSaveModalOpen && (
-          <SaveToVaultModal
-            productTitle={normalizedProduct?.title || "Product"}
-            calculatorData={getCalculatorPayload()}
-            onClose={() => setIsSaveModalOpen(false)}
+        <AnimatePresence>
+          {isSaveModalOpen && (
+            <SaveToVaultModal
+              productTitle={normalizedProduct?.title || "Product"}
+              calculatorData={getCalculatorPayload()}
+              onClose={() => setIsSaveModalOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+
+        {toast && (
+          <AlertToast
+            type={toast.type}
+            title={toast.title}
+            message={toast.message}
+            onClose={() => setToast(null)}
           />
         )}
       </div>

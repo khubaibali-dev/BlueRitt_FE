@@ -27,13 +27,24 @@ const ProductVault: React.FC = () => {
         res.data.map(async (cat: any) => {
           try {
             const detailRes = await getSavedCategoriesDetail({ id: cat.id });
+            const products = detailRes?.data?.products || [];
+            
+            // Extract preview images from products
+            const previewImages = products.slice(0, 4).map((p: any) => {
+              const amazonData = p.amazon_product?.data || p.amazon_product || {};
+              // For TikTok products, data might be nested or top-level in amazonData
+              const tiktokData = amazonData.data || amazonData;
+              return tiktokData.image || tiktokData.image_url || tiktokData.cover_url || p.image || "";
+            }).filter((img: string) => img && img !== "");
+
             return {
               ...cat,
-              product_count: detailRes?.data?.products?.length || 0
+              product_count: products.length,
+              previewImages
             };
           } catch (err) {
             console.error(`Failed to fetch count for category ${cat.id}:`, err);
-            return { ...cat, product_count: 0 };
+            return { ...cat, product_count: 0, previewImages: [] };
           }
         })
       );
@@ -77,7 +88,11 @@ const ProductVault: React.FC = () => {
       product_count: totalCountFromCategories,
       created_at: new Date().toISOString(),
       isAllProducts: true,
-      previewImages: allProducts.slice(0, 3).map((p: any) => p.image || p.ProductImage)
+      previewImages: allProducts.slice(0, 4).map((p: any) => {
+        const amazonData = p.amazon_product?.data || p.amazon_product || {};
+        const tiktokData = amazonData.data || amazonData;
+        return tiktokData.image || tiktokData.image_url || tiktokData.cover_url || p.image || "";
+      }).filter((img: string) => img && img !== "")
     };
 
     return [allProductsInfo, ...list];

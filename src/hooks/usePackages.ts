@@ -29,13 +29,12 @@ const transformPackage = (pkg: any, isPrepaid: boolean = false): PlanPackage => 
     globalFeatures,
     bluerittExplorer: [
       { 
-        name: isPremium 
-          ? `Unlock full access to product searches (up to ${f.amazon_search || 0})`
-          : f.amazon_search === -1 
-            ? "Unlimited product searches" 
-            : `Search up to ${f.amazon_search || 0} products${isAdvance ? " (2x more)" : ""}`, 
+        name: "Product searches", 
+        value: f.amazon_search === -1 
+            ? "Unlimited" 
+            : `up to ${f.amazon_search || 0} products${isAdvance ? " (2x more)" : ""}`, 
         active: true,
-        highlightedValue: f.amazon_search > 50 || f.amazon_search === -1
+        highlightedValue: true
       },
       { 
         name: `Product Details, Customer Reviews, Product Offers ${
@@ -48,36 +47,36 @@ const transformPackage = (pkg: any, isPrepaid: boolean = false): PlanPackage => 
         active: !!f.amazon_detail_access || !!f.no_of_customer_review || !!f.product_offer_access
       },
       { 
-        name: isPremium 
-          ? `Discover suppliers with very large monthly cap (up to ${f.supplier_discovery || 0})`
-          : f.supplier_discovery === -1 
-            ? "Unlimited supplier discoveries" 
-            : `Discover suppliers up to ${f.supplier_discovery || 0} times${isAdvance ? " (more than double)" : ""}`, 
+        name: "Discover suppliers", 
+        value: f.supplier_discovery === -1 
+            ? "Unlimited" 
+            : `up to ${f.supplier_discovery || 0} times${isAdvance ? " (more than double)" : ""}`, 
         active: true,
-        highlightedValue: f.supplier_discovery > 100 || f.supplier_discovery === -1
+        highlightedValue: true
       },
       { 
         name: "AI based supplier matches per product", 
         value: f.no_of_supplier_per_ai_match === -1 ? "(all matches)" : `(${f.no_of_supplier_per_ai_match || 0} matches)`, 
-        active: true 
+        active: true,
+        highlightedValue: true
       }
     ],
     marginMaxCalculator: [
       { 
-        name: isPremium 
-          ? `Calculate gross profit for up to ${f.no_of_gross_profit_calculations || 0} ASINs`
-          : f.no_of_gross_profit_calculations === -1 
+        name: "Calculate gross profit", 
+        value: f.no_of_gross_profit_calculations === -1 
             ? "Unlimited ASINs" 
-            : `Calculate gross profit for up to ${f.no_of_gross_profit_calculations || 0} ASINs${isAdvance ? " (3x more)" : ""}`, 
-        active: true 
+            : `up to ${f.no_of_gross_profit_calculations || 0} ASINs${isAdvance ? " (3x more)" : ""}`, 
+        active: true,
+        highlightedValue: true
       },
       { 
-        name: isPremium 
-          ? "Run gross and net profit analysis for hundreds of ASINs"
-          : f.no_of_net_profit_calculations === -1 
+        name: "Run net profit analysis", 
+        value: f.no_of_net_profit_calculations === -1 
             ? "Unlimited ASINs" 
-            : `Run net profit analysis on ${f.no_of_net_profit_calculations || 0} ASINs`, 
-        active: f.no_of_net_profit_calculations !== 0 
+            : `${f.no_of_net_profit_calculations || 0} ASINs`, 
+        active: f.no_of_net_profit_calculations !== 0,
+        highlightedValue: f.no_of_net_profit_calculations !== 0
       }
     ],
     socialPulse: []

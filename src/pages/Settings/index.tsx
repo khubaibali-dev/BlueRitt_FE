@@ -33,12 +33,12 @@ const SettingsPage: React.FC = () => {
 
       {/* Main Content Section */}
       <div className="flex flex-col gap-6 max-w-[1200px] w-full mx-auto">
-        <ProfileInformation defaultOpen={isProfileOpen} />
+        <ProfileInformation defaultOpen={isProfileOpen} scrollIntoViewOnOpen={isProfileOpen} />
         <AdditionalInformation defaultOpen={isProfileOpen} />
-        <ChangePassword defaultOpen={isSecurityOpen} />
+        <ChangePassword defaultOpen={isSecurityOpen} scrollIntoViewOnOpen={isSecurityOpen} />
         <Subscription defaultOpen={isSubscriptionOpen} scrollIntoViewOnOpen={isSubscriptionOpen} />
         <Invoices defaultOpen={isBillingOpen} scrollIntoViewOnOpen={isBillingOpen} />
-        <AddonsBalanceHistory defaultOpen={isBillingOpen} />
+        <AddonsBalanceHistory defaultOpen={isBillingOpen} scrollIntoViewOnOpen={isBillingOpen} />
         <Plans defaultOpen={isPlanOpen} scrollIntoViewOnOpen={isPlanOpen} />
       </div>
     </div>
