@@ -71,6 +71,10 @@ const createCheckout = (subscription_type: string, packageName: string, billing_
   });
 };
 
+const processSetupSuccess = (amount: number, description: string) => {
+  return api.post("/common/wallet/process_setup_success/", { amount, description });
+};
+
 export {
   getSubscriptionInvoices,
   getPackages,
@@ -84,4 +88,5 @@ export {
   createCheckout,
   fetchAccountSummary,
   emailInvoice,
+  processSetupSuccess
 };

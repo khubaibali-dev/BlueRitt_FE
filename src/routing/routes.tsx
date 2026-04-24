@@ -27,6 +27,9 @@ const SubscriptionCancelPage = lazy(() => import("../pages/Subscription/Subscrip
 const TrialSuccessPage = lazy(() => import("../pages/Trial/TrialSuccessPage"));
 const TrialCancelPage = lazy(() => import("../pages/Trial/TrialCancelPage"));
 const ResetPasswordPage = lazy(() => import("../pages/UserAuth/ResetPassword"));
+const WalletSetupSuccess = lazy(() => import("../pages/Wallet/SetupSuccess"));
+const WalletSetupCancel = lazy(() => import("../pages/Wallet/SetupCancel"));
+const WalletPaymentSuccess = lazy(() => import("../pages/Wallet/PaymentSuccess"));
 
 
 import AnalysisSkeleton from "../components/common/Skeletons/AnalysisSkeleton";
@@ -204,6 +207,24 @@ const routes: RouteType[] = [
   {
     path: "/trial/cancel",
     element: TrialCancelPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/wallet/setup/success",
+    element: WalletSetupSuccess,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/wallet/setup/cancel",
+    element: WalletSetupCancel,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/wallet/payment/success",
+    element: WalletPaymentSuccess,
     layout: AuthLayout,
     isProtected: false,
   },

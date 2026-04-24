@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Crown, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchAccountSummary, toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAccountSummary } from "../../../hooks/useAccountSummary";
+import { toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
 import { useToast } from "../../../components/common/Toast/ToastContext";
 import AddBalanceModal from "../../../components/common/Modals/AddBalanceModal";
 import CancelSubscriptionModal from "./CancelSubscriptionModal";
@@ -28,14 +29,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
   const [isTogglingAutoRenew, setIsTogglingAutoRenew] = useState(false);
   const toast = useToast();
 
-  const { data: summary, isLoading, isFetching } = useQuery({
-    queryKey: ['subscription', 'account_summary'],
-    queryFn: async () => {
-      const response = await fetchAccountSummary();
-      return response.data;
-    },
-    enabled: isOpen,
-  });
+  const { data: summary, isLoading, isFetching } = useAccountSummary({ enabled: isOpen });
 
   const today = new Date();
   const dueDateStr = summary?.dueDate || "";
@@ -134,10 +128,10 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
     setIsCancelModalOpen(true);
   };
 
-  const confirmCancelSubscription = async () => {
+  const confirmCancelSubscription = async (reason: string) => {
     setIsCancelling(true);
     try {
-      await cancelSubscription("User requested cancellation via settings");
+      await cancelSubscription(reason);
       queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
       toast.success("Subscription cancellation scheduled successfully.");
       setIsCancelModalOpen(false);
@@ -264,7 +258,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
                   <span className="subscription-auto-renew-desc">Your subscription will renew automatically</span>
                 </div>
                 <div className="flex items-center self-start sm:self-center">
-                   <button
+                  <button
                     onClick={onToggleAutoRenew}
                     disabled={isOneTimePlan || isTogglingAutoRenew}
                     className={`

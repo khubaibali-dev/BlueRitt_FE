@@ -5,6 +5,7 @@ import { chargeCard } from "../../../api/pricing";
 import { useToast } from "../Toast/ToastContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import * as Yup from "yup";
 
 interface AddBalanceModalProps {
   isOpen: boolean;
@@ -12,32 +13,51 @@ interface AddBalanceModalProps {
   currentBalance: string;
 }
 
+const fillBalanceSchema = Yup.object().shape({
+  fillAmount: Yup.number()
+    .typeError("Please enter a valid number")
+    .positive("Amount must be positive")
+    .min(5, "Minimum amount is $5")
+    .max(10000, "Maximum amount is $10,000")
+    .required("Please enter an amount"),
+});
+
 const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, currentBalance }) => {
   const [amount, setAmount] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
   const toast = useToast();
   const queryClient = useQueryClient();
 
   const handleProceed = async () => {
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      toast.error("Please enter a valid amount");
-      return;
-    }
-
+    setError(undefined);
+    
     try {
+      // Validate with Yup
+      await fillBalanceSchema.validate({ fillAmount: amount });
+      
       setIsSubmitting(true);
-      await chargeCard(Number(amount));
+      const response = await chargeCard(Number(amount));
 
-      toast.success(`Successfully added $${Number(amount).toFixed(2)} to your balance!`);
+      if (response?.data?.url) {
+        // Redirect to Stripe/Payment Gateway
+        window.location.href = response.data.url;
+      } else {
+        toast.success(`Successfully added $${Number(amount).toFixed(2)} to your balance!`);
 
-      // Invalidate both wallet and summary queries to update UI everywhere
-      queryClient.invalidateQueries({ queryKey: ["wallet", "balance"] });
-      queryClient.invalidateQueries({ queryKey: ["subscription", "account_summary"] });
+        // Invalidate both wallet and summary queries to update UI everywhere
+        queryClient.invalidateQueries({ queryKey: ["wallet", "balance"] });
+        queryClient.invalidateQueries({ queryKey: ["subscription", "account_summary"] });
 
-      onClose();
-      setAmount("");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to charge card. Please try again.");
+        onClose();
+        setAmount("");
+      }
+    } catch (err: any) {
+      if (err instanceof Yup.ValidationError) {
+        setError(err.message);
+      } else {
+        toast.error(err?.response?.data?.message || "Failed to charge card. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -90,10 +110,14 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
                 type="number"
                 placeholder="Enter amount"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  if (error) setError(undefined);
+                }}
                 prefix="$"
+                error={error}
               />
-              <p className="text-[12px] text-brand-textSecondary dark:text-[#FFFFFFB0] mt-[-8px]">Write the amount you want to fill ($)</p>
+              {!error && <p className="text-[12px] text-brand-textSecondary dark:text-[#FFFFFFB0] mt-[-8px]">Write the amount you want to fill ($)</p>}
             </div>
 
             <div className="purchase-action-row border-t border-brand-border dark:border-white/5">

@@ -472,35 +472,12 @@ const ProfitCalculatorContent: React.FC<any> = ({
                 errors={formik.errors}
                 touched={formik.touched}
                 handleBlur={formik.handleBlur}
+                hasGrossAccess={hasGrossAccess}
+                hasNetAccess={hasNetAccess}
+                showPremiumSections={activeTab === "Basic"}
               />
 
-              <div className="relative isolate">
-                {/* Targeted Locked Overlay for Advanced Section */}
-                {(activeTab === "Basic" || !hasNetAccess) && (
-                  <div className="absolute inset-0 z-[60] flex items-center justify-center rounded-[24px] overflow-hidden p-6 mt-0">
-                    <div className="absolute inset-0 bg-white/30 dark:bg-[#030B1C]/40 backdrop-blur-[6px] border border-brand-border rounded-[24px]" />
-                    <div className="relative z-10 text-center flex flex-col items-center max-w-[320px]">
-                      <div className="w-12 h-12 rounded-2xl bg-brand-primary/10 dark:bg-white/10 flex items-center justify-center mb-4 border border-brand-primary/20 dark:border-white/5 animate-bounce">
-                        <Lock size={24} className="text-brand-primary dark:text-white" />
-                      </div>
-                      <h4 className="text-[20px] font-bold text-brand-textPrimary dark:text-white mb-2 leading-tight">
-                        {activeTab === "Basic" ? "Advanced Features Locked" : "Net Profit Calculation Locked"}
-                      </h4>
-                      <p className="text-brand-textSecondary dark:text-white/60 text-[14px] mb-6 leading-relaxed">
-                        {activeTab === "Basic" 
-                          ? "Switch to the Advanced tab and upgrade to Pro to manage marketing, taxes, and more." 
-                          : "Upgrade to the Pro plan to access detailed marketing, taxes, and net profit analytics."}
-                      </p>
-                      <button
-                        onClick={() => navigate("/settings?tab=plan")}
-                        className="bg-brand-gradient hover:brightness-110 text-white px-8 py-3 rounded-full text-[14px] font-bold flex items-center gap-2 transition-all active:scale-95 shadow-xl shadow-brand-primary/20"
-                      >
-                        Unlock calculations
-                      </button>
-                    </div>
-                  </div>
-                )}
-
+              {activeTab === "Advanced" && (
                 <AdvancedTab
                   formData={formik.values as any}
                   handleFieldChange={formik.setFieldValue}
@@ -517,9 +494,9 @@ const ProfitCalculatorContent: React.FC<any> = ({
                   errors={formik.errors}
                   touched={formik.touched}
                   handleBlur={formik.handleBlur}
-                  disabled={activeTab === "Basic" || !hasNetAccess}
+                  disabled={!hasNetAccess}
                 />
-              </div>
+              )}
             </div>
 
             {/* Right Column: Sticky Results */}

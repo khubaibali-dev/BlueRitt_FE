@@ -245,6 +245,14 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                         basic: "Start strong with core features to kick off your BlueRitt journey",
                         advance: "Scale smarter with advanced BlueRitt tools for business growth",
                         premium: "Unlock the ultimate BlueRitt experience for scaling businesses",
+                        prepaidBasic: "Unlock the ultimate BlueRitt experience for scaling businesses",
+                      };
+
+                      const getPlanDesc = () => {
+                        if (slug.includes('prepaid') && slug.includes('basic')) return planDescriptions.prepaidBasic;
+                        if (slug.includes('premium')) return planDescriptions.premium;
+                        if (slug.includes('advance')) return planDescriptions.advance;
+                        return planDescriptions.basic;
                       };
 
                       return (
@@ -254,11 +262,11 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                               {pkg.name}
                             </span>
                             <p className="text-[10px] sm:text-[11px] text-brand-textSecondary dark:text-slate-400 font-medium leading-relaxed max-w-[120px] sm:max-w-[150px]">
-                              {planDescriptions[slug.includes('advance') ? 'advance' : slug.includes('premium') ? 'premium' : 'basic']}
+                              {getPlanDesc()}
                             </p>
                           </div>
                           {isCurrent && !isExpired ? (
-                            <span className="bg-brand-hover dark:bg-white/5 text-brand-textSecondary dark:text-slate-400 border border-brand-border dark:border-slate-700/50 px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold whitespace-nowrap">
+                            <span className="bg-brand-hover dark:bg-white/5 text-brand-textSecondary dark:text-slate-400 figma-pill-border px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold whitespace-nowrap">
                               Current Plan
                             </span>
                           ) : (
@@ -269,6 +277,13 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                             >
                               Update Plan
                             </button>
+                          )}
+
+                          {/* Trial Status Message */}
+                          {isCurrent && currentUser?.subscriptionStatus?.on_trial && currentUser?.subscriptionStatus?.has_active_subscription && (
+                            <p className="text-[10px] sm:text-[11px] font-bold text-brand-primary dark:text-brand-primary mt-1">
+                              * {isExpired ? "Trial Expired" : "Active Trial"}
+                            </p>
                           )}
                         </div>
                       );

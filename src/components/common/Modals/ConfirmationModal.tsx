@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { X, AlertTriangle, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -39,77 +40,88 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     };
   }, [isOpen]);
 
-  if (!mounted || !isOpen) return null;
+  if (!mounted) return null;
 
-  const modalContent = (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={onClose}
-      />
+  return ReactDOM.createPortal(
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={onClose}
+          />
 
-      {/* Modal Card */}
-      <div className="relative w-full max-w-[440px] animate-in zoom-in-95 fade-in duration-300">
-        <div className="relative p-[1px] rounded-[24px] bg-gradient-to-b from-white/10 to-transparent shadow-2xl">
-          <div className="bg-white dark:bg-[#04132B] rounded-[23px] overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/10">
-              <div className="flex items-center gap-3">
-                <div className={`p-2.5 rounded-xl ${type === 'danger' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'}`}>
-                  {type === 'danger' ? <Trash2 size={22} /> : <AlertTriangle size={22} />}
+          {/* Modal Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-[440px]"
+          >
+            <div className="relative p-[1px] rounded-[24px] bg-gradient-to-b from-white/10 to-transparent shadow-2xl">
+              <div className="bg-white dark:bg-[#04132B] rounded-[23px] overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2.5 rounded-xl ${type === 'danger' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                      {type === 'danger' ? <Trash2 size={22} /> : <AlertTriangle size={22} />}
+                    </div>
+                    <h2 className="text-[18px] font-bold text-[#04132B] dark:text-white tracking-tight">
+                      {title}
+                    </h2>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="p-2 -mr-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-all cursor-pointer"
+                  >
+                    <X size={22} />
+                  </button>
                 </div>
-                <h2 className="text-[18px] font-bold text-[#04132B] dark:text-white tracking-tight">
-                  {title}
-                </h2>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 -mr-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 transition-all cursor-pointer"
-              >
-                <X size={22} />
-              </button>
-            </div>
 
-            {/* Content Body */}
-            <div className="p-4 flex flex-col items-start text-left">
+                {/* Content Body */}
+                <div className="p-4 flex flex-col items-start text-left">
+                  {/* Message Box with separate border */}
+                  <div className="w-full p-4 rounded-[16px] border border-brand-inputBorder dark:border-white/5 bg-slate-50/30 dark:bg-white/[0.02] mb-8">
+                    <p className="text-[14px] font-medium dark:text-slate-400 leading-relaxed">
+                      {message}
+                    </p>
+                  </div>
 
-              {/* Message Box with separate border */}
-              <div className="w-full p-4 rounded-[16px] border border-brand-inputBorder dark:border-white/5 bg-slate-50/30 dark:bg-white/[0.02] mb-8">
-                <p className="text-[14px] font-medium dark:text-slate-400 leading-relaxed">
-
-                  {message}
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-3 w-full">
-                <button
-                  onClick={onClose}
-                  className="flex-1 px-6 py-3 rounded-full figma-pill-border text-[#04132B] dark:text-white text-[14px] font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-all active:scale-95"
-                >
-                  {cancelText}
-                </button>
-                <button
-                  onClick={onConfirm}
-                  disabled={isLoading}
-                  className={`flex-1 px-6 py-3 rounded-full text-white text-[14px] font-bold transition-all active:scale-95 shadow-xl
-                    ${type === 'danger'
-                      ? 'bg-brand-gradient'
-                      : 'bg-brand-gradient'} 
-                    disabled:opacity-50 disabled:pointer-events-none hover:brightness-110`}
-                >
-                  {isLoading ? "Processing..." : confirmText}
-                </button>
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row gap-3 w-full">
+                    <button
+                      onClick={onClose}
+                      className="flex-1 px-6 py-3 rounded-full figma-pill-border text-[#04132B] dark:text-white text-[14px] font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-all active:scale-95"
+                    >
+                      {cancelText}
+                    </button>
+                    <button
+                      onClick={onConfirm}
+                      disabled={isLoading}
+                      className={`flex-1 px-6 py-3 rounded-full text-white text-[14px] font-bold transition-all active:scale-95 shadow-xl
+                        ${type === 'danger'
+                          ? 'bg-brand-gradient'
+                          : 'bg-brand-gradient'} 
+                        disabled:opacity-50 disabled:pointer-events-none hover:brightness-110`}
+                    >
+                      {isLoading ? "Processing..." : confirmText}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>,
+    document.body
   );
-
-  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default ConfirmationModal;

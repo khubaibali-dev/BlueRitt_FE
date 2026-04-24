@@ -617,6 +617,9 @@ const CalculatorMainContent: React.FC<any> = ({
                 totalFulfillmentCost={totalFulfillmentCost}
                 errors={formik.errors}
                 touched={formik.touched}
+                hasGrossAccess={hasGrossAccess}
+                hasNetAccess={hasNetAccess}
+                showPremiumSections={activeTab === "Basic"}
               />
 
               <div className="relative isolate">
@@ -643,24 +646,26 @@ const CalculatorMainContent: React.FC<any> = ({
                   </div>
                 )}
 
-                <AdvancedTab
-                  formData={formik.values as any}
-                  handleFieldChange={formik.setFieldValue}
-                  handleBlur={formik.handleBlur}
-                  marketingCostUnit={marketingCostUnit}
-                  totalMarketingCost={totalMarketingCost}
-                  graphicsCostUnit={graphicsCostUnit}
-                  totalGraphicsCost={totalGraphicsCost}
-                  reviewerCostUnit={reviewerCostUnit}
-                  totalReviewerCost={totalReviewerCost}
-                  additionalCostUnit={additionalCostUnit}
-                  totalAdditionalCost={totalAdditionalCost}
-                  taxesUnit={taxesUnit}
-                  totalTaxes={totalTaxes}
-                  errors={formik.errors}
-                  touched={formik.touched}
-                  disabled={activeTab === "Basic" || !hasNetAccess}
-                />
+                {activeTab === "Advanced" && (
+                  <AdvancedTab
+                    formData={formik.values as any}
+                    handleFieldChange={formik.setFieldValue}
+                    handleBlur={formik.handleBlur}
+                    marketingCostUnit={marketingCostUnit}
+                    totalMarketingCost={totalMarketingCost}
+                    graphicsCostUnit={graphicsCostUnit}
+                    totalGraphicsCost={totalGraphicsCost}
+                    reviewerCostUnit={reviewerCostUnit}
+                    totalReviewerCost={totalReviewerCost}
+                    additionalCostUnit={additionalCostUnit}
+                    totalAdditionalCost={totalAdditionalCost}
+                    taxesUnit={taxesUnit}
+                    totalTaxes={totalTaxes}
+                    errors={formik.errors}
+                    touched={formik.touched}
+                    disabled={!hasNetAccess}
+                  />
+                )}
               </div>
             </div>
 
