@@ -8,7 +8,7 @@
   :root {
     --brand-bg: #EBEDF7;
     --brand-card: #FFFFFF;
-    --brand-border: #FFFFFF;
+    --brand-border: #E2E8F0;
     --brand-border-ui: #dbdbde;
     --brand-primary: #F05A2B;
     --brand-accent: #3B82F6;
@@ -2714,15 +2714,15 @@
 }
 
 .pricing-row-standard {
-  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-brand-border dark:border-[#1E293B]/40 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px] bg-brand-hover dark:bg-[#041024];
+  @apply px-3 sm:px-6 py-3 sm:py-4 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px] bg-brand-card dark:bg-[#041024];
 }
 
 .pricing-row-no-bg {
-  @apply px-3 sm:px-6 py-3 sm:py-4 border-b border-brand-border dark:border-[#1E293B]/40 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px];
+  @apply px-3 sm:px-6 py-3 sm:py-4 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px];
 }
 
 .pricing-header-row {
-  @apply pb-6 pt-5 px-3 sm:px-6 border-b border-brand-border dark:border-[#1E293B]/40 bg-brand-card dark:bg-[#041024] min-w-[600px];
+  @apply pb-6 pt-5 px-3 sm:px-6 items-center bg-brand-hover dark:bg-[#041024] min-w-[600px];
 }
 
 .pricing-subheader-row {

@@ -54,8 +54,8 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   }, [isOpen, scrollIntoViewOnOpen]);
 
   return (
-    <div 
-      ref={cardRef} 
+    <div
+      ref={cardRef}
       className="bg-brand-card dark:bg-[#04132B] rounded-[14px] border border-brand-inputBorder dark:border-brand-border relative w-full mb-0 overflow-hidden shadow-sm dark:shadow-none"
     >
       {/* Header (Trigger) */}

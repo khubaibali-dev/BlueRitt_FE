@@ -52,8 +52,10 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setActiveToast(null);
   }, []);
 
+  const value = React.useMemo(() => ({ success, error }), [success, error]);
+
   return (
-    <ToastContext.Provider value={{ success, error }}>
+    <ToastContext.Provider value={value}>
       {children}
       
       {activeToast && activeToast.type === "success" && (

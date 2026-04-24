@@ -1,4 +1,6 @@
 import BlueRittLogo from "../components/common/logo/BlueRittLogo";
+import ThemeToggle from "../components/common/ThemeToggle";
+
 import Footer from "../components/common/Footer/Footer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
@@ -34,7 +36,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       {/* The outer page frame — matches Figma's dark rounded rectangle */}
       <div className="auth-main-container relative z-10 w-full max-w-[1140px] min-h-[600px] lg:min-h-[800px] mx-auto rounded-[24px] flex flex-col">
         {/* Header / Logo + Theme Toggle */}
-        <header className="absolute top-0 left-0 w-full z-20 px-6 pt-6 lg:px-10 lg:pt-10 flex justify-between items-center">
+        <header className="absolute top-0 left-0 w-full z-20 px-6 pt-5 lg:px-10 lg:pt-8 flex justify-between items-center">
           <div className="flex items-center gap-2">
             {(isSelectPlanPage || isVerifyOtpPage) && (
               <button
@@ -47,6 +49,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             )}
             <BlueRittLogo />
           </div>
+          <ThemeToggle />
         </header>
 
         {/* Main content — pushed down further */}

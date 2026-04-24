@@ -64,6 +64,16 @@ const Banner = () => {
   }, [selectedCategory, categoriesAndSubcategoriesData]);
 
   const handleSearch = (value: string) => {
+    if (filterType.value !== "category") {
+      if (value.trim() === "") {
+        toast.error("Please enter a keyword", { title: "Search Failed" });
+        return;
+      }
+    }
+    if (filterType.value === "category") {
+      handleCategorySearch();
+      return;
+    }
     if (!value.trim()) return;
     navigate("/explorer", {
       state: {
@@ -75,6 +85,10 @@ const Banner = () => {
   };
 
   const handleCategorySearch = () => {
+    if (!selectedCategory) {
+      toast.error("Please select a category", { title: "Search Failed" });
+      return;
+    }
     if (!selectedSubcategory) {
       toast.error("Please select a subcategory", { title: "Search Failed" });
       return;

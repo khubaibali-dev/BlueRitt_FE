@@ -131,12 +131,13 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
       </div>
 
       {/* Secondary Result Panel (Dimmable/Locked) */}
+      {/* Secondary Result Panel */}
       <div
         className="w-full rounded-[24px] p-7 text-white relative transition-all flex flex-col min-h-[220px]"
         style={gradientStyle}
       >
-        {/* Locked Overlay for Secondary Panel */}
-        {((isAdvanced && !hasGrossAccess) || (!isAdvanced && !hasNetAccess)) && (
+        {/* Locked Overlay for Secondary Panel (Always locked in Basic mode, or if permission missing in Advanced) */}
+        {((!isAdvanced) || (isAdvanced && !hasGrossAccess)) && (
           <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center rounded-[24px] overflow-hidden">
             <div
               className="absolute inset-0 transition-all opacity-100 rounded-[24px]"
@@ -155,16 +156,16 @@ const ResultPanels: React.FC<ResultPanelsProps> = ({
           </div>
         )}
 
-        {/* Content (Mirrors Primary Panel) */}
-        <div className={((isAdvanced && !hasGrossAccess) || (!isAdvanced && !hasNetAccess)) ? "opacity-20 blur-[2px] pointer-events-none" : ""}>
+        {/* Content */}
+        <div className={((!isAdvanced) || (isAdvanced && !hasGrossAccess)) ? "opacity-20 blur-[2px] pointer-events-none" : ""}>
           <h3 className="text-[16px] font-medium mb-2 tracking-wide opacity-80">
             {isAdvanced ? "Gross Profit per Unit" : "Net Profit per Unit"}
           </h3>
-          <div className="text-[48px] sm:text-[56px] font-bold tracking-tighter leading-none mb-2 drop-shadow-sm">
-            ${isAdvanced ? grossProfitUnit : "0.00"}
+          <div className="text-[30px] sm:text-[48px] font-bold tracking-tighter leading-none mb-2 drop-shadow-sm">
+            ${isAdvanced ? grossProfitUnit : netProfitUnit}
           </div>
           <div className="text-[13px] font-bold text-white mb-8 tracking-wide">
-            Total: ${isAdvanced ? totalGrossProfit : "0.00"} <span className="mx-1.5 opacity-60">•</span> {quantity} units
+            Total: ${isAdvanced ? totalGrossProfit : totalNetProfit} <span className="mx-1.5 opacity-60">•</span> {quantity} units
           </div>
 
           <div className="flex gap-4">

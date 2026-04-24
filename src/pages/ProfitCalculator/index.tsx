@@ -476,7 +476,7 @@ const ProfitCalculatorContent: React.FC<any> = ({
 
               <div className="relative isolate">
                 {/* Targeted Locked Overlay for Advanced Section */}
-                {activeTab === 'Advanced' && !hasNetAccess && (
+                {(activeTab === "Basic" || !hasNetAccess) && (
                   <div className="absolute inset-0 z-[60] flex items-center justify-center rounded-[24px] overflow-hidden p-6 mt-0">
                     <div className="absolute inset-0 bg-white/30 dark:bg-[#030B1C]/40 backdrop-blur-[6px] border border-brand-border rounded-[24px]" />
                     <div className="relative z-10 text-center flex flex-col items-center max-w-[320px]">
@@ -484,10 +484,12 @@ const ProfitCalculatorContent: React.FC<any> = ({
                         <Lock size={24} className="text-brand-primary dark:text-white" />
                       </div>
                       <h4 className="text-[20px] font-bold text-brand-textPrimary dark:text-white mb-2 leading-tight">
-                        Net Profit Calculation Locked
+                        {activeTab === "Basic" ? "Advanced Features Locked" : "Net Profit Calculation Locked"}
                       </h4>
                       <p className="text-brand-textSecondary dark:text-white/60 text-[14px] mb-6 leading-relaxed">
-                        Upgrade to the Pro plan to access detailed marketing, taxes, and net profit analytics.
+                        {activeTab === "Basic" 
+                          ? "Switch to the Advanced tab and upgrade to Pro to manage marketing, taxes, and more." 
+                          : "Upgrade to the Pro plan to access detailed marketing, taxes, and net profit analytics."}
                       </p>
                       <button
                         onClick={() => navigate("/settings?tab=plan")}

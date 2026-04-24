@@ -40,7 +40,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ toggleSidebar }) => {
 
           <div className="flex flex-col min-w-0">
             <h1 className="header-greeting !ml-0 truncate">
-              Welcome back {currentUser?.firstName || "User"}!
+              Welcome Back {currentUser?.firstName || "User"}!
             </h1>
             <p className="header-subtitle !ml-0 text-[11px] sm:text-[14px] truncate">
               Find the right product for your business

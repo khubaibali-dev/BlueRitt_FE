@@ -26,6 +26,8 @@ const SubscriptionSuccessPage = lazy(() => import("../pages/Subscription/Subscri
 const SubscriptionCancelPage = lazy(() => import("../pages/Subscription/SubscriptionCancel"));
 const TrialSuccessPage = lazy(() => import("../pages/Trial/TrialSuccessPage"));
 const TrialCancelPage = lazy(() => import("../pages/Trial/TrialCancelPage"));
+const ResetPasswordPage = lazy(() => import("../pages/UserAuth/ResetPassword"));
+
 
 import AnalysisSkeleton from "../components/common/Skeletons/AnalysisSkeleton";
 import ResearchRowSkeleton from "../components/common/Skeletons/ResearchRowSkeleton";
@@ -56,6 +58,12 @@ const routes: RouteType[] = [
   {
     path: "/forgot-password",
     element: ForgotPasswordPage,
+    layout: AuthLayout,
+    isProtected: false,
+  },
+  {
+    path: "/reset-password",
+    element: ResetPasswordPage,
     layout: AuthLayout,
     isProtected: false,
   },

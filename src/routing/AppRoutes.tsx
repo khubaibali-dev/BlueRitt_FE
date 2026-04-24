@@ -28,12 +28,12 @@ const renderRoutes = (
 
     const RouteElement = route.isProtected ? (
       <ProtectedRoute>
-        <Suspense fallback={route.fallback || <div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
+        <Suspense fallback={route.fallback || null}>
           <route.element />
         </Suspense>
       </ProtectedRoute>
     ) : (
-      <Suspense fallback={route.fallback || <div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
+      <Suspense fallback={route.fallback || null}>
         <route.element />
       </Suspense>
     );
@@ -54,7 +54,7 @@ const renderRoutes = (
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-brand-bg flex items-center justify-center text-white">Loading...</div>}>
+    <Suspense fallback={null}>
       <Routes>{renderRoutes(routes, "")}</Routes>
     </Suspense>
   );

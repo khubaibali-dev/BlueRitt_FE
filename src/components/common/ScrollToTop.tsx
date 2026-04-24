@@ -5,6 +5,12 @@ export default function ScrollToTop() {
   const { pathname, search } = useLocation();
 
   useEffect(() => {
+    // Check if we should skip scroll to top (e.g., when navigating to specific settings tabs)
+    const searchParams = new URLSearchParams(search);
+    if (pathname.includes('/settings') && searchParams.has('tab')) {
+      return;
+    }
+
     // Scroll the window (for non-dashboard layouts)
     window.scrollTo(0, 0);
     

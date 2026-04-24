@@ -21,6 +21,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
   };
 
+  React.useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-brand-bg text-brand-textPrimary transition-colors duration-300">
       {/* Sidebar - Fixed Width with Collapsed Support */}

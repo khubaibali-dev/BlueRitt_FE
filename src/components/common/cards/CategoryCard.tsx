@@ -211,7 +211,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
 
   return (
     <div
-      className="group relative vault-card h-[250px] flex flex-col border border-brand-inputBorder rounded-[14px] overflow-hidden bg-brand-card dark:bg-[#04132B]"
+      onClick={onClick}
+      className="group relative vault-card h-[250px] flex flex-col border border-brand-inputBorder rounded-[14px] overflow-hidden bg-brand-card dark:bg-[#04132B] cursor-pointer"
     >
       {renderContent()}
 

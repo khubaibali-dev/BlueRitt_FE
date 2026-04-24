@@ -54,12 +54,8 @@ const ProtectedRoute = ({ children }: IProtectedRoutePropTypes) => {
   ) {
     return (
       <Navigate
-        to="/settings"
-        state={{
-          activeTab: "Plans",
-          subscriptionType: "general",
-          trialEnabled: false,
-        }}
+        to="/settings?tab=plan"
+        state={{ defaultOpen: true }}
         replace
       />
     );

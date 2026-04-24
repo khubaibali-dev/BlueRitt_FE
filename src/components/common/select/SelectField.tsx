@@ -53,12 +53,14 @@ const SelectField: React.FC<SelectFieldProps> = ({
     };
 
     updatePosition();
+    const handleScroll = () => setIsOpen(false);
+
     window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("scroll", handleScroll, true);
 
     return () => {
       window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("scroll", handleScroll, true);
     };
   }, [isOpen, direction]);
 
@@ -129,10 +131,10 @@ const SelectField: React.FC<SelectFieldProps> = ({
         {isOpen && ReactDOM.createPortal(
           <div
             ref={portalRef}
-            className="absolute z-[9999] bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar"
+            className="fixed z-[9999] bg-brand-card border border-brand-inputBorder rounded-lg shadow-2xl max-h-[240px] overflow-y-auto custom-scrollbar"
             style={{
-              top: (direction === "up" ? coords.top - 8 : coords.top + 8) + window.scrollY,
-              left: coords.left + window.scrollX,
+              top: (direction === "up" ? coords.top - 8 : coords.top + 8),
+              left: coords.left,
               width: coords.width,
               transform: direction === "up" ? "translateY(-100%)" : "none",
             }}

@@ -180,220 +180,238 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
   };
 
   return (
-    <CollapsibleCard
-      title="Plans"
-      subtitle="Choose Your Plan"
-      isOpen={isOpen}
-      onToggle={setIsOpen}
-      scrollIntoViewOnOpen={scrollIntoViewOnOpen}
-      icon={<Box size={24} className="text-brand-primary dark:text-white" />}
-      headerRight={
-        <div className="relative w-full sm:w-auto figma-pill-border rounded-full p-[1px]">
-          <select
-            value={subscriptionType}
-            onChange={(e) => setSubscriptionType(e.target.value as "subscription" | "one_time")}
-            className="appearance-none bg-brand-inputBg dark:bg-[#041024] text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none transition-colors w-full border-none shadow-none"
-          >
-            {!isPrepaidUser && (
-              <option value="subscription">Recurring Subscription</option>
-            )}
-            <option value="one_time">One Time Prepaid</option>
-          </select>
-          <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-textSecondary dark:text-slate-400 pointer-events-none" />
-        </div>
-      }
-    >
-      <div className="flex flex-col gap-3">
-        {/* Billing Cycle Switcher */}
-        {!isOneTime && (
-          <div className="flex justify-center mb-6">
-            <div className="figma-pill-border bg-brand-inputBg dark:bg-[#041024] p-1 rounded-full flex items-center gap-1">
-              {(["monthly", "quarterly", "annually"] as const).map((cycle) => (
-                <button
-                  key={cycle}
-                  onClick={() => setBillingCycle(cycle)}
-                  className={`px-4 sm:px-6 py-2 rounded-full text-[12px] sm:text-[13px] font-bold transition-colors duration-200 capitalize z-10
+    <div id="plans-section">
+      <CollapsibleCard
+        title="Pricing Plans"
+        subtitle="Select best plans that fits your needs for your business growth, plans are flexible with the enterprise. Familiarize with the payment plans below"
+        isOpen={isOpen}
+        onToggle={setIsOpen}
+        scrollIntoViewOnOpen={scrollIntoViewOnOpen}
+        icon={<Box size={24} className="text-brand-primary dark:text-white" />}
+        headerRight={
+          <div className="relative w-full sm:w-auto figma-pill-border rounded-full p-[1px]">
+            <select
+              value={subscriptionType}
+              onChange={(e) => setSubscriptionType(e.target.value as "subscription" | "one_time")}
+              className="appearance-none bg-brand-inputBg dark:bg-[#041024] text-brand-textPrimary dark:text-white text-[13px] font-bold px-5 pr-10 py-2 rounded-full cursor-pointer focus:outline-none transition-colors w-full border-none shadow-none"
+            >
+              {!isPrepaidUser && (
+                <option value="subscription">Recurring Subscription</option>
+              )}
+              <option value="one_time">One Time Prepaid</option>
+            </select>
+            <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-textSecondary dark:text-slate-400 pointer-events-none" />
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          {/* Billing Cycle Switcher */}
+          {!isOneTime && (
+            <div className="flex justify-center mb-6">
+              <div className="figma-pill-border bg-brand-inputBg dark:bg-[#041024] p-1 rounded-full flex items-center gap-1">
+                {(["monthly", "quarterly", "annually"] as const).map((cycle) => (
+                  <button
+                    key={cycle}
+                    onClick={() => setBillingCycle(cycle)}
+                    className={`px-4 sm:px-6 py-2 rounded-full text-[12px] sm:text-[13px] font-bold transition-colors duration-200 capitalize z-10
                     ${billingCycle === cycle ? "bg-brand-gradient text-white shadow-md scale-[1.02]" : "text-brand-textSecondary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5"}`}
-                >
-                  {cycle}
-                </button>
-              ))}
+                  >
+                    {cycle}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Comparison Table */}
+          <div className="border border-brand-border dark:border-brand-border rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              {isLoading ? (
+                <PlansSkeleton isOneTime={isOneTime} />
+              ) : (
+                <>
+                  {/* Comparison Header */}
+                  <div className={`pricing-header-row ${gridClass} !items-start py-8`}>
+                    <div className="flex flex-col justify-start pt-10">
+                      <h4 className="text-[12px] sm:text-[14px] font-black text-brand-textPrimary dark:text-white tracking-widest uppercase text-left">Check Our Plans</h4>
+                    </div>
+                    {visiblePackages.map((pkg: any) => {
+                      const slug = pkg.slug.toLowerCase();
+                      const isCurrent = slug === currentUser?.subscriptionStatus?.package?.slug?.toLowerCase();
+                      const authDueDate = currentUser?.dueDate;
+                      const isExpired = authDueDate ? new Date(authDueDate) < new Date() : false;
+
+                      const planDescriptions: Record<string, string> = {
+                        basic: "Start strong with core features to kick off your BlueRitt journey",
+                        advance: "Scale smarter with advanced BlueRitt tools for business growth",
+                        premium: "Unlock the ultimate BlueRitt experience for scaling businesses",
+                      };
+
+                      return (
+                        <div key={pkg.id} className="flex flex-col items-center gap-3 text-center">
+                          <div className="flex flex-col items-center gap-1">
+                            <span className="text-[13px] sm:text-[15px] font-black text-brand-textPrimary dark:text-white capitalize leading-tight">
+                              {pkg.name}
+                            </span>
+                            <p className="text-[10px] sm:text-[11px] text-brand-textSecondary dark:text-slate-400 font-medium leading-relaxed max-w-[120px] sm:max-w-[150px]">
+                              {planDescriptions[slug.includes('advance') ? 'advance' : slug.includes('premium') ? 'premium' : 'basic']}
+                            </p>
+                          </div>
+                          {isCurrent && !isExpired ? (
+                            <span className="bg-brand-hover dark:bg-white/5 text-brand-textSecondary dark:text-slate-400 border border-brand-border dark:border-slate-700/50 px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold whitespace-nowrap">
+                              Current Plan
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleUpdatePlan(pkg)}
+                              disabled={updatingPlanId === pkg.slug}
+                              className="figma-pill-border px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-black text-brand-textPrimary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5 transition-all whitespace-nowrap flex items-center"
+                            >
+                              Update Plan
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <FeatureRow
+                    label="Pricing"
+                    renderValue={(pkg) => getPriceByCycle(pkg)}
+                    noBg
+                    isBold={true}
+                  />
+
+                  {/* Global Section */}
+                  <FeatureRow label="Global" isHeader />
+                  <FeatureRow
+                    label="Free Trial Access"
+                    renderValue={() => <Check size={16} className="text-green-500" />}
+                  />
+                  <FeatureRow
+                    label="Marketplace Access"
+                    fieldKey="marketplace_access"
+                    renderValue={(pkg) => pkg.features?.marketplace_access ? "All Amazon Marketplaces" : <X size={16} className="text-red-500" />}
+                  />
+
+                  {/* BlueRitt Explorer Section */}
+                  <FeatureRow label="BlueRitt Explorer (Complete Flow)" isHeader />
+                  <FeatureRow
+                    label="Product Search Limit"
+                    fieldKey="amazon_search"
+                    renderValue={(pkg) => `${pkg.features?.amazon_search || 0} Searches`}
+                  />
+                  <FeatureRow label="Product Details" fieldKey="amazon_detail_access" />
+                  <FeatureRow
+                    label="Customer Reviews"
+                    fieldKey="no_of_customer_review"
+                    renderValue={(pkg) => pkg.features?.no_of_customer_review === -1 ? "Unlimited" : `${pkg.features?.no_of_customer_review || 0} Top Reviews`}
+                  />
+                  <FeatureRow
+                    label="Product Offers"
+                    fieldKey="product_offer_access"
+                    renderValue={(index) => index === 0 ? <X size={16} className="text-red-500" /> : "All Available Offers"}
+                  />
+                  <FeatureRow
+                    label="Discover Suppliers (Limit)"
+                    fieldKey="supplier_discovery"
+                    renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
+                  />
+                  <FeatureRow
+                    label="Max Supplier Matches"
+                    fieldKey="no_of_supplier_per_ai_match"
+                    renderValue={(pkg) => pkg.features?.no_of_supplier_per_ai_match === -1 ? "All Matched Suppliers" : `${pkg.features?.no_of_supplier_per_ai_match || 0} Matches`}
+                  />
+                  <FeatureRow label="Gross Profit Calculation" fieldKey="access_to_gross_profit" />
+                  <FeatureRow label="Net Profit Calculation" fieldKey="access_to_net_profit" />
+                  <FeatureRow label="Product Vault" fieldKey="access_to_product_vault" />
+
+                  {/* MarginMax Calculator Section */}
+                  <FeatureRow label="BlueRitt MarginMax Calculator" isHeader />
+                  <FeatureRow
+                    label="Gross Profit Calculation"
+                    fieldKey="no_of_gross_profit_calculations"
+                    renderValue={(pkg) => `${pkg.features?.no_of_gross_profit_calculations || 0} ASINs`}
+                  />
+                  <FeatureRow
+                    label="Net Profit Calculation"
+                    fieldKey="no_of_net_profit_calculations"
+                    renderValue={(pkg, index) => (index === 0 || pkg.features?.no_of_net_profit_calculations === 0) ? <X size={16} className="text-red-500" /> : `${pkg.features?.no_of_net_profit_calculations || 0} ASINs`}
+                  />
+
+                  {/* BlueRitt SocialPulse Section */}
+                  <FeatureRow label="BlueRitt SocialPulse" isHeader />
+                  <SubHeaderRow label="TikTok Trends" />
+                  <FeatureRow
+                    label="TikTok Trending Product Searches"
+                    fieldKey="tiktok_searches"
+                    renderValue={(pkg) => `${pkg.features?.tiktok_searches || 0} Searches`}
+                  />
+                  <FeatureRow
+                    label="Discover Suppliers (X Times) - Shared Limit"
+                    fieldKey="supplier_discovery"
+                    renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
+                  />
+                  <FeatureRow
+                    label="Fetch Trending Hashtags"
+                    fieldKey="tiktok_hashtag_search"
+                    renderValue={(pkg) => `${pkg.features?.tiktok_hashtag_search || 0} Fetches`}
+                  />
+                  <FeatureRow
+                    label="Product Shop Analysis"
+                    fieldKey="access_to_product_shop_analysis"
+                    renderValue={() => <Check size={16} className="text-green-500" />}
+                  />
+
+                  <SubHeaderRow label="Amazon Trends" />
+                  <FeatureRow
+                    label="Amazon Trending Product Searches"
+                    fieldKey="amazon_trends_search"
+                    renderValue={(pkg) => `${pkg.features?.amazon_trends_search || 0} Searches`}
+                  />
+                  <FeatureRow
+                    label="Discover Suppliers (X Times)- Shared Limit"
+                    fieldKey="supplier_discovery"
+                    renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
+                  />
+                  <FeatureRow
+                    label="Amazon Trending Product Description"
+                    fieldKey="access_to_amazon_trending_description"
+                    renderValue={() => <Check size={16} className="text-green-500" />}
+                  />
+
+                  <SubHeaderRow label="Influencer link" />
+                  <FeatureRow
+                    label="Influencers Included"
+                    fieldKey="no_of_product_offer"
+                    renderValue={(_, index) => index === 0 ? "25" : "50"}
+                  />
+                  <FeatureRow
+                    label="Influencer Posted Products"
+                    fieldKey="access_to_influencer_posted_products"
+                    renderValue={() => "All Posted Products"}
+                  />
+
+                </>
+              )}
             </div>
           </div>
-        )}
-
-        {/* Comparison Table */}
-        <div className="border border-brand-border dark:border-brand-border rounded-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            {isLoading ? (
-              <PlansSkeleton isOneTime={isOneTime} />
-            ) : (
-              <>
-                {/* Comparison Header */}
-                <div className={`pricing-header-row ${gridClass}`}>
-                  <div className="flex flex-col justify-end">
-                    <h4 className="text-[12px] sm:text-[14px] font-black text-brand-textPrimary dark:text-white tracking-widest uppercase text-left">Check Our Plans</h4>
-                  </div>
-                  {visiblePackages.map((pkg: any) => {
-                    const isCurrent = pkg.slug.toLowerCase() === currentUser?.subscriptionStatus?.package?.slug?.toLowerCase();
-
-                    return (
-                      <div key={pkg.id} className="flex flex-col items-center gap-3">
-                        <span className="text-[13px] sm:text-[15px] font-black text-brand-textPrimary dark:text-white capitalize">{pkg.name}</span>
-                        {isCurrent ? (
-                          <span className="bg-brand-hover dark:bg-white/5 text-brand-textSecondary dark:text-slate-400 border border-brand-border dark:border-slate-700/50 px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold whitespace-nowrap">
-                            Current Plan
-                          </span>
-                        ) : (
-                          <button
-                            onClick={() => handleUpdatePlan(pkg)}
-                            disabled={updatingPlanId === pkg.slug}
-                            className="figma-pill-border px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-black text-brand-textPrimary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5 transition-all whitespace-nowrap flex items-center"
-                          >
-                            Update Plan
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <FeatureRow
-                  label="Pricing"
-                  renderValue={(pkg) => getPriceByCycle(pkg)}
-                  noBg
-                  isBold={true}
-                />
-
-                {/* Global Section */}
-                <FeatureRow label="Global" isHeader />
-                <FeatureRow
-                  label="Free Trial Access"
-                  renderValue={() => <Check size={16} className="text-green-500" />}
-                />
-                <FeatureRow
-                  label="Marketplace Access"
-                  fieldKey="marketplace_access"
-                  renderValue={(pkg) => pkg.features?.marketplace_access ? "All Amazon Marketplaces" : <X size={16} className="text-red-500" />}
-                />
-
-                {/* BlueRitt Explorer Section */}
-                <FeatureRow label="BlueRitt Explorer (Complete Flow)" isHeader />
-                <FeatureRow
-                  label="Product Search Limit"
-                  fieldKey="amazon_search"
-                  renderValue={(pkg) => `${pkg.features?.amazon_search || 0} Searches`}
-                />
-                <FeatureRow label="Product Details" fieldKey="amazon_detail_access" />
-                <FeatureRow
-                  label="Customer Reviews"
-                  fieldKey="no_of_customer_review"
-                  renderValue={(pkg) => pkg.features?.no_of_customer_review === -1 ? "Unlimited" : `${pkg.features?.no_of_customer_review || 0} Top Reviews`}
-                />
-                <FeatureRow
-                  label="Product Offers"
-                  fieldKey="product_offer_access"
-                  renderValue={(index) => index === 0 ? <X size={16} className="text-red-500" /> : "All Available Offers"}
-                />
-                <FeatureRow
-                  label="Discover Suppliers (Limit)"
-                  fieldKey="supplier_discovery"
-                  renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
-                />
-                <FeatureRow
-                  label="Max Supplier Matches"
-                  fieldKey="no_of_supplier_per_ai_match"
-                  renderValue={(pkg) => pkg.features?.no_of_supplier_per_ai_match === -1 ? "All Matched Suppliers" : `${pkg.features?.no_of_supplier_per_ai_match || 0} Matches`}
-                />
-                <FeatureRow label="Gross Profit Calculation" fieldKey="access_to_gross_profit" />
-                <FeatureRow label="Net Profit Calculation" fieldKey="access_to_net_profit" />
-                <FeatureRow label="Product Vault" fieldKey="access_to_product_vault" />
-
-                {/* MarginMax Calculator Section */}
-                <FeatureRow label="BlueRitt MarginMax Calculator" isHeader />
-                <FeatureRow
-                  label="Gross Profit Calculation"
-                  fieldKey="no_of_gross_profit_calculations"
-                  renderValue={(pkg) => `${pkg.features?.no_of_gross_profit_calculations || 0} ASINs`}
-                />
-                <FeatureRow
-                  label="Net Profit Calculation"
-                  fieldKey="no_of_net_profit_calculations"
-                  renderValue={(pkg, index) => (index === 0 || pkg.features?.no_of_net_profit_calculations === 0) ? <X size={16} className="text-red-500" /> : `${pkg.features?.no_of_net_profit_calculations || 0} ASINs`}
-                />
-
-                {/* BlueRitt SocialPulse Section */}
-                <FeatureRow label="BlueRitt SocialPulse" isHeader />
-                <SubHeaderRow label="TikTok Trends" />
-                <FeatureRow
-                  label="TikTok Trending Product Searches"
-                  fieldKey="tiktok_searches"
-                  renderValue={(pkg) => `${pkg.features?.tiktok_searches || 0} Searches`}
-                />
-                <FeatureRow
-                  label="Discover Suppliers (X Times) - Shared Limit"
-                  fieldKey="supplier_discovery"
-                  renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
-                />
-                <FeatureRow
-                  label="Fetch Trending Hashtags"
-                  fieldKey="tiktok_hashtag_search"
-                  renderValue={(pkg) => `${pkg.features?.tiktok_hashtag_search || 0} Fetches`}
-                />
-                <FeatureRow
-                  label="Product Shop Analysis"
-                  fieldKey="access_to_product_shop_analysis"
-                  renderValue={() => <Check size={16} className="text-green-500" />}
-                />
-
-                <SubHeaderRow label="Amazon Trends" />
-                <FeatureRow
-                  label="Amazon Trending Product Searches"
-                  fieldKey="amazon_trends_search"
-                  renderValue={(pkg) => `${pkg.features?.amazon_trends_search || 0} Searches`}
-                />
-                <FeatureRow
-                  label="Discover Suppliers (X Times)- Shared Limit"
-                  fieldKey="supplier_discovery"
-                  renderValue={(pkg) => `${pkg.features?.supplier_discovery || 0} Discoveries`}
-                />
-                <FeatureRow
-                  label="Amazon Trending Product Description"
-                  fieldKey="access_to_amazon_trending_description"
-                  renderValue={() => <Check size={16} className="text-green-500" />}
-                />
-
-                <SubHeaderRow label="Influencer link" />
-                <FeatureRow
-                  label="Influencers Included"
-                  fieldKey="no_of_product_offer"
-                  renderValue={(_, index) => index === 0 ? "25" : "50"}
-                />
-                <FeatureRow
-                  label="Influencer Posted Products"
-                  fieldKey="access_to_influencer_posted_products"
-                  renderValue={() => "All Posted Products"}
-                />
-
-              </>
-            )}
-          </div>
         </div>
-      </div>
 
-      <ConfirmPlanModal
-        isOpen={isConfirmModalOpen}
-        onClose={() => {
-          setIsConfirmModalOpen(false);
-          setPendingPlan(null);
-        }}
-        onConfirm={handleConfirmUpdate}
-        planName={pendingPlan?.name || ""}
-        billingCycle={isOneTime ? "one time" : billingCycle}
-        price={pendingPlan ? getPriceByCycle(pendingPlan) : ""}
-        isUpdating={!!updatingPlanId}
-      />
-    </CollapsibleCard>
+        <ConfirmPlanModal
+          isOpen={isConfirmModalOpen}
+          onClose={() => {
+            setIsConfirmModalOpen(false);
+            setPendingPlan(null);
+          }}
+          onConfirm={handleConfirmUpdate}
+          planName={pendingPlan?.name || ""}
+          billingCycle={isOneTime ? "one time" : billingCycle}
+          price={pendingPlan ? getPriceByCycle(pendingPlan) : ""}
+          isUpdating={!!updatingPlanId}
+        />
+      </CollapsibleCard>
+    </div>
   );
 };
 

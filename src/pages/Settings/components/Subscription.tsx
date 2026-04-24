@@ -25,6 +25,7 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isTogglingAutoRenew, setIsTogglingAutoRenew] = useState(false);
   const toast = useToast();
 
   const { data: summary, isLoading, isFetching } = useQuery({
@@ -117,12 +118,15 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
   };
 
   const onToggleAutoRenew = async () => {
+    setIsTogglingAutoRenew(true);
     try {
       await toggleAutoRenew();
-      queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
-      toast.success(`Auto-renew ${summary?.autoRenew ? 'disabled' : 'enabled'} successfuly!`);
+      await queryClient.invalidateQueries({ queryKey: ['subscription', 'account_summary'] });
+      toast.success(`Auto-renew ${summary?.autoRenew ? 'disabled' : 'enabled'} successfully!`);
     } catch {
       toast.error("Failed to toggle auto-renew. Please try again.");
+    } finally {
+      setIsTogglingAutoRenew(false);
     }
   };
 
@@ -178,7 +182,15 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
                 </span>
               </div>
               <button
-                onClick={() => setIsBalanceModalOpen(true)}
+                onClick={() => {
+                  if (isExpired || isTrial) {
+                    toast.error(
+                      "A valid subscription is required to use Fill Balance for Add-ons. Please subscribe now to enable this feature."
+                    );
+                    return;
+                  }
+                  setIsBalanceModalOpen(true);
+                }}
                 className="px-5 py-2.5 rounded-full bg-brand-gradient hover:brightness-110 active:scale-95 text-white text-[13px] font-bold transition-all shadow-lg shadow-orange-500/10 dark:shadow-orange-500/20 whitespace-nowrap"
               >
                 Fill Balance
@@ -252,21 +264,27 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
                   <span className="subscription-auto-renew-desc">Your subscription will renew automatically</span>
                 </div>
                 <div className="flex items-center self-start sm:self-center">
-                  <button
+                   <button
                     onClick={onToggleAutoRenew}
-                    disabled={isOneTimePlan}
+                    disabled={isOneTimePlan || isTogglingAutoRenew}
                     className={`
                       relative w-[52px] h-[28px] rounded-full transition-all duration-300 outline-none
                       ${isOneTimePlan ? "opacity-40 cursor-not-allowed bg-slate-200 dark:bg-slate-800" : (summary?.autoRenew ? "bg-brand-accent shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "bg-brand-bg dark:bg-slate-700 border border-brand-border dark:border-transparent")}
+                      ${isTogglingAutoRenew ? "opacity-70 cursor-wait" : ""}
                     `}
                     title={isOneTimePlan ? "Auto-renewal is not available for one-time plans" : ""}
                   >
                     <div
                       className={`
                           absolute top-[3px] left-[3px] w-[22px] h-[22px] bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out
+                          flex items-center justify-center
                           ${summary?.autoRenew ? "translate-x-[24px]" : "translate-x-0"}
                         `}
-                    />
+                    >
+                      {isTogglingAutoRenew && (
+                        <RefreshCw size={12} className="text-brand-accent animate-spin" />
+                      )}
+                    </div>
                   </button>
                 </div>
               </div>

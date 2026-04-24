@@ -3,7 +3,7 @@ import { fetchAccountSummary } from "../api/pricing";
 
 export const useAccountSummary = () => {
   return useQuery({
-    queryKey: ["account-summary"],
+    queryKey: ["subscription", "account_summary"],
     queryFn: async () => {
       const response = await fetchAccountSummary();
       return response.data;

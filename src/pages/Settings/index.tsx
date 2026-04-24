@@ -11,15 +11,27 @@ import Plans from "./components/Plans";
 const SettingsPage: React.FC = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const activeTab = searchParams.get("tab");
+  const activeTab = searchParams.get("tab")?.toLowerCase();
 
   // Determine if a section should be open by default
   // If no tab is specified, Profile is open by default
   const isProfileOpen = !activeTab || activeTab === "profile";
   const isSecurityOpen = activeTab === "security";
   const isSubscriptionOpen = activeTab === "subscription";
-  const isPlanOpen = activeTab === "plan";
+  const isPlanOpen = activeTab === "plan" || activeTab === "plans";
   const isBillingOpen = activeTab === "billing";
+
+  React.useEffect(() => {
+    if (activeTab === "plan") {
+      const timer = setTimeout(() => {
+        const el = document.getElementById("plans-section");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab]);
 
   return (
     <div className="help-page-container">
