@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Box, Check, X, ChevronDown } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import { useQuery } from "@tanstack/react-query";
 import { getPackages, createCheckout } from "../../../api/pricing";
+import { useAccountSummary } from "../../../hooks/useAccountSummary";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../components/common/Toast/ToastContext";
 import ConfirmPlanModal from "../../../components/common/TourModels/ConfirmPlanModal";
@@ -46,6 +48,8 @@ interface PlansProps {
 
 const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
   const { currentUser } = useAuth();
+  const { data: summary } = useAccountSummary({ enabled: true });
+  const userBillingCycle = summary?.billingCycle?.toLowerCase() || "monthly";
   const toast = useToast();
   const userPlanName = currentUser?.subscriptionStatus?.package?.name?.toLowerCase() || "";
   const isPrepaidUser = userPlanName.includes("prepaid basic") || userPlanName.includes("prepaid advance");
@@ -208,14 +212,21 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
           {/* Billing Cycle Switcher */}
           {!isOneTime && (
             <div className="flex justify-center mb-6">
-              <div className="figma-pill-border bg-brand-inputBg dark:bg-[#041024] p-1 rounded-full flex items-center gap-1">
+              <div className="figma-pill-border bg-brand-inputBg dark:bg-[#041024] p-1 rounded-full flex items-center gap-1 relative overflow-hidden">
                 {(["monthly", "quarterly", "annually"] as const).map((cycle) => (
                   <button
                     key={cycle}
                     onClick={() => setBillingCycle(cycle)}
-                    className={`px-4 sm:px-6 py-2 rounded-full text-[12px] sm:text-[13px] font-bold transition-colors duration-200 capitalize z-10
-                    ${billingCycle === cycle ? "bg-brand-gradient text-white shadow-md scale-[1.02]" : "text-brand-textSecondary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5"}`}
+                    className={`relative px-4 sm:px-6 py-2 rounded-full text-[12px] sm:text-[13px] font-bold transition-colors duration-300 capitalize z-10
+                    ${billingCycle === cycle ? "text-white" : "text-brand-textSecondary dark:text-white hover:bg-brand-hover dark:hover:bg-white/5"}`}
                   >
+                    {billingCycle === cycle && (
+                      <motion.div
+                        layoutId="activeCycle"
+                        className="absolute inset-0 bg-brand-gradient shadow-md rounded-full z-[-1]"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
                     {cycle}
                   </button>
                 ))}
@@ -237,7 +248,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                     </div>
                     {visiblePackages.map((pkg: any) => {
                       const slug = pkg.slug.toLowerCase();
-                      const isCurrent = slug === currentUser?.subscriptionStatus?.package?.slug?.toLowerCase();
+                      const isCurrent = slug === currentUser?.subscriptionStatus?.package?.slug?.toLowerCase() && (isOneTime ? true : billingCycle === userBillingCycle);
                       const authDueDate = currentUser?.dueDate;
                       const isExpired = authDueDate ? new Date(authDueDate) < new Date() : false;
 
@@ -266,7 +277,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                             </p>
                           </div>
                           {isCurrent && !isExpired ? (
-                            <span className="bg-brand-hover dark:bg-white/5 text-brand-textSecondary dark:text-slate-400 figma-pill-border px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold whitespace-nowrap">
+                            <span className="bg-brand-hover dark:bg-white/5 text-brand-textSecondary dark:text-dim border border-brand-inputBorder px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-[12px] font-bold whitespace-nowrap">
                               Current Plan
                             </span>
                           ) : (
@@ -399,7 +410,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                   <FeatureRow
                     label="Influencers Included"
                     fieldKey="no_of_product_offer"
-                    renderValue={(_, index) => index === 0 ? "25" : "50"}
+                    renderValue={(_, index) => index === 0 ? "25" : index === 1 ? "50" : "100"}
                   />
                   <FeatureRow
                     label="Influencer Posted Products"

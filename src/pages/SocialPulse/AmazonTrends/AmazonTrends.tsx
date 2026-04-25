@@ -433,7 +433,9 @@ const AmazonTrends: React.FC = () => {
           bannerImage={amazonBanner}
           lightBannerImage={socialpulseLight}
           title="Amazon Trends"
-          subtitle="Discover viral products and high-volume keywords"
+          subtitle="Discover trending products, search by keywords, or browse by category
+
+"
           activeTab={activeTab}
           onTabChange={(tab) => {
             setActiveTab(tab);

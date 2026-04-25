@@ -31,11 +31,11 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
 
   const handleProceed = async () => {
     setError(undefined);
-    
+
     try {
       // Validate with Yup
       await fillBalanceSchema.validate({ fillAmount: amount });
-      
+
       setIsSubmitting(true);
       const response = await chargeCard(Number(amount));
 
@@ -73,7 +73,7 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#04132B]/10 backdrop-blur-sm z-0"
+            className="fixed inset-0 bg-[#00000066] backdrop-blur-sm z-0"
           />
 
           {/* Modal Card */}
@@ -120,22 +120,22 @@ const AddBalanceModal: React.FC<AddBalanceModalProps> = ({ isOpen, onClose, curr
               {!error && <p className="text-[12px] text-brand-textSecondary dark:text-[#FFFFFFB0] mt-[-8px]">Write the amount you want to fill ($)</p>}
             </div>
 
-            <div className="purchase-action-row border-t border-brand-border dark:border-white/5">
+            <div className="flex flex-row gap-2 sm:gap-3 pt-5 mt-4 items-center w-full border-t border-brand-border dark:border-white/5">
               <button
-                className="purchase-cancel-btn !py-2.5"
+                className="purchase-cancel-btn !py-2.5 !w-auto flex-1 min-w-0 whitespace-nowrap !px-2 sm:!px-6"
                 onClick={onClose}
                 disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
-                className={`purchase-submit-btn !bg-brand-gradient !py-2 text-white !w-auto min-w-[210px] !h-[40px] !text-[15px] flex items-center justify-center gap-2 ${(!amount || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
+                className={`purchase-submit-btn !bg-brand-gradient !py-2 text-white !w-auto flex-[1.8] min-w-0 !h-[40px] text-[12px] sm:!text-[15px] whitespace-nowrap !px-2 sm:!px-6 flex items-center justify-center gap-1 sm:gap-2 ${(!amount || isSubmitting) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
                 disabled={!amount || isSubmitting}
                 onClick={handleProceed}
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={18} className="animate-spin" />
+                    <Loader2 size={16} className="animate-spin" />
                     Processing...
                   </>
                 ) : (

@@ -1093,7 +1093,7 @@
  
   /* TikTok Trends Specific Styles */
   .tiktok-banner-wrapper {
-    @apply relative w-full pt-12 pb-0 px-6 sm:px-10 overflow-hidden flex flex-col items-start min-h-[340px] sm:min-h-[420px] isolate;
+    @apply relative w-full pt-12 pb-0 px-4 sm:px-6 overflow-hidden flex flex-col items-start min-h-[340px] sm:min-h-[420px] isolate;
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
   }
@@ -1332,11 +1332,13 @@
     @apply fixed inset-0 z-[9998] bg-black/40 backdrop-blur-[8px] transition-opacity duration-300;
   }
   .filter-drawer-panel {
-    @apply fixed top-0 right-0 h-full z-[9999] flex flex-col transition-transform duration-300 ease-in-out bg-brand-card border-l border-brand-border;
+    @apply fixed top-0 right-0 h-full z-[9999] flex flex-col transition-transform duration-300 ease-in-out bg-brand-card border-l border-brand-border overflow-hidden;
     width: min(520px, 100vw);
+    max-width: 100vw;
+    box-sizing: border-box;
   }
   .filter-drawer-header {
-    @apply flex items-center justify-between px-8 py-6 border-b border-brand-inputBorder;
+    @apply flex items-center justify-between px-5 sm:px-8 py-5 sm:py-6 border-b border-brand-inputBorder;
   }
   .filter-drawer-title {
     @apply text-[20px] font-semibold text-brand-textPrimary;
@@ -1347,13 +1349,24 @@
   .filter-drawer-body {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 32px;
+    overflow-x: hidden;
+    padding: 20px 16px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 20px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  @media (min-width: 640px) {
+    .filter-drawer-body {
+      padding: 24px 32px;
+      gap: 32px;
+    }
   }
   .filter-drawer-footer {
-    @apply flex items-center justify-end gap-3 px-2 border-t border-brand-inputBorder pt-6;
+    @apply flex items-center justify-between sm:justify-end gap-3 px-5 sm:px-8 border-t border-brand-inputBorder py-4 sm:py-6;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .filter-section-label {
@@ -1397,7 +1410,7 @@
   /* border-r border-brand-border-ui */
   /* Sidebar Styles */
   .sidebar-wrapper {
-    @apply h-screen bg-brand-bg  flex-col pb-6 shrink-0 fixed lg:relative lg:flex z-40 transform transition-all duration-300 overflow-hidden;
+    @apply h-[100dvh] bg-brand-bg flex flex-col pb-6 shrink-0 fixed lg:relative z-40 transform transition-all duration-300 overflow-hidden;
     width: 240px;
   }
   
@@ -1991,7 +2004,7 @@
 
 /* Floating Chatbot */
 .chatbot-floating-wrapper {
-  @apply absolute bottom-1 right-2 sm:bottom-4 sm:right-6 lg:bottom-10 lg:right-10 flex items-center gap-3 z-50;
+  @apply fixed bottom-6 right-4 sm:bottom-8 sm:right-8 lg:bottom-10 lg:right-10 flex items-center gap-3 z-50;
 }
 
 .chatbot-tooltip {
@@ -2010,7 +2023,7 @@
 ========================================= */
 
 .addons-page-container {
-  @apply relative w-full flex flex-col px-4 sm:px-8 lg:px-12 pt-10 pb-20 rounded-[24px] sm:rounded-[32px];
+  @apply relative w-full flex flex-col px-4 sm:px-4 lg:px-6 pt-10 pb-10 rounded-[24px] sm:rounded-[32px];
   background-color: var(--brand-card-alt);
 }
 
@@ -2275,7 +2288,7 @@
 }
 
 .purchase-cancel-btn {
-  @apply w-full flex-1 py-3 px-6 rounded-full border border-brand-inputBorder dark:border-[#A1A1A1] text-[13px] font-bold text-brand-textSecondary dark:text-white transition-all bg-brand-hover dark:hover:bg-white/5 active:scale-95;
+  @apply w-full flex-1 py-3 px-6 rounded-full border border-brand-inputBorder dark:border-[#A1A1A1] text-[13px] font-bold text-brand-textSecondary dark:text-white transition-all dark:bg-[#04132B] dark:hover:bg-white/5 active:scale-95;
 }
 
 .purchase-submit-btn {
@@ -2714,19 +2727,19 @@
 }
 
 .pricing-row-standard {
-  @apply px-3 sm:px-6 py-3 sm:py-4 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px] bg-brand-card dark:bg-[#041024];
+  @apply px-3 sm:px-6 py-3 sm:py-4 items-center min-w-[750px] min-h-[56px] sm:min-h-[64px] bg-brand-card dark:bg-[#041024] border-b border-brand-border dark:border-[#1E293B]/40;
 }
 
 .pricing-row-no-bg {
-  @apply px-3 sm:px-6 py-3 sm:py-4 items-center min-w-[600px] min-h-[56px] sm:min-h-[64px];
+  @apply px-3 sm:px-6 py-3 sm:py-4 items-center min-w-[750px] min-h-[56px] sm:min-h-[64px] border-b border-brand-border dark:border-[#1E293B]/40;
 }
 
 .pricing-header-row {
-  @apply pb-6 pt-5 px-3 sm:px-6 items-center bg-brand-hover dark:bg-[#041024] min-w-[600px];
+  @apply pb-6 pt-5 px-3 sm:px-6 items-center bg-brand-hover dark:bg-[#041024] min-w-[750px] border-b border-brand-border dark:border-[#1E293B]/40;
 }
 
 .pricing-subheader-row {
-  @apply bg-brand-hover dark:bg-[#04132B] px-3 sm:px-6 py-2.5 border-b border-brand-border dark:border-[#1E293B]/40 min-w-[600px];
+  @apply bg-brand-hover dark:bg-[#04132B] px-3 sm:px-6 py-2.5 border-b border-brand-border dark:border-[#1E293B]/40 min-w-[750px];
 }
 
 .pricing-label-header {
@@ -2734,7 +2747,7 @@
 }
 
 .pricing-label-standard {
-  @apply text-[11px] sm:text-[13px] pr-2 text-brand-textSecondary dark:text-slate-400;
+  @apply text-[11px] sm:text-[14px] pr-2 text-brand-textSecondary dark:text-[#FFFFFFB2];
 }
 
 .pricing-value-cell {

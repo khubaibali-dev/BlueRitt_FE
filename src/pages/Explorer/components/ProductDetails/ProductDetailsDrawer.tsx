@@ -190,18 +190,18 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
             </button>
           </div>
 
-          <div className="flex gap-2 p-1 bg-brand-card-alt rounded-xl w-fit">
+          <div className="flex gap-2 p-1 bg-brand-card-alt rounded-xl w-full sm:w-fit">
             {(['Details', 'Reviews', 'Offers'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as "Details" | "Reviews" | "Offers")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[14px] text-[16px] transition-all ${activeTab === tab ? 'text-white shadow-lg font-bold' : 'text-brand-textSecondary dark:text-white hover:bg-brand-hover'}`}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-[14px] text-[14px] sm:text-[16px] transition-all ${activeTab === tab ? 'text-white shadow-lg font-bold' : 'text-brand-textSecondary dark:text-white hover:bg-brand-hover'}`}
                 style={activeTab === tab ? { background: 'linear-gradient(96.06deg, #155DFC -33.01%, #CD5150 124.28%)' } : {}}
               >
                 {tab === 'Details' && <Box size={14} />}
                 {tab === 'Reviews' && <Star size={14} />}
                 {tab === 'Offers' && <DollarSign size={14} />}
-                {tab}
+                <span className="whitespace-nowrap">{tab}</span>
               </button>
             ))}
           </div>
@@ -221,9 +221,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                     </p>
                   </div>
                 )}
-                <div className="flex gap-4 mb-6">
-                  <div className="w-28 h-28 rounded-[12px] overflow-hidden shrink-0 border border-brand-inputBorder p-6">
-                    <img src={details?.product_photos?.[0] || displayProduct.image} alt="" className="w-full h-full object-cover" />
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="w-full sm:w-28 h-40 sm:h-28 rounded-[12px] overflow-hidden shrink-0 border border-brand-inputBorder p-4 sm:p-6 bg-white flex items-center justify-center">
+                    <img src={details?.product_photos?.[0] || displayProduct.image} alt="" className="max-w-full max-h-full object-contain" />
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-col gap-1 mb-2">
@@ -283,7 +283,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
 
                 <div className="border-b border-brand-border mb-8 mt-2" />
 
-                <div className="grid grid-cols-4 gap-2 mb-8">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-2 mb-8">
                   {[
                     { label: "ASIN", value: details?.asin, icon: Box },
                     {
@@ -307,7 +307,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                   ))}
                 </div>
                 {/* Seller / Shipping Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                     <span className="metric-label">Seller Name</span>
                     <span className="metric-value truncate">{details?.seller || details?.product_offers?.[0]?.seller || "Amazon"}</span>
@@ -318,8 +318,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                       <span className="metric-label">Seller Country</span>
                       <span className="text-[12px] text-brand-textPrimary font-medium uppercase">{details?.seller_country || "US"}</span>
@@ -334,7 +334,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                       </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5 p-3.5 rounded-[12px] bg-brand-card-alt border border-brand-inputBorder">
                       <span className="metric-label">Item Dimensions</span>
                       <span className="metric-value truncate text-[11px]">
@@ -438,13 +438,13 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
               </div>
             ) : isReviewsLoading ? <ReviewsSkeleton /> : (
               <div className="space-y-6">
-                <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-6">
-                  <div className="flex justify-between items-end mb-6">
+                <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
                     <div>
                       <h3 className="text-brand-textPrimary font-bold text-[18px] mb-1">Customer Reviews</h3>
                       <p className="text-brand-textSecondary text-[13px]">Based on {reviews.length} recent reviews</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <div className="text-[32px] font-bold text-brand-textPrimary">{details?.product_star_rating || displayProduct.rating}</div>
                       <div className="flex justify-end gap-0.5">
                         {[...Array(5)].map((_, i) => (
@@ -531,13 +531,13 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
               </div>
             ) : isDetailsLoading ? <OffersSkeleton /> : (
               <div className="space-y-6">
-                <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-6">
-                  <div className="flex justify-between items-center ">
+                <div className="bg-brand-card-alt border border-brand-inputBorder rounded-2xl p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                       <h3 className="text-brand-textPrimary font-bold text-[18px] mb-1">Available Offers</h3>
                       <p className="text-brand-textSecondary text-[13px]">Compare prices from different sellers</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <span className="text-brand-textSecondary text-[11px] uppercase font-bold tracking-widest block mb-1">Price</span>
                       <span className="text-[#6291DE] text-[24px] font-bold">
                         {offers.length > 0 ? offers[0].product_price : "N/A"}
@@ -549,8 +549,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                 <div className="space-y-4">
                   {offers.length > 0 ? (
                     offers.map((offer, idx) => (
-                      <div key={idx} className="bg-brand-card-alt border border-brand-inputBorder rounded-xl p-6">
-                        <div className="grid grid-cols-2 gap-y-6 gap-x-12">
+                      <div key={idx} className="bg-brand-card-alt border border-brand-inputBorder rounded-xl p-4 sm:p-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12">
                           {/* Column 1 */}
                           <div className="flex flex-col gap-6">
                             <div className="flex flex-col gap-1">
@@ -572,7 +572,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                           </div>
 
                           {/* Column 2 */}
-                          <div className="flex flex-col gap-6 items-end">
+                          <div className="flex flex-col gap-6 items-start sm:items-end">
                             <div className="flex flex-col gap-1 items-end">
                               <span className="metric-label">Price</span>
                               <span className="metric-value">{offer.product_price}</span>
@@ -602,7 +602,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
                             </div>
                           </div>
                         </div>
-                        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/5 flex items-center justify-between">
+                        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                           <div className="flex items-center gap-2 text-brand-textSecondary">
                             <Store size={16} className="dark:text-[#FFFFFFB2]" />
                             <span className="text-[13px] font-medium dark:text-[#FFFFFFB2]">Sold by {offer.seller || "Amazon.com"}</span>

@@ -8,7 +8,7 @@ import bgAnalysisLight from "../../../../assets/images/Explorer-light.png";
 import ProductDetailsDrawer from "../ProductDetails/ProductDetailsDrawer";
 import SupplierSourceLink from "../SourceLink/SupplierSourceLink";
 import MetricCard from "../Common/MetricCard";
-import MetricCardSkeleton from "../Common/MetricCardSkeleton";
+import MetricCardSkeleton from "../../../../components/common/Skeletons/MetricCardSkeleton";
 import CountrySelect, { countries } from "../../../../components/common/select/CountrySelect";
 import SelectField from "../../../../components/common/select/SelectField";
 import SourceLinkProfitCalculator from "../SourceLink/SourceLinkProfitCalculator";

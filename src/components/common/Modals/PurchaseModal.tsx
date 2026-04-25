@@ -59,7 +59,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, c
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#04132B]/30 backdrop-blur-md z-0"
+            className="fixed inset-0 bg-[#00000066] backdrop-blur-sm z-0"
           />
 
           {/* Modal Card */}
@@ -128,16 +128,16 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, addon, c
               <span className="text-[13px] ml-[2px]">I agree to the purchase of {numAmount} credits for ${addon.cost} and confirm that all sales are final.</span>
             </label>
 
-            <div className="purchase-action-row">
+            <div className="flex flex-row gap-2 sm:gap-3 items-center w-full mt-2">
               <button
-                className="purchase-cancel-btn"
+                className="purchase-cancel-btn !py-2.5 !w-auto flex-1 min-w-0 whitespace-nowrap !px-2 sm:!px-6"
                 onClick={onClose}
                 disabled={purchaseMutation.isPending}
               >
                 Cancel
               </button>
               <button
-                className="purchase-submit-btn"
+                className={`purchase-submit-btn !py-2 !w-auto flex-[1.8] min-w-0 !h-[40px] text-[12px] sm:!text-[13px] whitespace-nowrap !px-2 sm:!px-6 flex items-center justify-center gap-1 sm:gap-2 ${purchaseMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => purchaseMutation.mutate(addon.id)}
                 disabled={purchaseMutation.isPending}
               >

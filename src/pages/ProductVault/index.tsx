@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import { useToast } from "../../components/common/Toast/ToastContext";
 
 import CategoryCard from "../../components/common/cards/CategoryCard";
 import { useCategorySync } from "../../hooks/useCategorySync";
+import PageHeader from "../../components/common/PageHeader/PageHeader";
 
 const ProductVault: React.FC = () => {
   const queryClient = useQueryClient();
@@ -28,7 +30,7 @@ const ProductVault: React.FC = () => {
           try {
             const detailRes = await getSavedCategoriesDetail({ id: cat.id });
             const products = detailRes?.data?.products || [];
-            
+
             // Extract preview images from products
             const previewImages = products.slice(0, 4).map((p: any) => {
               const amazonData = p.amazon_product?.data || p.amazon_product || {};
@@ -168,12 +170,15 @@ const ProductVault: React.FC = () => {
       />
 
       {/* Create Modal */}
-      <CreateCollectionModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onConfirm={(name) => createMutation.mutate(name)}
-        isLoading={createMutation.isPending}
-      />
+      <AnimatePresence>
+        {isCreateModalOpen && (
+          <CreateCollectionModal
+            onClose={() => setIsCreateModalOpen(false)}
+            onConfirm={(name) => createMutation.mutate(name)}
+            isLoading={createMutation.isPending}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="relative z-10 px-4 py-4 sm:px-4 sm:py-6">
         {selectedCollection ? (
@@ -187,10 +192,11 @@ const ProductVault: React.FC = () => {
           </div>
         ) : (
           <div className="animate-in fade-in duration-500">
-            <div className="mb-10">
-              <h1 className="banner-heading-text !text-left !mb-1 text-brand-textPrimary dark:text-white !text-[24px]">Product Vault</h1>
-              <p className="tool-fusion-subtitle ml-4">Manage your saved product searches and categories</p>
-            </div>
+            <PageHeader
+              title="Product Vault"
+              subtitle="Manage your saved product searches and categories"
+              className="mt-4"
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {isLoadingTotal ? (

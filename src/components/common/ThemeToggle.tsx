@@ -6,18 +6,30 @@ const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="flex items-center dark:bg-white/5 
-      bg-black/5 justify-center p-3 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300"
-      aria-label="Toggle theme"
-    >
-      {theme === "light" ? (
-        <Moon size={22} className="text-black dark:text-white transition-colors" />
-      ) : (
-        <Sun size={22} className="text-black dark:text-white transition-colors" />
-      )}
-    </button>
+    <div className="theme-toggle-wrapper !flex">
+      <button
+        onClick={() => theme === 'light' && toggleTheme()}
+        className={`p-1.5 rounded-full transition-all ${
+          theme === 'dark' 
+            ? 'bg-brand-bg text-brand-textPrimary shadow-sm' 
+            : 'text-brand-textSecondary'
+        }`}
+        aria-label="Switch to dark mode"
+      >
+        <Moon size={18} />
+      </button>
+      <button
+        onClick={() => theme === 'dark' && toggleTheme()}
+        className={`p-1.5 rounded-full transition-all ${
+          theme === 'light' 
+            ? 'bg-white text-brand-primary shadow-sm' 
+            : 'text-brand-textSecondary'
+        }`}
+        aria-label="Switch to light mode"
+      >
+        <Sun size={18} />
+      </button>
+    </div>
   );
 };
 

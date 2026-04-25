@@ -10,7 +10,6 @@ import AlibabaSupplierCard from "../Common/Cards/AlibabaSupplierCard";
 import SelectField from "../../../../components/common/select/SelectField";
 import TrendProductCard from "../../../SocialPulse/TiktokTrends/components/TrendProductCard";
 import Tooltip from "../../../../components/common/Tooltip/Tooltip";
-import { formatNumber } from "../../../../api/tiktokTrends";
 import { checkIsTikTokProduct, normalizeAmazonProduct, normalizeTikTokProduct } from "../../../../utils/cardDataNormalizers";
 
 interface SupplierSourceLinkProps {

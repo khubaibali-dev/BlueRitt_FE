@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Info, Users, Crown } from "lucide-react";
-import InfluencerHeader from "./components/InfluencerHeader";
+import PageHeader from "../../../components/common/PageHeader/PageHeader";
 import InfluencerCard from "../../../components/common/SpkCards/InfluencerCard";
 import InfluencerDetailsDrawer from "./components/InfluencerDetailsDrawer";
 
@@ -125,11 +125,12 @@ const InfluencerLink: React.FC = () => {
           <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent pointer-events-none" />
         </div>
 
-        <div className="w-full max-w-[1240px] z-10 flex flex-col items-start px-1 sm:px-0">
+        <div className="w-full z-10 flex flex-col items-start px-0 sm:px-0">
           {/* 1. Module Heading */}
-          <InfluencerHeader
-            title="Discover Influencers"
-            subtitle="Connect with verified creators and explore their endorsed products"
+          <PageHeader
+            title="Influencer Link"
+            subtitle="Discover what Top Influencers are saying and see their trending posts and products"
+            className="mt-2"
           />
 
           {/* 2. Search Area */}
@@ -164,24 +165,24 @@ const InfluencerLink: React.FC = () => {
             </form>
 
             {/* Upgrade Hint Text */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-1 w-full max-w-3xl mb-12">
-              <div className="flex items-center gap-2 text-[14px] text-brand-textSecondary dark:text-[#FFFFFF99]">
-                <Info size={24} className="text-brand-textPrimary dark:text-white" />
-                <span className="text-[14px] leading-none">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 px-1 w-full max-w-3xl mb-12">
+              <div className="flex items-center gap-2.5 text-[14px] text-brand-textSecondary dark:text-[#FFFFFF99]">
+                <Info size={18} className="text-brand-textPrimary dark:text-white shrink-0" />
+                <span className="text-[14px] whitespace-nowrap">
                   You can view up to <span className="font-black text-[#FF5900]">{influencerLimit === Infinity ? "Unlimited" : influencerLimit}</span> influencers • All Posted Products
                 </span>
-                {userPlan !== "premium" && (
-                  <>
-                    <span className="w-1 h-1 rounded-full bg-slate-700 hidden sm:block" />
-                    <button
-                      onClick={() => navigate("/settings?tab=plan")}
-                      className="text-[14px] text-[#FF5900] hover:text-orange-300 transition-all text-left underline border-none bg-transparent cursor-pointer"
-                    >
-                      Upgrade to view more influencers
-                    </button>
-                  </>
-                )}
               </div>
+              {userPlan !== "premium" && (
+                <div className="pl-[28px] sm:pl-0 flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-textSecondary/40 hidden sm:block mr-3" />
+                  <button
+                    onClick={() => navigate("/settings?tab=plan")}
+                    className="text-[14px] text-[#FF5900] hover:text-orange-300 transition-all text-left underline border-none bg-transparent cursor-pointer font-medium whitespace-nowrap"
+                  >
+                    Upgrade to view more influencers
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Top Picks Section - Only show when NOT searching */}

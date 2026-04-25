@@ -52,7 +52,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-[#00000066] backdrop-blur-sm z-0"
             onClick={onClose}
           />
 

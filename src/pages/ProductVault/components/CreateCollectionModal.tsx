@@ -2,16 +2,15 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { X, Plus } from "lucide-react";
 import InputField from "../../../components/common/input/InputField";
+import { motion } from "framer-motion";
 
 interface CreateCollectionModalProps {
-  isOpen: boolean;
   onClose: () => void;
   onConfirm: (name: string) => void;
   isLoading: boolean;
 }
 
 const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
-  isOpen,
   onClose,
   onConfirm,
   isLoading
@@ -21,18 +20,14 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
 
   useEffect(() => {
     setMounted(true);
-    if (isOpen) {
-      setCollectionName("");
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    setCollectionName("");
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, []);
 
-  if (!mounted || !isOpen) return null;
+  if (!mounted) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +37,24 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-[440px] bg-white dark:bg-[#04132B] rounded-[16px] border border-brand-border dark:border-white/10 shadow-2xl relative overflow-hidden flex flex-col p-6 animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+      />
+
+      {/* Modal Box */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="w-full max-w-[440px] bg-white dark:bg-[#04132B] rounded-[16px] border border-brand-border dark:border-white/10 shadow-2xl relative overflow-hidden flex flex-col p-6"
+      >
 
         {/* Glow effects matching standard modal design */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[60px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -103,7 +114,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 

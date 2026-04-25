@@ -133,7 +133,7 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-[#04132B]/10 backdrop-blur-sm z-0"
+        className="fixed inset-0 bg-[#00000066] backdrop-blur-sm z-0"
       />
 
       {/* Modal Card */}
@@ -162,111 +162,111 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
         <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 
         {/* Content Section */}
-          <AnimatePresence mode="wait">
-            {!isAddingCollection ? (
-              <motion.div
-                key="list"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                {/* Collection Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 max-h-[280px] overflow-y-auto pr-1 custom-scrollbar">
-                  {isLoading ? (
-                    // 🔥 SKELETON UI
-                    <>
-                      {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div
-                          key={i}
-                          className="p-4 rounded-[14px] border bg-white dark:bg-brand-bg animate-pulse flex flex-col items-center justify-center gap-3 text-center"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
-                          <div className="w-20 h-3 bg-gray-200 dark:bg-gray-700 rounded" />
-                          <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
-                        </div>
-                      ))}
-                    </>
-                  ) : categories.length > 0 ? (
-                    allCategories.map((col) => (
+        <AnimatePresence mode="wait">
+          {!isAddingCollection ? (
+            <motion.div
+              key="list"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Collection Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 max-h-[280px] overflow-y-auto pr-1 custom-scrollbar">
+                {isLoading ? (
+                  // 🔥 SKELETON UI
+                  <>
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
                       <div
-                        key={col.id}
-                        onClick={() => setSelectedId(col.id)}
-                        className={`p-4 rounded-[14px] border transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center group
-                          ${selectedId === col.id
-                            ? "bg-[#F8FAFC] dark:bg-brand-bg border-gray-600 dark:border-white shadow-sm"
-                            : "bg-white dark:bg-brand-bg border-brand-inputBorder hover:border-brand-inputBorder hover:bg-brand-hover"}`}
+                        key={i}
+                        className="p-4 rounded-[14px] border bg-white dark:bg-brand-bg animate-pulse flex flex-col items-center justify-center gap-3 text-center"
                       >
-                        <div className={`quick-action-icon-circle !w-8 !h-8 transition-all duration-300
-                          ${selectedId === col.id
-                            ? "shadow-lg shadow-blue-500/20 scale-110"
-                            : "text-brand-textSecondary group-hover:text-brand-primary"}`}
-                        >
-                          <FolderOpen size={18} className="text-white" />
-                        </div>
-                        <div>
-                          <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight 
-                            ${selectedId === col.id
-                              ? "text-[#04132B] dark:text-white"
-                              : "dark:text-white text-brand-textSecondary"}`}
-                          >
-                            {col.name}
-                          </h4>
-                          <p className="text-[12px] dark:text-[#9F9F9F] text-brand-textSecondary font-medium">
-                            {col.productCount || 0} items
-                          </p>
-                        </div>
+                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+                        <div className="w-20 h-3 bg-gray-200 dark:bg-gray-700 rounded" />
+                        <div className="w-12 h-2 bg-gray-200 dark:bg-gray-700 rounded" />
                       </div>
-                    ))
-                  ) : (
-                    <div className="col-span-2 py-10 text-center text-slate-400 text-[12px]">
-                      No collections found. Create one to get started.
+                    ))}
+                  </>
+                ) : categories.length > 0 ? (
+                  allCategories.map((col) => (
+                    <div
+                      key={col.id}
+                      onClick={() => setSelectedId(col.id)}
+                      className={`p-4 rounded-[14px] border transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center group
+                          ${selectedId === col.id
+                          ? "bg-[#F8FAFC] dark:bg-brand-bg border-gray-600 dark:border-white shadow-sm"
+                          : "bg-white dark:bg-brand-bg border-brand-inputBorder hover:border-brand-inputBorder hover:bg-brand-hover"}`}
+                    >
+                      <div className={`quick-action-icon-circle !w-8 !h-8 transition-all duration-300
+                          ${selectedId === col.id
+                          ? "shadow-lg shadow-blue-500/20 scale-110"
+                          : "text-brand-textSecondary group-hover:text-brand-primary"}`}
+                      >
+                        <FolderOpen size={18} className="text-white" />
+                      </div>
+                      <div>
+                        <h4 className={`text-[13px] font-bold mb-0.5 transition-all duration-300 tracking-tight 
+                            ${selectedId === col.id
+                            ? "text-[#04132B] dark:text-white"
+                            : "dark:text-white text-brand-textSecondary"}`}
+                        >
+                          {col.name}
+                        </h4>
+                        <p className="text-[12px] dark:text-[#9F9F9F] text-brand-textSecondary font-medium">
+                          {col.productCount || 0} items
+                        </p>
+                      </div>
                     </div>
-                  )}
-                </div>
+                  ))
+                ) : (
+                  <div className="col-span-2 py-10 text-center text-slate-400 text-[12px]">
+                    No collections found. Create one to get started.
+                  </div>
+                )}
+              </div>
 
-                {/* Add New Collection */}
-                <button
-                  onClick={() => setIsAddingCollection(true)}
-                  className="flex items-center justify-start gap-2 text-[13px] font-bold dark:text-white text-brand-textPrimary mb-6 hover:text-brand-textPrimary transition-all py-1.5 rounded-xl hover:bg-brand-hover w-fit ml-0 px-2 group"
-                >
-                  <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center group-hover:bg-brand-hover transition-all ">
-                    <Plus size={14} className="text-brand-textPrimary" />
-                  </div>
-                  Add New Collection
-                </button>
-              </motion.div>
-            ) : (
-              /* Expanded Add New Collection Form */
-              <motion.div
-                key="add-form"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3 }}
-                className="relative p-[1px] rounded-[16px] bg-gradient-to-r from-[#155DFC] to-[#FF5900] mb-6"
+              {/* Add New Collection */}
+              <button
+                onClick={() => setIsAddingCollection(true)}
+                className="flex items-center justify-start gap-2 text-[13px] font-bold dark:text-white text-brand-textPrimary mb-6 hover:text-brand-textPrimary transition-all py-1.5 rounded-xl hover:bg-brand-hover w-fit ml-0 px-2 group"
               >
-                <div className="bg-white dark:bg-brand-bg rounded-[15px] p-4 flex flex-col gap-5">
-                  <div className="flex items-center gap-3">
-                    <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center text-[#04132B] dark:text-brand-textPrimary">
-                      <Plus size={16} />
-                    </div>
-                    <span className="text-[14px] font-bold text-[#04132B] dark:text-brand-textPrimary">Add New Collection</span>
-                  </div>
-                  <div className="mt-2">
-                    <InputField
-                      id="collectionName"
-                      label="Collection Name"
-                      type="text"
-                      value={collectionName}
-                      onChange={(e) => setCollectionName(e.target.value)}
-                      placeholder="e.g., Summer Products 2025"
-                    />
-                  </div>
+                <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center group-hover:bg-brand-hover transition-all ">
+                  <Plus size={14} className="text-brand-textPrimary" />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                Add New Collection
+              </button>
+            </motion.div>
+          ) : (
+            /* Expanded Add New Collection Form */
+            <motion.div
+              key="add-form"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.3 }}
+              className="relative p-[1px] rounded-[16px] bg-gradient-to-r from-[#155DFC] to-[#FF5900] mb-6"
+            >
+              <div className="bg-white dark:bg-brand-bg rounded-[15px] p-4 flex flex-col gap-5">
+                <div className="flex items-center gap-3">
+                  <div className="quick-action-icon-circle !w-8 !h-8 bg-black/5 dark:bg-white/5 flex items-center justify-center text-[#04132B] dark:text-brand-textPrimary">
+                    <Plus size={16} />
+                  </div>
+                  <span className="text-[14px] font-bold text-[#04132B] dark:text-brand-textPrimary">Add New Collection</span>
+                </div>
+                <div className="mt-2">
+                  <InputField
+                    id="collectionName"
+                    label="Collection Name"
+                    type="text"
+                    value={collectionName}
+                    onChange={(e) => setCollectionName(e.target.value)}
+                    placeholder="e.g., Summer Products 2025"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 

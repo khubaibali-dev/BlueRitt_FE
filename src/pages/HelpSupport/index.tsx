@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import PageHeader from "../../components/common/PageHeader/PageHeader";
 import { Headphones, Paperclip, Send, Bot } from "lucide-react";
 import InputField from "../../components/common/input/InputField";
 import SelectField from "../../components/common/select/SelectField";
 import tiktokBanner from "../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../assets/images/SocialPulse-light.png";
 import { useUserDetails } from "../../hooks/useUserDetails";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const HelpSupportPage: React.FC = () => {
   const { data: userDetails } = useUserDetails();
@@ -62,17 +62,17 @@ const HelpSupportPage: React.FC = () => {
       </div>
 
       <div className="relative z-10 flex flex-col w-full flex-1">
-        {/* Header Section with its own padding */}
-        <section className="relative min-h-[400px] flex flex-col pt-16 pb-4 px-6 sm:px-4">
-          <h1 className="page-header-title !mb-0 !font-normal !text-[24px]">Need Assistance? Reach Out Here</h1>
-          <p className="help-subtitle mt-1">
-            Fill out the form below, and our support team will get back to you within 24 hours. For faster resolution,
-            include details like error messages, account ID, or steps to reproduce the issue.
-          </p>
+        <section className="relative min-h-[400px] flex flex-col pt-16 pb-4 px-1 sm:px-4">
+          <PageHeader
+            title="Need Assistance? Reach Out Here"
+            subtitle="Fill out the form below, and our support team will get back to you within 24 hours. For faster resolution, include details like error messages, account ID, or steps to reproduce the issue."
+            titleClassName="!font-normal !text-[24px]"
+            subtitleClassName="mt-1"
+          />
         </section>
 
         {/* Form Card positioned deep onto the banner image */}
-        <div className="px-6 sm:px-4 relative z-20 -mt-40 sm:-mt-52">
+        <div className="px-1 sm:px-4 relative z-20 -mt-40 sm:-mt-52">
           <div className="help-form-card !mx-0">
             {/* Form Header */}
             <div className="help-form-header">

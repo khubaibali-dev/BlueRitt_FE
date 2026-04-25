@@ -5,10 +5,10 @@ import {
   SlidersHorizontal,
   Package,
 } from "lucide-react";
-import TrendsHeader from "./components/TrendsHeader";
 import TrendsTabs, { TabOption } from "./components/TrendsTabs";
 import TrendsMetricCard from "./components/TrendsMetricCard";
 import SelectField, { SelectOption } from "../../../components/common/select/SelectField";
+import PageHeader from "../../../components/common/PageHeader/PageHeader";
 
 interface MetricData {
   label: string;
@@ -48,7 +48,7 @@ interface TrendsPageTemplateProps {
   sortBy?: string;
   onSortByChange?: (value: string) => void;
   sortOptions?: SelectOption[];
-  showProductTrendsHeader?: boolean;
+  showProductPageHeader?: boolean;
   // Controlled props
   activeTab?: string;
   onTabChange?: (value: string) => void;
@@ -80,7 +80,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
   sortBy,
   onSortByChange,
   sortOptions,
-  showProductTrendsHeader = false,
+  showProductPageHeader = false,
   activeTab: controlledActiveTab,
   onTabChange: controlledOnTabChange,
   searchQuery: controlledSearchQuery,
@@ -150,7 +150,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
           <section className="relative min-h-[400px] flex flex-col pt-14 pb-4 mx-4">
             <div className="w-full max-w-[1240px] z-10 flex flex-col items-start text-left px-6 sm:px-1">
               <div className="w-full flex justify-between items-start">
-                <TrendsHeader title={title} subtitle={subtitle} />
+                <PageHeader title={title} subtitle={subtitle} />
                 <div className="mt-2">{metricsAction}</div>
               </div>
 
@@ -168,7 +168,7 @@ const TrendsPageTemplate: React.FC<TrendsPageTemplateProps> = ({
               )}
 
               {/* tiktoktrends Row */}
-              {showProductTrendsHeader && (
+              {showProductPageHeader && (
                 <div className="flex mb-4 items-center gap-2 animate-in fade-in slide-in-from-right-4 duration-500">
                   <div className="w-10 h-10 rounded-xl 
     bg-gradient-to-b from-black/10 to-[#6b96f3] 

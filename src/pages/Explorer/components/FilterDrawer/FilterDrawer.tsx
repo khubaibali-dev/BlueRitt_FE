@@ -98,8 +98,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
 
         <div className="filter-drawer-body custom-scrollbar">
           <div className="filter-section">
-            <div className="filter-input-row !items-end">
-              <div className="filter-input-wrap">
+            <div className="flex flex-row items-end gap-3 w-full">
+              <div className="flex-1 min-w-0">
                 <InputField
                   id="priceMin"
                   label={`Price Range (${country === "US" ? "$" : country})`}
@@ -110,7 +110,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   preventScientific={true}
                 />
               </div>
-              <div className="filter-input-wrap">
+              <div className="flex-1 min-w-0">
                 <InputField
                   id="priceMax"
                   type="number"
@@ -124,8 +124,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
           </div>
 
           <div className="filter-section">
-            <div className="filter-input-row !items-end">
-              <div className="filter-input-wrap">
+            <div className="flex flex-row items-end gap-3 w-full">
+              <div className="flex-1 min-w-0">
                 <InputField
                   id="ratingMin"
                   label="Star Ratings (0-5)"
@@ -136,7 +136,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   preventScientific={true}
                 />
               </div>
-              <div className="filter-input-wrap">
+              <div className="flex-1 min-w-0">
                 <InputField
                   id="ratingMax"
                   type="number"
@@ -150,8 +150,8 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
           </div>
 
           <div className="filter-section">
-            <div className="filter-input-row !items-end">
-              <div className="filter-input-wrap">
+            <div className="flex flex-row items-end gap-3 w-full">
+              <div className="flex-1 min-w-0">
                 <InputField
                   id="ratingCountMin"
                   label="Rating Count"
@@ -162,7 +162,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ isOpen, onClose, onApply, i
                   preventScientific={true}
                 />
               </div>
-              <div className="filter-input-wrap">
+              <div className="flex-1 min-w-0">
                 <InputField
                   id="ratingCountMax"
                   type="number"

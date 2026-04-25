@@ -16,7 +16,7 @@ interface TrendsTabsProps {
 
 const TrendsTabs: React.FC<TrendsTabsProps> = ({ options, activeTab, onTabChange }) => {
   return (
-    <div className="flex items-center gap-3 sm:gap-4 flex-nowrap">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
       {options.map((option) => {
         const Icon = option.icon ? (LucideIcons as any)[option.icon] : null;
         const CrownIcon = (LucideIcons as any).Crown;
@@ -25,7 +25,7 @@ const TrendsTabs: React.FC<TrendsTabsProps> = ({ options, activeTab, onTabChange
           <button
             key={option.value}
             onClick={() => onTabChange(option.value)}
-            className={`flex items-center gap-2.5 px-5 py-2.5 rounded-[12px] text-[14px] transition-all whitespace-nowrap flex-shrink-0 relative group/tab
+            className={`flex items-center justify-center sm:justify-start gap-2.5 px-5 py-2.5 rounded-[12px] text-[14px] transition-all whitespace-nowrap flex-shrink-0 w-full sm:w-auto relative group/tab
               ${activeTab === option.value
                 ? "trend-tab-active"
                 : "text-brand-textPrimary dark:text-white hover:bg-black/5 dark:hover:bg-white/10"}`}

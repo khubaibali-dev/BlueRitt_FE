@@ -21,7 +21,7 @@ import React from "react";
 import { useFormikContext } from "formik";
 import CalculatorSkeleton from "../../../../components/common/Skeletons/CalculatorSkeleton";
 import { calculatorValidationSchema as validationSchema } from "../../../../utils/calculatorSchema";
-import { saveProducts, updateProducts } from "../../../../api/savedProducts";
+import { updateProducts } from "../../../../api/savedProducts";
 import AlertToast from "../../../../components/common/Toast/AlertToast";
 import { AnimatePresence } from "framer-motion";
 

@@ -206,7 +206,7 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false, scrollIntoView
                         >
                           <Download size={16} />
                         </a>
-                        {/* <button
+                        <button
                           onClick={() => handleEmailInvoice(invoice.id)}
                           disabled={emailingInvoiceIds.includes(invoice.id)}
                           className="p-1.5 hover:bg-white/10 hover:text-white rounded-lg transition-all disabled:opacity-50"
@@ -217,7 +217,7 @@ const Invoices: React.FC<InvoicesProps> = ({ defaultOpen = false, scrollIntoView
                           ) : (
                             <Mail size={16} />
                           )}
-                        </button> */}
+                        </button>
                       </div>
                     </td>
                   </tr>

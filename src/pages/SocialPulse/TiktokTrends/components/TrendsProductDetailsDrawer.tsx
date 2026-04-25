@@ -216,27 +216,39 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
           {/* Content sections below remain high-fidelity but adjusted for layout */}
           {activeTab === "Details" ? (
             <>
-              {/* Top Info Section - Only visible in Details */}
-              <div className="flex gap-4 mb-2">
+              {/* Top Info Section - Final Responsive */}
+              <div className="flex gap-3 sm:gap-4 mb-3">
+
                 <ImageWithFallback
                   src={product.image}
                   title={product.title}
-                  className="w-28 h-28 rounded-[12px] shrink-0 border border-brand-inputBorder"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-[12px] shrink-0 border border-brand-inputBorder object-cover"
                 />
-                <div className="flex-1 min-w-0 flex justify-between">
-                  <div className="flex-1">
-                    <h4 className="product-card-title pr-4 !text-[18px] mb-2 mt-1">
-                      {product.title}
-                    </h4>
-                    <span className="text-[24px] font-black text-brand-textPrimary">{product.price}</span>
+
+                <div className="flex-1 min-w-0">
+
+                  {/* Title + Price */}
+                  <h4 className="product-card-title text-[14px] sm:text-[18px] mb-1 sm:mb-2 mt-1 line-clamp-2">
+                    {product.title}
+                  </h4>
+
+                  <span className="text-[16px] sm:text-[24px] font-black text-brand-textPrimary">
+                    {product.price}
+                  </span>
+
+                  {/* 👇 Category + Views same row */}
+                  <div className="flex items-center justify-between mt-2 gap-2">
+
+                    <span className="product-img-badge !rounded-full whitespace-nowrap text-[11px] sm:text-xs">
+                      {product.category}
+                    </span>
+
+                    <span className="product-img-badge !rounded-full whitespace-nowrap text-[11px] sm:text-xs">
+                      {formatNumber(product.view_count)} Views
+                    </span>
+
                   </div>
 
-                  <div className="flex flex-col items-end gap-2 mt-1">
-                    <div className="product-img-badge !static shrink-0 !rounded-full whitespace-nowrap">
-                      {product.category}
-                    </div>
-                    <span className="product-img-badge !rounded-full whitespace-nowrap">{formatNumber(product.view_count)} Views</span>
-                  </div>
                 </div>
               </div>
               <div className="border-b border-brand-inputBorder" />
@@ -265,8 +277,11 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
 
               {/* Metrics Grid */}
               <div className="space-y-4">
-                <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">Additional Metrics</h5>
-                <div className="grid grid-cols-4 gap-3">
+                <h5 className="text-[15px] font-bold text-brand-textPrimary tracking-tight">
+                  Additional Metrics
+                </h5>
+
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {[
                     { label: "CTR", value: enrichedMetrics?.ctr || "0.00" },
                     { label: "CVR", value: enrichedMetrics?.cvr || "0.00" },
@@ -275,9 +290,21 @@ const TrendsProductDetailsDrawer: React.FC<TrendsProductDetailsDrawerProps> = ({
                     { label: "Category", value: enrichedMetrics?.category || product.category || "N/A", fullWidth: true },
                     { label: "Subcategory", value: enrichedMetrics?.subcategory1 || "N/A", fullWidth: true }
                   ].map((metric, i) => (
-                    <div key={i} className={`product-metric-item ${metric.fullWidth ? "col-span-2" : ""} ${isEnrichedLoading ? "skeleton-pulse" : ""}`}>
-                      <span className="metric-label block mb-2">{metric.label}</span>
-                      <span className="metric-value block !text-[13px]">{isEnrichedLoading ? "..." : metric.value}</span>
+                    <div
+                      key={i}
+                      className={`
+          product-metric-item 
+          ${metric.fullWidth ? "col-span-2 sm:col-span-2 md:col-span-3 lg:col-span-2" : ""} 
+          ${isEnrichedLoading ? "skeleton-pulse" : ""}
+        `}
+                    >
+                      <span className="metric-label block mb-1 text-xs sm:text-sm">
+                        {metric.label}
+                      </span>
+
+                      <span className="metric-value block text-[12px] sm:text-[13px]">
+                        {isEnrichedLoading ? "..." : metric.value}
+                      </span>
                     </div>
                   ))}
                 </div>

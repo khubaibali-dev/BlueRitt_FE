@@ -53,14 +53,13 @@ const SelectField: React.FC<SelectFieldProps> = ({
     };
 
     updatePosition();
-    const handleScroll = () => setIsOpen(false);
 
     window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("scroll", updatePosition, true);
 
     return () => {
       window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("scroll", updatePosition, true);
     };
   }, [isOpen, direction]);
 

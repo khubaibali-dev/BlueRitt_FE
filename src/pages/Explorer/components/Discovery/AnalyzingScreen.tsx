@@ -33,7 +33,7 @@ const AnalyzingScreen: React.FC<AnalyzingScreenProps> = ({
       <div className="relative z-10 flex flex-col items-center text-center space-y-12 w-full max-w-2xl px-6">
         {!isDetailed ? (
           <div className="space-y-4 flex flex-col items-center">
-            <h2 className="text-[28px] sm:text-[32px] text-brand-textPrimary tracking-tight font-normal italic leading-snug">
+            <h2 className="text-[28px] sm:text-[32px] text-brand-textPrimary tracking-tight font-normal leading-snug">
               Analyzing your search with AI...
             </h2>
             {/* Scanning Trends Pill */}

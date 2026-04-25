@@ -7,6 +7,7 @@ import Subscription from "./components/Subscription";
 import Invoices from "./components/Invoices";
 import AddonsBalanceHistory from "./components/AddonsBalanceHistory";
 import Plans from "./components/Plans";
+import PageHeader from "../../components/common/PageHeader/PageHeader";
 
 const SettingsPage: React.FC = () => {
   const location = useLocation();
@@ -36,12 +37,11 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="help-page-container">
       {/* Header Section */}
-      <div className="max-w-[1200px] w-full mx-auto mb-4 text-left">
-        <h1 className="page-header-title !mb-0 !font-normal !text-[24px] mt-8">Settings</h1>
-        <p className="tool-fusion-subtitle ">
-          Manage your account, preferences, and subscription
-        </p>
-      </div>
+      <PageHeader
+        title="Settings"
+        subtitle="Manage your account, preferences, and subscription"
+        className="mt-6"
+      />
 
       {/* Main Content Section */}
       <div className="flex flex-col gap-6 max-w-[1200px] w-full mx-auto">

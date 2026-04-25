@@ -224,40 +224,6 @@ const TikTokTrends: React.FC = () => {
     setDiscoverySuppliers([]);
   };
 
-  // const handleApplyFilters = () => {
-  //   if (!validateSearch(searchQuery)) return;
-  //   setAppliedCountry(country);
-
-  //   setAppliedPeriod(period);
-  //   setAppliedCategory(category);
-  //   setAppliedSortBy(sortBy);
-  //   setAppliedSortOrder(sortOrder);
-  //   setPage(1);
-
-  //   setCurrentProductSearch(searchQuery);
-  //   setCurrentHashtagSearch(searchQuery);
-  //   setHasSearched(true);
-  //   setHasSearchedHashtags(true);
-
-  //   setProductFetchTrigger(prev => prev + 1);
-  //   setHashtagFetchTrigger(prev => prev + 1);
-  // };
-
-  // const handleClearFilters = () => {
-  //   setCountry("US");
-  //   setPeriod("30");
-  //   setCategory("");
-  //   setSortBy("post");
-  //   setSortOrder("desc");
-  //   setAppliedCountry("US");
-  //   setAppliedPeriod("30");
-  //   setAppliedCategory("");
-  //   setAppliedSortBy("post");
-  //   setAppliedSortOrder("desc");
-  //   setPage(1);
-  //   setProductFetchTrigger(prev => prev + 1);
-  //   setHashtagFetchTrigger(prev => prev + 1);
-  // };
 
   const handleDiscoverSupplier = async (product: any) => {
     setIsAnalyzing(true);
@@ -332,8 +298,8 @@ const TikTokTrends: React.FC = () => {
           bannerImage={tiktokBanner}
           lightBannerImage={socialpulseLight}
           title="TikTok Trends"
-          subtitle="Discover viral products and trending hashtags"
-          showProductTrendsHeader={true}
+          subtitle="Discover trending products and hashtags on TikTok with BlueRitt SocialPulse"
+          showProductPageHeader={true}
           activeTab="product"
           onTabChange={() => { }}
           searchQuery={searchQuery}
@@ -413,13 +379,13 @@ const TikTokTrends: React.FC = () => {
                 </div>
                 <button
                   onClick={handleSearch}
-                  className="upgrade-gradient-btn !px-8 !rounded-[12px] whitespace-nowrap h-[44px] w-full lg:w-auto font-bold flex items-center justify-center gap-2"
+                  className="upgrade-gradient-btn !px-12 !rounded-[12px] whitespace-nowrap h-[44px] w-full lg:w-auto font-bold flex items-center justify-center gap-2"
                 >
-                  <Sparkles size={18} /> Discover Trending Products
+                  <Sparkles size={18} /> Search
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 mb-6">
                 {/* Country Filter */}
                 <SelectField
                   id="inline-country"
@@ -469,6 +435,16 @@ const TikTokTrends: React.FC = () => {
                   onChange={setSortOrder}
                   className="!h-[44px] !rounded-[12px]"
                 />
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  onClick={handleSearch}
+                  disabled={!category}
+                  className={`upgrade-gradient-btn !px-8 !rounded-[12px] whitespace-nowrap h-[46px] w-full sm:w-auto font-bold flex items-center justify-center gap-2 transition-all ${!category ? 'opacity-50  cursor-not-allowed shadow-none' : 'hover:scale-[1.02]'}`}
+                >
+                  <Sparkles size={18} /> Discover Trending Products
+                </button>
               </div>
             </div>
           )}

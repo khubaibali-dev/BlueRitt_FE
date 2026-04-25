@@ -8,6 +8,7 @@ import { getActiveAddons, Addon } from "../../api/addons";
 import { fetchAccountSummary } from "../../api/pricing";
 import AddOnsSkeleton from "../../components/common/Skeletons/AddOnsSkeleton";
 import AddonCard from "../../components/common/cards/AddonCard";
+import PageHeader from "../../components/common/PageHeader/PageHeader";
 
 
 interface AddonSectionProps {
@@ -134,10 +135,10 @@ const AddOns: React.FC = () => {
 
   return (
     <div className="addons-page-container">
-      <div className="addons-header-section">
-        <h1 className="addons-title">Purchase Add-ons</h1>
-        <p className="tool-fusion-subtitle">Extend your limits with additional credits</p>
-      </div>
+      <PageHeader
+        title="Add-Ons"
+        subtitle="Extend your limits with additional credits"
+      />
 
       <div className="addons-balance-grid">
         <div className="addon-balance-card">

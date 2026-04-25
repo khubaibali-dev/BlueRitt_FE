@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ToolItem, BLUERITT_TOOLS, ACTIVE_TOOLS } from "../../utils/ToolFusionOptions";
+import PageHeader from "../../components/common/PageHeader/PageHeader";
 
 const ToolFusionPage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,14 +50,11 @@ const ToolFusionPage: React.FC = () => {
     <div className="tool-fusion-container">
       <div className="tool-fusion-wrapper">
         {/* Header Section */}
-        <div className="tool-fusion-header">
-          <h1 className="tool-fusion-title ">
-            ToolFusion
-          </h1>
-          <p className="tool-fusion-subtitle">
-            A curated suite of tools to support product research, compliance, and growth.
-          </p>
-        </div>
+        <PageHeader
+          title="Welcome to BlueRitt® ToolFusion"
+          subtitle="Explore a curated suite of trusted third-party tools — including Patent Checks, Barcode Verification, Product Optimization, Inspection Services, and more — all designed to accelerate your eCommerce success and streamline your operations under one unified platform.."
+          className=""
+        />
 
         {/* Blueritt Tools Section */}
         <div className="tool-section">

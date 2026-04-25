@@ -5,7 +5,6 @@ import {
   Calculator,
   TrendingUp,
   Settings,
-  CircleHelp,
   LogOut,
   Package,
   ChevronDown,
@@ -13,7 +12,8 @@ import {
   ShoppingBag,
   User,
   Radio,
-  LayoutGrid
+  Headphones,
+  Home
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 // import { useQuery } from "@tanstack/react-query";
@@ -187,10 +187,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         </div>
 
         {/* Scrollable Navigation Area */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col min-h-0">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden lg:custom-scrollbar flex flex-col min-h-0">
           {/* Main Nav */}
           <nav className="flex-1 space-y-1 px-3">
-            <NavItem icon={LayoutGrid} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={Home} label="Dashboard" to="/dashboard" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem icon={Search} label="Explorer" to="/explorer" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem icon={Calculator} label="MarginMax" to="/profit-calculator" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem icon={Puzzle} label="ToolFusion" to="/toolfusion" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
@@ -221,7 +221,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
             <div className="mt-auto mb-2" />
             <NavItem icon={TrendingUp} label="Add Ons" to="/addons" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem icon={Settings} label="Settings" to="/settings" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
-            <NavItem icon={CircleHelp} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
+            <NavItem icon={Headphones} label="Help & Support" to="/help" isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
             <NavItem
               icon={LogOut}
               label="Log Out"
