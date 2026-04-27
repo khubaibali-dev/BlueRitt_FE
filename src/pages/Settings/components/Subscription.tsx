@@ -8,6 +8,7 @@ import { toggleAutoRenew, cancelSubscription } from "../../../api/pricing";
 import { useToast } from "../../../components/common/Toast/ToastContext";
 import AddBalanceModal from "../../../components/common/Modals/AddBalanceModal";
 import CancelSubscriptionModal from "./CancelSubscriptionModal";
+import { useSubscriptionStatus } from "../../../hooks/useSubscriptionStatus";
 
 interface SubscriptionProps {
   defaultOpen?: boolean;
@@ -30,10 +31,11 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
   const toast = useToast();
 
   const { data: summary, isLoading, isFetching } = useAccountSummary({ enabled: isOpen });
+  const { isTrial, planSlug } = useSubscriptionStatus();
 
   const today = new Date();
   const dueDateStr = summary?.dueDate || "";
-  const currentPlanName = summary?.plan?.toLowerCase() || "";
+  const currentPlanName = summary?.plan?.toLowerCase() || planSlug;
   const isOneTimePlan = currentPlanName.includes("one time") ||
     currentPlanName.includes("prepaid") ||
     currentPlanName.includes("one-time");
@@ -41,7 +43,6 @@ const Subscription: React.FC<SubscriptionProps> = ({ defaultOpen = false, scroll
   // Handle "16 Apr 2026" or similar formats
   const dueDate = dueDateStr ? new Date(dueDateStr) : today;
   const isExpired = dueDate < today;
-  const isTrial = summary?.plan === "Trial";
   const isSubscribed = summary?.activeSubscription === true;
 
   // Condition cases from reference

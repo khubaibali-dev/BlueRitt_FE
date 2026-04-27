@@ -854,19 +854,7 @@
     box-shadow: none !important;
   }
 
-  .search-ai-btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1.2px;
-    background: linear-gradient(90deg, #234095 0%, rgba(158, 17, 97, 0.3) 50%, #FF5900 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-  }
+
 
   .filter-pill {
     @apply flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] text-brand-textPrimary font-medium border border-brand-inputBorder bg-brand-inputBg backdrop-blur-xl transition-all;
@@ -945,7 +933,7 @@
 
 
   .sidebar-item {
-    @apply w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-[#94A3B8] hover:bg-white/5 hover:text-white;
+    @apply w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-300 text-[#94A3B8] hover:bg-white/5 hover:text-white font-semibold;
     border: 1px solid transparent; /* Prevent layout shift */
   }
 
@@ -957,7 +945,7 @@
     /* Light mode override for active sidebar item */
   :root:not(.dark) .sidebar-item-active {
     background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important; /* Added border to match size */
+    border: none !important;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
     @apply !text-brand-textPrimary !important;
   }
@@ -967,7 +955,7 @@
       linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%),
       linear-gradient(60deg, #04132B 0%, #6291DE 40%, #3A6FD8 70%, #04132B 95%) !important;
     
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border: none !important;
     @apply !text-white !important;
     border-radius: 12px !important;
   }
@@ -975,14 +963,14 @@
   .socialpulse-active {
     background: linear-gradient(91.34deg, rgba(0, 0, 0, 0.3) 0.45%, rgba(78, 116, 184, 0.3) 50%, rgba(21, 40, 80, 0.3) 99.55%) !important;
     @apply !text-white !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Added border to prevent jerk */
+    border: none !important;
     border-radius: 12px !important;
   }
 
   :root:not(.dark) .socialpulse-active {
     background: #F8FAFC !important;
     @apply !text-brand-textPrimary !important;
-    border: 1px solid #E2E8F0 !important;
+    border: none !important;
   }
 
   .sidebar-item-open {
@@ -1023,7 +1011,7 @@
       linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%),
       linear-gradient(60deg, #04132B 0%, #6291DE 40%, #3A6FD8 70%, #04132B 95%) !important;
     @apply !text-white shadow-xl shadow-blue-500/10 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
     border-radius: 10px !important;
     outline: none !important;
   }
@@ -1031,7 +1019,7 @@
   :root:not(.dark) .sidebar-submenu-active {
     background: #FFFFFF !important;
     @apply !text-brand-textPrimary shadow-sm !important;
-    border: 1px solid #0000000D !important;
+    border: none !important;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
     outline: none !important;
   }
@@ -1077,13 +1065,11 @@
   }
 
   .trend-tab-active {
-    background: linear-gradient(90.17deg, #101B2B 0%, #101B2B 5%, #4871c7 100%);
-    @apply text-white border border-brand-inputBorder !important;
+    /* Handled by framer-motion */
   }
 
   :root:not(.dark) .trend-tab-active {
-    background: #FFFFFF !important;
-    @apply !text-brand-textPrimary border border-brand-inputBorder !important;
+    /* Handled by framer-motion */
   }
 
   .upgrade-badge {
@@ -1452,13 +1438,13 @@
   .sidebar-item-active {
     @apply text-white shadow-sm font-semibold mx-2;
     background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
-    border: 1px solid transparent !important;
+    border: none !important;
   }
 
   .socialpulse-active {
     @apply text-white shadow-sm font-semibold mx-2;
     background: linear-gradient(90.17deg, #101B2B 0.14%, #447aed 99.85%);
-    border: 1px solid transparent !important;
+    border: none !important;
   }
   
   .sidebar-badge {
@@ -2288,7 +2274,7 @@
 }
 
 .purchase-cancel-btn {
-  @apply w-full flex-1 py-3 px-6 rounded-full border border-brand-inputBorder dark:border-[#A1A1A1] text-[13px] font-bold text-brand-textSecondary dark:text-white transition-all dark:bg-[#04132B] dark:hover:bg-white/5 active:scale-95;
+  @apply w-full flex-1 py-3 px-6 rounded-full figma-pill-border text-[13px] font-bold text-brand-textSecondary dark:text-white transition-all dark:bg-[#04132B] dark:hover:bg-white/5 active:scale-95;
 }
 
 .purchase-submit-btn {

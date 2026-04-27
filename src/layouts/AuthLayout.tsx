@@ -18,13 +18,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   const isVerifyOtpPage = location.pathname.includes("/verify-otp");
 
   return (
-    /*
-      Figma shows the ENTIRE design lives inside a large dark rounded container.
-      The background behind this container uses an image for the soft glows.
-    */
+
     <div className="relative min-h-screen w-full bg-brand-bg flex items-center justify-center p-4 lg:p-10 overflow-auto transition-colors duration-300">
 
-      {/* --- Background Image (Behind the main container) --- */}
       <img
         src={bgGlows}
         alt=""

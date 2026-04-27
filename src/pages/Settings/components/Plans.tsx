@@ -8,6 +8,7 @@ import { useAccountSummary } from "../../../hooks/useAccountSummary";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../components/common/Toast/ToastContext";
 import ConfirmPlanModal from "../../../components/common/TourModels/ConfirmPlanModal";
+import { useSubscriptionStatus } from "../../../hooks/useSubscriptionStatus";
 
 
 const PlansSkeleton: React.FC<{ isOneTime: boolean }> = ({ isOneTime }) => {
@@ -47,11 +48,11 @@ interface PlansProps {
 }
 
 const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen = false }) => {
-  const { currentUser } = useAuth();
+  const { userDetails } = useSubscriptionStatus();
   const { data: summary } = useAccountSummary({ enabled: true });
   const userBillingCycle = summary?.billingCycle?.toLowerCase() || "monthly";
   const toast = useToast();
-  const userPlanName = currentUser?.subscriptionStatus?.package?.name?.toLowerCase() || "";
+  const userPlanName = userDetails?.subscription_status?.package?.name?.toLowerCase() || "";
   const isPrepaidUser = userPlanName.includes("prepaid basic") || userPlanName.includes("prepaid advance");
 
   const [subscriptionType, setSubscriptionType] = useState<"subscription" | "one_time">(
@@ -248,8 +249,8 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                     </div>
                     {visiblePackages.map((pkg: any) => {
                       const slug = pkg.slug.toLowerCase();
-                      const isCurrent = slug === currentUser?.subscriptionStatus?.package?.slug?.toLowerCase() && (isOneTime ? true : billingCycle === userBillingCycle);
-                      const authDueDate = currentUser?.dueDate;
+                      const isCurrent = slug === userDetails?.subscription_status?.package?.slug?.toLowerCase() && (isOneTime ? true : billingCycle === userBillingCycle);
+                      const authDueDate = userDetails?.subscription_status?.due_on;
                       const isExpired = authDueDate ? new Date(authDueDate) < new Date() : false;
 
                       const planDescriptions: Record<string, string> = {
@@ -291,7 +292,7 @@ const Plans: React.FC<PlansProps> = ({ defaultOpen = false, scrollIntoViewOnOpen
                           )}
 
                           {/* Trial Status Message */}
-                          {isCurrent && currentUser?.subscriptionStatus?.on_trial && currentUser?.subscriptionStatus?.has_active_subscription && (
+                          {isCurrent && userDetails?.subscription_status?.on_trial && userDetails?.subscription_status?.has_active_subscription && (
                             <p className="text-[10px] sm:text-[11px] font-bold text-brand-primary dark:text-brand-primary mt-1">
                               * {isExpired ? "Trial Expired" : "Active Trial"}
                             </p>

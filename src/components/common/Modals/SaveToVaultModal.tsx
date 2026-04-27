@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { X, FolderOpen, Plus } from "lucide-react";
+import { FolderOpen, Plus } from "lucide-react";
 import AlertToast from "../../../components/common/Toast/AlertToast";
 import InputField from "../../../components/common/input/InputField";
 import { motion, AnimatePresence } from "framer-motion";
+import ModalShell from "../../../components/common/Modals/ModalShell";
 
 import { getCategory, saveProducts, createCategory, getSavedCategoriesDetail } from "../../../api/savedProducts";
 
@@ -20,7 +20,6 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
   const [categories, setCategories] = useState<any[]>([]);
   const [isAddingCollection, setIsAddingCollection] = useState(false);
   const [collectionName, setCollectionName] = useState("");
-  const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ type: "success" | "error"; title: string; message: string } | null>(null);
@@ -118,47 +117,15 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
     }
   };
 
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  if (!mounted) return null;
-
-  const modalContent = (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      {/* Backdrop Overlay */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 bg-[#00000066] backdrop-blur-sm z-0"
-      />
-
-      {/* Modal Card */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="w-full max-w-[440px] bg-white dark:bg-brand-bg rounded-[16px] border border-brand-border shadow-2xl relative z-10 overflow-hidden flex flex-col p-6"
-      >
-        {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[60px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-500/5 blur-[60px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-
-        {/* Header */}
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-[18px] font-bold text-[#04132B] dark:text-brand-textPrimary tracking-tight">Save to ProductVault</h2>
-          <button
-            onClick={onClose}
-            className="p-2 -mr-2 rounded-full hover:bg-brand-hover text-brand-textPrimary hover:text-brand-textSecondary transition-all cursor-pointer"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <p className="auth-subtitle !text-[12px] mb-4 line-clamp-1">{productTitle}</p>
+  return (
+    <ModalShell
+      isOpen={true}
+      onClose={onClose}
+      title="Save to ProductVault"
+      subtitle={productTitle}
+      maxWidth="440px"
+    >
+      <div className="p-6 pt-0">
         <div className="h-px bg-brand-inputBorder mb-4 opacity-50" />
 
         {/* Content Section */}
@@ -290,20 +257,18 @@ const SaveToVaultModal: React.FC<SaveToVaultModalProps> = ({ productTitle, calcu
             {isAddingCollection ? (isSaving ? "Creating..." : "Create Collection") : (isSaving ? "Saving..." : "Save to Collection")}
           </button>
         </div>
-      </motion.div>
 
-      {toast && (
-        <AlertToast
-          type={toast.type}
-          title={toast.title}
-          message={toast.message}
-          onClose={() => setToast(null)}
-        />
-      )}
-    </div>
+        {toast && (
+          <AlertToast
+            type={toast.type}
+            title={toast.title}
+            message={toast.message}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </div>
+    </ModalShell>
   );
-
-  return ReactDOM.createPortal(modalContent, document.body);
 };
 
 export default SaveToVaultModal;

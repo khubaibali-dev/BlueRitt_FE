@@ -6,7 +6,6 @@ import SelectField from "../../../components/common/select/SelectField";
 import { useAuth } from "../../../context/AuthContext";
 import { updateUserProfile } from "../../../api/auth";
 import { useToast } from "../../../components/common/Toast/ToastContext";
-import { Loader2 } from "lucide-react";
 
 interface AdditionalFormData {
   businessType: string;
@@ -37,10 +36,10 @@ const BUSINESS_TYPES = [
 ];
 
 const EXPERIENCE_LEVELS = [
-  "Just Starting",
-  "Growing",
-  "Established",
-  "Enterprise"
+  "Just Starting (New to e-commerce)",
+  "Growing (1-2 years experience)",
+  "Established (3+ years experience)",
+  "Enterprise (Large Scale Operations)"
 ];
 
 interface AdditionalInformationProps {

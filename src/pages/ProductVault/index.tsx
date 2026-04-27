@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -69,8 +68,6 @@ const ProductVault: React.FC = () => {
 
   // ✅ Merge and add All Products at the start
   const allCategoriesMerged = useMemo(() => {
-    // FIXED_CATEGORIES are now synced to backend, so we only show what's in the DB (+ All Products)
-    // Filter out duplicates by name just in case backend has them
     const uniqueCategories = Array.from(
       new Map(categories.map((c: any) => [c.name.trim().toLowerCase(), c])).values()
     );
@@ -81,7 +78,6 @@ const ProductVault: React.FC = () => {
       return dateA - dateB;
     });
 
-    // sum counts from all fetched categories
     const totalCountFromCategories = categories.reduce((sum, cat) => sum + (cat.product_count || 0), 0);
 
     const allProductsInfo = {
@@ -170,15 +166,12 @@ const ProductVault: React.FC = () => {
       />
 
       {/* Create Modal */}
-      <AnimatePresence>
-        {isCreateModalOpen && (
-          <CreateCollectionModal
-            onClose={() => setIsCreateModalOpen(false)}
-            onConfirm={(name) => createMutation.mutate(name)}
-            isLoading={createMutation.isPending}
-          />
-        )}
-      </AnimatePresence>
+      <CreateCollectionModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onConfirm={(name) => createMutation.mutate(name)}
+        isLoading={createMutation.isPending}
+      />
 
       <div className="relative z-10 px-4 py-4 sm:px-4 sm:py-6">
         {selectedCollection ? (

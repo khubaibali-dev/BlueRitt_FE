@@ -16,9 +16,9 @@ import {
   Home
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
-// import { useQuery } from "@tanstack/react-query";
-// import { getCategory } from "../../../api/savedProducts";
+import { motion } from "framer-motion";
 import BlueRittLogo from "../logo/BlueRittLogo";
+import { useAuth } from "../../../context/AuthContext";
 
 interface NavItemProps {
   icon: React.ElementType;
@@ -54,21 +54,44 @@ const NavItem: React.FC<NavItemProps> = ({
     ? children.some(child => location.pathname === child.to) || location.pathname === to || isExpanded
     : location.pathname === to || (extraPaths && extraPaths.some((p: string) => location.pathname.startsWith(p)));
 
+  const activeClass = label === "SocialPulse" ? "socialpulse-active" : "sidebar-item-active";
+
+  // Shared inner content renderer to handle centering when collapsed
+  const renderContent = (iconSize: number, showLabel: boolean, showChevron: boolean = false) => (
+    <div className={`flex items-center w-full relative z-10 ${isCollapsed ? "justify-center" : "justify-between px-4 py-2.5"}`}>
+      <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
+        <Icon size={iconSize} />
+        {!isCollapsed && showLabel && <span className="text-[14px] font-normal">{label}</span>}
+      </div>
+      {!isCollapsed && showChevron && (
+        <ChevronDown
+          size={16}
+          className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+        />
+      )}
+      {!isCollapsed && badge && (
+        <span className="sidebar-badge">
+          {badge}
+        </span>
+      )}
+    </div>
+  );
+
   if (hasChildren && !isCollapsed) {
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col relative">
         <button
           onClick={onToggle}
-          className={`sidebar-item group !outline-none focus:!ring-0 ${isParentActive ? (label === "SocialPulse" ? "socialpulse-active" : "sidebar-item-active") : ""}`}
+          className={`sidebar-item group !outline-none focus:!ring-0 relative z-10 transition-colors !p-0 ${isParentActive ? "!text-brand-textPrimary dark:!text-white" : ""}`}
         >
-          <div className="flex items-center gap-3">
-            <Icon size={20} />
-            <span className="text-[14px] font-normal">{label}</span>
-          </div>
-          <ChevronDown
-            size={16}
-            className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
-          />
+          {isParentActive && (
+            <motion.div
+              layoutId="sidebar-active-pill"
+              className={`absolute inset-0 z-[-1] ${activeClass} !m-0 !p-0`}
+              transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+            />
+          )}
+          {renderContent(20, true, true)}
         </button>
 
         <div
@@ -77,20 +100,33 @@ const NavItem: React.FC<NavItemProps> = ({
         >
           <div className="overflow-hidden">
             <div className="sidebar-submenu-container">
-              {children.map((child) => (
-                <NavLink
-                  key={child.to}
-                  to={child.to}
-                  onClick={onClick}
-                  end
-                  className={({ isActive }) =>
-                    `sidebar-submenu-item group !outline-none focus:!ring-0 ${isActive ? "sidebar-submenu-active" : ""}`
-                  }
-                >
-                  <child.icon size={18} />
-                  <span className="text-[14px] font-normal">{child.label}</span>
-                </NavLink>
-              ))}
+              {children.map((child) => {
+                 const isSubActive = location.pathname === child.to;
+                 const SubIcon = child.icon;
+                 return (
+                  <NavLink
+                    key={child.to}
+                    to={child.to}
+                    onClick={onClick}
+                    end
+                    className={({ isActive }) =>
+                      `sidebar-submenu-item group !outline-none focus:!ring-0 relative z-10 transition-colors !p-0 ${isActive ? "!text-brand-textPrimary dark:!text-white" : ""}`
+                    }
+                  >
+                    {isSubActive && (
+                      <motion.div
+                        layoutId="sidebar-submenu-active-pill"
+                        className="absolute inset-0 z-[-1] sidebar-submenu-active !m-0 !p-0"
+                        transition={{ type: "spring", bounce: 0.1, duration: 0.4 }}
+                      />
+                    )}
+                    <div className="flex items-center gap-3 px-10 py-2 relative z-10 w-full">
+                      <SubIcon size={18} />
+                      <span className="text-[14px] font-normal">{child.label}</span>
+                    </div>
+                  </NavLink>
+                 );
+              })}
             </div>
           </div>
         </div>
@@ -98,29 +134,24 @@ const NavItem: React.FC<NavItemProps> = ({
     );
   }
 
+  const isExtraPathActive = extraPaths && extraPaths.some((p: string) => location.pathname.startsWith(p));
+  const isActive = (location.pathname === to || isExtraPathActive) && !isAnyMenuExpanded;
+
   return (
     <NavLink
       to={to}
       onClick={onClick}
       end
-      className={({ isActive }) => {
-        // If some other menu is expanded, this item should NOT be highlighted
-        const isExtraPathActive = extraPaths && extraPaths.some((p: string) => location.pathname.startsWith(p));
-        const effectiveActive = (isActive || isExtraPathActive) && !isAnyMenuExpanded;
-        const activeClass = label === "SocialPulse" ? "socialpulse-active" : "sidebar-item-active";
-        return effectiveActive ? `sidebar-item ${activeClass} group !outline-none focus:!ring-0` : "sidebar-item group !outline-none focus:!ring-0"
-      }}
+      className={`sidebar-item group !outline-none focus:!ring-0 relative z-10 transition-colors !p-0 ${isActive ? "!text-brand-textPrimary dark:!text-white" : ""}`}
     >
-      <div className="flex items-center gap-3">
-        <Icon size={18} />
-        <span className="text-[14px] font-normal">{label}</span>
-      </div>
-
-      {badge && (
-        <span className="sidebar-badge">
-          {badge}
-        </span>
+      {isActive && (
+        <motion.div
+          layoutId="sidebar-active-pill"
+          className={`absolute inset-0 z-[-1] ${activeClass} !m-0 !p-0`}
+          transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+        />
       )}
+      {renderContent(18, true)}
     </NavLink>
   );
 };
@@ -130,8 +161,6 @@ interface SidebarProps {
   isCollapsed: boolean;
   toggleSidebar: () => void;
 }
-
-import { useAuth } from "../../../context/AuthContext";
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar }) => {
   const { logoutUser } = useAuth();
@@ -181,9 +210,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
         <div className={`shrink-0 flex h-[75px] px-4 ${isCollapsed ? "lg:justify-center" : "justify-between"} items-center mb-2`}>
           <BlueRittLogo isCollapsed={isCollapsed} className="hidden lg:flex" />
           <BlueRittLogo isCollapsed={false} className="lg:hidden" />
-          {/* <button onClick={toggleSidebar} className="lg:hidden text-brand-textPrimary pl-2">
-            <X size={28} />
-          </button> */}
         </div>
 
         {/* Scrollable Navigation Area */}
@@ -212,7 +238,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, toggleSidebar })
               ]}
             />
 
-            {/*badge={categoriesCount > 0 ? categoriesCount.toString() : ""}*/}
             <NavItem icon={Package} label="Product Vault" to="/products" extraPaths={["/calculator/product"]} isCollapsed={isCollapsed} isAnyMenuExpanded={isAnyMenuExpanded} onClick={handleNavItemClick} />
           </nav>
 

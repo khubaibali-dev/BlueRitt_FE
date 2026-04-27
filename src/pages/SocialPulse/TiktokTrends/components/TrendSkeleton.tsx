@@ -47,7 +47,7 @@ export const HashtagSkeleton: React.FC = () => {
 
 const TrendSkeleton: React.FC<{ type: "product" | "hashtag"; count?: number }> = ({ type, count = 6 }) => {
   return (
-    <div className={type === "product" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
+    <div className={type === "product" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
       {Array.from({ length: count }).map((_, i) => (
         type === "product" ? <ProductSkeleton key={i} /> : <HashtagSkeleton key={i} />
       ))}
