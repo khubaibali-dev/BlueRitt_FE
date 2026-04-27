@@ -1,6 +1,6 @@
 // src/components/common/cards/CollapsibleCard.tsx
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CollapsibleCardProps {
@@ -13,6 +13,10 @@ interface CollapsibleCardProps {
   onToggle?: (isOpen: boolean) => void;
   children: React.ReactNode;
   scrollIntoViewOnOpen?: boolean;
+  showSaveButton?: boolean;
+  onSave?: () => void;
+  isSaving?: boolean;
+  saveButtonText?: string;
 }
 
 const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
@@ -25,6 +29,10 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
   onToggle,
   children,
   scrollIntoViewOnOpen = false,
+  showSaveButton = false,
+  onSave,
+  isSaving = false,
+  saveButtonText = "Save",
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
@@ -106,6 +114,23 @@ const CollapsibleCard: React.FC<CollapsibleCardProps> = ({
             <hr className="border-brand-inputBorder dark:border-slate-700 mx-6 sm:mx-8" />
             <div className="px-6 py-4 sm:px-8 sm:py-5">
               {children}
+
+              {showSaveButton && (
+                <div className="flex justify-end mt-4">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSave?.();
+                    }}
+                    disabled={isSaving}
+                    className={`bg-brand-gradient text-white px-10 py-2 sm:py-2.5 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02]  active:scale-95 border-none flex items-center gap-2 ${isSaving ? "opacity-70 cursor-not-allowed" : ""}`}
+                  >
+                    {isSaving && <Loader2 size={16} className="animate-spin" />}
+                    {isSaving ? "Saving..." : saveButtonText}
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

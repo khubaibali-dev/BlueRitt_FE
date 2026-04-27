@@ -26,7 +26,7 @@ type UserAuthContextType = {
   setAccessToken: (token: string) => void;
   currentUser: TUser;
   setCurrentUser: React.Dispatch<React.SetStateAction<TUser>>;
-  fetchUserDetails: () => Promise<void>;
+  fetchUserDetails: (force?: boolean) => Promise<void>;
   loading: boolean;
   needsSubscription: boolean;
   dueDate: string;
@@ -54,7 +54,7 @@ const userAuthContext = createContext<UserAuthContextType>({
   setAccessToken: () => {},
   currentUser: initialUser,
   setCurrentUser: () => {},
-  fetchUserDetails: async () => {},
+  fetchUserDetails: async (force?: boolean) => {},
   loading: true,
   needsSubscription: false,
   dueDate: "",
@@ -106,7 +106,7 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
     }
   };
 
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = async (force = false) => {
     try {
       // Get token from localStorage to ensure we have the latest value
       const token = getAccessToken();
@@ -121,7 +121,7 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
           const res = await getUserDetails();
           return res.data;
         },
-        staleTime: 5 * 60 * 1000,
+        staleTime: force ? 0 : 5 * 60 * 1000,
       });
 
       const updatedUser: TUser = {
@@ -131,6 +131,9 @@ const AuthProvider: React.FC<TUserAuthContextProviderProps> = ({
         fullName: userProfile.profile.full_name,
         phone: userProfile.profile.phone,
         country: userProfile.profile.country || "",
+        businessType: userProfile.profile.business_type || "",
+        experienceLevel: userProfile.profile.experience_level || "",
+        goals: userProfile.profile.main_goals || [],
         searchQuota: userProfile.search_quota as TSearchQuota,
         features: userProfile.features as TUserFeatures,
         subscriptionStatus:

@@ -74,6 +74,9 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false, sc
       defaultOpen={defaultOpen}
       scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<Lock size={24} className="text-white" />}
+      showSaveButton={true}
+      onSave={formik.handleSubmit}
+      isSaving={isSaving}
     >
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -142,16 +145,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ defaultOpen = false, sc
           />
         </div>
 
-        <div className="flex justify-end mt-2">
-          <button
-            type="submit"
-            disabled={isSaving}
-            className={`bg-brand-gradient text-white px-10 py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${isSaving ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-          >
-            {isSaving ? "Updating..." : "Save"}
-          </button>
-        </div>
+
       </form>
     </CollapsibleCard>
   );

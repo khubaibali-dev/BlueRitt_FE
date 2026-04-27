@@ -18,6 +18,7 @@ interface SelectFieldProps {
   required?: boolean;
   className?: string;
   direction?: "up" | "down";
+  disabled?: boolean;
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({
@@ -31,6 +32,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   required = false,
   className = "",
   direction = "down",
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -84,7 +86,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
         <div className="flex justify-between items-center pr-1">
           <label
             htmlFor={id}
-            className="text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white cursor-pointer"
+            className={`text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
@@ -97,11 +99,12 @@ const SelectField: React.FC<SelectFieldProps> = ({
           ref={buttonRef}
           type="button"
           id={id}
-          onClick={() => setIsOpen(!isOpen)}
+          disabled={disabled}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
           className={`
             w-full flex items-center justify-between gap-3 px-4 py-[12px] ${className || "rounded-lg"}
             bg-brand-inputBg border transition-all duration-200
-            focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none
+            ${disabled ? "opacity-70 cursor-not-allowed bg-brand-inputBg/50" : "focus:shadow-[0_0_0_2px_rgba(37,99,235,0.5)] outline-none"}
             ${error ? "border-red-500" : "border-brand-inputBorder"}
           `}
         >
@@ -112,8 +115,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           <svg
-            className={`w-[24px] h-[24px] text-brand-textPrimary transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-              }`}
+            className={`w-[24px] h-[24px] text-brand-textPrimary transition-transform duration-200 ${isOpen ? "rotate-180" : ""} ${disabled ? "opacity-50" : ""}`}
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { X, Sparkles, TrendingUp, DollarSign, Users, Package, Eye, Activity, ChevronRight, Check } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";
 
 interface OnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onComplete?: (data: { businessType: string | null; goals: string[]; experience: string | null }) => void;
 }
 
-const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) => {
+const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose, onComplete }) => {
+  const { currentUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [mounted, setMounted] = useState(false);
 
@@ -39,7 +42,15 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
   };
 
   const handleFinish = () => {
-    localStorage.setItem("blueritt_onboarding_completed", "true");
+    if (currentUser?.email) {
+      localStorage.setItem(`blueritt_onboarding_completed_${currentUser.email}`, "true");
+    } else {
+      localStorage.setItem("blueritt_onboarding_completed", "true");
+    }
+    
+    if (onComplete) {
+      onComplete({ businessType, goals, experience });
+    }
     onClose();
   };
 
@@ -221,7 +232,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClose }) =>
         <div className="p-6 pt-0 flex items-center justify-between">
           {currentStep < 4 ? (
             <button
-              onClick={handleFinish}
+              onClick={handleNext}
               className="text-[14px] font-bold text-brand-textSecondary dark:text-white hover:opacity-80 transition-opacity"
             >
               Skip

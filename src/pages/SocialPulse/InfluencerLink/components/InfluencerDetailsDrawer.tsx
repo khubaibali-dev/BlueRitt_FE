@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, ExternalLink, Users, TrendingUp, Eye, Crown } from "lucide-react";
 import { getInfluencerPosts, InfluencerPost } from "../../../../api/amazonTrends";
-import { useUserDetails } from "../../../../hooks/useUserDetails";
+import { useSubscriptionStatus } from "../../../../hooks/useSubscriptionStatus";
 
 interface InfluencerDetailsDrawerProps {
   isOpen: boolean;
@@ -22,13 +22,7 @@ const InfluencerDetailsDrawer: React.FC<InfluencerDetailsDrawerProps> = ({ isOpe
   const navigate = useNavigate();
   const [posts, setPosts] = useState<InfluencerPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { data: userDetails } = useUserDetails();
-
-  const userPlan = userDetails?.subscription_status?.package?.slug?.toLowerCase() || "trial";
-
-  const isTrial = useMemo(() => {
-    return !userPlan.includes("premium") && !userPlan.includes("advance") && !userPlan.includes("basic") && userPlan === "trial";
-  }, [userPlan]);
+  const { isTrial } = useSubscriptionStatus();
 
   const postLimit = useMemo(() => {
     return isTrial ? 5 : 100;

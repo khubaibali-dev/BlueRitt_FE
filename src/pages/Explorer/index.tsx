@@ -6,8 +6,10 @@ import ExplorerStats from "./components/Common/ExplorerStats";
 import ExplorerTourModal from "../../components/common/TourModels/ExplorerTourModal";
 import AnalyzingScreen from "./components/Discovery/AnalyzingScreen";
 import DiscoveryResults from "./components/Discovery/DiscoveryResults";
+import { useAuth } from "../../context/AuthContext";
 
 const ExplorerPage: React.FC = () => {
+  const { currentUser } = useAuth();
   const location = useLocation();
   const [showTour, setShowTour] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -19,15 +21,21 @@ const ExplorerPage: React.FC = () => {
   const [isDetailedLoading, setIsDetailedLoading] = useState(false);
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem("blueritt_explorer_tour_completed");
+    if (!currentUser?.email) return;
+
+    const hasCompleted = localStorage.getItem(`blueritt_explorer_tour_completed_${currentUser.email}`);
     if (!hasCompleted) {
       setShowTour(true);
     }
-  }, []);
+  }, [currentUser?.email]);
 
   const handleCloseTour = () => {
     setShowTour(false);
-    localStorage.setItem("blueritt_explorer_tour_completed", "true");
+    if (currentUser?.email) {
+      localStorage.setItem(`blueritt_explorer_tour_completed_${currentUser.email}`, "true");
+    } else {
+      localStorage.setItem("blueritt_explorer_tour_completed", "true");
+    }
   };
 
   useEffect(() => {

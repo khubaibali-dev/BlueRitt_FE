@@ -4,7 +4,7 @@ import { X, Star, Box, BarChart3, Truck, DollarSign, ChevronDown, ChevronUp, Ale
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getAmazonExplorerProductDetails, getAmazonExplorerProductReviews, ProductReview } from "../../../../api/amazonExplorer";
-import { useUserDetails } from "../../../../hooks/useUserDetails";
+import { useSubscriptionStatus } from "../../../../hooks/useSubscriptionStatus";
 import DetailsSkeleton from "./skeletons/DetailsSkeleton";
 import ReviewsSkeleton from "./skeletons/ReviewsSkeleton";
 import OffersSkeleton from "./skeletons/OffersSkeleton";
@@ -105,8 +105,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({ isOpen, onC
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [displayProduct, setDisplayProduct] = useState(product);
 
-  const { data: userDetails } = useUserDetails();
-  const isTrial = userDetails?.subscription_status?.on_trial || userDetails?.subscription_status?.package?.slug?.toLowerCase() === "trial" || !userDetails?.subscription_status?.package?.slug;
+  const { isTrial } = useSubscriptionStatus();
 
   useEffect(() => {
     if (product) {

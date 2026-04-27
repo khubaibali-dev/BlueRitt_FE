@@ -79,15 +79,21 @@ const ProfitCalculator: React.FC = () => {
   const hasNetAccess = userDetails?.features?.access_to_net_profit ?? true;
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem("blueritt_profit_calculator_tour_completed");
+    if (!userDetails?.email) return;
+
+    const hasCompleted = localStorage.getItem(`blueritt_profit_calculator_tour_completed_${userDetails.email}`);
     if (!hasCompleted) {
       setShowTour(true);
     }
-  }, []);
+  }, [userDetails?.email]);
 
   const handleCloseTour = () => {
     setShowTour(false);
-    localStorage.setItem("blueritt_profit_calculator_tour_completed", "true");
+    if (userDetails?.email) {
+      localStorage.setItem(`blueritt_profit_calculator_tour_completed_${userDetails.email}`, "true");
+    } else {
+      localStorage.setItem("blueritt_profit_calculator_tour_completed", "true");
+    }
   };
 
   // 1. Fetch saved calculation if ID exists

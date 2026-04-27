@@ -173,6 +173,9 @@ export const updateUserProfile = (profileData: {
   last_name?: string;
   phone?: string;
   country?: string;
+  business_type?: string;
+  experience_level?: string;
+  main_goals?: string[];
 }) => {
   return api.patch(`/auth/me/`, profileData);
 };

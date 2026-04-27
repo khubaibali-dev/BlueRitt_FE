@@ -1,8 +1,12 @@
 // src/pages/Settings/components/AdditionalInformation.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User, TrendingUp, DollarSign, UserSearch, Box, Target, Zap } from "lucide-react";
 import CollapsibleCard from "../../../components/common/cards/CollapsibleCard";
 import SelectField from "../../../components/common/select/SelectField";
+import { useAuth } from "../../../context/AuthContext";
+import { updateUserProfile } from "../../../api/auth";
+import { useToast } from "../../../components/common/Toast/ToastContext";
+import { Loader2 } from "lucide-react";
 
 interface AdditionalFormData {
   businessType: string;
@@ -11,12 +15,32 @@ interface AdditionalFormData {
 }
 
 const GOALS = [
-  { id: "find_winning_products", label: "Find Winning Products", icon: TrendingUp },
-  { id: "maximize_profit_margins", label: "Maximize Profit Margins", icon: DollarSign },
-  { id: "strategic_supplier_discovery", label: "Strategic Supplier Discovery", icon: UserSearch },
-  { id: "manage_product_catalog", label: "Manage Product Catalog", icon: Box },
-  { id: "track_market_trends", label: "Track Market Trends", icon: Target },
-  { id: "simulate_pricing_scenarios", label: "Simulate Pricing Scenarios", icon: Zap },
+  { id: "products", label: "Find Winning Products", icon: TrendingUp },
+  { id: "margins", label: "Maximize Profit Margins", icon: DollarSign },
+  { id: "suppliers", label: "Strategic Supplier Discovery", icon: UserSearch },
+  { id: "catalog", label: "Manage Product Catalog", icon: Box },
+  { id: "trends", label: "Track Market Trends", icon: Target },
+  { id: "pricing", label: "Simulate Pricing Scenarios", icon: Zap },
+];
+
+const BUSINESS_TYPES = [
+  "Marketplace/Amazon Seller",
+  "E-commerce Business",
+  "Dropshipping",
+  "Private Label",
+  "Wholesale",
+  "Retail Arbitrage",
+  "Product Researcher",
+  "Agency/Consultant",
+  "New Seller/Explorer",
+  "Other"
+];
+
+const EXPERIENCE_LEVELS = [
+  "Just Starting",
+  "Growing",
+  "Established",
+  "Enterprise"
 ];
 
 interface AdditionalInformationProps {
@@ -24,24 +48,51 @@ interface AdditionalInformationProps {
 }
 
 const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOpen = false }) => {
+  const { currentUser, fetchUserDetails } = useAuth();
+  const toast = useToast();
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<AdditionalFormData>({
-    businessType: "marketplace_amazon_seller",
-    experienceLevel: "established_3_years",
-    goals: ["find_winning_products", "strategic_supplier_discovery"],
+    businessType: currentUser.businessType || "",
+    experienceLevel: currentUser.experienceLevel || "",
+    goals: currentUser.goals || [],
   });
 
-  const handleGoalToggle = (goalId: string) => {
+  // Sync with API data when it loads
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        businessType: currentUser.businessType || "",
+        experienceLevel: currentUser.experienceLevel || "",
+        goals: currentUser.goals || [],
+      });
+    }
+  }, [currentUser]);
+
+  const handleGoalToggle = (goalLabel: string) => {
     setFormData((prev) => {
-      const isSelected = prev.goals.includes(goalId);
+      const isSelected = prev.goals.includes(goalLabel);
       if (isSelected) {
-        return { ...prev, goals: prev.goals.filter((id) => id !== goalId) };
+        return { ...prev, goals: prev.goals.filter((label) => label !== goalLabel) };
       }
-      return { ...prev, goals: [...prev.goals, goalId] };
+      return { ...prev, goals: [...prev.goals, goalLabel] };
     });
   };
 
-  const handleSave = () => {
-    console.log("Saving Additional Information...", formData);
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await updateUserProfile({
+        business_type: formData.businessType,
+        experience_level: formData.experienceLevel,
+        main_goals: formData.goals,
+      });
+      await fetchUserDetails(true);
+      toast.success("Information updated successfully!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to update information");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -50,6 +101,9 @@ const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOp
       subtitle="We'll customize your dashboard accordingly"
       defaultOpen={defaultOpen}
       icon={<User size={24} className="text-brand-primary dark:text-white" />}
+      showSaveButton={true}
+      onSave={handleSave}
+      isSaving={isSaving}
     >
       <div className="flex flex-col gap-8">
         {/* Dropdowns Row */}
@@ -57,12 +111,7 @@ const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOp
           <SelectField
             id="businessType"
             label="What type of business do you run?"
-            options={[
-              { label: "Marketplace/Amazon Seller", value: "marketplace_amazon_seller" },
-              { label: "E-Commerce Store", value: "ecommerce_store" },
-              { label: "Agency", value: "agency" },
-              { label: "Other", value: "other" },
-            ]}
+            options={BUSINESS_TYPES.map(type => ({ label: type, value: type }))}
             value={formData.businessType}
             onChange={(val) => setFormData((prev) => ({ ...prev, businessType: val }))}
           />
@@ -70,11 +119,7 @@ const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOp
           <SelectField
             id="experienceLevel"
             label="What's your experience level?"
-            options={[
-              { label: "Beginner (0-1 years)", value: "beginner_0_1_years" },
-              { label: "Intermediate (1-3 years)", value: "intermediate_1_3_years" },
-              { label: "Established (3+ years)", value: "established_3_years" },
-            ]}
+            options={EXPERIENCE_LEVELS.map(level => ({ label: level, value: level }))}
             value={formData.experienceLevel}
             onChange={(val) => setFormData((prev) => ({ ...prev, experienceLevel: val }))}
           />
@@ -87,13 +132,13 @@ const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOp
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {GOALS.map((goal) => {
-              const isSelected = formData.goals.includes(goal.id);
+              const isSelected = formData.goals.includes(goal.label);
               const Icon = goal.icon;
               return (
                 <button
                   key={goal.id}
                   type="button"
-                  onClick={() => handleGoalToggle(goal.id)}
+                  onClick={() => handleGoalToggle(goal.label)}
                   className={`
                     relative flex items-center gap-3 px-5 py-4 rounded-[12px] transition-all duration-200 overflow-hidden outline-none hover:bg-brand-hover dark:hover:bg-white/5
                   ${isSelected
@@ -113,16 +158,6 @@ const AdditionalInformation: React.FC<AdditionalInformationProps> = ({ defaultOp
               );
             })}
           </div>
-        </div>
-
-        <div className="flex justify-end mt-2">
-          <button
-            type="button"
-            onClick={handleSave}
-            className="bg-brand-gradient text-white px-10 py-2 sm:py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none"
-          >
-            Save
-          </button>
         </div>
       </div>
     </CollapsibleCard>

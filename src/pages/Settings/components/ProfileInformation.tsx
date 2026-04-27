@@ -148,6 +148,9 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
       defaultOpen={defaultOpen}
       scrollIntoViewOnOpen={scrollIntoViewOnOpen}
       icon={<User size={24} className="text-brand-primary dark:text-white" />}
+      showSaveButton={true}
+      onSave={() => formik.handleSubmit()}
+      isSaving={isSaving}
     >
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-6">
         {/* Top Row: First Name, Last Name, Email */}
@@ -210,6 +213,7 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
               formik.setFieldValue("contactNumber", "");
             }}
             direction="down"
+            disabled={true}
           />
 
           <InputField
@@ -227,17 +231,6 @@ const ProfileInformation: React.FC<ProfileInformationProps> = ({ defaultOpen = t
           />
 
           <div className="hidden md:block">{/* Empty space for 3rd column */}</div>
-        </div>
-
-        <div className="flex justify-end mt-4">
-          <button
-            type="submit"
-            disabled={isSaving}
-            className={`bg-brand-gradient text-white px-10 py-2 sm:py-2 rounded-full text-[14px] font-semibold transition-transform hover:scale-[1.02] shadow-lg active:scale-95 border-none ${isSaving ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-          >
-            {isSaving ? "Saving..." : "Save"}
-          </button>
         </div>
       </form>
     </CollapsibleCard>

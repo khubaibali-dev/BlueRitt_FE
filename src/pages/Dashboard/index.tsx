@@ -8,19 +8,38 @@ import RecentSearches from "./components/RecentSearches";
 // import TikTokHashtags from "./components/TikTokHashtags";
 import OnboardingModal from "../../components/common/TourModels/OnboardingModal";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { updateUserProfile } from "../../api/auth";
+
 
 const DashboardPage: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const { currentUser, fetchUserDetails } = useAuth();
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem("blueritt_onboarding_completed");
+    if (!currentUser?.email) return;
+
+    const hasCompleted = localStorage.getItem(`blueritt_onboarding_completed_${currentUser.email}`);
     if (!hasCompleted) {
       const timer = setTimeout(() => {
         setShowOnboarding(true);
       }, 1000); // Small delay for better UX
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [currentUser?.email]);
+
+  const handleOnboardingComplete = async (data: any) => {
+    try {
+      await updateUserProfile({
+        business_type: data.businessType || "",
+        experience_level: data.experience || "",
+        main_goals: data.goals || [],
+      });
+      await fetchUserDetails();
+    } catch (error) {
+      console.error("Failed to update onboarding profile:", error);
+    }
+  };
 
   return (
     <div className="dashboard-container relative min-h-screen bg-brand-bg  lg:p-1">
@@ -84,6 +103,7 @@ const DashboardPage: React.FC = () => {
       <OnboardingModal
         isOpen={showOnboarding}
         onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 // src/pages/UserAuth/Login/components/LoginForm.tsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,11 +9,13 @@ import InputField from "../../../../components/common/input/InputField";
 import { login } from "../../../../api/auth";
 import { encryptPassword } from "../../../../utils/encryption";
 import ReCaptchaWidget from "../../components/ReCaptchaWidget";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Eye, EyeOff } from "lucide-react";
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [captchaError, setCaptchaError] = useState("");
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -61,6 +63,10 @@ const LoginForm: React.FC = () => {
     onError: (error: any) => {
       const msg = error?.response?.data?.error || "Invalid credentials or login failed";
       toast.error(msg);
+      
+      // Reset reCAPTCHA so the user can verify again
+      recaptchaRef.current?.reset();
+      formik.setFieldValue("recaptchaToken", null);
     },
   });
 
@@ -110,6 +116,7 @@ const LoginForm: React.FC = () => {
 
         <div className="space-y-1">
           <ReCaptchaWidget
+            ref={recaptchaRef}
             onVerify={(token: string) => {
               formik.setFieldValue("recaptchaToken", token);
               setCaptchaError("");

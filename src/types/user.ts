@@ -50,6 +50,9 @@ export type TUser = {
     email: string;
     phone: string;
     country: string;
+    businessType?: string;
+    experienceLevel?: string;
+    goals?: string[];
     searchQuota?: TSearchQuota;
     features?: TUserFeatures;
     subscriptionStatus?: TSubscriptionStatus;
