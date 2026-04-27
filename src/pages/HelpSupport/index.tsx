@@ -1,14 +1,18 @@
 import PageHeader from "../../components/common/PageHeader/PageHeader";
-import { Headphones, Paperclip, Send, Bot } from "lucide-react";
+import { Headphones, Paperclip, Send, Bot, Loader2 } from "lucide-react";
 import InputField from "../../components/common/input/InputField";
 import SelectField from "../../components/common/select/SelectField";
 import tiktokBanner from "../../assets/images/tiktoktrends.png";
 import socialpulseLight from "../../assets/images/SocialPulse-light.png";
 import { useUserDetails } from "../../hooks/useUserDetails";
 import { useEffect, useState } from "react";
+import { createSupportTicket } from "../../api/support";
+import { useToast } from "../../components/common/Toast/ToastContext";
 
 const HelpSupportPage: React.FC = () => {
   const { data: userDetails } = useUserDetails();
+  const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,6 +20,8 @@ const HelpSupportPage: React.FC = () => {
     category: "",
     message: "",
   });
+
+  const [attachment, setAttachment] = useState<File | null>(null);
 
   // Pre-fill user details when available
   useEffect(() => {
@@ -28,8 +34,6 @@ const HelpSupportPage: React.FC = () => {
     }
   }, [userDetails]);
 
-  const [fileName, setFileName] = useState<string | null>(null);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -40,16 +44,43 @@ const HelpSupportPage: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
+      setAttachment(e.target.files[0]);
     } else {
-      setFileName(null);
+      setAttachment(null);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Support Request Submitted", formData, fileName);
-    // Add API logic here
+    
+    if (!formData.category) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await createSupportTicket({
+        ...formData,
+        attachment: attachment || undefined
+      });
+
+      toast.success("Your support request has been sent successfully!");
+      
+      // Reset form (except name/email if user is logged in)
+      setFormData(prev => ({
+        ...prev,
+        subject: "",
+        category: "",
+        message: ""
+      }));
+      setAttachment(null);
+    } catch (error: any) {
+      console.error("Support submission error:", error);
+      toast.error(error?.response?.data?.message || "Failed to send support request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -93,7 +124,7 @@ const HelpSupportPage: React.FC = () => {
               <InputField
                 id="name"
                 label="Name"
-                placeholder="Ahmed"
+                placeholder="Enter your name"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -104,7 +135,7 @@ const HelpSupportPage: React.FC = () => {
                 id="email"
                 type="email"
                 label="Email"
-                placeholder="Ahmad"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -114,9 +145,10 @@ const HelpSupportPage: React.FC = () => {
               <InputField
                 id="subject"
                 label="Subject/Topic"
-                placeholder="reverce94@yopmail.com"
+                placeholder="What is this regarding?"
                 value={formData.subject}
                 onChange={handleChange}
+                required
               />
 
               {/* Category */}
@@ -145,11 +177,12 @@ const HelpSupportPage: React.FC = () => {
                     id="attachments"
                     className="hidden"
                     onChange={handleFileChange}
+                    disabled={isSubmitting}
                   />
                   <div className="help-file-inner">
                     <Paperclip size={18} className="text-slate-400 shrink-0" />
                     <span className="help-file-text truncate">
-                      {fileName ? fileName : "No file chosen"}
+                      {attachment ? attachment.name : "No file chosen"}
                     </span>
                   </div>
                 </label>
@@ -173,10 +206,20 @@ const HelpSupportPage: React.FC = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full sm:w-fit px-8 sm:px-12 mt-4 text-white py-3.5 sm:py-4 !rounded-full text-[13px] sm:text-[14px] font-semibold transition-transform hover:scale-[1.02] flex items-center justify-center gap-2.5 shadow-lg active:scale-95 border-none bg-brand-gradient"
+                disabled={isSubmitting}
+                className={`w-full sm:w-fit px-8 sm:px-12 mt-4 text-white py-3.5 sm:py-4 !rounded-full text-[13px] sm:text-[14px] font-semibold transition-transform hover:scale-[1.02] flex items-center justify-center gap-2.5 shadow-lg active:scale-95 border-none bg-brand-gradient ${isSubmitting ? 'opacity-70 cursor-wait' : ''}`}
               >
-                <Send size={16} />
-                Send Message
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    Send Message
+                  </>
+                )}
               </button>
             </form>
           </div>

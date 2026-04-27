@@ -86,7 +86,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
         <div className="flex justify-between items-center pr-1">
           <label
             htmlFor={id}
-            className={`text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
+            className={`text-[12px] font-bold leading-[16px] tracking-[0px] text-brand-textSecondary dark:text-white ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
