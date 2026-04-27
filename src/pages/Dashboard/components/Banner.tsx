@@ -2,7 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SlidersHorizontal, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import shadowBg from "../../../assets/images/dashboard1.png";
+// import shadowBg from "../../../assets/images/dashboard1.png";
+// import shadowBgLight from "../../../assets/images/Dashboard-light.png";
+import shadowBg from "../../../assets/images/Badge.png";
+import shadowBgLight from "../../../assets/images/ExplorerLoading.png";
 import starImg from "../../../assets/images/star.png";
 import PremiumSearchBar from "../../../components/common/search/PremiumSearchBar";
 import FilterDropdown from "../../../components/common/select/FilterDropdown";
@@ -12,7 +15,6 @@ import { COUNTRY_OPTIONS } from "../../../utils/Country";
 import { PRODUCT_FILTER_OPTIONS } from "../../../utils/SearchOptions";
 import { getAmazonCategoriesandSubcategories } from "../../../api/product";
 import { useToast } from "../../../components/common/Toast/ToastContext";
-import shadowBgLight from "../../../assets/images/Dashboard-light.png";
 
 const Banner = () => {
   const toast = useToast();

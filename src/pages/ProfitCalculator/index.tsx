@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Search, Info, Globe, Lock } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Formik, useFormikContext } from "formik";
-import shadowBg from "../../assets/images/marganmax.png";
-import shadowBgLight from "../../assets/images/Explorer-light.png";
+// import shadowBg from "../../assets/images/marganmax.png";
+// import shadowBgLight from "../../assets/images/Explorer-light.png";
+import shadowBg from "../../assets/images/Badge.png";
+import shadowBgLight from "../../assets/images/ExplorerLoading.png";
 import ResultPanels from "./components/ResultPanels";
 import MarginMaxTourModal from "../../components/common/TourModels/MarginMaxTourModal";
 import BasicTab from "./Basic/BasicTab";
@@ -360,9 +362,9 @@ const ProfitCalculatorContent: React.FC<any> = ({
           <div className="absolute inset-0 z-[-1] overflow-hidden rounded-t-[32px]">
             <img src={shadowBg} alt="" className="dashboard-banner-image hidden dark:block" />
             <img src={shadowBgLight} alt="" className="dashboard-banner-image block dark:hidden" />
-            <div className="calculator-hero-glow dark:block hidden" />
-            <div className="calculator-hero-fade" />
-            <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/20 to-transparent dark:flex hidden pointer-events-none" />
+            {/* <div className="calculator-hero-glow dark:block hidden" />
+            <div className="calculator-hero-fade" /> */}
+            <div className="absolute bottom-0 left-0 right-0 h-[280px] bg-gradient-to-t from-brand-card-alt via-brand-card-alt/40 to-transparent pointer-events-none hidden dark:block" />
           </div>
 
           <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center mt-2">
